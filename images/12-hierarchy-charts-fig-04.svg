@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t12-04 d12-04">
+  <title id="t12-04">Depth-limit failure — treemap at 5 levels and sunburst at 7 levels</title>
+  <desc id="d12-04">Two panels showing the geometric depth limit. Left: a five-level treemap with a zoom box highlighting the innermost slivers. Right: a seven-level sunburst with the outermost ring annotated. Both annotate the exact pixel arithmetic that produces illegibility.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .mono{ font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar12-04" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">Both depth limits follow from the geometry, not from taste</text>
+
+  <!-- LEFT: TREEMAP, 5 levels -->
+  <text x="32" y="58" class="ti">Treemap — 5 levels</text>
+  <text x="32" y="74" class="sm">at 10% share per level, level-5 area = 0.001 of total</text>
+
+  <!-- Outer 280×220 frame at 32,86 -->
+  <rect x="32" y="86" width="280" height="220" fill="#2a1a0e"/>
+  <!-- Level 2 (10% of level 1): 28×22 -->
+  <rect x="32" y="86" width="28" height="220" fill="#4a4540"/>
+  <!-- Remaining area uses dividers to suggest nesting -->
+  <line x1="60"  y1="86" x2="60"  y2="306" stroke="#fdfcfb" stroke-width="1.2"/>
+  <line x1="120" y1="86" x2="120" y2="306" stroke="#fdfcfb" stroke-width="0.8"/>
+  <line x1="180" y1="86" x2="180" y2="306" stroke="#fdfcfb" stroke-width="0.8"/>
+  <line x1="240" y1="86" x2="240" y2="306" stroke="#fdfcfb" stroke-width="0.8"/>
+  <line x1="60"  y1="186" x2="312" y2="186" stroke="#fdfcfb" stroke-width="0.8"/>
+  <line x1="60"  y1="246" x2="312" y2="246" stroke="#fdfcfb" stroke-width="0.6"/>
+  <line x1="60"  y1="126" x2="312" y2="126" stroke="#fdfcfb" stroke-width="0.6"/>
+
+  <!-- Inner zoom callout: highlight 30×30 region inside, with arrow to magnified slice -->
+  <rect x="32" y="86" width="28" height="22" fill="none" stroke="#C8860E" stroke-width="1.5"/>
+  <!-- Connector to zoom -->
+  <line x1="60" y1="108" x2="160" y2="340" stroke="#C8860E" stroke-width="0.8" stroke-dasharray="3 2"/>
+  <!-- Zoomed view -->
+  <rect x="100" y="340" width="80" height="60" fill="#2a1a0e"/>
+  <rect x="100" y="340" width="8"  height="60" fill="#4a4540"/>
+  <rect x="100" y="340" width="8"  height="6"  fill="#8a8480"/>
+  <rect x="100" y="340" width="0.8" height="6" fill="#c8c4c0"/>
+  <text x="184" y="354" class="mono">L1  L2  L3  L4  L5</text>
+  <text x="184" y="368" class="mono">2 × 3 px</text>
+  <text x="184" y="382" class="sm">smaller than a glyph stroke</text>
+
+  <text x="32" y="424" class="lb">800×600 chart, 10% each level → 0.48 sq px at L5.</text>
+  <text x="32" y="438" class="sm">not just unlabelled — not visible.</text>
+
+  <!-- DIVIDER -->
+  <line x1="350" y1="50" x2="350" y2="445" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT: SUNBURST, 7 levels -->
+  <text x="370" y="58" class="ti">Sunburst — 7 levels</text>
+  <text x="370" y="74" class="sm">outermost ring at r=400 with 200 leaves → ~12 px per segment</text>
+
+  <!-- Center at (530, 210), max radius = 130. 7 rings = ~18.6 px each -->
+  <g transform="translate(530,210)">
+    <!-- Draw 7 nested rings of decreasing fill darkness -->
+    <circle r="130" fill="#c8c4c0"/>
+    <circle r="111" fill="#b8b3ae"/>
+    <circle r="93"  fill="#9a948e"/>
+    <circle r="74"  fill="#7a746e"/>
+    <circle r="56"  fill="#5a5450"/>
+    <circle r="37"  fill="#3a3530"/>
+    <circle r="19"  fill="#2a1a0e"/>
+    <!-- Radial segment dividers — many on the outer ring to suggest 200 leaves -->
+    <g stroke="#fdfcfb" stroke-width="0.5">
+      <!-- 24 dividers shown for visual density -->
+      <line x1="0" y1="0" x2="0"      y2="-130"/>
+      <line x1="0" y1="0" x2="33.7"   y2="-125.6"/>
+      <line x1="0" y1="0" x2="65"     y2="-112.6"/>
+      <line x1="0" y1="0" x2="91.9"   y2="-91.9"/>
+      <line x1="0" y1="0" x2="112.6"  y2="-65"/>
+      <line x1="0" y1="0" x2="125.6"  y2="-33.7"/>
+      <line x1="0" y1="0" x2="130"    y2="0"/>
+      <line x1="0" y1="0" x2="125.6"  y2="33.7"/>
+      <line x1="0" y1="0" x2="112.6"  y2="65"/>
+      <line x1="0" y1="0" x2="91.9"   y2="91.9"/>
+      <line x1="0" y1="0" x2="65"     y2="112.6"/>
+      <line x1="0" y1="0" x2="33.7"   y2="125.6"/>
+      <line x1="0" y1="0" x2="0"      y2="130"/>
+      <line x1="0" y1="0" x2="-33.7"  y2="125.6"/>
+      <line x1="0" y1="0" x2="-65"    y2="112.6"/>
+      <line x1="0" y1="0" x2="-91.9"  y2="91.9"/>
+      <line x1="0" y1="0" x2="-112.6" y2="65"/>
+      <line x1="0" y1="0" x2="-125.6" y2="33.7"/>
+      <line x1="0" y1="0" x2="-130"   y2="0"/>
+      <line x1="0" y1="0" x2="-125.6" y2="-33.7"/>
+      <line x1="0" y1="0" x2="-112.6" y2="-65"/>
+      <line x1="0" y1="0" x2="-91.9"  y2="-91.9"/>
+      <line x1="0" y1="0" x2="-65"    y2="-112.6"/>
+      <line x1="0" y1="0" x2="-33.7"  y2="-125.6"/>
+    </g>
+    <!-- Outer ring callout: zoom on a wedge -->
+    <path d="M 0 -111 L 0 -130 L 33.7 -125.6 L 28.7 -107 Z" fill="#fdfcfb" fill-opacity="0.0" stroke="#C8860E" stroke-width="1.5"/>
+  </g>
+
+  <!-- Zoom box pointer for sunburst -->
+  <line x1="540" y1="78" x2="612" y2="350" stroke="#C8860E" stroke-width="0.8" stroke-dasharray="3 2"/>
+  <rect x="540" y="350" width="120" height="50" fill="#fdfcfb" stroke="#c8c4c0"/>
+  <text x="546" y="366" class="mono">2πr / 200 ≈ 12 px wide</text>
+  <text x="546" y="380" class="sm">below glyph-readable size</text>
+  <text x="546" y="394" class="sm">becomes background, not content</text>
+
+  <text x="370" y="424" class="lb">Each ring = total radius / depth.</text>
+  <text x="370" y="438" class="sm">Outer ring punishes the deepest, most detailed nodes.</text>
+</svg>

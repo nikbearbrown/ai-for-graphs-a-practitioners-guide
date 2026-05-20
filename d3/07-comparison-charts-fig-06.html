@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 7.6 — Radial vs linear bars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 360px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .bar { fill: var(--color-secondary); }
+  .bar.primary { fill: var(--color-red); }
+  .slice { stroke: var(--color-white); stroke-width: 1; }
+  .slice.primary { fill: var(--color-red); }
+  .slice-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-ink); }
+  .value-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-ink); }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 7.6 — Radial vs linear bars</h1>
+<p class="subtitle">Same eight cognitive-domain scores. The radial form looks distinctive but uses a worse perceptual channel. The linear form uses position along a common scale, the highest-accuracy channel.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Radial bars</div>
+    <div class="panel-sub">Channel ≈ 0.71 (length without shared baseline). Outer arcs sweep more visual angle than inner ones.</div>
+    <div id="chartRadial" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Linear bars</div>
+    <div class="panel-sub">Channel ≈ 1.00. Position from a zero baseline; ranking readable at a glance.</div>
+    <div id="chartLinear" class="chart"></div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const domainData = [
+  { label: 'Memory',   value: 96 },
+  { label: 'Pattern',  value: 92 },
+  { label: 'Logic',    value: 82 },
+  { label: 'Quant',    value: 71 },
+  { label: 'Language', value: 64 },
+  { label: 'Moral',    value: 47 },
+  { label: 'Empathy',  value: 42 },
+  { label: 'Embodied', value: 35 }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(e, d) { tooltip.html(`<strong>${d.label}</strong>: ${d.value}`).style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px').transition().duration(150).style('opacity', 1); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function setup(sel, title, desc) {
+  d3.select(sel).selectAll('*').remove();
+  const c = document.querySelector(sel);
+  const w = c.clientWidth || 380, h = c.clientHeight || 360;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${sel.slice(1)}-t ${sel.slice(1)}-d`);
+  svg.append('title').attr('id', `${sel.slice(1)}-t`).text(title);
+  svg.append('desc').attr('id', `${sel.slice(1)}-d`).text(desc);
+  return { svg, w, h };
+}
+
+function drawRadial() {
+  const { svg, w, h } = setup('#chartRadial',
+    'Radial bar chart of cognitive-domain scores',
+    'Eight annular sectors arranged around a central point, with outer radius proportional to score.');
+  const cx = w / 2, cy = h / 2;
+  const innerR = 24;
+  const outerMax = Math.min(w, h) / 2 - 24;
+  const maxVal = d3.max(domainData, d => d.value);
+  const angle = d3.scaleBand().domain(domainData.map(d => d.label)).range([0, Math.PI * 2]);
+  const rScale = d3.scaleLinear().domain([0, maxVal]).range([innerR, outerMax]);
+  const arc = d3.arc()
+    .innerRadius(innerR)
+    .outerRadius(d => rScale(d.value))
+    .startAngle(d => angle(d.label))
+    .endAngle(d => angle(d.label) + angle.bandwidth())
+    .padAngle(0.01);
+
+  const g = svg.append('g').attr('transform', `translate(${cx},${cy})`);
+  g.append('circle').attr('r', innerR).attr('fill', 'none').attr('stroke', 'var(--color-border)');
+  g.selectAll('.slice').data(domainData).join('path')
+    .attr('class', (d, i) => i === 0 ? 'slice primary' : 'slice')
+    .attr('fill', (d, i) => i === 0 ? 'var(--color-red)' : d3.interpolateRgb('var(--color-ink)', 'var(--color-border)')(i / domainData.length))
+    .attr('d', arc).attr('tabindex', 0)
+    .attr('aria-label', d => `${d.label}: ${d.value}`)
+    .on('mouseover', (e, d) => showTip(e, d)).on('mouseout', hideTip);
+
+  // labels around outside
+  g.selectAll('.slice-label').data(domainData).join('text')
+    .attr('class', 'slice-label')
+    .attr('transform', d => {
+      const a = angle(d.label) + angle.bandwidth()/2 - Math.PI/2;
+      const r = outerMax + 12;
+      return `translate(${Math.cos(a) * r},${Math.sin(a) * r})`;
+    })
+    .attr('text-anchor', 'middle').attr('dy', '0.35em')
+    .text(d => d.label);
+}
+
+function drawLinear() {
+  const { svg, w, h } = setup('#chartLinear',
+    'Linear horizontal bar chart of cognitive-domain scores',
+    'Eight horizontal bars on a shared zero baseline, sorted descending.');
+  const margin = { top: 16, right: 32, bottom: 32, left: 88 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const y = d3.scaleBand().domain(domainData.map(d => d.label)).range([0, ch]).padding(0.18);
+  const x = d3.scaleLinear().domain([0, 100]).range([0, cw]);
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y));
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x).ticks(5));
+  g.selectAll('.bar').data(domainData).join('rect')
+    .attr('class', (d, i) => i === 0 ? 'bar primary' : 'bar')
+    .attr('x', 0).attr('y', d => y(d.label))
+    .attr('width', d => x(d.value)).attr('height', y.bandwidth())
+    .attr('tabindex', 0).attr('aria-label', d => `${d.label}: ${d.value}`)
+    .on('mouseover', (e, d) => showTip(e, d)).on('mouseout', hideTip);
+  g.selectAll('.value-label').data(domainData).join('text').attr('class', 'value-label')
+    .attr('x', d => x(d.value) + 6).attr('y', d => y(d.label) + y.bandwidth()/2 + 4)
+    .text(d => d.value);
+}
+
+function drawAll() { drawRadial(); drawLinear(); }
+drawAll();
+const ro = new ResizeObserver(drawAll);
+['#chartRadial', '#chartLinear'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

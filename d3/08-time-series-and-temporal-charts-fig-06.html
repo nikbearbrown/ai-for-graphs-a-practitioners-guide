@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 8.6 — Line chart vs spiral plot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .panel-q { color: var(--color-ink); font-size: 12px; margin-top: 8px; font-style: italic; }
+  .chart { width: 100%; height: 360px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .line { fill: none; stroke: var(--color-ink); stroke-width: 1.4; }
+  .marker { fill: var(--color-ochre); }
+  .clock-axis { stroke: var(--color-border); stroke-width: 0.7; }
+  .clock-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .annot { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .tradeoff { margin-top: 16px; border: 2px solid var(--color-ochre); padding: 16px; font-size: 13px; line-height: 1.5; }
+  .tradeoff b { color: var(--color-ink); }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 8.6 — Line chart vs spiral plot</h1>
+<p class="subtitle">Five years of monthly electricity consumption. The linear chart answers the trend question; the spiral plot answers the cycle question.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Linear time series — 60 months</div>
+    <div class="panel-sub">point position along straight axis — highest channel accuracy</div>
+    <div id="chartLine" class="chart"></div>
+    <div class="panel-q">answers: "is consumption rising over five years?"</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Spiral plot — one rotation per year</div>
+    <div class="panel-sub">position along a curve — lower accuracy, cyclic pattern visible as one shape</div>
+    <div id="chartSpiral" class="chart"></div>
+    <div class="panel-q">answers: "is the seasonal pattern consistent across years?"</div>
+  </div>
+</div>
+<div class="tradeoff">
+  <b>Trade-off.</b>
+  The spiral accepts Cleveland and McGill's lower-accuracy channel (position along a curve) in exchange for making cyclic structure perceptible as a single shape. Use it when the cycle is the question; prefer small multiples for cross-year value comparison.
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Generate 60 monthly values with seasonal cycle + slow trend
+const seriesData = d3.range(60).map(i => {
+  const seasonal = 350 * Math.cos((2 * Math.PI * (i % 12)) / 12);
+  const trend = 850 + 8 * i;
+  return {
+    monthIndex: i,
+    dateObj: new Date(Date.UTC(2019, i, 1)),
+    value: Math.round(trend + seasonal)
+  };
+});
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+const fmtMonth = d3.utcFormat("%b '%y");
+const fmtYear = d3.utcFormat('%Y');
+
+function drawLine() {
+  const sel = '#chartLine';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 420;
+  const totalHeight = container.clientHeight || 360;
+  const margin = { top: 24, right: 16, bottom: 48, left: 56 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(sel).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'ln-t ln-d');
+  svg.append('title').attr('id', 'ln-t').text('Linear time series of monthly electricity consumption for sixty months');
+  svg.append('desc').attr('id', 'ln-d').text('Sixty monthly values arranged left to right; seasonal sawtooth visible and a slow upward trend over five years.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleUtc = d3.scaleUtc()
+    .domain(d3.extent(seriesData, d => d.dateObj))
+    .range([0, chartWidth]);
+  const yMax = d3.max(seriesData, d => d.value) * 1.05;
+  const yScaleLinear = d3.scaleLinear().domain([0, yMax]).range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleUtc).ticks(d3.utcYear.every(1)).tickFormat(fmtYear));
+  gChart.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(yScaleLinear).ticks(5));
+
+  const lineGen = d3.line()
+    .x(d => xScaleUtc(d.dateObj))
+    .y(d => yScaleLinear(d.value))
+    .curve(d3.curveLinear);
+
+  gChart.append('path').datum(seriesData).attr('class', 'line').attr('d', lineGen);
+
+  // Mark winter peaks (Jan of each year) and summer dips (Jul of each year)
+  seriesData.filter(d => d.dateObj.getUTCMonth() === 0).forEach(d => {
+    gChart.append('circle').attr('class', 'marker')
+      .attr('cx', xScaleUtc(d.dateObj)).attr('cy', yScaleLinear(d.value)).attr('r', 3)
+      .attr('tabindex', 0).attr('aria-label', `${fmtMonth(d.dateObj)}: ${d.value} kWh — winter spike`)
+      .on('mouseover', (event) => showTip(event, `<strong>${fmtMonth(d.dateObj)}</strong>: ${d.value} kWh (winter spike)`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+  });
+}
+
+function drawSpiral() {
+  const sel = '#chartSpiral';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 420;
+  const totalHeight = container.clientHeight || 360;
+
+  const svg = d3.select(sel).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'sp-t sp-d');
+  svg.append('title').attr('id', 'sp-t').text('Spiral plot of monthly electricity consumption, one rotation per year');
+  svg.append('desc').attr('id', 'sp-d').text('Sixty months arranged on an Archimedean spiral with January at 12 oclock; winter spikes cluster at the top and summer dips at the bottom.');
+
+  const cx = totalWidth / 2, cy = totalHeight / 2;
+  const innerR = 30;
+  const outerR = Math.min(totalWidth, totalHeight) / 2 - 30;
+  const seasonalAmp = 8;
+
+  // clock guides
+  const guides = svg.append('g').attr('class', 'clock-axis-group');
+  [0, 90, 180, 270].forEach(deg => {
+    const rad = (deg - 90) * Math.PI / 180;
+    guides.append('line').attr('class', 'clock-axis')
+      .attr('x1', cx).attr('y1', cy)
+      .attr('x2', cx + outerR * Math.cos(rad))
+      .attr('y2', cy + outerR * Math.sin(rad));
+  });
+  svg.append('text').attr('class', 'clock-label')
+    .attr('x', cx).attr('y', cy - outerR - 6).attr('text-anchor', 'middle').text('Jan');
+  svg.append('text').attr('class', 'clock-label')
+    .attr('x', cx + outerR + 6).attr('y', cy + 4).attr('text-anchor', 'start').text('Apr');
+  svg.append('text').attr('class', 'clock-label')
+    .attr('x', cx).attr('y', cy + outerR + 16).attr('text-anchor', 'middle').text('Jul');
+  svg.append('text').attr('class', 'clock-label')
+    .attr('x', cx - outerR - 6).attr('y', cy + 4).attr('text-anchor', 'end').text('Oct');
+
+  // spiral path
+  const points = seriesData.map(d => {
+    const t = d.monthIndex / 60;
+    const angle = -Math.PI / 2 + (d.monthIndex / 12) * 2 * Math.PI;
+    const seasonal = seasonalAmp * Math.cos((2 * Math.PI * (d.monthIndex % 12)) / 12);
+    const r = innerR + t * (outerR - innerR) + seasonal;
+    return [cx + r * Math.cos(angle), cy + r * Math.sin(angle), d];
+  });
+
+  const pathGen = d3.line().x(p => p[0]).y(p => p[1]).curve(d3.curveCardinal);
+  svg.append('path').datum(points).attr('class', 'line').attr('d', pathGen);
+
+  // Mark winter spikes (January each year)
+  points.filter(p => p[2].dateObj.getUTCMonth() === 0).forEach(p => {
+    svg.append('circle').attr('class', 'marker')
+      .attr('cx', p[0]).attr('cy', p[1]).attr('r', 3.5)
+      .attr('tabindex', 0)
+      .attr('aria-label', `${fmtMonth(p[2].dateObj)}: ${p[2].value} kWh — winter spike`)
+      .on('mouseover', (event) => showTip(event, `<strong>${fmtMonth(p[2].dateObj)}</strong>: ${p[2].value} kWh`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+  });
+}
+
+function draw() { drawLine(); drawSpiral(); }
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartLine'));
+ro.observe(document.getElementById('chartSpiral'));
+</script>
+</body>
+</html>

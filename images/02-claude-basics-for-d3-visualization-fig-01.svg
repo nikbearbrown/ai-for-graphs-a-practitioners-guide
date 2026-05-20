@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t01 d01">
+  <title id="t01">Vague vs specific prompt — every omitted decision is one the model makes</title>
+  <desc id="d01">Two-column comparison: the left column shows the vague prompt with five decisions flagged as model-decided; the right column shows the specific prompt with the same decisions flagged as author-controlled.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .tag { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; fill: #4a4540; font-style: italic; }
+      .prompt { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+    </style>
+    <marker id="ar1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4a4540"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+
+  <text x="350" y="24" text-anchor="middle" class="ti">Two prompts, same dataset. The difference is who decides.</text>
+
+  <!-- LEFT: VAGUE PROMPT -->
+  <g transform="translate(24,52)">
+    <text x="0" y="0" class="ti">Vague prompt</text>
+    <text x="0" y="14" class="sm">model decides everything below</text>
+    <rect x="0" y="24" width="300" height="60" fill="#f5f2ee" stroke="#8a8480"/>
+    <text x="12" y="44" class="prompt">"Make a chart showing AI</text>
+    <text x="12" y="58" class="prompt">capability across cognitive</text>
+    <text x="12" y="72" class="prompt">domains."</text>
+
+    <!-- five decision rows -->
+    <g transform="translate(0,108)">
+      <rect x="0" y="0" width="300" height="22" fill="#fdfcfb" stroke="#c8c4c0"/>
+      <text x="10" y="15" class="lb">chart type</text>
+      <text x="290" y="15" text-anchor="end" class="tag">→ model picks: scatterplot</text>
+
+      <rect x="0" y="28" width="300" height="22" fill="#fdfcfb" stroke="#c8c4c0"/>
+      <text x="10" y="43" class="lb">mark</text>
+      <text x="290" y="43" text-anchor="end" class="tag">→ model picks: circle</text>
+
+      <rect x="0" y="56" width="300" height="22" fill="#fdfcfb" stroke="#c8c4c0"/>
+      <text x="10" y="71" class="lb">channel for score</text>
+      <text x="290" y="71" text-anchor="end" class="tag">→ model picks: area</text>
+
+      <rect x="0" y="84" width="300" height="22" fill="#fdfcfb" stroke="#c8c4c0"/>
+      <text x="10" y="99" class="lb">channel for domain</text>
+      <text x="290" y="99" text-anchor="end" class="tag">→ model picks: hue</text>
+
+      <rect x="0" y="112" width="300" height="22" fill="#fdfcfb" stroke="#c8c4c0"/>
+      <text x="10" y="127" class="lb">sort order &amp; baseline</text>
+      <text x="290" y="127" text-anchor="end" class="tag">→ model picks: none / unspecified</text>
+    </g>
+
+    <!-- verdict chip -->
+    <rect x="0" y="252" width="300" height="24" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="150" y="268" text-anchor="middle" class="lb">verdict: chart, not information</text>
+  </g>
+
+  <!-- divider arrow -->
+  <line x1="350" y1="60" x2="350" y2="420" stroke="#c8c4c0" stroke-width="0.75"/>
+  <path d="M 332 130 L 368 130" fill="none" stroke="#4a4540" stroke-width="1" marker-end="url(#ar1)"/>
+  <text x="350" y="124" text-anchor="middle" class="tag">specificity</text>
+
+  <!-- RIGHT: SPECIFIC PROMPT -->
+  <g transform="translate(376,52)">
+    <text x="0" y="0" class="ti">Specific prompt</text>
+    <text x="0" y="14" class="sm">author decides everything below</text>
+    <rect x="0" y="24" width="300" height="60" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="12" y="44" class="prompt">"Vertical bar chart, sorted</text>
+    <text x="12" y="58" class="prompt">descending, zero baseline, color</text>
+    <text x="12" y="72" class="prompt">luminance redundant. D3 v7."</text>
+
+    <g transform="translate(0,108)">
+      <rect x="0" y="0" width="300" height="22" fill="#fdfcfb" stroke="#2a1a0e"/>
+      <text x="10" y="15" class="lb">chart type</text>
+      <text x="290" y="15" text-anchor="end" class="tag">→ author: vertical bars</text>
+
+      <rect x="0" y="28" width="300" height="22" fill="#fdfcfb" stroke="#2a1a0e"/>
+      <text x="10" y="43" class="lb">mark</text>
+      <text x="290" y="43" text-anchor="end" class="tag">→ author: rect from baseline</text>
+
+      <rect x="0" y="56" width="300" height="22" fill="#fdfcfb" stroke="#2a1a0e"/>
+      <text x="10" y="71" class="lb">channel for score</text>
+      <text x="290" y="71" text-anchor="end" class="tag">→ author: y-position + luminance</text>
+
+      <rect x="0" y="84" width="300" height="22" fill="#fdfcfb" stroke="#2a1a0e"/>
+      <text x="10" y="99" class="lb">channel for domain</text>
+      <text x="290" y="99" text-anchor="end" class="tag">→ author: x-position (sorted)</text>
+
+      <rect x="0" y="112" width="300" height="22" fill="#fdfcfb" stroke="#2a1a0e"/>
+      <text x="10" y="127" class="lb">sort order &amp; baseline</text>
+      <text x="290" y="127" text-anchor="end" class="tag">→ author: descending, zero</text>
+    </g>
+
+    <rect x="0" y="252" width="300" height="24" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="150" y="268" text-anchor="middle" class="lb">verdict: information, on first attempt</text>
+  </g>
+
+  <text x="350" y="448" text-anchor="middle" class="cap">Every decision the vague prompt omits is a decision the model makes for you.</text>
+</svg>

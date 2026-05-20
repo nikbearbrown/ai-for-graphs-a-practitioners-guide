@@ -41,7 +41,8 @@ decisions.
 
 The chart that comes back is right on the first attempt. Five horizontal bars sorted by funding, on a zero baseline, pale-to-dark encoding reinforcing the ranking, direct value labels, sector names on the left with room to breathe. The reader ranks the sectors in three seconds.
 
-<!-- → [FIGURE: Two side-by-side bar charts, same dataset. Left: vague-prompt output — column chart, auto-fit y-axis starting at $40M, uniform steelblue bars, crowded x-axis labels unrotated, no value labels. Right: four-move-prompt output — horizontal bars sorted descending, zero baseline, sequential pale-to-dark luminance, direct value labels, left-aligned sector names with generous margin. Caption labels each panel with the prompt that produced it (truncated to one line each). The reader should see, at a glance, what 9 words vs. 200 words buys.] -->
+![Two side-by-side bar charts of the same humanitarian-funding dataset. The left panel is the vague-prompt output — vertical columns, y-axis auto-fitted from $40M, uniform color, source-file order, no value labels. The right panel is the four-move-prompt output — horizontal bars sorted descending on a zero baseline, sequential pale-to-dark luminance, direct value labels at each bar end, generous left margin for sector names.](../images/06-working-with-claude-code-fig-01.png)
+*Figure 5.1 — Same data, two prompts. The four-move version makes the channel decomposition visible in the artifact.*
 
 The difference between the two prompts is not intelligence applied. It is discipline applied. The second prompt is 200 words; the first is 9. But the second encodes the outputs of the previous three chapters — the channel decomposition from Chapter 3, the chart-type selection from Chapter 4, the data structure description that Chapter 3 teaches. Without that upstream work in the prompt, Claude Code is guessing. With it, Claude Code is executing.
 
@@ -79,7 +80,8 @@ Every D3 prompt Claude Code receives has the same four moves. The moves come fro
 
 The second prompt in this chapter's opening case follows this structure exactly. The four moves are labeled. The "Constrain it" block is the longest. The "Verify" move is the last. This is not a coincidence.
 
-<!-- → [FIGURE: The second prompt from the opening case rendered as an annotated code block. Each of the four moves is highlighted in a different muted color with a label bracket on the left margin: Move 1 (Show what you have), Move 2 (Say what you want), Move 3 (Constrain it — the largest block), Move 4 (Verify). Annotations point out: "data sample goes here," "chart type named explicitly, not categorically," "every channel-to-attribute mapping is a bullet," "verification request is always the last move." This is the template the reader will copy for every chart in the book.] -->
+![The opening-case prompt rendered as a code block with four left-margin brackets labeling Move 1 through Move 4. Right-margin annotations call out "data sample goes here," "chart type named explicitly, not categorically," "every channel-to-attribute mapping is a bullet," and "verification is always the last move."](../images/06-working-with-claude-code-fig-02.png)
+*Figure 5.2 — The four-move template. Move 3 is the longest. Move 4 is the last. The structure is the protocol.*
 
 ---
 
@@ -129,7 +131,8 @@ A bad follow-up re-specifies everything from the beginning. The bad version prod
 
 **The rendered chart is the truth.** A working chart shows things that specifications do not. Data clusters in unexpected ways. Labels overlap at small browser widths. A color that looks fine in light mode looks wrong in dark mode. None of this is visible in a written specification. Open the chart in a browser. Resize it. Switch to dark mode. Run a color-blind simulator. The artifact is the truth; the prompt was a hypothesis.
 
-<!-- → [FIGURE: The MBTA iteration loop as a circular flow diagram. Four nodes: (1) Four-move prompt → (2) Working chart (12 seconds) → (3) Audit (Evergreen/Emery subset, 90 seconds) → (4) Targeted follow-up prompt. Arrow from (4) back to (2). A fifth node breaks out of the loop: "Audit passes → Publishable chart." Annotation on the loop: "One concern per iteration. Structural before stylistic." Annotation on the exit arrow: "Typically 1–3 iterations." The MBTA quote appears as a caption: "Nothing beat iterating on working code. — Barry & Card, 2014."] -->
+![A four-node circular flow diagram. Four-move prompt leads to a working chart in twelve seconds, then to an Evergreen-Emery audit in ninety seconds, then to a targeted follow-up that returns to the working-chart node. A fifth node exits the loop labeled "audit passes — publishable chart." The Barry and Card 2014 quote anchors the figure: nothing beat iterating on working code.](../images/06-working-with-claude-code-fig-03.png)
+*Figure 5.3 — The MBTA loop. One concern per pass. Structural failures before stylistic. Typically one to three iterations.*
 
 ---
 
@@ -220,7 +223,8 @@ Here is the five-stage pipeline walked once through, with the humanitarian fundi
 
 When an item fails, the follow-up is small, targeted, and grounded in the chapter's vocabulary. Typically one to three iterations after the first chart. The pipeline ends when the audit passes.
 
-<!-- → [FIGURE: End-to-end pipeline as a horizontal five-stage flow. Boxes: (1) Chapter 3: Data audit — attribute types, analyst vs. reader question, "compared with what?" (2) Chapter 4: Chart selection — Cairo four steps, functional category, specific form. (3) Chapter 3: Channel decomposition — marks, mappings, constraints. (4) Chapter 5: Four-move prompt → Working chart. (5) Audit & iterate → Publishable chart. Arrows between all five. A "feedback loop" arrow from Stage 5 back to Stage 4 labeled "Structural failure → revise decomposition." Each box also names its deliverable file from the chapter-05-pipeline/ directory (01-data-audit.md, etc.). Caption: "The pipeline. Stages 1–3 are upstream. Stage 4 is this chapter. Stage 5 is the loop that closes the gap."] -->
+![Five-stage horizontal flow from data audit to publishable chart. Stages 1 through 3 are upstream chapters (data audit, chart selection, channel decomposition). Stage 4 is the four-move prompt in this chapter, producing a working chart in twelve seconds. Stage 5 is audit-and-iterate using the Evergreen-Emery five-category subset. A dashed feedback arrow loops stage 5 back to stage 4 when a structural failure requires revising the decomposition. Each stage names its deliverable file.](../images/06-working-with-claude-code-fig-04.png)
+*Figure 5.4 — The pipeline. Stages 1–3 are upstream. Stage 4 is this chapter. Stage 5 closes the gap.*
 
 ---
 
@@ -366,6 +370,50 @@ Save outputs as a chapter-05-full-pipeline/ directory:
 - **Evergreen, Stephanie. (2019).** *Effective Data Visualization: The Right Chart for the Right Data.* SAGE Publications. The Evergreen/Emery checklist with extensive examples.
 - **Few, Stephen.** *Now You See It: Simple Visualization Techniques for Quantitative Analysis.* Chapters on iteration and audit are directly relevant.
 - **The book's pantry** — `pantry/EvergreenDataVizChecklist.txt` for the full checklist; `pantry/00-claude-prompting-tips.md` for prompt-writing discipline applied to D3.
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 5.1 — Vague vs four-move prompt
+
+Build a two-panel D3 v7 figure comparing the same humanitarian-funding dataset rendered from two prompts. Data: five sectors with funding in USD millions — Food Security 380.2, Shelter 142.7, Water and Sanitation 98.4, Health 87.3, Protection 64.1. Left panel renders the vague-prompt output: vertical bar chart with x-axis in source-file order, truncated y-axis from 40 to 400 with ticks every 100, uniform `var(--color-secondary)` fill, no value labels, long category labels unrotated and crowded along the x-axis. Right panel renders the four-move-prompt output: horizontal bar chart sorted by funding descending, zero-baseline x-axis with ticks at 0, 100, 200, 300, 400 prefixed with `$` and suffixed with `M`, sequential luminance from `var(--color-red)` at rank 1 through `var(--color-ink)`, `#787878`, `#ADADAD` down to `var(--color-border)` at rank 5, direct value labels at the right end of each bar, generous left margin (160 px) for sector names right-aligned. Below each chart, render a short bulleted list naming the failures or passes that match. Standalone HTML, D3 7.9.0 from the pinned CDN, inline CSS/JS, accessible markup (role="img", title, desc), tooltips, responsive via ResizeObserver.
+
+> Reference implementation: `d3/06-working-with-claude-code-fig-01.html`
+
+---
+
+### Figure 5.2 — The four-move prompt, annotated
+
+Build a single-figure D3 v7 layout rendering the opening-case prompt as an annotated code block. Layout: a vertical code-block frame centered on the page, with four left-margin brackets labeling Move 1 through Move 4, and four right-margin annotations pointing at the corresponding code region. Code is rendered in `'JetBrains Mono', monospace` at 12 px, with section headers (`Show what I have:`, `Say what I want:`, `Constrain it:`, `Verify:`) in `var(--color-secondary)` and body lines in `var(--color-ink)`. Move 3 (Constrain it) occupies the largest vertical region — eight bullet lines. Move 4 (Verify) is last. Brackets are 1.25 px `var(--color-secondary)` paths. Annotation lines are dashed `var(--color-ochre)` with text in `var(--color-secondary)` italic Inter 11 px. Each move is keyboard-reachable with `tabindex="0"` and triggers a tooltip describing what the move does and why it is in this position. Standalone HTML, D3 7.9.0 from the pinned CDN, accessible, responsive via ResizeObserver.
+
+> Reference implementation: `d3/06-working-with-claude-code-fig-02.html`
+
+---
+
+### Figure 5.3 — The MBTA iteration loop
+
+Build a single-figure D3 v7 node-and-edge diagram of a four-node loop with one exit branch. Nodes laid out in diamond formation: top (Four-move prompt, ≈ 12 seconds), right (Working chart), bottom (Audit, Evergreen/Emery ≈ 90 seconds), left (Targeted follow-up, one concern per iteration). Edges flow clockwise: prompt → working chart → audit → follow-up. A dashed feedback edge runs from the follow-up node back to the working-chart node, labeled "small targeted change · one concern per iteration." A fifth exit node (Publishable chart) sits below-right of the audit node; a solid edge runs from audit to publishable labeled "audit passes." Node rectangles are 200×60 with 1.25 px `var(--color-secondary)` borders, hover and focus states raise stroke to `var(--color-red)` 2 px width. The exit node permanently uses the red border to mark it as the loop's terminating state. Arrowheads via SVG `<defs>` `<marker>`. Below the diagram, render the Barry & Card 2014 quote in `'EB Garamond'` italic 16 px. Standalone HTML, D3 7.9.0 from the pinned CDN, accessible, responsive via ResizeObserver, tooltips on every node.
+
+> Reference implementation: `d3/06-working-with-claude-code-fig-03.html`
+
+---
+
+### Figure 5.4 — End-to-end pipeline
+
+Build a single-figure D3 v7 horizontal flow diagram of five stages, evenly spaced and connected by right-pointing arrows. Each stage is a 240 px tall rectangle containing: stage title (Inter 13 px bold), chapter source line (Inter 11 px `var(--color-secondary)`), a horizontal `var(--color-border)` rule, four to five bullet lines naming the stage's outputs (Inter 11 px), and a deliverable filename at the bottom (`'JetBrains Mono', monospace` 10 px `var(--color-secondary)`). The five stages: (1) Data audit — Chapter 3, deliverable `01-data-audit.md`. (2) Chart selection — Chapter 4, deliverable `02-selection-audit.md`. (3) Channel decomposition — Chapter 3, deliverable `03-channel-decomp.md`. (4) Four-move prompt — Chapter 5 (this chapter), deliverable `04-prompt.txt`, rendered with a `var(--color-red)` 2 px border and an italic "here" marker. (5) Audit & iterate — Evergreen/Emery, deliverable `05-iteration-log.md`. A dashed feedback arrow loops from stage 5 down and back to stage 4, labeled "structural failure → revise decomposition." Hover and focus on any stage shows a tooltip explaining the stage's role. Standalone HTML, D3 7.9.0 from the pinned CDN, accessible, responsive via ResizeObserver.
+
+> Reference implementation: `d3/06-working-with-claude-code-fig-04.html`
 
 ---
 

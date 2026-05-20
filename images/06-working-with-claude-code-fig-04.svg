@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 480" role="img" aria-labelledby="t06-04 d06-04">
+  <title id="t06-04">End-to-end pipeline — five stages from raw data to publishable chart</title>
+  <desc id="d06-04">A horizontal five-stage flow. Stage 1: data audit (chapter 3). Stage 2: chart selection (chapter 4). Stage 3: channel decomposition (chapter 3). Stage 4: four-move prompt producing a working chart (this chapter). Stage 5: audit and iterate to publishable. A feedback arrow loops from stage 5 back to stage 4 when structural failures require revision. Each stage names its deliverable file.</desc>
+  <defs>
+    <style>
+      .ti     { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb     { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm     { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap    { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .stage  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+      .file   { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; fill: #4a4540; }
+      .here   { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; font-style: italic; fill: #2a1a0e; }
+    </style>
+    <marker id="ar06d" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="760" height="480" fill="#fdfcfb"/>
+  <text x="380" y="28" text-anchor="middle" class="ti">The pipeline. Stages 1–3 are upstream. Stage 4 is this chapter. Stage 5 is the loop that closes the gap.</text>
+
+  <!-- Five stages, 140 wide each, gap 6. Total 760: start at x=10. -->
+  <!-- Stage 1 -->
+  <g transform="translate(10,90)">
+    <rect x="0" y="0" width="140" height="180" fill="#f5f2ee" stroke="#4a4540" stroke-width="1"/>
+    <text x="70" y="22" text-anchor="middle" class="stage">1. Data audit</text>
+    <text x="70" y="38" text-anchor="middle" class="sm">Chapter 3</text>
+    <line x1="14" y1="48" x2="126" y2="48" stroke="#c8c4c0"/>
+    <text x="14" y="64"  class="sm">• attribute types</text>
+    <text x="14" y="78"  class="sm">• n observations</text>
+    <text x="14" y="92"  class="sm">• analyst vs reader</text>
+    <text x="14" y="106" class="sm">  question</text>
+    <text x="14" y="120" class="sm">• "compared with</text>
+    <text x="14" y="134" class="sm">  what?"</text>
+    <text x="14" y="148" class="sm">• relationship type</text>
+    <text x="14" y="170" class="file">01-data-audit.md</text>
+  </g>
+  <!-- Stage 2 -->
+  <g transform="translate(160,90)">
+    <rect x="0" y="0" width="140" height="180" fill="#f5f2ee" stroke="#4a4540" stroke-width="1"/>
+    <text x="70" y="22" text-anchor="middle" class="stage">2. Chart selection</text>
+    <text x="70" y="38" text-anchor="middle" class="sm">Chapter 4</text>
+    <line x1="14" y1="48" x2="126" y2="48" stroke="#c8c4c0"/>
+    <text x="14" y="64"  class="sm">• Cairo step 1: key</text>
+    <text x="14" y="78"  class="sm">  message in 1 line</text>
+    <text x="14" y="92"  class="sm">• functional category</text>
+    <text x="14" y="106" class="sm">  (FT Visual Vocab.)</text>
+    <text x="14" y="120" class="sm">• specific form</text>
+    <text x="14" y="134" class="sm">  (h-bar, line, …)</text>
+    <text x="14" y="170" class="file">02-selection-audit.md</text>
+  </g>
+  <!-- Stage 3 -->
+  <g transform="translate(310,90)">
+    <rect x="0" y="0" width="140" height="180" fill="#f5f2ee" stroke="#4a4540" stroke-width="1"/>
+    <text x="70" y="22" text-anchor="middle" class="stage">3. Channel decomp.</text>
+    <text x="70" y="38" text-anchor="middle" class="sm">Chapter 3</text>
+    <line x1="14" y1="48" x2="126" y2="48" stroke="#c8c4c0"/>
+    <text x="14" y="64"  class="sm">• marks named</text>
+    <text x="14" y="78"  class="sm">• channel ↔ attribute</text>
+    <text x="14" y="92"  class="sm">  mappings</text>
+    <text x="14" y="106" class="sm">• sort, ticks, scale</text>
+    <text x="14" y="120" class="sm">• palette endpoints</text>
+    <text x="14" y="134" class="sm">• annotations</text>
+    <text x="14" y="170" class="file">03-channel-decomp.md</text>
+  </g>
+  <!-- Stage 4 — THIS CHAPTER -->
+  <g transform="translate(460,90)">
+    <rect x="0" y="0" width="140" height="180" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1.5"/>
+    <text x="70" y="22" text-anchor="middle" class="stage">4. Four-move prompt</text>
+    <text x="70" y="38" text-anchor="middle" class="here">Chapter 5 — here</text>
+    <line x1="14" y1="48" x2="126" y2="48" stroke="#c8c4c0"/>
+    <text x="14" y="64"  class="sm">• show what you</text>
+    <text x="14" y="78"  class="sm">  have</text>
+    <text x="14" y="92"  class="sm">• say what you want</text>
+    <text x="14" y="106" class="sm">• constrain it</text>
+    <text x="14" y="120" class="sm">• verify</text>
+    <text x="14" y="134" class="sm">→ working chart</text>
+    <text x="14" y="148" class="sm">  in ≈ 12 seconds</text>
+    <text x="14" y="170" class="file">04-prompt.txt</text>
+  </g>
+  <!-- Stage 5 -->
+  <g transform="translate(610,90)">
+    <rect x="0" y="0" width="140" height="180" fill="#f5f2ee" stroke="#4a4540" stroke-width="1"/>
+    <text x="70" y="22" text-anchor="middle" class="stage">5. Audit &amp; iterate</text>
+    <text x="70" y="38" text-anchor="middle" class="sm">Evergreen/Emery</text>
+    <line x1="14" y1="48" x2="126" y2="48" stroke="#c8c4c0"/>
+    <text x="14" y="64"  class="sm">• text</text>
+    <text x="14" y="78"  class="sm">• arrangement</text>
+    <text x="14" y="92"  class="sm">• color</text>
+    <text x="14" y="106" class="sm">• lines</text>
+    <text x="14" y="120" class="sm">• overall</text>
+    <text x="14" y="134" class="sm">→ publishable chart</text>
+    <text x="14" y="170" class="file">05-iteration-log.md</text>
+  </g>
+
+  <!-- arrows between stages -->
+  <g stroke="#2a1a0e" stroke-width="1.25" fill="none">
+    <path d="M 150 180 L 160 180" marker-end="url(#ar06d)"/>
+    <path d="M 300 180 L 310 180" marker-end="url(#ar06d)"/>
+    <path d="M 450 180 L 460 180" marker-end="url(#ar06d)"/>
+    <path d="M 600 180 L 610 180" marker-end="url(#ar06d)"/>
+  </g>
+
+  <!-- feedback arrow: stage 5 → stage 4 -->
+  <path d="M 680 270 Q 680 340 530 340 L 530 290" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#ar06d)"/>
+  <text x="605" y="356" text-anchor="middle" class="sm">structural failure → revise decomposition</text>
+
+  <!-- structural vs stylistic note -->
+  <text x="380" y="402" text-anchor="middle" class="sm">Loop typically resolves in 1–3 iterations. Structural fixes before stylistic ones.</text>
+
+  <!-- caption -->
+  <text x="380" y="460" text-anchor="middle" class="cap">Five stages, one direction. The deliverables form the chapter-05-pipeline/ directory.</text>
+</svg>

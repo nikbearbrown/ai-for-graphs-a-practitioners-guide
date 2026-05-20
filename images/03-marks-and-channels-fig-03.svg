@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t03 d03">
+  <title id="t03">Radius-linear versus area-linear bubble encoding</title>
+  <desc id="d03">Two bubble pairs comparing radius-linear and area-linear encodings of a value that has doubled. Each pair shows the data ratio, the area ratio the chart actually produces, and the perceived ratio under Stevens' power law with exponent 0.7.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .badtag { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+  <text x="32" y="28" class="ti">Bubble encoding — radius-linear (wrong) versus area-linear (less wrong)</text>
+  <text x="32" y="44" class="sm">Both panels show the same data: a value that has doubled. The eye reads each panel differently.</text>
+
+  <!-- LEFT — RADIUS-LINEAR (WRONG) -->
+  <g transform="translate(32,76)">
+    <rect width="312" height="280" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="0.75"/>
+    <text x="14" y="22" class="ti">Radius scales with value</text>
+    <text x="14" y="38" class="sm">value doubles · radius doubles · area quadruples</text>
+
+    <!-- Small bubble (value 1, r=18) -->
+    <circle cx="80"  cy="160" r="18" fill="#8a8480"/>
+    <text x="80" y="200" text-anchor="middle" class="sm">value = 1</text>
+    <text x="80" y="214" text-anchor="middle" class="sm">r = 18</text>
+
+    <!-- Large bubble (value 2, r=36) -->
+    <circle cx="220" cy="160" r="36" fill="#2a1a0e"/>
+    <text x="220" y="218" text-anchor="middle" class="sm">value = 2</text>
+    <text x="220" y="232" text-anchor="middle" class="sm">r = 36</text>
+
+    <!-- numbers row -->
+    <g transform="translate(14,250)">
+      <text x="0" y="0" class="lb">data ratio</text>
+      <text x="0" y="14" class="badtag">2×</text>
+      <text x="100" y="0" class="lb">area ratio</text>
+      <text x="100" y="14" class="badtag">4×</text>
+      <text x="200" y="0" class="lb">perceived</text>
+      <text x="200" y="14" class="badtag">≈ 2.6×</text>
+    </g>
+  </g>
+
+  <!-- RIGHT — AREA-LINEAR (CORRECT) -->
+  <g transform="translate(356,76)">
+    <rect width="312" height="280" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="0.75"/>
+    <text x="14" y="22" class="ti">Area scales with value</text>
+    <text x="14" y="38" class="sm">value doubles · area doubles · radius scales by √2</text>
+
+    <!-- Small bubble (value 1, area πr², r=18) -->
+    <circle cx="80"  cy="160" r="18" fill="#8a8480"/>
+    <text x="80" y="200" text-anchor="middle" class="sm">value = 1</text>
+    <text x="80" y="214" text-anchor="middle" class="sm">r = 18</text>
+
+    <!-- Large bubble (value 2 → r = 18·√2 ≈ 25.46) -->
+    <circle cx="220" cy="160" r="25.46" fill="#2a1a0e"/>
+    <text x="220" y="207" text-anchor="middle" class="sm">value = 2</text>
+    <text x="220" y="221" text-anchor="middle" class="sm">r ≈ 25.5</text>
+
+    <!-- numbers row -->
+    <g transform="translate(14,250)">
+      <text x="0" y="0" class="lb">data ratio</text>
+      <text x="0" y="14" class="badtag">2×</text>
+      <text x="100" y="0" class="lb">area ratio</text>
+      <text x="100" y="14" class="badtag">2×</text>
+      <text x="200" y="0" class="lb">perceived</text>
+      <text x="200" y="14" class="badtag">≈ 1.6×</text>
+    </g>
+  </g>
+
+  <!-- footer note: Stevens' law -->
+  <text x="350" y="395" text-anchor="middle" class="cap">Stevens' law for area: Ψ = I^0.7. The eye underestimates magnitudes encoded as area — predictably and consistently.</text>
+</svg>

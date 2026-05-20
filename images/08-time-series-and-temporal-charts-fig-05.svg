@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 440" role="img" aria-labelledby="t08-05 d08-05">
+  <title id="t08-05">Stacked area chart layer-accuracy gradient</title>
+  <desc id="d08-05">A five-layer stacked area chart annotated to show that the bottom layer has a fixed zero baseline (high accuracy), middle layers have variable baselines (lower accuracy), and the top boundary of the topmost layer recovers high accuracy as the total trajectory.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .br  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+    <marker id="ar8-05" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="760" height="440" fill="#fdfcfb"/>
+  <text x="380" y="28" text-anchor="middle" class="ti">Stacked area — accuracy degrades with every layer above the zero baseline</text>
+
+  <!-- axis frame -->
+  <line x1="60" y1="60" x2="60" y2="340" stroke="#8a8480"/>
+  <line x1="60" y1="340" x2="500" y2="340" stroke="#8a8480"/>
+  <text x="56" y="343" text-anchor="end" class="sm">0</text>
+  <text x="56" y="201" text-anchor="end" class="sm">500</text>
+  <text x="56" y="63" text-anchor="end" class="sm">1000</text>
+  <line x1="58" y1="340" x2="60" y2="340" stroke="#4a4540"/>
+  <line x1="58" y1="201" x2="60" y2="201" stroke="#4a4540"/>
+  <line x1="58" y1="63" x2="60" y2="63" stroke="#4a4540"/>
+
+  <!-- 6 time points spaced over 440 px (x = 60..500) → step 88. Months Jan..Jun. -->
+  <!-- Per-layer values (5 sectors), each 6 monthly values, totals around 500–950:
+       Food Security (most stable, bottom): 240, 250, 245, 255, 250, 260
+       Shelter:                              140, 160, 170, 180, 175, 190
+       WASH:                                  80,  95, 110, 120, 130, 135
+       Health:                                60,  85, 100, 115, 135, 150
+       Protection (most variable, top):       40,  60,  95, 130, 155, 195
+       Totals:                               560, 650, 720, 800, 845, 930
+       Per-pixel scale: 1000 units → 277 px, factor 0.277. y = 340 - cumulative*0.277  -->
+  <!-- Cumulative tops, by layer, per time point: -->
+  <!-- Food:        240, 250, 245, 255, 250, 260       → 273.5, 270.8, 272.2, 269.4, 270.8, 268.0 -->
+  <!-- +Shelter:    380, 410, 415, 435, 425, 450       → 234.7, 226.4, 225.0, 219.5, 222.3, 215.4 -->
+  <!-- +WASH:       460, 505, 525, 555, 555, 585       → 212.6, 200.1, 194.6, 286.3? let me recompute carefully -->
+  <!--
+       y = 340 - cumulative*0.277
+       Food         240→273.5  250→270.8  245→272.2  255→269.4  250→270.8  260→268.0
+       Food+Shel    380→234.7  410→226.4  415→225.0  435→219.5  425→222.3  450→215.4
+       +WASH        460→212.6  505→200.1  525→194.6  555→186.3  555→186.3  585→178.0
+       +Health      520→196.0  590→176.6  625→167.0  670→154.5  690→149.0  735→136.5
+       +Protect     560→185.0  650→160.0  720→140.6  800→118.4  845→105.9  930→82.4
+  -->
+  <!-- x positions: 60, 148, 236, 324, 412, 500 -->
+
+  <!-- LAYER 1: Food Security (bottom, fixed baseline) -->
+  <path d="M 60,273.5 L 148,270.8 L 236,272.2 L 324,269.4 L 412,270.8 L 500,268.0 L 500,340 L 60,340 Z" fill="#2a1a0e"/>
+  <!-- LAYER 2: Shelter -->
+  <path d="M 60,234.7 L 148,226.4 L 236,225.0 L 324,219.5 L 412,222.3 L 500,215.4 L 500,268.0 L 412,270.8 L 324,269.4 L 236,272.2 L 148,270.8 L 60,273.5 Z" fill="#4a4540"/>
+  <!-- LAYER 3: WASH -->
+  <path d="M 60,212.6 L 148,200.1 L 236,194.6 L 324,186.3 L 412,186.3 L 500,178.0 L 500,215.4 L 412,222.3 L 324,219.5 L 236,225.0 L 148,226.4 L 60,234.7 Z" fill="#6e6862"/>
+  <!-- LAYER 4: Health -->
+  <path d="M 60,196.0 L 148,176.6 L 236,167.0 L 324,154.5 L 412,149.0 L 500,136.5 L 500,178.0 L 412,186.3 L 324,186.3 L 236,194.6 L 148,200.1 L 60,212.6 Z" fill="#8a8480"/>
+  <!-- LAYER 5: Protection -->
+  <path d="M 60,185.0 L 148,160.0 L 236,140.6 L 324,118.4 L 412,105.9 L 500,82.4 L 500,136.5 L 412,149.0 L 324,154.5 L 236,167.0 L 148,176.6 L 60,196.0 Z" fill="#c8c4c0"/>
+
+  <!-- month labels -->
+  <g class="sm">
+    <text x="60"  y="356" text-anchor="middle">Jan</text>
+    <text x="148" y="356" text-anchor="middle">Feb</text>
+    <text x="236" y="356" text-anchor="middle">Mar</text>
+    <text x="324" y="356" text-anchor="middle">Apr</text>
+    <text x="412" y="356" text-anchor="middle">May</text>
+    <text x="500" y="356" text-anchor="middle">Jun</text>
+  </g>
+
+  <!-- y label -->
+  <text x="20" y="200" text-anchor="middle" class="sm" transform="rotate(-90 20 200)">funding ($M)</text>
+
+  <!-- Brackets on right side of chart, with labels at x=520+ -->
+  <!-- Each bracket spans the layer at x=500 -->
+  <!-- LAYER 1 bracket: y=268..340 -->
+  <line x1="510" y1="268" x2="514" y2="268" stroke="#2a1a0e"/>
+  <line x1="514" y1="268" x2="514" y2="340" stroke="#2a1a0e"/>
+  <line x1="510" y1="340" x2="514" y2="340" stroke="#2a1a0e"/>
+  <text x="520" y="295" class="br">Food Security (bottom)</text>
+  <text x="520" y="308" class="sm">fixed zero baseline</text>
+  <text x="520" y="320" class="sm">position along common scale</text>
+  <text x="520" y="332" class="lb">accuracy: high</text>
+
+  <!-- LAYER 3 bracket: y=178..215.4 -->
+  <line x1="510" y1="178" x2="514" y2="178" stroke="#2a1a0e"/>
+  <line x1="514" y1="178" x2="514" y2="215.4" stroke="#2a1a0e"/>
+  <line x1="510" y1="215.4" x2="514" y2="215.4" stroke="#2a1a0e"/>
+  <text x="520" y="190" class="br">WASH (middle)</text>
+  <text x="520" y="203" class="sm">baseline varies with</text>
+  <text x="520" y="215" class="sm">layers below</text>
+  <text x="520" y="227" class="lb">accuracy: lower</text>
+
+  <!-- LAYER 5 bracket: y=82.4..136.5 -->
+  <line x1="510" y1="82.4" x2="514" y2="82.4" stroke="#2a1a0e"/>
+  <line x1="514" y1="82.4" x2="514" y2="136.5" stroke="#2a1a0e"/>
+  <line x1="510" y1="136.5" x2="514" y2="136.5" stroke="#2a1a0e"/>
+  <text x="520" y="100" class="br">Protection (top)</text>
+  <text x="520" y="113" class="sm">baseline highly variable</text>
+  <text x="520" y="125" class="sm">thickness hardest to read</text>
+  <text x="520" y="137" class="lb">accuracy: lowest</text>
+
+  <!-- TOTAL bracket: full height 340..82.4 along the top edge -->
+  <path d="M 60,75 L 500,75" stroke="#2a1a0e" stroke-dasharray="3 2"/>
+  <path d="M 60,75 L 60,82.4" stroke="#2a1a0e"/>
+  <path d="M 500,75 L 500,82.4" stroke="#2a1a0e"/>
+  <text x="280" y="68" text-anchor="middle" class="br">TOTAL trajectory — top edge against y-axis</text>
+  <text x="280" y="54" text-anchor="middle" class="sm">position along common scale (shared with y-axis) → accuracy: high</text>
+
+  <!-- design rule callout -->
+  <g transform="translate(60,374)">
+    <rect width="640" height="42" fill="none" stroke="#c8860e" stroke-width="2"/>
+    <text x="12" y="16" class="lb">Layer-ordering rule: put the most stable (or most important to read) series at the bottom.</text>
+    <text x="12" y="32" class="sm">The bottom layer keeps the fixed zero baseline; everything above must be estimated against a moving floor.</text>
+  </g>
+
+  <!-- footer caption -->
+  <text x="380" y="430" text-anchor="middle" class="cap">Two ends of the chart are accurate — the bottom layer and the total. The middle is where the eye works hardest.</text>
+</svg>

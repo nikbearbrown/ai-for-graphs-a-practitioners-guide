@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 8.2 — The seven temporal chart forms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .card { border: 1px solid var(--color-border); padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .card.callout { border-color: var(--color-ochre); border-width: 2px; }
+  .card-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--color-ink); }
+  .thumb { width: 100%; height: 96px; border: 1px solid var(--color-border); }
+  .card-meta { font-size: 12px; line-height: 1.4; }
+  .card-meta .label { color: var(--color-secondary); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.08em; }
+  .card-meta .value { color: var(--color-ink); }
+  .callout-title { font-family: 'EB Garamond', Georgia, serif; font-size: 18px; color: var(--color-ink); }
+  .callout-list { font-size: 12px; line-height: 1.6; color: var(--color-ink); }
+  .callout-list b { color: var(--color-red); }
+  @media (max-width: 900px) { #grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 8.2 — The seven temporal chart forms</h1>
+<p class="subtitle">One thumbnail per form. Each names its primary channel and the question it answers best. The eighth card collapses the decision rule.</p>
+<div id="grid">
+  <div class="card">
+    <div class="card-name">LINE CHART</div>
+    <svg class="thumb" id="thumbLine" viewBox="0 0 200 100" preserveAspectRatio="none" role="img" aria-label="Line chart thumbnail"></svg>
+    <div class="card-meta"><span class="label">Channel</span> <span class="value">point position</span></div>
+    <div class="card-meta"><span class="label">Use when</span> <span class="value">trajectory — slope, inflection, trend</span></div>
+  </div>
+  <div class="card">
+    <div class="card-name">AREA CHART</div>
+    <svg class="thumb" id="thumbArea" viewBox="0 0 200 100" preserveAspectRatio="none" role="img" aria-label="Area chart thumbnail"></svg>
+    <div class="card-meta"><span class="label">Channel</span> <span class="value">area (zero baseline)</span></div>
+    <div class="card-meta"><span class="label">Use when</span> <span class="value">magnitude — how much accumulated</span></div>
+  </div>
+  <div class="card">
+    <div class="card-name">STACKED AREA</div>
+    <svg class="thumb" id="thumbStacked" viewBox="0 0 200 100" preserveAspectRatio="none" role="img" aria-label="Stacked area thumbnail"></svg>
+    <div class="card-meta"><span class="label">Channel</span> <span class="value">position + area</span></div>
+    <div class="card-meta"><span class="label">Use when</span> <span class="value">composition + total trajectory</span></div>
+  </div>
+  <div class="card">
+    <div class="card-name">STREAM GRAPH</div>
+    <svg class="thumb" id="thumbStream" viewBox="0 0 200 100" preserveAspectRatio="none" role="img" aria-label="Stream graph thumbnail"></svg>
+    <div class="card-meta"><span class="label">Channel</span> <span class="value">centered area</span></div>
+    <div class="card-meta"><span class="label">Use when</span> <span class="value">rhetorical rise and fall</span></div>
+  </div>
+  <div class="card">
+    <div class="card-name">SPIRAL PLOT</div>
+    <svg class="thumb" id="thumbSpiral" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Spiral plot thumbnail"></svg>
+    <div class="card-meta"><span class="label">Channel</span> <span class="value">position along a curve</span></div>
+    <div class="card-meta"><span class="label">Use when</span> <span class="value">cyclic structure is the question</span></div>
+  </div>
+  <div class="card">
+    <div class="card-name">GANTT CHART</div>
+    <svg class="thumb" id="thumbGantt" viewBox="0 0 200 100" preserveAspectRatio="none" role="img" aria-label="Gantt chart thumbnail"></svg>
+    <div class="card-meta"><span class="label">Channel</span> <span class="value">position + length</span></div>
+    <div class="card-meta"><span class="label">Use when</span> <span class="value">intervals, durations, overlaps</span></div>
+  </div>
+  <div class="card">
+    <div class="card-name">TIMELINE</div>
+    <svg class="thumb" id="thumbTimeline" viewBox="0 0 200 100" preserveAspectRatio="none" role="img" aria-label="Timeline thumbnail"></svg>
+    <div class="card-meta"><span class="label">Channel</span> <span class="value">x-position only</span></div>
+    <div class="card-meta"><span class="label">Use when</span> <span class="value">narrative sequence of events</span></div>
+  </div>
+  <div class="card callout">
+    <div class="callout-title">Choose by channel</div>
+    <div class="callout-list">
+      Trajectory  <b>→</b>  line<br>
+      Magnitude  <b>→</b>  area<br>
+      Composition  <b>→</b>  stacked<br>
+      Cycle  <b>→</b>  spiral<br>
+      Intervals  <b>→</b>  Gantt<br>
+      Events  <b>→</b>  timeline<br>
+      Rhetorical flow  <b>→</b>  stream
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Synthetic short series for thumbnails
+const seriesA = [62, 56, 58, 44, 48, 30, 36, 22];
+const seriesB = [40, 36, 38, 30, 32, 26, 28, 22];
+const seriesC = [20, 22, 24, 22, 26, 22, 24, 26];
+
+function thumbAxes(svg, w, h) {
+  svg.append('line').attr('x1', 6).attr('y1', h-12).attr('x2', w-6).attr('y2', h-12)
+    .attr('stroke', 'var(--color-secondary)').attr('stroke-width', 0.6);
+}
+
+function drawLineThumb() {
+  const svg = d3.select('#thumbLine');
+  svg.selectAll('*').remove();
+  const w = 200, h = 100;
+  thumbAxes(svg, w, h);
+  const x = d3.scaleLinear().domain([0, seriesA.length - 1]).range([10, w-10]);
+  const y = d3.scaleLinear().domain([0, 70]).range([h-14, 8]);
+  const line = d3.line().x((d, i) => x(i)).y(d => y(d)).curve(d3.curveLinear);
+  svg.append('path').datum(seriesA).attr('d', line)
+    .attr('fill', 'none').attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.6);
+}
+
+function drawAreaThumb() {
+  const svg = d3.select('#thumbArea');
+  svg.selectAll('*').remove();
+  const w = 200, h = 100;
+  thumbAxes(svg, w, h);
+  const x = d3.scaleLinear().domain([0, seriesA.length - 1]).range([10, w-10]);
+  const y = d3.scaleLinear().domain([0, 70]).range([h-14, 8]);
+  const area = d3.area().x((d, i) => x(i)).y0(y(0)).y1(d => y(d));
+  svg.append('path').datum(seriesA).attr('d', area)
+    .attr('fill', 'var(--color-secondary)').attr('fill-opacity', 0.55)
+    .attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.2);
+}
+
+function drawStackedThumb() {
+  const svg = d3.select('#thumbStacked');
+  svg.selectAll('*').remove();
+  const w = 200, h = 100;
+  const series = seriesA.map((a, i) => ({ a, b: seriesB[i], c: seriesC[i] }));
+  const stack = d3.stack().keys(['c', 'b', 'a']);
+  const stacked = stack(series);
+  const x = d3.scaleLinear().domain([0, series.length - 1]).range([10, w-10]);
+  const total = d3.max(series, d => d.a + d.b + d.c);
+  const y = d3.scaleLinear().domain([0, total]).range([h-14, 8]);
+  const colors = ['#c8c4c0', '#8a8480', 'var(--color-ink)'];
+  const area = d3.area().x((d, i) => x(i)).y0(d => y(d[0])).y1(d => y(d[1]));
+  stacked.forEach((layer, idx) => {
+    svg.append('path').datum(layer).attr('d', area).attr('fill', colors[idx]);
+  });
+  thumbAxes(svg, w, h);
+}
+
+function drawStreamThumb() {
+  const svg = d3.select('#thumbStream');
+  svg.selectAll('*').remove();
+  const w = 200, h = 100;
+  const series = seriesA.map((a, i) => ({ a, b: seriesB[i], c: seriesC[i] }));
+  const stack = d3.stack().keys(['c', 'b', 'a']).offset(d3.stackOffsetWiggle);
+  const stacked = stack(series);
+  const x = d3.scaleLinear().domain([0, series.length - 1]).range([10, w-10]);
+  const yExtent = [
+    d3.min(stacked, l => d3.min(l, p => p[0])),
+    d3.max(stacked, l => d3.max(l, p => p[1]))
+  ];
+  const y = d3.scaleLinear().domain(yExtent).range([h-8, 8]);
+  const colors = ['#c8c4c0', '#8a8480', 'var(--color-ink)'];
+  const area = d3.area().x((d, i) => x(i)).y0(d => y(d[0])).y1(d => y(d[1])).curve(d3.curveBasis);
+  stacked.forEach((layer, idx) => {
+    svg.append('path').datum(layer).attr('d', area).attr('fill', colors[idx]);
+  });
+}
+
+function drawSpiralThumb() {
+  const svg = d3.select('#thumbSpiral');
+  svg.selectAll('*').remove();
+  const w = 200, h = 100;
+  const cx = w / 2, cy = h / 2;
+  const points = [];
+  const turns = 3;
+  const steps = 90;
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const angle = -Math.PI / 2 + t * turns * 2 * Math.PI;
+    const r = 6 + t * 38;
+    points.push([cx + r * Math.cos(angle), cy + r * Math.sin(angle)]);
+  }
+  const path = d3.line().x(d => d[0]).y(d => d[1]).curve(d3.curveCardinal);
+  svg.append('path').datum(points).attr('d', path)
+    .attr('fill', 'none').attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.3);
+  // 12 o'clock tick
+  svg.append('line').attr('x1', cx).attr('y1', cy - 46).attr('x2', cx).attr('y2', cy - 8)
+    .attr('stroke', 'var(--color-secondary)').attr('stroke-dasharray', '2 2');
+  svg.append('text').attr('x', cx).attr('y', cy - 50).attr('text-anchor', 'middle')
+    .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 9)
+    .attr('fill', 'var(--color-secondary)').text('Jan');
+}
+
+function drawGanttThumb() {
+  const svg = d3.select('#thumbGantt');
+  svg.selectAll('*').remove();
+  const w = 200, h = 100;
+  thumbAxes(svg, w, h);
+  const tasks = [
+    { start: 10, end: 76, row: 0 },
+    { start: 40, end: 98, row: 1 },
+    { start: 68, end: 118, row: 2 },
+    { start: 92, end: 134, row: 3 }
+  ];
+  const rowHeight = 14;
+  const colors = ['var(--color-ink)', '#4a4540', '#8a8480', '#c8c4c0'];
+  svg.selectAll('rect.task')
+    .data(tasks)
+    .join('rect')
+      .attr('x', d => d.start)
+      .attr('y', d => 16 + d.row * (rowHeight + 4))
+      .attr('width', d => d.end - d.start)
+      .attr('height', rowHeight)
+      .attr('fill', (d, i) => colors[i]);
+}
+
+function drawTimelineThumb() {
+  const svg = d3.select('#thumbTimeline');
+  svg.selectAll('*').remove();
+  const w = 200, h = 100;
+  svg.append('line').attr('x1', 10).attr('y1', 60).attr('x2', w-10).attr('y2', 60)
+    .attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.4);
+  const events = [22, 58, 94, 130, 168];
+  events.forEach((x, i) => {
+    svg.append('circle').attr('cx', x).attr('cy', 60).attr('r', 4).attr('fill', 'var(--color-ink)');
+    svg.append('line').attr('x1', x).attr('y1', 60).attr('x2', x).attr('y2', 60 - 14 - (i % 3) * 8)
+      .attr('stroke', 'var(--color-secondary)').attr('stroke-width', 0.6);
+  });
+}
+
+function drawAll() {
+  drawLineThumb(); drawAreaThumb(); drawStackedThumb(); drawStreamThumb();
+  drawSpiralThumb(); drawGanttThumb(); drawTimelineThumb();
+}
+drawAll();
+const ro = new ResizeObserver(() => drawAll());
+ro.observe(document.getElementById('grid'));
+</script>
+</body>
+</html>

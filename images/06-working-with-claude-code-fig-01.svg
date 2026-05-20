@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t06-01 d06-01">
+  <title id="t06-01">Vague prompt vs four-move prompt — same data, two outputs</title>
+  <desc id="d06-01">Two side-by-side bar charts of the same humanitarian-funding dataset. The left panel shows the 9-word prompt output: vertical columns, auto-fit y-axis starting at $40M, uniform color, crowded unrotated labels, no value labels. The right panel shows the 200-word four-move prompt output: horizontal bars sorted descending, zero baseline, sequential luminance, direct value labels, generous left margin for sector names.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .pr  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; font-style: italic; fill: #4a4540; }
+      .vt  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; fill: #2a1a0e; }
+    </style>
+    <marker id="ar06a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+  <text x="350" y="24" text-anchor="middle" class="ti">Same dataset. Two prompts. Two charts.</text>
+
+  <!-- LEFT PANEL — VAGUE 9-WORD PROMPT -->
+  <g transform="translate(20,46)">
+    <text x="0" y="0" class="ti">Vague prompt (9 words)</text>
+    <text x="0" y="14" class="pr">"Make a bar chart of humanitarian funding by sector."</text>
+    <!-- axis: truncated y starts at 40 -->
+    <line x1="42" y1="42" x2="42" y2="262" stroke="#8a8480"/>
+    <line x1="42" y1="262" x2="320" y2="262" stroke="#8a8480"/>
+    <!-- y ticks 40, 200, 400; scale 40..400 → 262..42 (220 px / 360 = 0.611 px/unit) -->
+    <text x="38" y="265" text-anchor="end" class="sm">$40M</text>
+    <text x="38" y="167" text-anchor="end" class="sm">$200M</text>
+    <text x="38" y="46"  text-anchor="end" class="sm">$400M</text>
+    <!-- 5 cols of uniform fill, all same hue. data: 380.2, 142.7, 98.4, 87.3, 64.1
+         but source-file order may differ; show as input-order: Food 380, Shelter 143, W&S 98, Health 87, Protection 64.
+         heights (val-40)*0.611: 207.7, 62.9, 35.6, 28.9, 14.7 -->
+    <g>
+      <rect x="58"  y="54.3"  width="42" height="207.7" fill="#4a4540"/>
+      <rect x="110" y="199.1" width="42" height="62.9"  fill="#4a4540"/>
+      <rect x="162" y="226.4" width="42" height="35.6"  fill="#4a4540"/>
+      <rect x="214" y="233.1" width="42" height="28.9"  fill="#4a4540"/>
+      <rect x="266" y="247.3" width="42" height="14.7"  fill="#4a4540"/>
+    </g>
+    <!-- long labels unrotated, crowded -->
+    <g class="sm">
+      <text x="79"  y="276" text-anchor="middle">Food Security</text>
+      <text x="131" y="276" text-anchor="middle">Shelter</text>
+      <text x="183" y="276" text-anchor="middle">Water and Sanitation</text>
+      <text x="235" y="276" text-anchor="middle">Health</text>
+      <text x="287" y="276" text-anchor="middle">Protection</text>
+    </g>
+    <!-- annotation: failures -->
+    <g class="sm">
+      <text x="0" y="312" class="lb">Failures the audit catches:</text>
+      <text x="0" y="326">• y-axis starts at $40M, not zero</text>
+      <text x="0" y="338">• bars uniform — no rank reinforcement</text>
+      <text x="0" y="350">• long labels crowd and overlap</text>
+      <text x="0" y="362">• no value labels — reader counts ticks</text>
+      <text x="0" y="374">• source-file order, not value-sorted</text>
+    </g>
+    <!-- pointer to truncation -->
+    <path d="M 60 80 L 22 80 L 22 50" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar06a)"/>
+    <text x="0" y="78" class="vt">truncated</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="350" y1="32" x2="350" y2="448" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT PANEL — FOUR-MOVE 200-WORD PROMPT -->
+  <g transform="translate(370,46)">
+    <text x="0" y="0" class="ti">Four-move prompt (200 words)</text>
+    <text x="0" y="14" class="pr">Show → Say → Constrain → Verify</text>
+    <!-- horizontal bars, sorted desc, value labels, x from 0
+         categories: Food Security 380.2, Shelter 142.7, Water and Sanitation 98.4, Health 87.3, Protection 64.1
+         bar y positions 50, 88, 126, 164, 202 (height 28, gap 10). label left of bar.
+         x scale 0..400 → 0..220 px starting at 116 -->
+    <line x1="116" y1="42" x2="116" y2="246" stroke="#8a8480"/>
+    <line x1="116" y1="246" x2="316" y2="246" stroke="#8a8480"/>
+    <!-- x ticks 0, 100, 200, 300, 400 → 116, 166, 216, 266, 316 -->
+    <g class="sm">
+      <line x1="116" y1="246" x2="116" y2="250" stroke="#4a4540"/>
+      <line x1="166" y1="246" x2="166" y2="250" stroke="#4a4540"/>
+      <line x1="216" y1="246" x2="216" y2="250" stroke="#4a4540"/>
+      <line x1="266" y1="246" x2="266" y2="250" stroke="#4a4540"/>
+      <line x1="316" y1="246" x2="316" y2="250" stroke="#4a4540"/>
+      <text x="116" y="260" text-anchor="middle">$0</text>
+      <text x="166" y="260" text-anchor="middle">$100M</text>
+      <text x="216" y="260" text-anchor="middle">$200M</text>
+      <text x="266" y="260" text-anchor="middle">$300M</text>
+      <text x="316" y="260" text-anchor="middle">$400M</text>
+    </g>
+    <!-- labels left, right-aligned -->
+    <g class="sm">
+      <text x="110" y="68"  text-anchor="end">Food Security</text>
+      <text x="110" y="106" text-anchor="end">Shelter</text>
+      <text x="110" y="144" text-anchor="end">Water and Sanitation</text>
+      <text x="110" y="182" text-anchor="end">Health</text>
+      <text x="110" y="220" text-anchor="end">Protection</text>
+    </g>
+    <!-- bars: pale-to-dark luminance reinforces rank. widths = val * 0.5 -->
+    <g>
+      <rect x="116" y="54"  width="190.1" height="28" fill="#2a1a0e"/>
+      <rect x="116" y="92"  width="71.4"  height="28" fill="#4a4540"/>
+      <rect x="116" y="130" width="49.2"  height="28" fill="#8a8480"/>
+      <rect x="116" y="168" width="43.7"  height="28" fill="#8a8480"/>
+      <rect x="116" y="206" width="32.1"  height="28" fill="#c8c4c0"/>
+    </g>
+    <!-- value labels right of bars -->
+    <g class="vt">
+      <text x="310" y="72"  text-anchor="start">$380.2M</text>
+      <text x="191" y="110" text-anchor="start">$142.7M</text>
+      <text x="169" y="148" text-anchor="start">$98.4M</text>
+      <text x="163" y="186" text-anchor="start">$87.3M</text>
+      <text x="152" y="224" text-anchor="start">$64.1M</text>
+    </g>
+    <!-- annotation: passes -->
+    <g class="sm">
+      <text x="0" y="296" class="lb">What the prompt encoded:</text>
+      <text x="0" y="310">• zero baseline (proportional ink, ch. 5)</text>
+      <text x="0" y="322">• sort descending (effectiveness)</text>
+      <text x="0" y="334">• luminance redundancy on funding</text>
+      <text x="0" y="346">• value labels at bar ends</text>
+      <text x="0" y="358">• horizontal orientation for long labels</text>
+      <text x="0" y="370">• 0/100/200/300/400 tick locations specified</text>
+    </g>
+  </g>
+
+  <!-- caption -->
+  <text x="350" y="460" text-anchor="middle" class="cap">What 200 words buys: the channel decomposition makes the discipline visible in the artifact.</text>
+</svg>

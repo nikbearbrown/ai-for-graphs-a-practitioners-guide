@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t17-02 d17-02">
+  <title id="t17-02">Phase A deliverables — three questions, data audit, and gaps</title>
+  <desc id="d17-02">A structured document in three panels. Panel one lists three reader-focused questions with audience and decision. Panel two shows a column-type classification of the UNHCR dataset. Panel three names the one identified gap.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .h2  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .badge { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #fdfcfb; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .eyebrow { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Phase A — documentation, not charts</text>
+  <text x="350" y="44" text-anchor="middle" class="eyebrow">Questions, audit, gaps. In writing. Before anything is drawn.</text>
+
+  <!-- PANEL 1: three questions -->
+  <g transform="translate(24,68)">
+    <rect width="216" height="332" fill="#fdfcfb" stroke="#2a1a0e"/>
+    <rect width="216" height="22" fill="#2a1a0e"/>
+    <text x="108" y="16" text-anchor="middle" class="h2" fill="#fdfcfb">1 · Three questions</text>
+
+    <!-- Q1 -->
+    <g transform="translate(10,34)">
+      <rect width="196" height="84" fill="#f5f2ee" stroke="#c8c4c0"/>
+      <text x="8" y="14" class="h2">Q1 — Origins</text>
+      <text x="8" y="30" class="sm">Which countries produce the</text>
+      <text x="8" y="42" class="sm">most refugees, 2020–2024?</text>
+      <text x="8" y="60" class="sm">Audience · public-policy desk</text>
+      <text x="8" y="74" class="sm">Decision · where to focus aid</text>
+    </g>
+    <!-- Q2 -->
+    <g transform="translate(10,126)">
+      <rect width="196" height="84" fill="#f5f2ee" stroke="#c8c4c0"/>
+      <text x="8" y="14" class="h2">Q2 — Destinations</text>
+      <text x="8" y="30" class="sm">Which countries receive the</text>
+      <text x="8" y="42" class="sm">most refugees?</text>
+      <text x="8" y="60" class="sm">Audience · public-policy desk</text>
+      <text x="8" y="74" class="sm">Decision · where to fund hosts</text>
+    </g>
+    <!-- Q3 -->
+    <g transform="translate(10,218)">
+      <rect width="196" height="84" fill="#f5f2ee" stroke="#c8c4c0"/>
+      <text x="8" y="14" class="h2">Q3 — Composition</text>
+      <text x="8" y="30" class="sm">What share of displacement is</text>
+      <text x="8" y="42" class="sm">internal vs international?</text>
+      <text x="8" y="60" class="sm">Audience · public-policy desk</text>
+      <text x="8" y="74" class="sm">Decision · IDP vs cross-border</text>
+    </g>
+    <text x="108" y="320" text-anchor="middle" class="sm">reader-focused · build in sequence</text>
+  </g>
+
+  <!-- PANEL 2: data audit -->
+  <g transform="translate(248,68)">
+    <rect width="216" height="332" fill="#fdfcfb" stroke="#2a1a0e"/>
+    <rect width="216" height="22" fill="#2a1a0e"/>
+    <text x="108" y="16" text-anchor="middle" class="h2" fill="#fdfcfb">2 · Data audit</text>
+
+    <text x="12" y="42" class="h2">UNHCR · ≈ 5,000 rows</text>
+
+    <!-- column rows, each with column name + badge -->
+    <g transform="translate(12,54)">
+      <text x="0" y="14" class="lb">country_of_origin</text>
+      <rect x="148" y="2" width="52" height="14" fill="#4a4540"/>
+      <text x="174" y="13" text-anchor="middle" class="badge">categorical</text>
+    </g>
+    <g transform="translate(12,76)">
+      <text x="0" y="14" class="lb">country_of_asylum</text>
+      <rect x="148" y="2" width="52" height="14" fill="#4a4540"/>
+      <text x="174" y="13" text-anchor="middle" class="badge">categorical</text>
+    </g>
+    <g transform="translate(12,98)">
+      <text x="0" y="14" class="lb">year</text>
+      <rect x="148" y="2" width="52" height="14" fill="#8a8480"/>
+      <text x="174" y="13" text-anchor="middle" class="badge">temporal</text>
+    </g>
+    <g transform="translate(12,120)">
+      <text x="0" y="14" class="lb">type</text>
+      <rect x="148" y="2" width="52" height="14" fill="#4a4540"/>
+      <text x="174" y="13" text-anchor="middle" class="badge">categorical</text>
+    </g>
+    <g transform="translate(12,142)">
+      <text x="0" y="14" class="lb">count</text>
+      <rect x="148" y="2" width="52" height="14" fill="#2a1a0e"/>
+      <text x="174" y="13" text-anchor="middle" class="badge">quantitative</text>
+    </g>
+
+    <line x1="12" y1="172" x2="204" y2="172" stroke="#c8c4c0"/>
+    <text x="12" y="190" class="h2">Relationships supported</text>
+    <text x="12" y="208" class="sm">— comparison (Q1, Q2)</text>
+    <text x="12" y="222" class="sm">— change over time (Q1)</text>
+    <text x="12" y="236" class="sm">— part-to-whole (Q3)</text>
+    <text x="12" y="250" class="sm">— spatial (not supported here)</text>
+  </g>
+
+  <!-- PANEL 3: gap -->
+  <g transform="translate(472,68)">
+    <rect width="204" height="332" fill="#fdfcfb" stroke="#2a1a0e"/>
+    <rect width="204" height="22" fill="#2a1a0e"/>
+    <text x="102" y="16" text-anchor="middle" class="h2" fill="#fdfcfb">3 · Gaps identified</text>
+
+    <g transform="translate(10,38)">
+      <rect width="184" height="118" fill="#f5f2ee" stroke="#c8c4c0"/>
+      <text x="92" y="22" text-anchor="middle" class="h2">Flow map</text>
+      <text x="92" y="40" text-anchor="middle" class="sm">requested by Q1 + Q2</text>
+      <text x="10" y="62" class="sm">Origin-destination pairs are</text>
+      <text x="10" y="76" class="sm">in the dataset; coordinates are</text>
+      <text x="10" y="90" class="sm">not. A flow map requires a</text>
+      <text x="10" y="104" class="sm">country-coordinates join.</text>
+    </g>
+
+    <g transform="translate(10,170)">
+      <text x="0" y="14" class="h2">Honest move</text>
+      <text x="0" y="32" class="sm">Scope the project to the three</text>
+      <text x="0" y="46" class="sm">questions the data directly</text>
+      <text x="0" y="60" class="sm">supports.</text>
+      <text x="0" y="80" class="sm">Document the gap in</text>
+      <text x="0" y="94" class="sm">PROJECT.md — do not paper</text>
+      <text x="0" y="108" class="sm">over it with a half-built map.</text>
+    </g>
+  </g>
+
+  <!-- caption -->
+  <text x="350" y="436" text-anchor="middle" class="cap">The data audit follows the questions. Not the other way around.</text>
+</svg>

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t053 d053">
+  <title id="t053">Five-step pre-chart audit, applied to the food assistance example</title>
+  <desc id="d053">Vertical flow of five audit steps. Each box names the step, its input, and its output. Step 5 holds the final chart specification — key message, data structure, functional category, and chart form — derived from the four steps above.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .sn { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+      .io { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .sp { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar53" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+
+  <!-- Title -->
+  <text x="350" y="28" text-anchor="middle" class="ti">The audit, five steps, food-assistance example</text>
+
+  <!-- Step 1 -->
+  <rect x="100" y="48" width="500" height="56" fill="#fdfcfb" stroke="#8a8480"/>
+  <circle cx="124" cy="76" r="14" fill="#2a1a0e"/>
+  <text x="124" y="80" text-anchor="middle" class="sn" style="fill:#fdfcfb">1</text>
+  <text x="150" y="68" class="sn">Identify data types</text>
+  <text x="150" y="84" class="io">input: the dataset columns</text>
+  <text x="150" y="98" class="io">output: state (geographic), assistance $ (quantitative), population (quantitative)</text>
+  <line x1="350" y1="104" x2="350" y2="120" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar53)"/>
+
+  <!-- Step 2 -->
+  <rect x="100" y="124" width="500" height="56" fill="#fdfcfb" stroke="#8a8480"/>
+  <circle cx="124" cy="152" r="14" fill="#2a1a0e"/>
+  <text x="124" y="156" text-anchor="middle" class="sn" style="fill:#fdfcfb">2</text>
+  <text x="150" y="144" class="sn">Whose question?</text>
+  <text x="150" y="160" class="io">input: analyst version vs reader versions</text>
+  <text x="150" y="174" class="io">output: policymaker, peer NGO, general reader — three different charts in waiting</text>
+  <line x1="350" y1="180" x2="350" y2="196" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar53)"/>
+
+  <!-- Step 3 -->
+  <rect x="100" y="200" width="500" height="56" fill="#fdfcfb" stroke="#8a8480"/>
+  <circle cx="124" cy="228" r="14" fill="#2a1a0e"/>
+  <text x="124" y="232" text-anchor="middle" class="sn" style="fill:#fdfcfb">3</text>
+  <text x="150" y="220" class="sn">Compared with what?</text>
+  <text x="150" y="236" class="io">input: the reader's primary question</text>
+  <text x="150" y="250" class="io">output: per-capita rate, not absolute dollars — a single-variable choropleth fails</text>
+  <line x1="350" y1="256" x2="350" y2="272" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar53)"/>
+
+  <!-- Step 4 -->
+  <rect x="100" y="276" width="500" height="56" fill="#fdfcfb" stroke="#8a8480"/>
+  <circle cx="124" cy="304" r="14" fill="#2a1a0e"/>
+  <text x="124" y="308" text-anchor="middle" class="sn" style="fill:#fdfcfb">4</text>
+  <text x="150" y="296" class="sn">What does the data support?</text>
+  <text x="150" y="312" class="io">input: the eight relationships</text>
+  <text x="150" y="326" class="io">output: assistance per capita yes; assistance per food-insecure household no — annotate the gap</text>
+  <line x1="350" y1="332" x2="350" y2="348" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar53)"/>
+
+  <!-- Step 5 — chart specification -->
+  <rect x="60" y="352" width="580" height="92" fill="#f5f2ee" stroke="#2a1a0e" stroke-width="1.25"/>
+  <circle cx="84" cy="380" r="14" fill="#2a1a0e"/>
+  <text x="84" y="384" text-anchor="middle" class="sn" style="fill:#fdfcfb">5</text>
+  <text x="110" y="372" class="sn">Chart specification — emerges from steps 1–4</text>
+  <text x="110" y="392" class="sp"><tspan font-weight="bold">key message:</tspan> food-assistance dollars per capita vary by 10× across U.S. states, highest in the rural Southwest</text>
+  <text x="110" y="408" class="sp"><tspan font-weight="bold">data structure:</tspan> state polygons + assistance/capita (derived)</text>
+  <text x="110" y="424" class="sp"><tspan font-weight="bold">functional category:</tspan> spatial</text>
+  <text x="110" y="440" class="sp"><tspan font-weight="bold">specific form:</tspan> choropleth, sequential luminance, annotated for what it does and doesn't show</text>
+
+  <!-- Caption -->
+  <text x="350" y="466" text-anchor="middle" class="cap">The audit is not overhead. It is how the specification gets built.</text>
+</svg>

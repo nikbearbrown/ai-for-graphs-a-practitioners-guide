@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 2.3 — The four-move prompt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #moves { display: grid; grid-template-columns: 24px 1fr 1fr; column-gap: 18px; row-gap: 12px; align-items: stretch; }
+  .rail { position: relative; }
+  .rail .line { position: absolute; left: 11px; top: 0; bottom: 0; width: 2px; background: var(--color-border); }
+  .badge { position: relative; z-index: 1; width: 24px; height: 24px; border-radius: 50%; background: var(--color-ink); color: var(--color-white); display: flex; align-items: center; justify-content: center; font-family: 'EB Garamond', Georgia, serif; font-weight: 700; font-size: 13px; margin-top: 12px; }
+  .move { background: var(--color-white); border: 1px solid var(--color-border); padding: 14px 16px; cursor: pointer; transition: border-color 120ms; }
+  .move.move-3 { border-color: var(--color-ink); border-width: 2px; }
+  .move.active { border-color: var(--color-ochre); border-width: 2px; }
+  .move .name { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; }
+  .move .what { color: var(--color-secondary); font-size: 12px; margin-top: 2px; }
+  .move .example { font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-size: 13px; margin-top: 10px; padding: 8px 12px; border-left: 3px solid var(--color-border); color: var(--color-ink); }
+  .move.move-3 .example { border-left-color: var(--color-red); }
+  .skip { background: var(--color-white); border: 1px solid var(--color-border); padding: 14px 16px; }
+  .skip .head { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: var(--color-ink); }
+  .skip ul { list-style: none; padding: 0; margin: 8px 0 0; }
+  .skip li { font-size: 12px; color: var(--color-secondary); padding: 3px 0; border-bottom: 1px dashed var(--color-border); }
+  .skip li:last-child { border-bottom: 0; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 20px; max-width: 65ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 2.3 — The four-move prompt</h1>
+<p class="subtitle">Show. Say. Constrain. Verify. The four moves take ~90 seconds longer than a vague prompt — and reliably produce charts that are right on the first attempt.</p>
+
+<div id="moves" role="img" aria-labelledby="moves-t moves-d">
+  <span id="moves-t" hidden>Four-move prompt structure</span>
+  <span id="moves-d" hidden>Four panels, one per move. Each pairs a move definition and example with a callout naming what the model decides if the move is skipped.</span>
+</div>
+
+<p class="caption">Move 3 is the move most people skip. It is also the one that determines whether the output is right on the first attempt.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const moveData = [
+  {
+    id: 1, name: 'Show what you have',
+    what: 'data shape, columns, types, sample rows, or file name',
+    example: '"Eight rows. domain (string, 12–17 chars), score (0–100). Sample: Pattern 94, Language 87, Memory 96."',
+    skips: [
+      'whether values are %, counts, or scores',
+      'whether order in data is meaningful',
+      'whether categories share a baseline'
+    ]
+  },
+  {
+    id: 2, name: 'Say what you want',
+    what: 'chart type, marks, D3 version, deliverable format',
+    example: '"Vertical bar chart. D3 v7. Single HTML file with inline CSS and CDN-loaded D3. Responsive."',
+    skips: [
+      'chart type (probably scatter or pie)',
+      'D3 version (often mixes v4 / v6 / v7)',
+      'rendering target (file vs module vs component)'
+    ]
+  },
+  {
+    id: 3, name: 'Constrain it · (the move most people skip)',
+    what: 'channel-to-attribute mappings, layout, accessibility',
+    example: '"x = domain (sorted desc). y = score from zero. Luminance redundant. Labels rotated -30°."',
+    skips: [
+      'which channel encodes which attribute',
+      'whether the baseline is zero',
+      'whether hue, size, or position carries score'
+    ]
+  },
+  {
+    id: 4, name: 'Ask for verification',
+    what: 'restate, comment channels, flag unspecified decisions',
+    example: '"Restate the channel decomposition before coding. Comment which line implements which channel."',
+    skips: [
+      'whether to surface its own assumptions',
+      'which trade-offs to flag',
+      'whether to ship or wait for review'
+    ]
+  }
+];
+
+function draw() {
+  const root = d3.select('#moves');
+  root.selectAll('*').remove();
+
+  moveData.forEach((m, i) => {
+    // rail with badge
+    const rail = root.append('div').attr('class', 'rail');
+    if (i < moveData.length - 1) rail.append('div').attr('class', 'line');
+    rail.append('div').attr('class', 'badge').text(m.id);
+
+    // move card
+    const move = root.append('div')
+      .attr('class', `move move-${m.id}`)
+      .attr('tabindex', 0)
+      .attr('role', 'button')
+      .attr('aria-label', `Move ${m.id}: ${m.name}`)
+      .on('mouseenter', function () { d3.selectAll('.move').classed('active', false); d3.select(this).classed('active', true); })
+      .on('focus',      function () { d3.selectAll('.move').classed('active', false); d3.select(this).classed('active', true); });
+    move.append('div').attr('class', 'name').text(m.name);
+    move.append('div').attr('class', 'what').text(m.what);
+    move.append('div').attr('class', 'example').text(m.example);
+
+    // skip callout
+    const skip = root.append('div').attr('class', 'skip');
+    skip.append('div').attr('class', 'head').text('if skipped, the model decides:');
+    const ul = skip.append('ul');
+    ul.selectAll('li').data(m.skips).join('li').text(d => '• ' + d);
+  });
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('moves'));
+</script>
+</body>
+</html>

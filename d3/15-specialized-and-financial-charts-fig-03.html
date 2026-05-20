@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 15.3 — Radar chart axis-order failure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 11px; margin-bottom: 12px; min-height: 32px; }
+  .chart { width: 100%; height: 320px; }
+  .axis-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); }
+  .ring { fill: none; stroke: var(--color-border); stroke-width: 0.6; }
+  .spoke { stroke: var(--color-border); stroke-width: 0.6; }
+  .poly { fill: var(--color-ink); fill-opacity: 0.18; stroke: var(--color-ink); stroke-width: 1.6; }
+  .tick-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 15.3 — Radar chart axis-order failure</h1>
+<p class="subtitle">Identical six-attribute values rendered three times with three axis orders. The polygon's shape changes meaningfully — it is partly the axis order, not the data.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Original order</div>
+    <div class="panel-sub">Speed → Strength → Endurance → Agility → Technique → Recovery</div>
+    <div id="chartA" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Reordered</div>
+    <div class="panel-sub">Strength → Recovery → Speed → Technique → Endurance → Agility</div>
+    <div id="chartB" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">C. Reordered again</div>
+    <div class="panel-sub">Agility → Endurance → Recovery → Speed → Technique → Strength</div>
+    <div id="chartC" class="chart"></div>
+  </div>
+</div>
+<p class="caption">Same six values. Three axis orders. Three different-looking shapes. A bar chart of these numbers would look identical no matter how the categories are arranged.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const VALUES = {
+  Speed: 70, Strength: 90, Endurance: 55, Agility: 80, Technique: 60, Recovery: 40
+};
+const ORDERS = {
+  '#chartA': ['Speed', 'Strength', 'Endurance', 'Agility', 'Technique', 'Recovery'],
+  '#chartB': ['Strength', 'Recovery', 'Speed', 'Technique', 'Endurance', 'Agility'],
+  '#chartC': ['Agility', 'Endurance', 'Recovery', 'Speed', 'Technique', 'Strength']
+};
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(e, h) { tooltip.html(h).style('left', (e.pageX + 12) + 'px').style('top', (e.pageY - 28) + 'px').transition().duration(150).style('opacity', 1); }
+function moveTip(e) { tooltip.style('left', (e.pageX + 12) + 'px').style('top', (e.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawRadar(sel, order, title) {
+  d3.select(sel).selectAll('*').remove();
+  const c = document.querySelector(sel);
+  const w = c.clientWidth || 260, h = c.clientHeight || 320;
+  const cx = w / 2, cy = h / 2 + 6;
+  const radius = Math.min(w, h) * 0.36;
+
+  const svg = d3.select(sel).append('svg')
+    .attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${sel.slice(1)}-t ${sel.slice(1)}-d`);
+  svg.append('title').attr('id', `${sel.slice(1)}-t`).text(title);
+  svg.append('desc').attr('id', `${sel.slice(1)}-d`).text(`Radar chart of six attributes in this order: ${order.join(', ')}.`);
+
+  // grid rings
+  [0.25, 0.5, 0.75, 1.0].forEach(p => {
+    svg.append('circle').attr('class', 'ring')
+      .attr('cx', cx).attr('cy', cy).attr('r', radius * p);
+  });
+
+  const n = order.length;
+  // spokes
+  order.forEach((k, i) => {
+    const a = -Math.PI / 2 + i * (2 * Math.PI / n);
+    const ex = cx + Math.cos(a) * radius;
+    const ey = cy + Math.sin(a) * radius;
+    svg.append('line').attr('class', 'spoke')
+      .attr('x1', cx).attr('y1', cy).attr('x2', ex).attr('y2', ey);
+  });
+
+  // polygon
+  const rScale = d3.scaleLinear().domain([0, 100]).range([0, radius]);
+  const points = order.map((k, i) => {
+    const a = -Math.PI / 2 + i * (2 * Math.PI / n);
+    const rr = rScale(VALUES[k]);
+    return [cx + Math.cos(a) * rr, cy + Math.sin(a) * rr];
+  });
+  svg.append('polygon').attr('class', 'poly')
+    .attr('points', points.map(p => p.join(',')).join(' '));
+
+  // datapoint markers (hoverable)
+  svg.selectAll('.dot').data(order.map((k, i) => {
+    const a = -Math.PI / 2 + i * (2 * Math.PI / n);
+    const rr = rScale(VALUES[k]);
+    return { k, v: VALUES[k], x: cx + Math.cos(a) * rr, y: cy + Math.sin(a) * rr };
+  })).join('circle')
+    .attr('class', 'dot')
+    .attr('cx', d => d.x).attr('cy', d => d.y).attr('r', 3.5)
+    .attr('fill', 'var(--color-ink)')
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `${d.k}: ${d.v}`)
+    .on('mouseover', (e, d) => showTip(e, `<strong>${d.k}</strong>: ${d.v}`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // axis labels just beyond ring
+  order.forEach((k, i) => {
+    const a = -Math.PI / 2 + i * (2 * Math.PI / n);
+    const lx = cx + Math.cos(a) * (radius + 18);
+    const ly = cy + Math.sin(a) * (radius + 18);
+    let anchor = 'middle';
+    const cos = Math.cos(a);
+    if (cos > 0.2) anchor = 'start';
+    else if (cos < -0.2) anchor = 'end';
+    svg.append('text').attr('class', 'axis-label')
+      .attr('x', lx).attr('y', ly + 4).attr('text-anchor', anchor).text(k);
+  });
+}
+
+function draw() {
+  Object.entries(ORDERS).forEach(([sel, order]) => {
+    drawRadar(sel, order, `Radar chart with axis order ${order.join(', ')}`);
+  });
+}
+draw();
+const ro = new ResizeObserver(draw);
+Object.keys(ORDERS).forEach(sel => ro.observe(document.querySelector(sel)));
+</script>
+</body>
+</html>

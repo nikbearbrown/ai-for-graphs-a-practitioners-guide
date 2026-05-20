@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t05 d05">
+  <title id="t05">Magnitude channels versus identity channels — Munzner's two families</title>
+  <desc id="d05">Two-column taxonomy comparing magnitude channels (position, length, area, luminance — suited to quantitative data) with identity channels (hue, shape, texture — suited to categorical data). Each entry has a small icon, a correct-use example, and a misuse example. The expressiveness and effectiveness principles appear as captions beneath the columns.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .col { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 14px; font-weight: bold; fill: #2a1a0e; }
+      .pname { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+  <text x="32" y="28" class="ti">Magnitude channels and identity channels — Munzner's two families</text>
+  <text x="32" y="44" class="sm">Quantitative attributes belong on magnitude channels. Categorical attributes belong on identity channels.</text>
+
+  <!-- COLUMN HEADERS -->
+  <text x="180" y="80" text-anchor="middle" class="col">Magnitude channels</text>
+  <text x="180" y="96" text-anchor="middle" class="sm">suited to: quantitative / ordered data</text>
+
+  <text x="520" y="80" text-anchor="middle" class="col">Identity channels</text>
+  <text x="520" y="96" text-anchor="middle" class="sm">suited to: categorical data</text>
+
+  <!-- vertical divider -->
+  <line x1="350" y1="60" x2="350" y2="420" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- LEFT COLUMN — MAGNITUDE -->
+  <!-- Position -->
+  <g transform="translate(48,116)">
+    <!-- icon: a vertical mini axis with a dot -->
+    <line x1="0" y1="0" x2="0" y2="34" stroke="#2a1a0e" stroke-width="1"/>
+    <circle cx="0" cy="8" r="3" fill="#2a1a0e"/>
+    <text x="20" y="6" class="pname">Position</text>
+    <text x="20" y="20" class="sm">correct: x/y axis encodes a quantity</text>
+    <text x="20" y="32" class="sm">misuse: categories arranged on a scale</text>
+  </g>
+
+  <!-- Length -->
+  <g transform="translate(48,176)">
+    <rect x="0" y="6" width="14" height="28" fill="#2a1a0e"/>
+    <text x="20" y="6" class="pname">Length</text>
+    <text x="20" y="20" class="sm">correct: bar height encodes revenue</text>
+    <text x="20" y="32" class="sm">misuse: bars without a zero baseline</text>
+  </g>
+
+  <!-- Area -->
+  <g transform="translate(48,236)">
+    <circle cx="7" cy="20" r="13" fill="#8a8480"/>
+    <text x="28" y="6" class="pname">Area</text>
+    <text x="28" y="20" class="sm">correct: bubble scaled by area, not radius</text>
+    <text x="28" y="32" class="sm">misuse: radius-linear bubbles, treemaps for rank</text>
+  </g>
+
+  <!-- Luminance -->
+  <g transform="translate(48,296)">
+    <rect x="0"  y="8" width="9" height="20" fill="#f5f2ee"/>
+    <rect x="9"  y="8" width="9" height="20" fill="#c8c4c0"/>
+    <rect x="18" y="8" width="9" height="20" fill="#8a8480"/>
+    <rect x="27" y="8" width="9" height="20" fill="#4a4540"/>
+    <rect x="36" y="8" width="9" height="20" fill="#2a1a0e"/>
+    <text x="55" y="6" class="pname">Luminance</text>
+    <text x="55" y="20" class="sm">correct: choropleth of an ordered quantity</text>
+    <text x="55" y="32" class="sm">misuse: too many levels; eye reads ~7 reliably</text>
+  </g>
+
+  <!-- Principle box LEFT -->
+  <g transform="translate(32,365)">
+    <rect width="306" height="44" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="12" y="18" class="lb"><tspan font-weight="bold">Effectiveness principle</tspan></text>
+    <text x="12" y="34" class="sm">Encode the most important attribute on the highest-ranked appropriate channel.</text>
+  </g>
+
+  <!-- RIGHT COLUMN — IDENTITY -->
+  <!-- Hue -->
+  <g transform="translate(388,116)">
+    <circle cx="6"  cy="20" r="6" fill="#2a1a0e"/>
+    <circle cx="22" cy="20" r="6" fill="#8a8480"/>
+    <circle cx="38" cy="20" r="6" fill="#c8c4c0"/>
+    <text x="55" y="6" class="pname">Hue</text>
+    <text x="55" y="20" class="sm">correct: each category gets a distinct color</text>
+    <text x="55" y="32" class="sm">misuse: rainbow ramp for a quantitative value</text>
+  </g>
+
+  <!-- Shape -->
+  <g transform="translate(388,176)">
+    <circle cx="6"  cy="20" r="5" fill="#2a1a0e"/>
+    <rect   x="17" y="15" width="10" height="10" fill="#2a1a0e"/>
+    <polygon points="38,15 44,25 32,25" fill="#2a1a0e"/>
+    <text x="55" y="6" class="pname">Shape</text>
+    <text x="55" y="20" class="sm">correct: distinguish data series in a scatter</text>
+    <text x="55" y="32" class="sm">misuse: shape as proxy for a number (years)</text>
+  </g>
+
+  <!-- Texture -->
+  <g transform="translate(388,236)">
+    <defs>
+      <pattern id="px1" width="4" height="4" patternUnits="userSpaceOnUse">
+        <line x1="0" y1="0" x2="0" y2="4" stroke="#2a1a0e" stroke-width="0.6"/>
+      </pattern>
+      <pattern id="px2" width="4" height="4" patternUnits="userSpaceOnUse">
+        <line x1="0" y1="0" x2="4" y2="4" stroke="#2a1a0e" stroke-width="0.6"/>
+      </pattern>
+      <pattern id="px3" width="4" height="4" patternUnits="userSpaceOnUse">
+        <circle cx="2" cy="2" r="0.8" fill="#2a1a0e"/>
+      </pattern>
+    </defs>
+    <rect x="0"  y="8" width="14" height="20" fill="url(#px1)" stroke="#2a1a0e" stroke-width="0.4"/>
+    <rect x="16" y="8" width="14" height="20" fill="url(#px2)" stroke="#2a1a0e" stroke-width="0.4"/>
+    <rect x="32" y="8" width="14" height="20" fill="url(#px3)" stroke="#2a1a0e" stroke-width="0.4"/>
+    <text x="55" y="6" class="pname">Texture</text>
+    <text x="55" y="20" class="sm">correct: print/B&amp;W categorical fills</text>
+    <text x="55" y="32" class="sm">misuse: too many patterns at once → noise</text>
+  </g>
+
+  <!-- Principle box RIGHT -->
+  <g transform="translate(362,365)">
+    <rect width="306" height="44" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="12" y="18" class="lb"><tspan font-weight="bold">Expressiveness principle</tspan></text>
+    <text x="12" y="34" class="sm">The channel must be capable of expressing the attribute type. No quantity on hue.</text>
+  </g>
+
+  <!-- bottom caption -->
+  <text x="350" y="455" text-anchor="middle" class="cap">Two principles — expressiveness and effectiveness — generate every chart-design rule that follows.</text>
+</svg>

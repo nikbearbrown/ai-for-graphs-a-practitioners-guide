@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 440" role="img" aria-labelledby="t08-03 d08-03">
+  <title id="t08-03">Area chart with truncated baseline, area chart with zero baseline, and line chart — same temperature series</title>
+  <desc id="d08-03">Three panels using the same 30-day temperature dataset (65 to 85 degrees Fahrenheit). The truncated-baseline area chart distorts; the zero-baseline area chart honors proportional ink; the line chart drops the area encoding and uses point position.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9.5px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .chip { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9.5px; font-weight: bold; fill: #2a1a0e; }
+      .verdict-bad  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+      .verdict-ok   { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+  </defs>
+  <rect width="700" height="440" fill="#fdfcfb"/>
+  <text x="350" y="24" text-anchor="middle" class="ti">30 days of temperature, three encodings — only the channel choice changes</text>
+
+  <!-- PANEL A: area, y from 50 (truncated) -->
+  <g transform="translate(20,52)">
+    <rect width="220" height="320" fill="none" stroke="#c8c4c0"/>
+    <text x="10" y="14" class="ti">A. Area, y-axis from 50°F</text>
+    <text x="10" y="28" class="sm">visual area = temp − 50, not temp</text>
+    <!-- axis -->
+    <line x1="42" y1="46" x2="42" y2="240" stroke="#8a8480"/>
+    <line x1="42" y1="240" x2="210" y2="240" stroke="#8a8480"/>
+    <text x="38" y="243" text-anchor="end" class="sm">50</text>
+    <text x="38" y="143" text-anchor="end" class="sm">70</text>
+    <text x="38" y="46" text-anchor="end" class="sm">90</text>
+    <line x1="40" y1="240" x2="42" y2="240" stroke="#4a4540"/>
+    <line x1="40" y1="143" x2="42" y2="143" stroke="#4a4540"/>
+    <line x1="40" y1="46" x2="42" y2="46" stroke="#4a4540"/>
+    <!-- 30 daily values, 65–85°F. y(50)=240, y(90)=46, so y = 240 - (v-50)*4.85 -->
+    <!-- baseline at y=240 for area encoding -->
+    <!-- daily values: 66, 68, 67, 70, 72, 71, 73, 75, 74, 76, 78, 77, 80, 82, 81, 83, 85, 84, 82, 80, 78, 77, 75, 73, 72, 70, 69, 71, 68, 67 -->
+    <!-- x positions over 156px from 50 to 206; step ≈ 5.38 -->
+    <path d="M 50,162.40 L 55.4,152.70 L 60.8,157.55 L 66.2,143.00 L 71.6,133.30 L 77.0,138.15 L 82.4,128.45 L 87.8,118.75 L 93.2,123.60 L 98.6,113.90 L 104.0,104.20 L 109.4,109.05 L 114.8,94.50 L 120.2,84.80 L 125.6,89.65 L 131.0,79.95 L 136.4,70.25 L 141.8,75.10 L 147.2,84.80 L 152.6,94.50 L 158.0,104.20 L 163.4,109.05 L 168.8,118.75 L 174.2,128.45 L 179.6,133.30 L 185.0,143.00 L 190.4,147.85 L 195.8,138.15 L 201.2,152.70 L 206.0,157.55 L 206.0,240 L 50,240 Z"
+          fill="#8a8480" fill-opacity="0.55" stroke="#2a1a0e" stroke-width="1.2"/>
+    <!-- annotation: visual ratio -->
+    <text x="60" y="280" class="sm">Day at 70°F: area ∝ 20</text>
+    <text x="60" y="294" class="sm">Day at 80°F: area ∝ 30</text>
+    <text x="60" y="308" class="lb">visual ratio 1.5×</text>
+    <!-- verdict chip -->
+    <rect x="60" y="318" width="100" height="14" fill="none" stroke="#2a1a0e" stroke-width="1.4"/>
+    <text x="110" y="328" text-anchor="middle" class="verdict-bad">distorts</text>
+  </g>
+
+  <!-- PANEL B: area, y from 0 (honest) -->
+  <g transform="translate(245,52)">
+    <rect width="220" height="320" fill="none" stroke="#c8c4c0"/>
+    <text x="10" y="14" class="ti">B. Area, y-axis from 0°F</text>
+    <text x="10" y="28" class="sm">visual area = temperature</text>
+    <line x1="42" y1="46" x2="42" y2="240" stroke="#8a8480"/>
+    <line x1="42" y1="240" x2="210" y2="240" stroke="#8a8480"/>
+    <text x="38" y="243" text-anchor="end" class="sm">0</text>
+    <text x="38" y="143" text-anchor="end" class="sm">50</text>
+    <text x="38" y="46" text-anchor="end" class="sm">100</text>
+    <line x1="40" y1="240" x2="42" y2="240" stroke="#4a4540"/>
+    <line x1="40" y1="143" x2="42" y2="143" stroke="#4a4540"/>
+    <line x1="40" y1="46" x2="42" y2="46" stroke="#4a4540"/>
+    <!-- y = 240 - v*1.94 (range 0–100 → 194px) -->
+    <!-- 66→112.0, 68→108.1, 67→110.0, 70→104.2, 72→100.3, 71→102.3, 73→98.4, 75→94.5, 74→96.4, 76→92.6, 78→88.7, 77→90.6, 80→84.8, 82→80.9, 81→82.9, 83→79.0, 85→75.1, 84→77.0 -->
+    <path d="M 50,112.0 L 55.4,108.1 L 60.8,110.0 L 66.2,104.2 L 71.6,100.3 L 77.0,102.3 L 82.4,98.4 L 87.8,94.5 L 93.2,96.4 L 98.6,92.6 L 104.0,88.7 L 109.4,90.6 L 114.8,84.8 L 120.2,80.9 L 125.6,82.9 L 131.0,79.0 L 136.4,75.1 L 141.8,77.0 L 147.2,80.9 L 152.6,84.8 L 158.0,88.7 L 163.4,90.6 L 168.8,94.5 L 174.2,98.4 L 179.6,100.3 L 185.0,104.2 L 190.4,106.1 L 195.8,102.3 L 201.2,108.1 L 206.0,110.0 L 206.0,240 L 50,240 Z"
+          fill="#8a8480" fill-opacity="0.55" stroke="#2a1a0e" stroke-width="1.2"/>
+    <!-- shaded "below 65" area emphasized as honest empty -->
+    <rect x="50" y="113.6" width="156" height="126.4" fill="none" stroke="none"/>
+    <text x="128" y="200" text-anchor="middle" class="sm">most of the area is empty</text>
+    <text x="128" y="212" text-anchor="middle" class="sm">but it now encodes the temperature</text>
+    <text x="60" y="280" class="sm">Day at 70°F: area ∝ 70</text>
+    <text x="60" y="294" class="sm">Day at 80°F: area ∝ 80</text>
+    <text x="60" y="308" class="lb">visual ratio 1.14× (true)</text>
+    <rect x="60" y="318" width="100" height="14" fill="none" stroke="#2a1a0e" stroke-width="1"/>
+    <text x="110" y="328" text-anchor="middle" class="verdict-ok">honest (but wasteful)</text>
+  </g>
+
+  <!-- PANEL C: line, y 60–90 -->
+  <g transform="translate(470,52)">
+    <rect width="220" height="320" fill="none" stroke="#c8c4c0"/>
+    <text x="10" y="14" class="ti">C. Line, y-axis 60°F–90°F</text>
+    <text x="10" y="28" class="sm">point position — no area encoding</text>
+    <line x1="42" y1="46" x2="42" y2="240" stroke="#8a8480"/>
+    <line x1="42" y1="240" x2="210" y2="240" stroke="#8a8480"/>
+    <text x="38" y="243" text-anchor="end" class="sm">60</text>
+    <text x="38" y="143" text-anchor="end" class="sm">75</text>
+    <text x="38" y="46" text-anchor="end" class="sm">90</text>
+    <line x1="40" y1="240" x2="42" y2="240" stroke="#4a4540"/>
+    <line x1="40" y1="143" x2="42" y2="143" stroke="#4a4540"/>
+    <line x1="40" y1="46" x2="42" y2="46" stroke="#4a4540"/>
+    <!-- y = 240 - (v-60)*6.47 (range 60–90 → 194px) -->
+    <!-- 66→201.2, 68→188.3, 67→194.8, 70→175.4, 72→162.4, 71→168.9, 73→155.9, 75→142.9, 74→149.4, 76→136.5, 78→123.5, 77→130.0, 80→110.6, 82→97.6, 81→104.1, 83→91.1, 85→78.2, 84→84.6 -->
+    <polyline points="50,201.2 55.4,188.3 60.8,194.8 66.2,175.4 71.6,162.4 77,168.9 82.4,155.9 87.8,142.9 93.2,149.4 98.6,136.5 104,123.5 109.4,130.0 114.8,110.6 120.2,97.6 125.6,104.1 131,91.1 136.4,78.2 141.8,84.6 147.2,97.6 152.6,110.6 158,123.5 163.4,130.0 168.8,142.9 174.2,155.9 179.6,162.4 185,175.4 190.4,181.9 195.8,168.9 201.2,188.3 206,194.8"
+              fill="none" stroke="#2a1a0e" stroke-width="1.4"/>
+    <!-- markers for the 70 and 80 days -->
+    <circle cx="66.2" cy="175.4" r="3" fill="#2a1a0e"/>
+    <circle cx="114.8" cy="110.6" r="3" fill="#2a1a0e"/>
+    <text x="66.2" y="170" text-anchor="middle" class="sm">70</text>
+    <text x="114.8" y="105" text-anchor="middle" class="sm">80</text>
+    <text x="60" y="280" class="sm">Day at 70°F: position y = 175</text>
+    <text x="60" y="294" class="sm">Day at 80°F: position y = 110</text>
+    <text x="60" y="308" class="lb">y-range is a design choice</text>
+    <rect x="60" y="318" width="100" height="14" fill="none" stroke="#2a1a0e" stroke-width="1"/>
+    <text x="110" y="328" text-anchor="middle" class="verdict-ok">honest</text>
+  </g>
+
+  <!-- footer caption -->
+  <text x="350" y="404" text-anchor="middle" class="cap">Left amplifies the 70:80 ratio by a factor of three. Center fixes the violation by zero-basing; right escapes it by changing channel.</text>
+  <text x="350" y="420" text-anchor="middle" class="cap">When the channel is area, the baseline must be zero. When the channel is position, the y-range is a design decision.</text>
+</svg>

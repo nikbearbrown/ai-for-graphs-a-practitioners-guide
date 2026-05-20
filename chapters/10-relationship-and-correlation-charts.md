@@ -15,7 +15,8 @@ Alberto Cairo's frame is specific: a scatterplot showing strong correlation, wit
 
 The fix is short. Add a text block near the trend line: "Correlation does not imply causation. These variables are associated; the causal mechanism is not established by this chart." The caveat does not weaken the chart. It completes it. The reader now knows what is and is not being claimed.
 
-<!-- → [FIGURE: Two identical scatterplots side by side. Same 170-country education-index vs. life-expectancy dataset, same OLS trend line, same r = 0.79 annotation. Left: no causation caveat — the chart invites the causal inference. Right: a visible callout box near the trend line reads "Correlation does not imply causation. These variables are associated; the causal mechanism is not established by this chart." Caption: "Same chart. Left invites an inference the data cannot support. Right completes the claim. The caveat is not decoration — it is the difference between a chart that misleads and one that informs."] -->
+![Two identical scatterplots of education index vs life expectancy across 170 countries, same OLS trend line and r = 0.79. The left panel has no caveat; the right panel adds a visible callout reading "Correlation does not imply causation; these variables are associated, the causal mechanism is not established by this chart."](../images/10-relationship-and-correlation-charts-fig-01.png)
+*Figure 10.1 — Same chart, same r. The left invites the causal inference the data cannot support; the right closes the gap.*
 
 This chapter is about the family of relationship charts and the design responsibilities that come with them. The scatterplot is the canonical form. Bubble charts, connected scatterplots, heatmaps, and parallel coordinates are extensions for specific analytical situations. Each form has its own channel rules, its own failure modes, and its own version of the ethical obligation Cairo names.
 
@@ -31,7 +32,8 @@ The OLS regression line is the standard addition. It summarizes the linear relat
 
 The scatterplot's strength is the cloud shape. Not just the trend line — the whole shape of the scatter. A linear cloud and a curved cloud have the same r if the curve is symmetric; they have different implications for the relationship. A cloud with a consistent band width is homoscedastic; a fan-shaped cloud where variance increases with x is heteroscedastic. An outlier ten standard deviations from the trend line may be a data error or the most important observation. None of these is visible in a summary statistic. The scatterplot shows them all.
 
-<!-- → [FIGURE: Four small scatterplot panels, each with the same r ≈ 0.7 annotated. Panel 1: linear cloud — what the trend line correctly summarizes. Panel 2: curved (quadratic) cloud — r = 0.7 is technically correct but the relationship is non-linear; the linear trend line misrepresents it. Panel 3: fan-shaped cloud (heteroscedastic) — r = 0.7 but variance increases with x; the model is unstable at high x. Panel 4: linear cloud with one extreme outlier — r = 0.7 is dominated by the outlier; removing it gives r ≈ 0.3. Caption: "The same r = 0.7 can describe any of these clouds. The number summarizes; the chart shows. Always look at the cloud, not just the statistic."] -->
+![Four small scatterplot panels each annotated r ≈ 0.7: a linear cloud, a quadratic (curved) cloud, a fan-shaped heteroscedastic cloud, and a linear cloud whose r is dominated by a single extreme outlier.](../images/10-relationship-and-correlation-charts-fig-02.png)
+*Figure 10.2 — The same r ≈ 0.7 fits all four. The number summarises; the cloud shows. Always look at the cloud.*
 
 ---
 
@@ -51,7 +53,8 @@ The right strategy depends on what the reader needs to see. If individual points
 
 These strategies belong in the "Constrain it" block of the Claude Code prompt. The default scatterplot will overplot on dense data. Specify: "use alpha transparency 0.2" or "use hexagonal 2D binning with d3.hexbin" or "jitter x-positions by up to 0.5 units." Without explicit instruction, Claude Code renders the default, and the default for large n is a black mass.
 
-<!-- → [FIGURE: Four-panel comparison using the same 10,000-point dataset. Panel 1: full opacity — dense region is a solid black mass, cloud shape invisible. Panel 2: alpha transparency 0.15 — cloud shape visible, individual outliers preserved, density gradient clear. Panel 3: jittered — useful only if the data had discrete clustering (this panel works best with a discrete-variable dataset). Panel 4: hexagonal 2D binning — density shown as luminance gradient, individual points lost, useful when the distribution shape is the question. Caption below each panel names the strategy, what it reveals, and what it hides.] -->
+![Four panels of the same large scatterplot: full opacity producing a black mass, alpha transparency at 0.15 revealing the cloud shape, a jittered grid showing per-cell counts for discrete data, and hexagonal 2D binning showing density as luminance.](../images/10-relationship-and-correlation-charts-fig-03.png)
+*Figure 10.3 — Four overplotting strategies. The right one depends on what the reader needs to see.*
 
 ---
 
@@ -69,7 +72,8 @@ If you scale the bubble's **area** linearly with the value, a value that doubles
 
 There is no way to eliminate Stevens' compression entirely — it is a fact of human perception, not a chart design choice. But the radius encoding compounds it with an avoidable squared distortion. Area encoding removes that compounding and leaves only the perceptual distortion that cannot be designed away.
 
-<!-- → [FIGURE: Two bubble pairs side by side, each showing a small bubble (value 100) and a large bubble (value 200). Left pair: radius-linear encoding. Small bubble radius = 10px; large bubble radius = 20px. Area ratio = 4:1. Stevens' perceived ratio ≈ 2.6:1. Three annotated numbers: "Data: 2×. Area: 4×. Perceived: 2.6×. None match." Right pair: area-linear encoding (d3.scaleSqrt). Small bubble area = 100 units; large bubble area = 200 units. Radius ratio ≈ 1.41:1. Stevens' perceived ratio ≈ 1.6:1. Three annotated numbers: "Data: 2×. Area: 2×. Perceived: 1.6×. Two match." Caption: "Radius encoding makes a bad situation worse. Area encoding makes it as good as human perception allows."] -->
+![Two pairs of bubbles, each comparing value 100 to value 200. The left pair uses radius-linear encoding (data 2×, rendered area 4×, perceived ≈ 2.6×). The right pair uses area-linear encoding via d3.scaleSqrt (data 2×, rendered area 2×, perceived ≈ 1.6×).](../images/10-relationship-and-correlation-charts-fig-04.png)
+*Figure 10.4 — Radius encoding compounds Stevens' law with an avoidable squared distortion. Area encoding via d3.scaleSqrt is as good as human perception allows.*
 
 The D3 implementation is specific: `d3.scaleSqrt` maps the value to the radius such that the area is proportional to the value. The function applies the square root to the input (because radius = sqrt(area/π), up to a constant), producing a radius that gives the right area. `d3.scaleLinear` for bubble radius is the common error; it produces radius-linear encoding, area-quadratic distortion, and a chart that visually amplifies large values far beyond what the data supports.
 
@@ -102,7 +106,8 @@ The most common heatmap error is using a categorical or rainbow color scale for 
 
 The second design decision is sort order. For categorical axes, the default is often alphabetical or source-file order — usually wrong. Sort rows and columns to reveal structure: by maximum value (which row has the highest intensity overall?), by hierarchical clustering (which rows are most similar to each other?), or by a domain-specific order the reader expects. The heatmap's visual pattern is highly dependent on ordering; the right order makes clusters visible, the wrong order hides them.
 
-<!-- → [FIGURE: Two heatmaps side by side, same dataset (8 regions × 6 sectors, luminance = adoption rate). Left: alphabetical row and column order — no visible pattern, cells appear random. Right: rows sorted by maximum value (highest-adoption region at top), columns sorted by average value across regions (highest-adoption sector at left) — a bright upper-left cluster is immediately visible, showing that certain high-adoption regions concentrate in specific sectors. Caption: "Same data, two orderings. Left hides the pattern. Right reveals it. Sort order is a design decision, not a default."] -->
+![Two heatmaps of the same eight-region by six-sector adoption matrix. The left panel uses alphabetical ordering and shows no pattern. The right panel sorts rows by maximum value and columns by mean, surfacing a high-adoption cluster in the upper left.](../images/10-relationship-and-correlation-charts-fig-05.png)
+*Figure 10.5 — Same data, two orderings. Sort order is a design decision, not a default.*
 
 ---
 
@@ -120,7 +125,8 @@ This limitation is manageable when the chart is interactive — the reader can d
 
 For Claude Code work: specify the axis order in the prompt (name the variables in the order that makes the most important pairwise relationships adjacent) and include axis brushing in the interaction requirements. A static parallel coordinates chart without brushing is often outperformed by a matrix of pairwise scatterplots.
 
-<!-- → [FIGURE: Two parallel coordinates charts, same dataset (six quantitative variables, 200 observations). Left: original axis order (alphabetical or source-file order) — the polyline patterns look tangled with no clear structure. Right: reordered axes placing the two most correlated variable pairs adjacent — two clear clusters emerge, visible as distinct bands of parallel lines. Annotation between the panels: "Axis order 1 hides the clusters. Axis order 2 reveals them. Same data. 720 possible orderings. This is Munzner's axis-order-dependence problem." Annotation on the right panel: "These two orderings were selected by placing the highest-r pairs adjacent."] -->
+![Two parallel-coordinates charts of the same six-variable, 200-observation dataset. The left axis order (alphabetical) shows a tangled set of polylines; the right ordering places the most correlated variable pairs adjacent and resolves into two clean clusters of parallel bands.](../images/10-relationship-and-correlation-charts-fig-06.png)
+*Figure 10.6 — Same data, two axis orders. Munzner's axis-order-dependence problem made concrete: 6! = 720 orderings, each making different relationships visible.*
 
 ---
 
@@ -339,6 +345,66 @@ overplotting addressed, color scale appropriate for heatmaps.
 - **Munzner, Tamara. (2014).** *Visualization Analysis and Design.* CRC Press. The section on parallel coordinates and the axis-order-dependence problem.
 - **Cleveland, William S., and Robert McGill. (1984).** "Graphical Perception." *Journal of the American Statistical Association* 79(387). The accuracy ranking that puts position-along-common-scale at the top — the foundation for why scatterplots use both axes as position channels.
 - **The book's pantry** — `scatterplot.html`, `bubble-chart.html`, `heatmap.html` for working examples of each form.
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 10.1 — With and without the causation caveat
+
+Build a two-panel D3 v7 figure showing the same education-index vs life-expectancy scatterplot rendered twice. Data: 170 synthetic country observations with x ∈ [0.3, 0.95] (education index) and y in years (life expectancy), generated so that Pearson r ≈ 0.79. Channels: x-position is education index (quantitative linear), y-position is life expectancy in years (quantitative linear). Both panels use the same axes, same point cloud, same OLS regression line computed in code, same r-value annotation in the top-right. Left panel: no caveat. Right panel: an inline callout box positioned near the trend line with `--color-ochre` border containing the verbatim text "Correlation ≠ causation. These variables are associated; the causal mechanism is not established by this chart." Include a thin pointer line from the callout to the trend line. Use a low-opacity fill on the dots so the cloud shape is readable. Standalone HTML, D3 7.9.0 from the pinned CDN, inline CSS/JS, accessible (role="img", title, desc), tooltips on hover, ResizeObserver redraw.
+
+> Reference implementation: `d3/10-relationship-and-correlation-charts-fig-01.html`
+
+---
+
+### Figure 10.2 — Same r ≈ 0.7, four very different clouds
+
+Build a four-panel D3 v7 figure with one scatterplot per panel, generated so all four share Pearson r ≈ 0.7. Panel 1: linear cloud (additive noise around y = 0.2 + 0.7x). Panel 2: curved/quadratic cloud (inverted parabola producing the same r as the linear panel). Panel 3: fan-shaped heteroscedastic cloud (variance grows with x). Panel 4: a tight low-r cluster plus one extreme outlier in the upper-right that drags r up to 0.7; render that point with `var(--color-red)` and radius 5. All panels share the same [0,1] x and y domains, same axis style, the same OLS trend line rendered through each cloud, and a Pearson r badge in the top-right corner of each (computed from the actual data). Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver, tooltips. Use a single seeded RNG so the data is deterministic across renders.
+
+> Reference implementation: `d3/10-relationship-and-correlation-charts-fig-02.html`
+
+---
+
+### Figure 10.3 — Four overplotting strategies
+
+Build a four-panel D3 v7 figure rendering the same overplotting problem four ways. Generate ~5,000 points from a Gaussian-along-a-line distribution shared by panels 1, 2, and 4; generate a separate ~2,000-point integer-valued dataset for panel 3. Panel 1: full-opacity dots filled with `--color-ink`. Panel 2: same continuous dataset rendered with fill-opacity 0.15. Panel 3: discrete-integer dataset with x and y in {1..5}; jitter each point uniformly by ±0.3. Panel 4: same continuous dataset rendered as a hexagonal 2D bin grid (compute bin counts with a simple square-grid count and draw flat-top hexagon paths; do not depend on the `d3-hexbin` plugin). Color the hex cells with `d3.scaleSequential` interpolating between `#F0EBE3` and `var(--color-ink)`. All four panels share the same axis domains where applicable. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver.
+
+> Reference implementation: `d3/10-relationship-and-correlation-charts-fig-03.html`
+
+---
+
+### Figure 10.4 — Bubble encoding: radius vs area
+
+Build a two-panel D3 v7 figure comparing radius-linear and area-linear bubble encoding for the same value pair {100, 200}. Left panel: radius scale created with `d3.scaleLinear().domain([0, 200]).range([0, 60])` — this is the deliberately wrong panel that demonstrates the common error. Right panel: radius scale created with `d3.scaleSqrt().domain([0, 200]).range([0, 60])` — the correct encoding. Each panel renders two filled circles at the chosen radii, labels them with their value and pixel radius, and shows a verdict block below the chart with three lines: the data ratio (2×), the rendered area ratio, and the Stevens-perceived ratio (using exponent 0.7). The wrong panel's verdict numbers should use `var(--color-red)`; the correct panel's verdict should use `var(--color-ink)`. Standalone HTML, D3 v7, inline CSS/JS, accessible (role="img", aria-label per circle), ResizeObserver.
+
+> Reference implementation: `d3/10-relationship-and-correlation-charts-fig-04.html`
+
+---
+
+### Figure 10.5 — Heatmap sort order
+
+Build a two-panel D3 v7 figure rendering the same 8-region × 6-sector adoption-rate matrix twice. Data: hard-coded 0–100 adoption values for eight regions (Andes, Baltics, Cascadia, Deccan, Ebro, Frisia, Galicia, Hokkaido) across six sectors (S1..S6). Color scale: `d3.scaleSequential` interpolating between `#F0EBE3` and `var(--color-ink)` (sequential luminance, not categorical hue). Left panel: rows and columns in alphabetical order. Right panel: rows sorted descending by row maximum, columns sorted descending by column mean across regions; a `var(--color-ochre)` 2-pixel rectangle highlights the upper-left high-adoption cluster. Both panels share the same color scale. Each cell is interactive: hover shows a tooltip with region · sector · adoption %, focus ring on keyboard navigation. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver.
+
+> Reference implementation: `d3/10-relationship-and-correlation-charts-fig-05.html`
+
+---
+
+### Figure 10.6 — Parallel coordinates: axis-order dependence
+
+Build a two-panel D3 v7 parallel-coordinates figure of the same 200-observation, six-variable dataset (variables A, B, C, D, E, F). Generate the data with a seeded RNG from two latent clusters of 100 observations each — cluster 1 high on A, C, E and low on B, D; cluster 2 reversed. Left panel: axes in alphabetical order A · B · C · D · E · F, all polylines stroked `var(--color-ink)` at opacity 0.35 — the tangle. Right panel: axes reordered A · C · E · F · D · B so the highest-r pairs are adjacent; stroke cluster 1 in `var(--color-ink)` and cluster 2 in `var(--color-red)` to make the two bands obvious. Use `d3.scalePoint` for axis x-positions and one `d3.scaleLinear` per axis (domain 0..1). Hover on any polyline thickens it to 2px and shows a tooltip listing all six values. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver.
+
+> Reference implementation: `d3/10-relationship-and-correlation-charts-fig-06.html`
 
 ---
 

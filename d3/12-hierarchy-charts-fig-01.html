@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 12.1 — Treemap vs tree diagram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 420px; }
+  .leaf { stroke: var(--color-white); stroke-width: 1.2; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .tm-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-white); pointer-events: none; }
+  .tm-label-dark { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); pointer-events: none; }
+  .node circle { stroke: var(--color-white); stroke-width: 1.2; }
+  .node text { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); }
+  .link { fill: none; stroke: var(--color-secondary); stroke-opacity: 0.6; stroke-width: 1; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 100%; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 12.1 — Treemap vs tree diagram</h1>
+<p class="subtitle">Same government-budget hierarchy. Treemap answers proportion; tree diagram answers structure. Neither answers both.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Treemap — proportions</div>
+    <div class="panel-sub">Area of each rectangle is proportional to budget.</div>
+    <div id="chartTreemap" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Tree diagram — structure</div>
+    <div class="panel-sub">Every node the same size. Reporting lines visible.</div>
+    <div id="chartTree" class="chart"></div>
+  </div>
+</div>
+<p class="caption">Choose the question first. Proportions point to the treemap; reporting structure points to the tree diagram.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const budgetData = {
+  name: 'Secretary',
+  children: [
+    { name: 'Health', children: [
+      { name: 'Hospitals',  children: [{ name: 'Staff', value: 12 }, { name: 'Equipment', value: 8 }] },
+      { name: 'Prevention', children: [{ name: 'Programs', value: 6 }, { name: 'Outreach',  value: 4 }] },
+      { name: 'Research',   children: [{ name: 'Grants',  value: 5 }, { name: 'Trials',    value: 3 }] }
+    ]},
+    { name: 'Education', children: [
+      { name: 'K-12',       children: [{ name: 'Schools',  value: 10 }, { name: 'Teachers', value: 6 }] },
+      { name: 'Higher',     children: [{ name: 'Universities', value: 5 }, { name: 'Grants', value: 3 }] },
+      { name: 'Vocational', children: [{ name: 'Training', value: 4 }] }
+    ]},
+    { name: 'Defense', children: [
+      { name: 'Personnel',  children: [{ name: 'Salaries', value: 12 }] },
+      { name: 'Equipment',  children: [{ name: 'Procurement', value: 8 }] }
+    ]},
+    { name: 'Transport', children: [
+      { name: 'Highways',   children: [{ name: 'Maintenance', value: 8 }] },
+      { name: 'Rail',       children: [{ name: 'Operations',  value: 6 }] }
+    ]}
+  ]
+};
+
+const colorByDept = {
+  'Health':     'var(--color-ink)',
+  'Education':  '#404040',
+  'Defense':    '#787878',
+  'Transport':  '#ADADAD'
+};
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function deptOf(node) { let n = node; while (n.depth > 1) n = n.parent; return n.data.name; }
+
+function drawTreemap() {
+  const selector = '#chartTreemap';
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 480;
+  const totalHeight = container.clientHeight || 420;
+  const margin = { top: 8, right: 8, bottom: 8, left: 8 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'tm-t tm-d');
+  svg.append('title').attr('id', 'tm-t').text('Government budget treemap');
+  svg.append('desc').attr('id', 'tm-d').text('Nested rectangles, area proportional to budget, three levels deep, four top-level departments.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const root = d3.hierarchy(budgetData).sum(d => d.value || 0).sort((a, b) => b.value - a.value);
+  d3.treemap().tile(d3.treemapSquarify).size([chartWidth, chartHeight]).paddingOuter(2).paddingInner(1)(root);
+
+  const leaves = root.descendants().filter(d => d.depth >= 1 && d.depth <= 3);
+
+  gChart.selectAll('.leaf')
+    .data(leaves)
+    .join('rect')
+      .attr('class', 'leaf')
+      .attr('x', d => d.x0).attr('y', d => d.y0)
+      .attr('width',  d => d.x1 - d.x0)
+      .attr('height', d => d.y1 - d.y0)
+      .attr('fill', d => colorByDept[deptOf(d)])
+      .attr('fill-opacity', d => d.depth === 1 ? 1 : d.depth === 2 ? 0.85 : 0.7)
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.ancestors().reverse().slice(1).map(a => a.data.name).join(' / ')}: ${d.value}`)
+      .on('mouseover', (event, d) => showTip(event, `<strong>${d.data.name}</strong>: ${d.value}`))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
+
+  // Labels — only on rectangles wide enough to fit
+  gChart.selectAll('.tm-label')
+    .data(leaves.filter(d => d.depth <= 2 && (d.x1 - d.x0) > 60 && (d.y1 - d.y0) > 22))
+    .join('text')
+      .attr('class', 'tm-label')
+      .attr('x', d => d.x0 + 6).attr('y', d => d.y0 + 16)
+      .text(d => `${d.data.name} ${d.value}`);
+}
+
+function drawTree() {
+  const selector = '#chartTree';
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 480;
+  const totalHeight = container.clientHeight || 420;
+  const margin = { top: 24, right: 24, bottom: 24, left: 24 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'tr-t tr-d');
+  svg.append('title').attr('id', 'tr-t').text('Government budget tree diagram');
+  svg.append('desc').attr('id', 'tr-d').text('Top-to-bottom tree, secretary at root, four department directors, programs, and line items.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const root = d3.hierarchy(budgetData);
+  d3.tree().size([chartWidth, chartHeight]).separation((a, b) => a.parent === b.parent ? 1 : 1.4)(root);
+
+  gChart.selectAll('.link')
+    .data(root.links())
+    .join('path')
+      .attr('class', 'link')
+      .attr('d', d3.linkVertical().x(d => d.x).y(d => d.y));
+
+  const nodes = gChart.selectAll('.node')
+    .data(root.descendants())
+    .join('g')
+      .attr('class', 'node')
+      .attr('transform', d => `translate(${d.x},${d.y})`);
+
+  nodes.append('circle')
+    .attr('r', d => d.depth === 0 ? 6 : d.depth === 1 ? 5 : d.depth === 2 ? 4 : 3)
+    .attr('fill', d => d.depth === 0 ? 'var(--color-red)' : d.depth === 1 ? 'var(--color-ink)' : '#787878')
+    .attr('tabindex', 0)
+    .attr('aria-label', d => d.data.name)
+    .on('mouseover', (event, d) => showTip(event, `<strong>${d.data.name}</strong>${d.children ? ` — ${d.children.length} children` : ''}`))
+    .on('mousemove', moveTip)
+    .on('mouseout', hideTip);
+
+  // Only label level 0 and level 1 to keep the chart readable
+  nodes.filter(d => d.depth <= 1).append('text')
+    .attr('dy', d => d.depth === 0 ? -10 : -8)
+    .attr('text-anchor', 'middle')
+    .text(d => d.data.name);
+}
+
+function draw() {
+  drawTreemap();
+  drawTree();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartTreemap'));
+ro.observe(document.getElementById('chartTree'));
+</script>
+</body>
+</html>

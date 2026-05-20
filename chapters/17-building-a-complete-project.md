@@ -13,7 +13,8 @@ What this chapter does is run all of that together, in sequence, on a real proje
 
 The dataset is UNHCR forced displacement figures, 2020 to 2024. The audience is public-policy readers who make decisions about where to focus humanitarian aid. The question is: what does the data actually say, and how do you show it?
 
-<!-- → [FIGURE: The five-phase pipeline as a horizontal flow diagram. Five labeled boxes: Phase A (Audit) → Phase B (Schema) → Phase C (Generate) → Phase D (Verify) → Phase E (Handoff). Each box contains two lines: what the phase produces (e.g., "Three framed questions + data audit") and what chapters it draws from (e.g., "Chapters 3 and 4"). Arrows between boxes. A sixth element at the end: "Published artifact." Above the flow, a label: "The MBTA model: start with the question; iterate on working code; publish with provenance." Caption: "Each phase is the output of chapters you have already read. This chapter runs them in sequence."] -->
+![A horizontal flow diagram of the five phases — Phase A Audit, Phase B Schema, Phase C Generate, Phase D Verify, Phase E Handoff — connected by arrows into a sixth element labelled Published artifact. Each phase box names its deliverable and the chapters it draws on. A dashed loop returns from the artifact to the start, labelled with Cairo's purpose test.](../images/17-building-a-complete-project-fig-01.png)
+*Figure 17.1 — The five-phase pipeline. Each phase is the output of chapters you have already read; the loop closes when Cairo's purpose test passes.*
 
 ---
 
@@ -51,7 +52,8 @@ The data audit also identifies limits. The dataset has origin-destination pair c
 
 This is Phase A. It produces: three framed questions, a data audit, and a list of what the data can and cannot support. Nothing is drawn yet.
 
-<!-- → [FIGURE: The Phase A deliverable visualized as a structured document. Three panels: (1) "Three questions" — the three reader-focused questions listed as labeled cards, each with the audience named and the decision it informs. (2) "Data audit" — a column-type classification of the UNHCR dataset: country_of_origin (categorical), country_of_asylum (categorical), year (temporal), type (categorical), count (quantitative). Each column type mapped to a color-coded badge. (3) "Gaps identified" — one item: "Origin-destination flow map requires country coordinates not in the dataset." Caption: "Phase A produces documentation, not charts. The questions, the audit, and the gaps — in writing — before anything is drawn."] -->
+![A three-panel document. Panel one lists three reader-focused questions about refugee origins, destinations, and composition. Panel two is a column-type audit of the UNHCR dataset with categorical, temporal, and quantitative badges, plus the relationships the data supports. Panel three names the identified gap — a flow map requested by Q1 and Q2 that the dataset cannot directly support without a country-coordinates join.](../images/17-building-a-complete-project-fig-02.png)
+*Figure 17.2 — Phase A produces documentation, not charts. The questions, the audit, and the gaps — in writing — before anything is drawn.*
 
 ---
 
@@ -69,7 +71,8 @@ The split disciplines this. `CLAUDE.md` holds coding rules that apply to every s
 
 The practical rule: if the session involves any visual decision — "should this line be this color?" or "what margin should I use?" — load both files. If the session is purely about data processing, scale construction, or layout logic, load only `CLAUDE.md`.
 
-<!-- → [FIGURE: A session-loading decision diagram. Two columns: left "Every session" (always load CLAUDE.md), right "Visual-decision sessions only" (additionally load DESIGN.md). The left column lists: D3 version, encoding rules (zero baseline, scaleSqrt, equal-area projection), naming conventions, accessibility defaults. The right column lists: color palette, typography, spacing scale, dark-mode rules, responsive breakpoints. A dotted boundary between columns labeled: "The instruction budget split — ~60 lines reliably retained per file; combined loading risks silent constraint-dropping at the bottom of a long file." Caption: "Split the files because Claude Code's instruction budget is finite. Load only what the session needs."] -->
+![A two-column session-loading diagram. The left column lists rules that load every session — D3 version, zero-baseline rule, scaleSqrt, equal-area projection, naming conventions, accessibility defaults, event signature, ResizeObserver pattern. The right column lists visual rules that load only on visual-decision sessions — colour palette, typography, spacing scale, dark-mode inversion, breakpoints, animation durations, tokens, state system. A dotted boundary between them labels the instruction-budget reason.](../images/17-building-a-complete-project-fig-03.png)
+*Figure 17.3 — Split the files because the instruction budget is finite. Load only what the session needs.*
 
 ### PROJECT.md: the decision record
 
@@ -123,7 +126,8 @@ Channel decomposition:
 
 This chart is the simplest of the three; Claude Code typically produces a good first output without iteration. Verify that the two segments sum to 100% and that the color hues match the `DESIGN.md` categorical palette.
 
-<!-- → [FIGURE: Three panels showing the Phase C deliverables side by side. Panel 1: the heatmap of top refugee-origin countries by year (2020–2024), countries on y-axis sorted by total count, years on x-axis, sequential luminance encoding count. Panel 2: the horizontal bar chart of top destination countries, sorted descending, zero baseline, direct value labels. Panel 3: the stacked bar showing internal vs. international proportion with labeled percentage segments. Below each panel: the question it answers (Q1, Q2, Q3), the chart family (heatmap, comparison, part-to-whole), and the primary channel (color luminance, position-from-baseline, length). Caption: "Three questions, three charts, three chart families. The sequence establishes context (Q1), answers the primary question (Q2), and adds a compositional dimension (Q3)."] -->
+![Three panels side by side. Panel one is a sequential-luminance heatmap of the top refugee-origin countries from 2020 to 2024, sorted by 2024 total. Panel two is a horizontal bar chart of the top destination countries, sorted descending from a zero baseline with direct value labels in millions. Panel three is a two-segment stacked bar showing internal versus international displacement with percentages inside each segment. Each panel is labelled with its question, chart family, and primary channel.](../images/17-building-a-complete-project-fig-04.png)
+*Figure 17.4 — Three questions, three charts, three families. The sequence establishes context, answers the primary question, and adds the compositional dimension.*
 
 ---
 
@@ -162,7 +166,8 @@ The project-level handoff includes the `PROJECT.md` with the full decision recor
 
 This last point is more important than it appears. A visualization that cannot be reproduced is a visualization that becomes stale without remedy. The README ensures that when the UNHCR releases 2025 figures, the project can be updated in a day — not rebuilt from scratch.
 
-<!-- → [FIGURE: The Phase E deliverable as a publication-packaged chart. One of the three project charts (the horizontal bar of destination countries) shown inside a publication container: title above, subtitle below, the chart, then a row of three text elements: source citation ("Data: UNHCR Refugee Statistics 2024"), methodology note ("Counts are point-in-time totals as of December 31 of each year"), and accessibility statement ("Alt text and ARIA labels provided; WCAG AA contrast verified"). Below those: a small file-manifest panel showing the project's five deliverable files (chart-01.html, chart-02.html, chart-03.html, CLAUDE.md, PROJECT.md, README.md). Caption: "A published chart is not just the SVG. It is the chart plus the provenance that lets the reader trust it and the README that lets future-you update it."] -->
+![A publication-packaged horizontal bar chart of top refugee destination countries in 2024, sitting inside an outer container. Above the chart sit a title and subtitle in EB Garamond. Below the chart sit three provenance blocks — source, methodology, and accessibility — followed by a project manifest panel naming the deliverable files: three chart HTMLs, CLAUDE.md, DESIGN.md, PROJECT.md, and README.md.](../images/17-building-a-complete-project-fig-05.png)
+*Figure 17.5 — A published chart is the SVG plus the provenance that lets the reader trust it and the README that lets future-you update it.*
 
 ---
 
@@ -348,6 +353,58 @@ PROJECT.md, README.md, and a publication-ready artifact.
 - **Evergreen, Stephanie. (2019).** *Effective Data Visualization.* The 22-point checklist that Phase D applies.
 - **UNHCR Refugee Statistics.** unhcr.org/refugee-statistics. The dataset used in this chapter's worked example. Publicly available, updated annually.
 - **The book's pantry** — the complete reference set you have used throughout. Every pantry file is a Phase C resource.
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 17.1 — The five-phase pipeline
+
+Build a horizontal flow diagram of the five-phase pipeline. Five labelled boxes laid out left-to-right with arrows between them: Phase A (Audit), Phase B (Schema), Phase C (Generate), Phase D (Verify), Phase E (Handoff). Each box has a dark header bar with the phase name in white, two interior text lines naming the deliverable (e.g. "Three framed questions + data audit"), a hairline, and a source line naming the chapters the phase draws from (e.g. "Chapters 3 & 4"). Below Phase E, an arrow drops to a sixth element labelled "Published artifact" — slightly wider, with two interior lines listing the manifest (three charts, PROJECT.md, README, audit log). A dashed loop curves from the artifact back to Phase A, labelled "if Cairo's purpose test fails → return to the question." Above the flow, a strap line in EB Garamond: "The MBTA model — question, working code, provenance." Hover on a box reveals a tooltip with the phase's detail sentence. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/17-building-a-complete-project-fig-01.html`
+
+---
+
+### Figure 17.2 — Phase A deliverables
+
+Build a three-panel structured document in a 1.1 / 1.1 / 1 grid. Each panel has a dark header bar with white text. Panel 1 ("Three questions") contains three stacked cards, one per question (Origins, Destinations, Composition), each card with a card title, the question text, an audience line, and a decision line. Panel 2 ("Data audit") shows the UNHCR dataset as a column table: five rows, each with a column name (`country_of_origin`, `country_of_asylum`, `year`, `type`, `count`) and a colour-coded badge naming the column type (categorical = mid-grey, temporal = darker grey, quantitative = ink). Below the table, a "Relationships supported" block lists comparison, change over time, part-to-whole, and spatial. Panel 3 ("Gaps identified") contains an ochre-bordered card describing the flow-map gap and a separate "Honest move" block explaining the scope decision. Standalone HTML, D3 v7 used for data binding, inline CSS/JS, accessible, responsive — single column on narrow viewports.
+
+> Reference implementation: `d3/17-building-a-complete-project-fig-02.html`
+
+---
+
+### Figure 17.3 — The session-loading split
+
+Build a two-column comparison diagram showing which file loads in which session. Left column header: "Every session · CLAUDE.md"; right column header: "Visual sessions · +DESIGN.md". Each column lists eight rules, each rendered as a list row with a small ink dot, a monospace code chip naming the rule's keyword (e.g. `D3 7.9.0`, `[0, max]`, `d3.scaleSqrt`, `geoEqualEarth`), and a prose explanation in Inter. The left column lists coding rules; the right column lists visual rules. Between columns, a dotted vertical divider with a rotated italic label "load on demand". A footer eyebrow under each column explains the consequence of mis-loading. Below the two columns, a full-width strap block in EB Garamond explains the instruction budget: roughly 60 lines reliably retained per file, combined loading drops the bottom. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive — stacks vertically below 720 px.
+
+> Reference implementation: `d3/17-building-a-complete-project-fig-03.html`
+
+---
+
+### Figure 17.4 — Phase C deliverables
+
+Build a three-panel figure rendering the three project charts side by side. Each panel has a dark header naming the question and family, a chart body, and a footer block listing Family, Channel, Sort, and a one-line summary. Panel 1 (Q1 · Origins): sequential-luminance heatmap of six refugee-origin countries (Syria, Ukraine, Afghanistan, Sudan, South Sudan, Myanmar) across years 2020–2024; countries on y-axis, years on x-axis, refugee count interpolated from `#F0EBE3` to `var(--color-ink)`. Panel 2 (Q2 · Destinations): horizontal bar chart of six destination countries (Turkey 3.6M, Iran 3.4M, Germany 2.5M, Pakistan 1.7M, Uganda 1.5M, Poland 1.0M), sorted descending, zero baseline, value labels in JetBrains Mono at the bar ends. Panel 3 (Q3 · Composition): single horizontal stacked bar with two segments (60% Internal, 40% International) with EB Garamond labels inside each segment and a small legend below. Each panel responsive, with tooltips on hover; grid collapses to one column below 900 px. Standalone HTML, D3 v7, inline CSS/JS, accessible.
+
+> Reference implementation: `d3/17-building-a-complete-project-fig-04.html`
+
+---
+
+### Figure 17.5 — The published artifact
+
+Build a publication-packaged chart. The outer element is a bordered "publication container" with an italic eyebrow label peeking over its top edge. Inside: an EB Garamond title ("Where the world's refugees are going"), an EB Garamond subtitle in secondary grey, a horizontal bar chart of six refugee destination countries with value labels in JetBrains Mono at the bar ends. Below the chart, a horizontal divider, then a three-column provenance row with eyebrow labels (SOURCE, METHODOLOGY, ACCESSIBILITY) and short prose blocks underneath. Below the provenance row, a "Project manifest" panel with a soft border-tinted background and a single JetBrains Mono line listing the deliverable files: `chart-01.html · chart-02.html · chart-03.html · CLAUDE.md · DESIGN.md · PROJECT.md · README.md`. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive — provenance row collapses to one column below 720 px.
+
+> Reference implementation: `d3/17-building-a-complete-project-fig-05.html`
 
 ---
 

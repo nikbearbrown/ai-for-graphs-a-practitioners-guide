@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 14.3 — Area-size distortion at a single value</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; background: var(--color-white); }
+  #chart { width: 100%; height: 460px; }
+  .country { fill: #8A8480; stroke: var(--color-white); stroke-width: 0.4; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .country:hover { opacity: 0.85; }
+  .annotation { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .ann-line { stroke: var(--color-ink); stroke-width: 1; stroke-dasharray: 4 3; fill: none; }
+  .ochre-line { stroke: var(--color-ochre); }
+  .legend-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 14.3 — Every country at the same value</h1>
+<p class="subtitle">A choropleth where every polygon is filled with the identical mid-range luminance. The data signal is constant. The visual signal still moves to whichever country has the most area.</p>
+<div class="panel">
+  <div id="chart"></div>
+</div>
+<p class="caption">Area is preattentive — processed before color. The choropleth's encoding cannot override what the eye reads first.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Inline fallback: minimal simplified countries (lon/lat) for offline render.
+const FALLBACK_WORLD = {
+  type: 'FeatureCollection',
+  features: [
+    { type: 'Feature', properties: { name: 'Russia' },     geometry: { type: 'Polygon', coordinates: [[[30,50],[180,55],[180,75],[30,75],[30,50]]] } },
+    { type: 'Feature', properties: { name: 'Canada' },     geometry: { type: 'Polygon', coordinates: [[[-140,50],[-60,50],[-55,72],[-140,72],[-140,50]]] } },
+    { type: 'Feature', properties: { name: 'USA' },        geometry: { type: 'Polygon', coordinates: [[[-125,30],[-75,30],[-72,48],[-125,48],[-125,30]]] } },
+    { type: 'Feature', properties: { name: 'Greenland' },  geometry: { type: 'Polygon', coordinates: [[[-50,60],[-25,60],[-20,82],[-55,82],[-50,60]]] } },
+    { type: 'Feature', properties: { name: 'Africa' },     geometry: { type: 'Polygon', coordinates: [[[-15,-35],[50,-35],[50,30],[-15,30],[-15,-35]]] } },
+    { type: 'Feature', properties: { name: 'Europe' },     geometry: { type: 'Polygon', coordinates: [[[-10,36],[35,36],[35,60],[-10,60],[-10,36]]] } },
+    { type: 'Feature', properties: { name: 'China' },      geometry: { type: 'Polygon', coordinates: [[[75,18],[135,18],[135,50],[75,50],[75,18]]] } },
+    { type: 'Feature', properties: { name: 'India' },      geometry: { type: 'Polygon', coordinates: [[[68,8],[90,8],[90,32],[68,32],[68,8]]] } },
+    { type: 'Feature', properties: { name: 'Brazil' },     geometry: { type: 'Polygon', coordinates: [[[-70,-30],[-35,-30],[-35,5],[-70,5],[-70,-30]]] } },
+    { type: 'Feature', properties: { name: 'Australia' },  geometry: { type: 'Polygon', coordinates: [[[115,-38],[155,-38],[155,-12],[115,-12],[115,-38]]] } },
+    { type: 'Feature', properties: { name: 'Luxembourg' }, geometry: { type: 'Polygon', coordinates: [[[5.7,49.4],[6.5,49.4],[6.5,50.2],[5.7,50.2],[5.7,49.4]]] } }
+  ]
+};
+
+async function loadWorld() {
+  try {
+    // world-atlas via cdnjs — fetch as TopoJSON then convert.
+    const res = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    if (!res.ok) throw new Error('cdn');
+    const topo = await res.json();
+    // Use a tiny inline topojson feature converter to avoid extra script tag.
+    return toGeoJSON(topo, topo.objects.countries);
+  } catch {
+    return FALLBACK_WORLD;
+  }
+}
+
+// Minimal topojson-feature inverse (handles only what we need).
+function toGeoJSON(topo, obj) {
+  const transform = topo.transform;
+  const arcs = topo.arcs;
+  const t = transform ? transform.translate : [0,0];
+  const s = transform ? transform.scale : [1,1];
+  function decodeArc(arc) {
+    if (!transform) return arc.slice();
+    let x = 0, y = 0;
+    return arc.map(p => { x += p[0]; y += p[1]; return [x * s[0] + t[0], y * s[1] + t[1]]; });
+  }
+  const decodedArcs = arcs.map(decodeArc);
+  function ringToCoords(ring) {
+    const coords = [];
+    ring.forEach(a => {
+      const arc = a < 0 ? decodedArcs[~a].slice().reverse() : decodedArcs[a].slice();
+      if (coords.length) arc.shift();
+      coords.push(...arc);
+    });
+    return coords;
+  }
+  function geomToCoords(geom) {
+    if (geom.type === 'Polygon') return geom.arcs.map(ringToCoords);
+    if (geom.type === 'MultiPolygon') return geom.arcs.map(rings => rings.map(ringToCoords));
+    return null;
+  }
+  const features = obj.geometries.map(geom => ({
+    type: 'Feature',
+    properties: geom.properties || {},
+    geometry: { type: geom.type, coordinates: geomToCoords(geom) }
+  })).filter(f => f.geometry.coordinates);
+  return { type: 'FeatureCollection', features };
+}
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+
+function draw(world) {
+  d3.select('#chart').selectAll('*').remove();
+  const container = document.getElementById('chart');
+  const totalWidth = container.clientWidth || 800;
+  const totalHeight = container.clientHeight || 460;
+
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'chart-title chart-desc');
+  svg.append('title').attr('id', 'chart-title').text('World choropleth with a single shared value');
+  svg.append('desc').attr('id', 'chart-desc').text('Every country filled with the same luminance. The visual story is still dominated by land area because area perception is preattentive.');
+
+  const projection = d3.geoEqualEarth().fitSize([totalWidth - 32, totalHeight - 60], world);
+  const path = d3.geoPath(projection);
+
+  const g = svg.append('g').attr('transform', 'translate(16,16)');
+
+  g.selectAll('.country')
+    .data(world.features)
+    .join('path')
+      .attr('class', 'country')
+      .attr('d', path)
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${(d.properties && d.properties.name) || 'country'}: all values equal`)
+      .on('mouseover', (event, d) => {
+        const name = (d.properties && d.properties.name) || 'country';
+        tooltip.html(`<strong>${name}</strong><br>value: mid-range (same for all)`)
+          .style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+          .transition().duration(150).style('opacity', 1);
+      })
+      .on('mousemove', e => tooltip.style('left', (e.pageX + 12) + 'px').style('top', (e.pageY - 28) + 'px'))
+      .on('mouseout', () => tooltip.transition().duration(100).style('opacity', 0));
+
+  // Annotations — anchor by country name when present in data.
+  const named = {};
+  world.features.forEach(f => { if (f.properties && f.properties.name) named[f.properties.name] = f; });
+
+  function annotateCountry(name, labelText, accent) {
+    const f = named[name]; if (!f) return;
+    const [cx, cy] = projection(d3.geoCentroid(f));
+    g.append('text').attr('class', 'annotation')
+      .attr('x', cx).attr('y', cy - 14)
+      .attr('text-anchor', 'middle')
+      .attr('fill', accent ? 'var(--color-ochre)' : 'var(--color-ink)')
+      .text(labelText);
+  }
+  annotateCountry('Russia', 'Russia · dominant', false);
+  annotateCountry('Canada', 'Canada · dominant', false);
+  annotateCountry('Australia', 'Australia · dominant', false);
+  annotateCountry('Greenland', 'Greenland · small', true);
+  annotateCountry('Luxembourg', 'Luxembourg · invisible', true);
+
+  // Legend
+  const legendG = svg.append('g').attr('transform', `translate(${totalWidth - 220}, ${totalHeight - 36})`);
+  legendG.append('rect').attr('width', 36).attr('height', 12).attr('fill', '#8A8480').attr('stroke', 'var(--color-white)');
+  legendG.append('text').attr('x', 44).attr('y', 10).attr('class', 'legend-label').text('all countries: same value');
+}
+
+loadWorld().then(world => {
+  draw(world);
+  const ro = new ResizeObserver(() => draw(world));
+  ro.observe(document.getElementById('chart'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t01 d01">
+  <title id="t01">Honest vs truncated bar charts — same data, different visual ratio</title>
+  <desc id="d01">Two panels of the same eight cognitive-domain scores. Left panel uses a zero baseline; right panel uses a truncated 20–100 baseline, exaggerating differences.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <!-- LEFT PANEL — HONEST (0–100) -->
+  <text x="32" y="32" class="ti">Honest baseline (y-axis 0–100)</text>
+  <text x="32" y="48" class="sm">true ratio Memory:Embodied ≈ 2.7×</text>
+  <!-- axis -->
+  <line x1="62" y1="60" x2="62" y2="340" stroke="#8a8480" stroke-width="1"/>
+  <line x1="62" y1="340" x2="330" y2="340" stroke="#8a8480" stroke-width="1"/>
+  <!-- y ticks 0,50,100 -->
+  <line x1="60" y1="340" x2="62" y2="340" stroke="#4a4540"/>
+  <text x="56" y="343" text-anchor="end" class="sm">0</text>
+  <line x1="60" y1="200" x2="62" y2="200" stroke="#4a4540"/>
+  <text x="56" y="203" text-anchor="end" class="sm">50</text>
+  <line x1="60" y1="60" x2="62" y2="60" stroke="#4a4540"/>
+  <text x="56" y="63" text-anchor="end" class="sm">100</text>
+  <!-- 8 bars: scale 0–100 → y from 340 to 60 (280 px) -->
+  <!-- data: MR 96, PR 92, LR 82, QA 71, LG 64, MJ 47, EM 42, ET 35 -->
+  <!-- bar width 24, gap 8, x start 72 -->
+  <g>
+    <rect x="72"  y="71.2" width="24" height="268.8" fill="#2a1a0e"/>
+    <rect x="104" y="82.4" width="24" height="257.6" fill="#4a4540"/>
+    <rect x="136" y="110.4" width="24" height="229.6" fill="#4a4540"/>
+    <rect x="168" y="141.2" width="24" height="198.8" fill="#8a8480"/>
+    <rect x="200" y="160.8" width="24" height="179.2" fill="#8a8480"/>
+    <rect x="232" y="208.4" width="24" height="131.6" fill="#c8c4c0"/>
+    <rect x="264" y="222.4" width="24" height="117.6" fill="#c8c4c0"/>
+    <rect x="296" y="242.0" width="24" height="98.0" fill="#c8c4c0"/>
+  </g>
+  <!-- x labels rotated -->
+  <g class="sm">
+    <text x="84"  y="355" text-anchor="end" transform="rotate(-35 84 355)">Memory</text>
+    <text x="116" y="355" text-anchor="end" transform="rotate(-35 116 355)">Pattern</text>
+    <text x="148" y="355" text-anchor="end" transform="rotate(-35 148 355)">Logic</text>
+    <text x="180" y="355" text-anchor="end" transform="rotate(-35 180 355)">Quant</text>
+    <text x="212" y="355" text-anchor="end" transform="rotate(-35 212 355)">Language</text>
+    <text x="244" y="355" text-anchor="end" transform="rotate(-35 244 355)">Moral</text>
+    <text x="276" y="355" text-anchor="end" transform="rotate(-35 276 355)">Empathy</text>
+    <text x="308" y="355" text-anchor="end" transform="rotate(-35 308 355)">Embodied</text>
+  </g>
+  <!-- annotation arrow on left -->
+  <path d="M 84 71 L 84 50 L 308 50 L 308 242" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+  <text x="196" y="44" text-anchor="middle" class="lb">96 vs 35  →  2.7× true</text>
+
+  <!-- divider -->
+  <line x1="350" y1="20" x2="350" y2="400" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT PANEL — TRUNCATED (20–100) -->
+  <text x="370" y="32" class="ti">Truncated baseline (y-axis 20–100)</text>
+  <text x="370" y="48" class="sm">visual ratio Memory:Embodied ≈ 5×</text>
+  <line x1="400" y1="60" x2="400" y2="340" stroke="#8a8480" stroke-width="1"/>
+  <line x1="400" y1="340" x2="670" y2="340" stroke="#8a8480" stroke-width="1"/>
+  <!-- y ticks 20,60,100; scale: 20→340, 100→60 (range 280 px / 80 units = 3.5 px/unit) -->
+  <line x1="398" y1="340" x2="400" y2="340" stroke="#4a4540"/>
+  <text x="394" y="343" text-anchor="end" class="sm">20</text>
+  <line x1="398" y1="200" x2="400" y2="200" stroke="#4a4540"/>
+  <text x="394" y="203" text-anchor="end" class="sm">60</text>
+  <line x1="398" y1="60" x2="400" y2="60" stroke="#4a4540"/>
+  <text x="394" y="63" text-anchor="end" class="sm">100</text>
+  <!-- bars: y = 340 - (val-20)*3.5; height = (val-20)*3.5 -->
+  <g>
+    <rect x="410" y="74"  width="24" height="266" fill="#2a1a0e"/>
+    <rect x="442" y="88"  width="24" height="252" fill="#4a4540"/>
+    <rect x="474" y="123" width="24" height="217" fill="#4a4540"/>
+    <rect x="506" y="161.5" width="24" height="178.5" fill="#8a8480"/>
+    <rect x="538" y="186" width="24" height="154" fill="#8a8480"/>
+    <rect x="570" y="245.5" width="24" height="94.5" fill="#c8c4c0"/>
+    <rect x="602" y="263" width="24" height="77" fill="#c8c4c0"/>
+    <rect x="634" y="287.5" width="24" height="52.5" fill="#c8c4c0"/>
+  </g>
+  <g class="sm">
+    <text x="422" y="355" text-anchor="end" transform="rotate(-35 422 355)">Memory</text>
+    <text x="454" y="355" text-anchor="end" transform="rotate(-35 454 355)">Pattern</text>
+    <text x="486" y="355" text-anchor="end" transform="rotate(-35 486 355)">Logic</text>
+    <text x="518" y="355" text-anchor="end" transform="rotate(-35 518 355)">Quant</text>
+    <text x="550" y="355" text-anchor="end" transform="rotate(-35 550 355)">Language</text>
+    <text x="582" y="355" text-anchor="end" transform="rotate(-35 582 355)">Moral</text>
+    <text x="614" y="355" text-anchor="end" transform="rotate(-35 614 355)">Empathy</text>
+    <text x="646" y="355" text-anchor="end" transform="rotate(-35 646 355)">Embodied</text>
+  </g>
+  <!-- distortion callout -->
+  <path d="M 422 74 L 422 50 L 646 50 L 646 287.5" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+  <text x="534" y="44" text-anchor="middle" class="lb">looks like ≈ 5×</text>
+
+  <!-- caption -->
+  <text x="350" y="395" text-anchor="middle" class="cap">Same data. The truncated baseline makes a 2.7× difference look like a 5× difference.</text>
+</svg>

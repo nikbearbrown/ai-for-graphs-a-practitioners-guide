@@ -10,7 +10,8 @@ Now look at the Inner Suburbs box. There is a cluster of points sitting well abo
 
 This is the central tension of the whole chapter. Every distribution chart is a compression. Some compressions preserve the shape. Others preserve the quartiles. Others preserve the raw values. No single form preserves everything, and the right choice depends on what the reader needs to see and what they are able to read.
 
-<!-- → [IMAGE: the pantry's box-whisker.html rendered in a browser — five box plots side by side for the five residential zones, with an annotation arrow pointing to the Inner Suburbs outlier cluster above the upper whisker. A second annotation asks "bimodal sub-population, or just a long tail?" and notes that the box plot cannot answer. Caption: "The cluster is visible. What it means is not."] -->
+![Five Tukey box plots of household income for the five residential zones, side by side. An annotation arrow points to a cluster of high-income outlier points above the Inner Suburbs upper whisker; a second annotation asks whether the cluster is a bimodal sub-population or a long tail and notes the box plot cannot answer.](../images/09-distribution-charts-fig-01.png)
+*Figure 9.1 — The cluster is visible. What it means is not.*
 
 ---
 
@@ -26,7 +27,8 @@ John Tukey understood this when he designed the box plot in 1977. His goal was a
 
 What it cannot show is shape. This is the limitation the violin plot exists to address.
 
-<!-- → [INFOGRAPHIC: two side-by-side distribution comparisons — left pair shows a normal distribution and a bimodal distribution that have identical five-number summaries (Q1, median, Q3, whiskers all match); their box plots are shown beneath each and are visually indistinguishable. Right pair shows the same two distributions as violin plots, where the bimodal shape is unmistakable. Caption: "Same five-number summary. Different shapes. The box plot cannot tell them apart."] -->
+![Left group: two box plots — one for a normal distribution, one for a bimodal — sharing identical Q1, median, Q3, and whisker extent and rendered visually indistinguishable. Right group: the same two distributions as violin plots, where the bimodal shape shows two clear bulges.](../images/09-distribution-charts-fig-02.png)
+*Figure 9.2 — Same five-number summary. Different shapes. The box plot cannot tell them apart.*
 
 ---
 
@@ -46,7 +48,8 @@ For Claude Code work, the implication is direct: specify the bin width or the se
 
 The practical test for bimodality is to build three histograms at different bin widths — narrow, medium, wide — and ask whether the two peaks survive across all three. A bimodality that appears at narrow bins and vanishes at wider ones is sampling noise. A bimodality that persists across all three bin widths is real, and at that point the histogram form may be less informative than a density-based alternative.
 
-<!-- → [IMAGE: three-panel histogram of the same bimodal income dataset — left panel: very wide bins ($50K intervals, two peaks merge into one broad shape), center panel: Freedman-Diaconis binning (both peaks visible, gap between them legible), right panel: very narrow bins ($1K intervals, noise produces dozens of spurious wiggles). Annotations label each panel with the failure mode (too wide: bimodality hidden / right: structure visible / too narrow: noise amplified). Caption: "Three bin widths. Two of them lie."] -->
+![Three histograms of the same bimodal income dataset. Left panel: $50K bins, where the two peaks merge into a broad shape (bimodality hidden). Middle panel: Freedman–Diaconis binning, where both peaks are visible and the gap between them is legible (structure visible). Right panel: $1K bins, where dozens of small wiggles overwhelm the structure (noise amplified).](../images/09-distribution-charts-fig-03.png)
+*Figure 9.3 — Three bin widths. Two of them lie.*
 
 ---
 
@@ -66,7 +69,8 @@ What the box plot hides: distribution shape. Two distributions with the same Q1,
 
 Two additional things the standard box plot hides: sample size and within-quartile structure. Two box plots from samples of ten and ten thousand look identical. The reader cannot tell whether the summary is based on a handful of observations or a robust population. The variable-width box plot addresses this by encoding sample size as box width — wider boxes for larger samples — but the standard form does not.
 
-<!-- → [INFOGRAPHIC: annotated box plot anatomy — one box plot with labeled callouts for each element: "Box top = Q3 (75th percentile)," "Median line = Q2 (50th percentile)," "Box bottom = Q1 (25th percentile)," "IQR = height of box," "Whisker = most extreme value within Q3 + 1.5×IQR," "Points beyond whisker = outliers by Tukey's rule." A second panel shows the min-to-max whisker failure mode with the label "This is NOT Tukey's box plot — it is a range chart." Caption: "Tukey's design is specific. The fence is what makes the outlier visible."] -->
+![Two-panel diagram. Left panel: a Tukey box plot annotated with callouts naming the box top as Q3, the box bottom as Q1, the centre line as the median, the IQR as box height, the whisker fence as the most extreme value within 1.5 × IQR, and the points beyond the fence as outliers. Right panel: a similar box plot whose whiskers extend to the data minimum and maximum, labelled "no fence, no outliers — range chart, not Tukey."](../images/09-distribution-charts-fig-04.png)
+*Figure 9.4 — Tukey's design is specific. The fence is what makes the outlier visible.*
 
 ---
 
@@ -84,7 +88,8 @@ The violin's weakness is that the reader cannot extract precise quartile values 
 
 The standard resolution is the hybrid form: a thin box plot overlaid inside the violin. The box gives the precise quartiles; the violin gives the shape. The hybrid is denser but more informative. It is best suited to audiences with high graphicacy — readers who have encountered both forms and can decode each independently.
 
-<!-- → [IMAGE: three-panel comparison of the same bimodal distribution — left: box plot alone (two-bulge shape invisible, only outlier cluster hints at it), center: violin plot alone (bimodality unmistakable, but no precise quartile values readable), right: hybrid box-violin (bimodal shape visible AND quartile lines readable). Caption: "Each form reveals what the others hide. The hybrid pays a density cost for completeness."] -->
+![Three panels of the same bimodal distribution. Left: a box plot whose two-bulge shape is invisible. Middle: a violin plot whose bimodality is unmistakable, with no precise quartile values readable. Right: a hybrid showing the violin envelope with a thin box plot overlaid, where both the bimodal shape and the quartile lines are readable.](../images/09-distribution-charts-fig-05.png)
+*Figure 9.5 — Each form reveals what the others hide. The hybrid pays a density cost for completeness.*
 
 ---
 
@@ -299,6 +304,58 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 ---
 
 *Tags: distribution-charts, histogram, box-plot, violin-plot, KDE, kernel-density-estimation, stem-and-leaf, Tukey, bin-width, bandwidth, graphicacy, Cairo, Heer-Bostock, multimodality, D3, Claude-Code*
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 9.1 — Five zone box plots, the Inner Suburbs cluster
+
+Build a single horizontal-layout D3 v7 figure showing five Tukey box plots side by side, one per residential zone (Urban Core, Inner Suburbs, Outer Suburbs, Exurban, Rural). Data per zone: minimum within fence, Q1, median, Q3, upper whisker within Q3 + 1.5 × IQR, and any individual outlier points. Use these summaries — Urban Core 18/32/46/62/92, Inner Suburbs 28/48/64/84/118 with outliers [150, 158, 168, 174, 182, 188], Outer Suburbs 36/58/72/90/122, Exurban 30/50/62/78/108, Rural 16/26/38/52/78. Channels: x-position is zone (categorical band, ordered as given), y-position is income in $000s (quantitative linear, zero baseline, ticks every 50). Highlight the Inner Suburbs box in var(--color-red) for fill and stroke; other boxes use var(--color-ink). Render whisker caps, central whisker line, the box between Q1 and Q3, a thick median line, and outlier points jittered horizontally. Add an annotation arrow on the right margin pointing into the Inner Suburbs outlier cluster with text "outlier cluster above whisker — bimodal sub-population, or just a long tail?". Standalone HTML, D3 v7, inline CSS/JS, accessible markup, ResizeObserver, tooltips on hover showing the five-number summary per box.
+
+> Reference implementation: `d3/09-distribution-charts-fig-01.html`
+
+---
+
+### Figure 9.2 — Same five-number summary, different shape
+
+Build a two-panel D3 v7 figure. Left panel: two box plots side by side, one labelled "Normal" and one labelled "Bimodal", sharing identical Q1, median, Q3, and whisker extent so the two boxes are visually indistinguishable. Right panel: two violin plots from the same underlying samples, one a single bell shape, one a clear two-bulge bimodal shape. Sample synthetically — normal via N(50, 17) clipped to [0, 100]; bimodal via mixture of N(28, 6), N(72, 6), and extreme tails to force the same five-number summary. Channels: y-position is value 0–100 (shared scale), x-position is group. Use kernel density with Gaussian kernel, bandwidth 3.5 for bimodal and 6 for normal, evaluated at 1-unit thresholds. Add a "visually identical" badge under the box panel and a "two peaks visible" badge under the violin panel. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver. Use d3.scaleLinear and d3.scaleBand; never d3.scaleLinear for radius. Box fill var(--color-white), violin fill semi-opaque var(--color-ink), median tick var(--color-red).
+
+> Reference implementation: `d3/09-distribution-charts-fig-02.html`
+
+---
+
+### Figure 9.3 — Three bin widths on a bimodal income
+
+Build a three-panel D3 v7 figure showing the same bimodal income dataset histogrammed three ways. Sample synthetically — mixture of N(40, 9) and N(120, 14) with 760 observations, clipped to [0, 170]. Panel A: bins of $50K (3 bars, both peaks merge into one broad shape) — verdict "bimodality hidden". Panel B: Freedman–Diaconis-style binning at roughly $12K (14 bars, two peaks legible with a gap between them) — verdict "structure visible". Panel C: bins of $2K (50+ narrow bars, sampling variation produces visible wiggles) — verdict "noise amplified". Channels: x-position is income (quantitative linear 0–170, zero baseline), y-position is count (quantitative linear, zero baseline). Bars use var(--color-secondary). Each verdict chip outlined in var(--color-red) for the two failure panels and in var(--color-ink) for the centre panel. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver. Use d3.bin().domain([0, 170]).thresholds(...) for the binning.
+
+> Reference implementation: `d3/09-distribution-charts-fig-03.html`
+
+---
+
+### Figure 9.4 — Tukey box plot anatomy and the imposter
+
+Build a two-panel D3 v7 figure. Left panel (wider): a single fully annotated Tukey box plot with these summaries — min within fence 18, Q1 38, median 52, Q3 68, upper whisker within fence 92, and three outlier points at 8, 100, 106. Draw callouts to the right of the box with leader lines pointing at each element: Q3 (75th percentile), median (Q2, 50th percentile), Q1 (25th percentile), whisker fence (= max value within Q3 + 1.5 × IQR), lower whisker (= min value within Q1 − 1.5 × IQR), outliers (beyond fence — flagged individually). Add a separate leader to the left of the box labelled "IQR = box height". Right panel: the same data with whiskers extending to the data min (8) and max (106), no outlier points, no fence. Callout text "whisker = data max", "whisker = data min", "no fence — no outliers exist". Below the right panel, a verdict chip outlined in var(--color-red) reading "verdict: range chart, not Tukey". Channels: y-position is value (quantitative linear 0–120). Median line var(--color-red); callout leaders var(--color-ochre). Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver.
+
+> Reference implementation: `d3/09-distribution-charts-fig-04.html`
+
+---
+
+### Figure 9.5 — Box, violin, hybrid
+
+Build a three-panel D3 v7 figure rendering the same bimodal sample three ways. Sample synthetically — mixture of N(28, 7) and N(72, 7), 840 observations clipped to [0, 100]. Panel A: a box plot alone with Tukey whiskers (compute Q1, Q3, IQR, upper and lower whisker fences directly from the sample). Verdict chip "quartiles yes, shape no". Panel B: a violin plot alone (kernel density, Gaussian kernel, bandwidth 3.5, evaluated at 1-unit thresholds), no overlaid box, no quartile marks. Verdict chip "shape yes, quartiles no". Panel C: a hybrid — same violin envelope as panel B with a thin box overlay (16 px wide) centred on the violin axis, showing Q1–Q3, the median line, and the whisker range. Verdict chip "both readouts". Channels: y-position is value 0–100 (shared scale across panels), x-position centred within each panel. Violin fill semi-opaque var(--color-ink); median line var(--color-red); box bodies var(--color-white) with var(--color-ink) outline. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver.
+
+> Reference implementation: `d3/09-distribution-charts-fig-05.html`
 
 ---
 

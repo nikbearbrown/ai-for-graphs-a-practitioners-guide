@@ -1,0 +1,24 @@
+{
+  "name": "ai-for-graphs-a-practitioners-guide",
+  "version": "1.0.0",
+  "description": "**Author:** Nik Bear Brown **Publisher:** Bear Brown, LLC **Status:** Draft **Started:** 2026-05-18",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikbearbrown/ai-for-graphs-a-practitioners-guide.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikbearbrown/ai-for-graphs-a-practitioners-guide/issues"
+  },
+  "homepage": "https://github.com/nikbearbrown/ai-for-graphs-a-practitioners-guide#readme",
+  "dependencies": {
+    "@fontsource/eb-garamond": "^5.2.7",
+    "sharp": "^0.34.5"
+  }
+}

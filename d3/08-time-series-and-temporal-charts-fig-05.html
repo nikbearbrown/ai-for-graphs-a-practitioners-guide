@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 8.5 — Stacked area accuracy gradient</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 3fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .chart { width: 100%; height: 420px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; margin-bottom: 12px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { display: inline-block; width: 12px; height: 12px; }
+  .layer-bracket text { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); }
+  .layer-bracket .bracket { stroke: var(--color-ink); fill: none; }
+  .acc-high { color: var(--color-ink); font-weight: 600; }
+  .acc-low { color: var(--color-secondary); font-weight: 600; }
+  .rule { border: 2px solid var(--color-ochre); padding: 16px; font-size: 13px; line-height: 1.5; }
+  .rule b { color: var(--color-ink); }
+  .annot { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 8.5 — Stacked area accuracy gradient</h1>
+<p class="subtitle">Five humanitarian sectors over six months. The bottom layer reads accurately against the fixed zero baseline; layers above must be estimated against a moving floor; the total trajectory recovers accuracy at the top edge.</p>
+<div class="legend">
+  <span><span class="swatch" style="background:var(--color-ink)"></span>Food Security (bottom)</span>
+  <span><span class="swatch" style="background:#4a4540"></span>Shelter</span>
+  <span><span class="swatch" style="background:#6e6862"></span>WASH</span>
+  <span><span class="swatch" style="background:#8a8480"></span>Health</span>
+  <span><span class="swatch" style="background:#c8c4c0"></span>Protection (top)</span>
+</div>
+<div id="wrap">
+  <div class="panel">
+    <div id="chart" class="chart"></div>
+  </div>
+  <div class="rule">
+    <b>Layer-ordering rule.</b>
+    Put the most stable (or most important to read) series at the bottom.
+    The bottom layer keeps the fixed zero baseline; everything above must be estimated against a moving floor.
+    The total trajectory along the top edge recovers position-along-common-scale accuracy.
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const months = ['2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06'];
+const sectors = [
+  { key: 'Food Security', color: 'var(--color-ink)', vals: [240, 250, 245, 255, 250, 260] },
+  { key: 'Shelter',        color: '#4a4540',          vals: [140, 160, 170, 180, 175, 190] },
+  { key: 'WASH',           color: '#6e6862',          vals: [ 80,  95, 110, 120, 130, 135] },
+  { key: 'Health',         color: '#8a8480',          vals: [ 60,  85, 100, 115, 135, 150] },
+  { key: 'Protection',     color: '#c8c4c0',          vals: [ 40,  60,  95, 130, 155, 195] }
+];
+const stackData = months.map((m, i) => {
+  const o = { dateObj: new Date(m + '-01T00:00:00Z') };
+  sectors.forEach(s => { o[s.key] = s.vals[i]; });
+  return o;
+});
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  const sel = '#chart';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 640;
+  const totalHeight = container.clientHeight || 420;
+  const margin = { top: 36, right: 168, bottom: 48, left: 56 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(sel).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'sa-t sa-d');
+  svg.append('title').attr('id', 'sa-t').text('Stacked area chart of five humanitarian sectors over six months');
+  svg.append('desc').attr('id', 'sa-d').text('The bottom layer Food Security has a fixed zero baseline; middle layers have variable baselines; the topmost layer Protection is the hardest to read, but the total trajectory at the top edge is accurate.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const keys = sectors.map(s => s.key);
+  const stack = d3.stack().keys(keys);
+  const stacked = stack(stackData);
+
+  const xScaleUtc = d3.scaleUtc()
+    .domain(d3.extent(stackData, d => d.dateObj))
+    .range([0, chartWidth]);
+  const maxTotal = d3.max(stacked[stacked.length - 1], d => d[1]);
+  const yScaleLinear = d3.scaleLinear()
+    .domain([0, maxTotal])
+    .range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleUtc).ticks(d3.utcMonth.every(1)).tickFormat(d3.utcFormat('%b')));
+  gChart.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(yScaleLinear).ticks(5));
+
+  const area = d3.area()
+    .x(d => xScaleUtc(d.data.dateObj))
+    .y0(d => yScaleLinear(d[0]))
+    .y1(d => yScaleLinear(d[1]))
+    .curve(d3.curveLinear);
+
+  gChart.selectAll('.layer')
+    .data(stacked)
+    .join('path')
+      .attr('class', 'layer')
+      .attr('fill', d => sectors.find(s => s.key === d.key).color)
+      .attr('d', area)
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.key} layer`)
+      .on('mouseover', function(event, d) {
+        const i = months.length - 1;
+        const val = stackData[i][d.key];
+        showTip(event, `<strong>${d.key}</strong>: ${val} (June)`);
+      })
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
+
+  // Brackets on the right edge for layers 1, 3, 5 and the total
+  const lastIdx = stackData.length - 1;
+  function rightBracket(g, yTop, yBot, label, sub, acc) {
+    const x0 = chartWidth + 6;
+    const x1 = chartWidth + 12;
+    g.append('path').attr('class', 'bracket')
+      .attr('d', `M ${x0},${yTop} L ${x1},${yTop} L ${x1},${yBot} L ${x0},${yBot}`)
+      .attr('stroke', 'var(--color-ink)').attr('fill', 'none');
+    g.append('text').attr('x', x1 + 6).attr('y', (yTop + yBot) / 2 - 6)
+      .attr('class', 'annot').attr('font-weight', 600).text(label);
+    g.append('text').attr('x', x1 + 6).attr('y', (yTop + yBot) / 2 + 8)
+      .attr('class', 'annot').attr('fill', 'var(--color-secondary)').text(sub);
+    g.append('text').attr('x', x1 + 6).attr('y', (yTop + yBot) / 2 + 22)
+      .attr('class', 'annot').text(`accuracy: ${acc}`);
+  }
+
+  const layer0 = stacked[0][lastIdx];
+  const layer2 = stacked[2][lastIdx];
+  const layer4 = stacked[4][lastIdx];
+
+  const bracketGroup = gChart.append('g').attr('class', 'layer-bracket');
+  rightBracket(bracketGroup,
+    yScaleLinear(layer0[1]), yScaleLinear(layer0[0]),
+    'Food Sec.', 'fixed zero', 'high');
+  rightBracket(bracketGroup,
+    yScaleLinear(layer2[1]), yScaleLinear(layer2[0]),
+    'WASH', 'moving floor', 'lower');
+  rightBracket(bracketGroup,
+    yScaleLinear(layer4[1]), yScaleLinear(layer4[0]),
+    'Protection', 'noisiest floor', 'lowest');
+
+  // Total trajectory marker — top edge along x
+  gChart.append('text').attr('x', 0).attr('y', -14)
+    .attr('class', 'annot').attr('font-weight', 600)
+    .text('TOTAL trajectory (top edge): position along common scale → accuracy: high');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

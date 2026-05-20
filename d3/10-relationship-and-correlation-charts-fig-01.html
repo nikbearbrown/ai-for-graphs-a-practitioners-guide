@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 10.1 — Scatterplot with and without the causation caveat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; background: var(--color-white); }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 360px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .axis-title { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-secondary); }
+  .dot { fill: var(--color-secondary); fill-opacity: 0.55; transition: fill-opacity 120ms cubic-bezier(0.2,0.8,0.2,1); }
+  .dot:hover { fill: var(--color-red); fill-opacity: 1; }
+  .trend { stroke: var(--color-ink); stroke-width: 1.6; fill: none; }
+  .r-badge { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; fill: var(--color-ink); }
+  .caveat-box rect { fill: var(--color-white); stroke: var(--color-ochre); stroke-width: 2; }
+  .caveat-box text { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .caveat-box text.head { font-weight: 700; }
+  .pointer { stroke: var(--color-ochre); stroke-width: 1.2; fill: none; }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 12px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; font-family: 'Inter', sans-serif; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 10.1 — With and without the causation caveat</h1>
+<p class="subtitle">Same 170-country education-index vs life-expectancy dataset, same OLS line, same Pearson r. The right panel adds the annotation Cairo's frame requires.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Without caveat</div>
+    <div class="panel-sub">Reader naturally infers causation</div>
+    <div id="chartBare" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">With caveat</div>
+    <div class="panel-sub">Annotation closes the gap between claim and chart</div>
+    <div id="chartCaveat" class="chart"></div>
+  </div>
+</div>
+<p class="caption">Pearson r is identical. The chart on the right does not weaken the claim — it completes it.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Synthetic 170-country dataset: education index 0.3–0.95, life expectancy 50–82, r ≈ 0.79
+function makeData() {
+  const data = [];
+  let seed = 42;
+  function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  for (let i = 0; i < 170; i++) {
+    const x = 0.3 + 0.65 * rand();
+    const noise = (rand() - 0.5) * 6;
+    const y = 50 + (x - 0.3) * (32 / 0.65) + noise;
+    data.push({ x, y, id: i });
+  }
+  return data;
+}
+const scatterData = makeData();
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>education ${d.x.toFixed(2)}</strong><br/>life expectancy ${d.y.toFixed(1)} yrs`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function ols(data) {
+  const n = data.length;
+  const mx = d3.mean(data, d => d.x);
+  const my = d3.mean(data, d => d.y);
+  let num = 0, den = 0;
+  data.forEach(d => { num += (d.x - mx) * (d.y - my); den += (d.x - mx) ** 2; });
+  const slope = num / den;
+  const intercept = my - slope * mx;
+  // pearson r
+  let sxy = 0, sxx = 0, syy = 0;
+  data.forEach(d => { sxy += (d.x - mx) * (d.y - my); sxx += (d.x - mx) ** 2; syy += (d.y - my) ** 2; });
+  const r = sxy / Math.sqrt(sxx * syy);
+  return { slope, intercept, r };
+}
+
+function draw(selector, withCaveat) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 420;
+  const totalHeight = container.clientHeight || 360;
+  const margin = { top: 24, right: 24, bottom: 48, left: 56 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', `${selector.slice(1)}-t ${selector.slice(1)}-d`);
+  svg.append('title').attr('id', `${selector.slice(1)}-t`)
+     .text(withCaveat ? 'Scatterplot with causation caveat' : 'Scatterplot without caveat');
+  svg.append('desc').attr('id', `${selector.slice(1)}-d`)
+     .text('Education index vs life expectancy across 170 countries with an OLS trend line and Pearson r = 0.79.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleLinear = d3.scaleLinear().domain([0.25, 1.0]).range([0, chartWidth]);
+  const yScaleLinear = d3.scaleLinear().domain([48, 84]).range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis')
+    .attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleLinear).ticks(5).tickFormat(d3.format('.1f')));
+  gChart.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(5));
+
+  gChart.append('text').attr('class', 'axis-title')
+    .attr('x', chartWidth / 2).attr('y', chartHeight + 36).attr('text-anchor', 'middle')
+    .text('education index');
+  gChart.append('text').attr('class', 'axis-title')
+    .attr('transform', `translate(-40,${chartHeight / 2}) rotate(-90)`).attr('text-anchor', 'middle')
+    .text('life expectancy (years)');
+
+  gChart.selectAll('.dot')
+    .data(scatterData)
+    .join('circle')
+      .attr('class', 'dot')
+      .attr('cx', d => xScaleLinear(d.x))
+      .attr('cy', d => yScaleLinear(d.y))
+      .attr('r', 3)
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `education ${d.x.toFixed(2)}, life expectancy ${d.y.toFixed(1)}`)
+      .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  const fit = ols(scatterData);
+  const x1 = 0.3, x2 = 0.95;
+  gChart.append('line').attr('class', 'trend')
+    .attr('x1', xScaleLinear(x1)).attr('y1', yScaleLinear(fit.intercept + fit.slope * x1))
+    .attr('x2', xScaleLinear(x2)).attr('y2', yScaleLinear(fit.intercept + fit.slope * x2));
+
+  gChart.append('text').attr('class', 'r-badge')
+    .attr('x', chartWidth - 8).attr('y', 18).attr('text-anchor', 'end')
+    .text(`r = ${fit.r.toFixed(2)}`);
+
+  if (withCaveat) {
+    const bx = chartWidth - 232;
+    const by = chartHeight / 2 - 36;
+    const g = gChart.append('g').attr('class', 'caveat-box');
+    g.append('rect').attr('x', bx).attr('y', by).attr('width', 220).attr('height', 76);
+    g.append('text').attr('class', 'head').attr('x', bx + 10).attr('y', by + 18).text('Correlation ≠ causation.');
+    g.append('text').attr('x', bx + 10).attr('y', by + 34).text('These variables are associated;');
+    g.append('text').attr('x', bx + 10).attr('y', by + 48).text('the causal mechanism is not');
+    g.append('text').attr('x', bx + 10).attr('y', by + 62).text('established by this chart.');
+    gChart.append('line').attr('class', 'pointer')
+      .attr('x1', bx + 110).attr('y1', by).attr('x2', bx + 60).attr('y2', by - 36);
+  }
+}
+
+function drawAll() {
+  draw('#chartBare', false);
+  draw('#chartCaveat', true);
+}
+drawAll();
+const ro = new ResizeObserver(() => drawAll());
+ro.observe(document.getElementById('chartBare'));
+ro.observe(document.getElementById('chartCaveat'));
+</script>
+</body>
+</html>

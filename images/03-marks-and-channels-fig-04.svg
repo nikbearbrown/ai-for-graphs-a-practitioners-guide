@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t04 d04">
+  <title id="t04">Nightingale's polar area chart — radius-linear versus area-corrected</title>
+  <desc id="d04">Two polar-area renderings of Florence Nightingale's 1858 mortality data. The left disk uses radius proportional to value (the published form, which amplifies outer wedges); the right disk uses radius proportional to the square root of value (area-honest).</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .month { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+  <text x="32" y="28" class="ti">Nightingale's rose — the published form, and the area-honest one</text>
+  <text x="32" y="44" class="sm">12 wedges, one per month · the data: monthly deaths among British troops in the Crimea (Apr 1854 – Mar 1855)</text>
+
+  <!-- Data — monthly preventable-disease death rate per 1000 (illustrative for the demonstration):
+       Apr 9, May 24, Jun 38, Jul 50, Aug 60, Sep 68, Oct 80, Nov 110, Dec 192, Jan 220, Feb 156, Mar 80.
+       Radius-linear: r_i = value_i * 0.55, max r ≈ 121 at Jan 220. Area-honest: r_i = sqrt(value_i) * 8.2, max ≈ 122. -->
+
+  <!-- LEFT DISK — RADIUS-LINEAR (PUBLISHED) -->
+  <g transform="translate(175,250)">
+    <text x="0" y="-140" text-anchor="middle" class="ti">Radius ∝ value (Nightingale's published form)</text>
+    <!-- 12 wedges, each 30° wide, starting at -90° (top). Use path with arc. -->
+    <!-- wedge radii: -->
+    <!-- Apr 9 → 4.95, May 24 → 13.2, Jun 38 → 20.9, Jul 50 → 27.5, Aug 60 → 33, Sep 68 → 37.4,
+         Oct 80 → 44, Nov 110 → 60.5, Dec 192 → 105.6, Jan 220 → 121, Feb 156 → 85.8, Mar 80 → 44 -->
+    <!-- helper: each wedge from angle a1 to a2 with radius r:
+         M 0,0 L r*sin(a1), -r*cos(a1) A r r 0 0 1 r*sin(a2), -r*cos(a2) Z
+         Use 30° increments. Angle 0 at top, clockwise. -->
+
+    <!-- Apr (0-30°) -->
+    <path d="M 0 0 L 0 -4.95 A 4.95 4.95 0 0 1 2.475 -4.288 Z" fill="#c8c4c0"/>
+    <!-- May (30-60°) -->
+    <path d="M 0 0 L 6.6 -11.432 A 13.2 13.2 0 0 1 11.432 -6.6 Z" fill="#c8c4c0"/>
+    <!-- Jun (60-90°) -->
+    <path d="M 0 0 L 18.10 -10.45 A 20.9 20.9 0 0 1 20.9 0 Z" fill="#8a8480"/>
+    <!-- Jul (90-120°) -->
+    <path d="M 0 0 L 27.5 0 A 27.5 27.5 0 0 1 23.815 13.75 Z" fill="#8a8480"/>
+    <!-- Aug (120-150°) -->
+    <path d="M 0 0 L 28.58 16.5 A 33 33 0 0 1 16.5 28.58 Z" fill="#8a8480"/>
+    <!-- Sep (150-180°) -->
+    <path d="M 0 0 L 18.70 32.39 A 37.4 37.4 0 0 1 0 37.4 Z" fill="#4a4540"/>
+    <!-- Oct (180-210°) -->
+    <path d="M 0 0 L 0 44 A 44 44 0 0 1 -22 38.105 Z" fill="#4a4540"/>
+    <!-- Nov (210-240°) -->
+    <path d="M 0 0 L -30.25 52.39 A 60.5 60.5 0 0 1 -52.39 30.25 Z" fill="#4a4540"/>
+    <!-- Dec (240-270°) -->
+    <path d="M 0 0 L -91.45 52.8 A 105.6 105.6 0 0 1 -105.6 0 Z" fill="#2a1a0e"/>
+    <!-- Jan (270-300°) -->
+    <path d="M 0 0 L -121 0 A 121 121 0 0 1 -104.79 -60.5 Z" fill="#2a1a0e"/>
+    <!-- Feb (300-330°) -->
+    <path d="M 0 0 L -74.30 -42.9 A 85.8 85.8 0 0 1 -42.9 -74.30 Z" fill="#2a1a0e"/>
+    <!-- Mar (330-360°) -->
+    <path d="M 0 0 L -22 -38.105 A 44 44 0 0 1 0 -44 Z" fill="#8a8480"/>
+
+    <!-- center mark -->
+    <circle r="2" fill="#2a1a0e"/>
+
+    <!-- month labels around outer ring at r=130 -->
+    <g class="month">
+      <text x="0"      y="-135" text-anchor="middle">Apr</text>
+      <text x="65"     y="-117" text-anchor="middle">May</text>
+      <text x="113"    y="-65"  text-anchor="middle">Jun</text>
+      <text x="130"    y="0"    text-anchor="middle">Jul</text>
+      <text x="113"    y="70"   text-anchor="middle">Aug</text>
+      <text x="65"     y="123"  text-anchor="middle">Sep</text>
+      <text x="0"      y="140"  text-anchor="middle">Oct</text>
+      <text x="-65"    y="123"  text-anchor="middle">Nov</text>
+      <text x="-113"   y="70"   text-anchor="middle">Dec</text>
+      <text x="-130"   y="0"    text-anchor="middle">Jan</text>
+      <text x="-113"   y="-65"  text-anchor="middle">Feb</text>
+      <text x="-65"    y="-117" text-anchor="middle">Mar</text>
+    </g>
+
+    <text x="0" y="170" text-anchor="middle" class="sm">Jan wedge area is ≈ 4× the radius-equivalent would predict.</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="350" y1="80" x2="350" y2="440" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT DISK — AREA-CORRECTED (radius ∝ sqrt(value)) -->
+  <g transform="translate(525,250)">
+    <text x="0" y="-140" text-anchor="middle" class="ti">Radius ∝ √value (area-honest)</text>
+    <!-- radii using sqrt(val) * 8.2:
+         Apr √9=3 → 24.6; May √24=4.9 → 40.2; Jun √38=6.16 → 50.5; Jul √50=7.07 → 58.0;
+         Aug √60=7.75 → 63.5; Sep √68=8.25 → 67.6; Oct √80=8.94 → 73.3; Nov √110=10.49 → 86.0;
+         Dec √192=13.86 → 113.6; Jan √220=14.83 → 121.6; Feb √156=12.49 → 102.4; Mar √80=8.94 → 73.3. -->
+
+    <!-- Apr (0-30°) r=24.6 -->
+    <path d="M 0 0 L 0 -24.6 A 24.6 24.6 0 0 1 12.3 -21.3 Z" fill="#c8c4c0"/>
+    <!-- May (30-60°) r=40.2 -->
+    <path d="M 0 0 L 20.1 -34.81 A 40.2 40.2 0 0 1 34.81 -20.1 Z" fill="#c8c4c0"/>
+    <!-- Jun (60-90°) r=50.5 -->
+    <path d="M 0 0 L 43.73 -25.25 A 50.5 50.5 0 0 1 50.5 0 Z" fill="#8a8480"/>
+    <!-- Jul (90-120°) r=58.0 -->
+    <path d="M 0 0 L 58.0 0 A 58.0 58.0 0 0 1 50.23 29.0 Z" fill="#8a8480"/>
+    <!-- Aug (120-150°) r=63.5 -->
+    <path d="M 0 0 L 55.0 31.75 A 63.5 63.5 0 0 1 31.75 55.0 Z" fill="#8a8480"/>
+    <!-- Sep (150-180°) r=67.6 -->
+    <path d="M 0 0 L 33.8 58.55 A 67.6 67.6 0 0 1 0 67.6 Z" fill="#4a4540"/>
+    <!-- Oct (180-210°) r=73.3 -->
+    <path d="M 0 0 L 0 73.3 A 73.3 73.3 0 0 1 -36.65 63.48 Z" fill="#4a4540"/>
+    <!-- Nov (210-240°) r=86.0 -->
+    <path d="M 0 0 L -43.0 74.48 A 86.0 86.0 0 0 1 -74.48 43.0 Z" fill="#4a4540"/>
+    <!-- Dec (240-270°) r=113.6 -->
+    <path d="M 0 0 L -98.38 56.8 A 113.6 113.6 0 0 1 -113.6 0 Z" fill="#2a1a0e"/>
+    <!-- Jan (270-300°) r=121.6 -->
+    <path d="M 0 0 L -121.6 0 A 121.6 121.6 0 0 1 -105.31 -60.8 Z" fill="#2a1a0e"/>
+    <!-- Feb (300-330°) r=102.4 -->
+    <path d="M 0 0 L -88.68 -51.2 A 102.4 102.4 0 0 1 -51.2 -88.68 Z" fill="#2a1a0e"/>
+    <!-- Mar (330-360°) r=73.3 -->
+    <path d="M 0 0 L -36.65 -63.48 A 73.3 73.3 0 0 1 0 -73.3 Z" fill="#8a8480"/>
+
+    <circle r="2" fill="#2a1a0e"/>
+
+    <g class="month">
+      <text x="0"      y="-135" text-anchor="middle">Apr</text>
+      <text x="65"     y="-117" text-anchor="middle">May</text>
+      <text x="113"    y="-65"  text-anchor="middle">Jun</text>
+      <text x="130"    y="0"    text-anchor="middle">Jul</text>
+      <text x="113"    y="70"   text-anchor="middle">Aug</text>
+      <text x="65"     y="123"  text-anchor="middle">Sep</text>
+      <text x="0"      y="140"  text-anchor="middle">Oct</text>
+      <text x="-65"    y="123"  text-anchor="middle">Nov</text>
+      <text x="-113"   y="70"   text-anchor="middle">Dec</text>
+      <text x="-130"   y="0"    text-anchor="middle">Jan</text>
+      <text x="-113"   y="-65"  text-anchor="middle">Feb</text>
+      <text x="-65"    y="-117" text-anchor="middle">Mar</text>
+    </g>
+
+    <text x="0" y="170" text-anchor="middle" class="sm">Jan wedge area is now proportional to the data value.</text>
+  </g>
+
+  <text x="350" y="460" text-anchor="middle" class="cap">Nightingale knew the form amplified winter mortality. She used the amplification anyway — that is the case for design under known distortion.</text>
+</svg>

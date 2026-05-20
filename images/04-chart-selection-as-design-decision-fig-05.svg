@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t405 d405">
+  <title id="t405">The eight FT Visual Vocabulary functional categories</title>
+  <desc id="d405">Four-by-two grid of chart-selection categories — comparison, change over time, distribution, relationship, part-to-whole, hierarchy, flow, spatial — each with its defining reader question and canonical chart types.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .cat { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; letter-spacing: 0.6px; }
+      .q   { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-style: italic; fill: #4a4540; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; }
+      .num { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #8a8480; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+
+  <text x="350" y="30" text-anchor="middle" class="ti">Eight functional categories. The category is the navigation move.</text>
+
+  <!-- 4 columns × 2 rows. Card width 160, height 175. Start at x=22, y=52. Gaps 12. -->
+  <!-- Row 1 -->
+  <!-- Card 1: COMPARISON -->
+  <g transform="translate(22,52)">
+    <rect width="160" height="175" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="10" y="20" class="num">01</text>
+    <text x="10" y="42" class="cat">COMPARISON</text>
+    <text x="10" y="60" class="q">how do these</text>
+    <text x="10" y="74" class="q">compare?</text>
+    <line x1="10" y1="88" x2="150" y2="88" stroke="#c8c4c0"/>
+    <text x="10" y="106" class="lb">bar chart</text>
+    <text x="10" y="122" class="lb">column chart</text>
+    <text x="10" y="138" class="lb">slope graph</text>
+    <text x="10" y="154" class="lb">dot plot</text>
+  </g>
+  <!-- Card 2: CHANGE OVER TIME -->
+  <g transform="translate(194,52)">
+    <rect width="160" height="175" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="10" y="20" class="num">02</text>
+    <text x="10" y="42" class="cat">CHANGE OVER TIME</text>
+    <text x="10" y="60" class="q">how is this</text>
+    <text x="10" y="74" class="q">changing?</text>
+    <line x1="10" y1="88" x2="150" y2="88" stroke="#c8c4c0"/>
+    <text x="10" y="106" class="lb">line chart</text>
+    <text x="10" y="122" class="lb">area chart</text>
+    <text x="10" y="138" class="lb">stream graph</text>
+    <text x="10" y="154" class="lb">candlestick</text>
+  </g>
+  <!-- Card 3: DISTRIBUTION -->
+  <g transform="translate(366,52)">
+    <rect width="160" height="175" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="10" y="20" class="num">03</text>
+    <text x="10" y="42" class="cat">DISTRIBUTION</text>
+    <text x="10" y="60" class="q">what does the spread</text>
+    <text x="10" y="74" class="q">look like?</text>
+    <line x1="10" y1="88" x2="150" y2="88" stroke="#c8c4c0"/>
+    <text x="10" y="106" class="lb">histogram</text>
+    <text x="10" y="122" class="lb">density plot</text>
+    <text x="10" y="138" class="lb">box plot</text>
+    <text x="10" y="154" class="lb">violin plot</text>
+  </g>
+  <!-- Card 4: RELATIONSHIP -->
+  <g transform="translate(538,52)">
+    <rect width="160" height="175" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="10" y="20" class="num">04</text>
+    <text x="10" y="42" class="cat">RELATIONSHIP</text>
+    <text x="10" y="60" class="q">are these variables</text>
+    <text x="10" y="74" class="q">connected?</text>
+    <line x1="10" y1="88" x2="150" y2="88" stroke="#c8c4c0"/>
+    <text x="10" y="106" class="lb">scatterplot</text>
+    <text x="10" y="122" class="lb">bubble chart</text>
+    <text x="10" y="138" class="lb">heatmap</text>
+    <text x="10" y="154" class="lb">parallel coords</text>
+  </g>
+
+  <!-- Row 2 -->
+  <!-- Card 5: PART-TO-WHOLE -->
+  <g transform="translate(22,239)">
+    <rect width="160" height="175" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="10" y="20" class="num">05</text>
+    <text x="10" y="42" class="cat">PART-TO-WHOLE</text>
+    <text x="10" y="60" class="q">what makes up</text>
+    <text x="10" y="74" class="q">this total?</text>
+    <line x1="10" y1="88" x2="150" y2="88" stroke="#c8c4c0"/>
+    <text x="10" y="106" class="lb">stacked bar</text>
+    <text x="10" y="122" class="lb">waffle chart</text>
+    <text x="10" y="138" class="lb">treemap</text>
+    <text x="10" y="154" class="lb">pie / donut</text>
+  </g>
+  <!-- Card 6: HIERARCHY -->
+  <g transform="translate(194,239)">
+    <rect width="160" height="175" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="10" y="20" class="num">06</text>
+    <text x="10" y="42" class="cat">HIERARCHY</text>
+    <text x="10" y="60" class="q">how is this</text>
+    <text x="10" y="74" class="q">structured?</text>
+    <line x1="10" y1="88" x2="150" y2="88" stroke="#c8c4c0"/>
+    <text x="10" y="106" class="lb">treemap</text>
+    <text x="10" y="122" class="lb">sunburst</text>
+    <text x="10" y="138" class="lb">circle packing</text>
+    <text x="10" y="154" class="lb">dendrogram</text>
+  </g>
+  <!-- Card 7: FLOW -->
+  <g transform="translate(366,239)">
+    <rect width="160" height="175" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="10" y="20" class="num">07</text>
+    <text x="10" y="42" class="cat">FLOW</text>
+    <text x="10" y="60" class="q">how does this</text>
+    <text x="10" y="74" class="q">get from A to B?</text>
+    <line x1="10" y1="88" x2="150" y2="88" stroke="#c8c4c0"/>
+    <text x="10" y="106" class="lb">Sankey diagram</text>
+    <text x="10" y="122" class="lb">alluvial diagram</text>
+    <text x="10" y="138" class="lb">chord diagram</text>
+    <text x="10" y="154" class="lb">network</text>
+  </g>
+  <!-- Card 8: SPATIAL -->
+  <g transform="translate(538,239)">
+    <rect width="160" height="175" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="10" y="20" class="num">08</text>
+    <text x="10" y="42" class="cat">SPATIAL</text>
+    <text x="10" y="60" class="q">where is this</text>
+    <text x="10" y="74" class="q">happening?</text>
+    <line x1="10" y1="88" x2="150" y2="88" stroke="#c8c4c0"/>
+    <text x="10" y="106" class="lb">choropleth</text>
+    <text x="10" y="122" class="lb">dot map</text>
+    <text x="10" y="138" class="lb">bubble map</text>
+    <text x="10" y="154" class="lb">cartogram</text>
+  </g>
+
+  <text x="350" y="450" text-anchor="middle" class="cap">The reader's question, not the data's structure, decides the category.</text>
+  <text x="350" y="466" text-anchor="middle" class="cap">Source: Financial Times Visual Vocabulary.</text>
+</svg>

@@ -26,7 +26,8 @@ The five-slice rule follows directly from this threshold. Five slices, with the 
 
 The practical consequence: if your part-to-whole data has more than five categories, a bar chart almost always communicates more accurately. Position along a common baseline is the highest-accuracy channel available. A sorted horizontal bar chart of twelve funding categories shows the ranking unmistakably; the twelve-slice pie shows a wreath of wedges.
 
-<!-- → [IMAGE: side-by-side of a five-slice pie (readable, each wedge above 30°) and a twelve-slice pie (same total, same data, roughly equal wedges below 30°). Annotations on the five-slice version label the readable angular range (~30°–150°). Annotations on the twelve-slice version mark the cluster of small wedges that fall below the 30° threshold. Caption: "The five-slice rule is the point at which the channel's accuracy degrades below useful."] -->
+![Side-by-side pie charts of the same total. The left panel shows five slices with wedges above 30 degrees and an annotation marking the readable angular range. The right panel shows twelve roughly equal slices, all below the 30-degree threshold for reliable angle discrimination.](../images/11-part-to-whole-charts-fig-01.png)
+*Figure 11.1 — Five-slice vs twelve-slice pie. Past five slices, the channel's accuracy degrades below useful.*
 
 ---
 
@@ -66,7 +67,8 @@ The weaknesses are real. The waffle chart requires a defined total — you canno
 
 The choice between waffle and pie turns on accuracy versus familiarity. If the reader has the graphicacy to decode a waffle chart and precision matters, the waffle wins. If the reader expects a pie chart and the data is within the five-slice limit, the pie may communicate more effectively because it requires no explanation. Few's frame applies: clarity for this audience is the criterion.
 
-<!-- → [IMAGE: same five-category proportional data rendered as a pie chart (left) and a waffle chart (right). The waffle's 10×10 grid has cells colored and counted per category; one category has 23 cells labeled "23%." An annotation on the waffle panel reads "Each cell = 1%. Count directly. No angle estimation." Caption: "The waffle chart trades familiarity for precision. The trade is worth making when the audience can decode it."] -->
+![Side-by-side panels of the same five-proportion dataset. The left panel renders the data as a pie chart with the largest slice at the top; the right panel renders it as a 10-by-10 waffle grid with one cell per percentage point, color-coded by category.](../images/11-part-to-whole-charts-fig-02.png)
+*Figure 11.2 — Pie vs waffle. Same data; angle channel on the left, position channel on the right.*
 
 ---
 
@@ -110,7 +112,8 @@ In an analytical context — a research paper, a decision-support dashboard, a p
 
 The practical rule for any polar area chart: if the form is used in advocacy, document the distortion in the chart's annotation or legend. "Wedge area encodes value (area scales as radial length squared)" is the disclosure. If the form is used in analysis, consider whether the distortion is acceptable or whether a standard linear chart would serve better. The Nightingale chart is a case study in how a designer can choose a form with a known error and be right to do so — but the conditions that make the choice defensible are specific and not always present.
 
-<!-- → [IMAGE: Nightingale's original 1858 polar area chart (Diagram of the Causes of Mortality in the Army in the East) with two annotations: (1) an arrow showing a wedge in the "large deaths from preventable disease" section with the label "this wedge is twice as long as its neighbor → appears ~4× larger in area (area scales as r²)," and (2) a callout naming the context: "advocacy for sanitary reform — the distortion served the argument." Caption: "Nightingale knew about the distortion. She used it anyway. The conditions that made the choice defensible are named in this chapter."] -->
+![A simplified rendering of Nightingale's 1858 polar area chart. Twelve monthly wedges fan around a circle, each split by cause of death — preventable disease in the largest dark wedges, wounds in the mid gray, other causes in the light gray. Two annotations name the area-as-radial-length-squared distortion and the advocacy context.](../images/11-part-to-whole-charts-fig-03.png)
+*Figure 11.3 — Nightingale's polar area chart, with the distortion named. Defensible in advocacy; failure-by-default in analysis.*
 
 ---
 
@@ -126,7 +129,8 @@ Cairo's four-step framework catches this at step one: naming the key message. "F
 
 The audit before building the chart is what prevents the mismatch. The question to ask is: is the reader trying to understand how the pieces relate to the whole, or trying to rank the pieces? Composition wants part-to-whole. Ranking wants comparison.
 
-<!-- → [INFOGRAPHIC: two-branch decision tree — root node: "Is the message compositional or comparative?" Left branch (compositional): "How many categories?" → ≤5 with significant differences → pie/donut; >5 → aggregate or switch to bar. Right branch (comparative / ranking): directly to "bar chart." A second branch off the left: "Is precision more important than familiarity?" → yes → waffle; no → pie. Caption: "The audit before the chart. The question determines the form."] -->
+![Two-branch decision tree starting from the question "is the message compositional or comparative." The compositional branch splits on the five-slice rule, then on precision vs familiarity, resolving to waffle, pie or donut, or aggregate-plus-bar. The comparative branch goes directly to a sorted bar chart.](../images/11-part-to-whole-charts-fig-04.png)
+*Figure 11.4 — Decision tree. The audit before the chart: the question determines the form.*
 
 ---
 
@@ -144,7 +148,8 @@ Color hue distinguishing sectors. Hue is the right channel for categorical ident
 
 None of these decisions is stylistic. Each is the application of a perceptual principle to a specific constraint. The chart is good not because it looks clean but because the encoding choices match the data's structure and the reader's perceptual capabilities.
 
-<!-- → [IMAGE: annotated five-slice pie chart from the pantry with five callout arrows — (1) "Five slices: data aggregated before building" pointing to the 'Other' note; (2) "Sort order: largest at 12 o'clock, clockwise descending" with an arc showing the reading direction; (3) "Direct labels: no legend lookup required" pointing to an inline percentage label; (4) "Color hue: categorical identity, no implied ranking" with a note that luminance would incorrectly imply order; (5) "Largest slice ~50%: dominance signal is unmistakable" pointing to the half-circle Food Security wedge. Caption: "Every decision is doing work. The chart is good because the encoding fits the data."] -->
+![An annotated five-slice pie chart of the pantry's funding allocation with five numbered callouts naming the design decisions: aggregation to five categories, clockwise sort order from the largest at twelve o'clock, direct on-slice labels, color hue used for categorical identity, and the dominant half-circle slice as the headline signal.](../images/11-part-to-whole-charts-fig-05.png)
+*Figure 11.5 — Five design decisions in one pie chart. Every element is doing work; nothing is decorative.*
 
 ---
 
@@ -310,6 +315,58 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 ---
 
 *Tags: part-to-whole, pie-chart, donut, waffle, stacked-bar, Marimekko, Nightingale-rose, five-slice-rule, Cleveland-McGill-angle, Bertin-area, Cairo-rhetorical-analytical, Few-clarity, D3, Claude-Code*
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 11.1 — Five-slice vs twelve-slice pie
+
+Build a two-panel D3 v7 figure comparing the same total rendered as a five-slice pie and a twelve-slice pie. Left panel data: Food Security 56, Shelter 21, Water 14, Health 6, Protection 3 (sums to 100). Right panel data: twelve roughly equal categories at 8–9% each (sums to 100). Both panels use `d3.pie()` with `sort(null)` so the largest slice anchors at twelve o'clock and the remaining slices proceed clockwise. Channels: angle for both. Color: the largest slice in the left panel is `var(--color-red)`; remaining slices use a luminance ramp through grays from `#4a4540` to `#c8c4c0`. The right panel uses the same ramp cycled across twelve wedges (no red highlight). Direct labels appear on slices whose angular sweep exceeds 0.35 rad (about 20°). Subtitle the right panel "wedges below the 30° threshold of reliable angle discrimination." Deliverable: a single standalone HTML file, inline CSS, inline JS, D3 7.9.0 from the pinned CDN, `role="img"` with `title` and `desc`, tooltip on hover.
+
+> Reference implementation: `d3/11-part-to-whole-charts-fig-01.html`
+
+---
+
+### Figure 11.2 — Pie vs waffle
+
+Build a two-panel D3 v7 figure rendering the same five-category proportional dataset as a pie chart (left) and a 10×10 waffle chart (right). Data: A 38, B 23, C 18, D 13, E 8 (sums to 100). Left panel: pie chart with the largest slice at twelve o'clock; channel = angle; primary slice `var(--color-red)`, others through a gray luminance ramp. Right panel: 10×10 cell grid (100 cells total); each cell sized to fit the panel with 2 px gaps; cells filled row-major top-to-bottom in category order so cell 1 is the top-left A cell and cell 100 is the bottom-right E cell. Add a legend below the waffle with category color swatch + percentage. Both panels share a tooltip on hover showing the category and value. Channels: angle (pie, Cleveland & McGill rank 4) vs counted-cell position (waffle, rank 1). Deliverable: a single standalone HTML file, inline CSS/JS, D3 7.9.0, accessible markup, dark-mode aware.
+
+> Reference implementation: `d3/11-part-to-whole-charts-fig-02.html`
+
+---
+
+### Figure 11.3 — Nightingale polar area with the distortion named
+
+Build a single-panel D3 v7 polar area chart of twelve months of mortality data split into three causes — preventable disease (largest), wounds from battle (middle), and other causes (smallest). Data per month is given as three values; sample dataset peaks around Dec–Jan to mirror Nightingale's 1854–55 finding. Each month occupies a 30° wedge anchored at -90° and sweeping clockwise. For each wedge, render three nested arcs in z-order largest-first so the smaller causes sit on top: disease (`#2a1a0e`), wounds (`#8a8480`), other (`#c8c4c0`). Use `d3.scaleLinear()` (not `scaleSqrt`) for the radius because Nightingale's chart encodes the value as the radial length — the area distortion is what the figure documents. Month labels orbit the outside. Inline legend top-left. Beside the chart, render two callout boxes with `var(--color-ochre)` left-borders: (1) "Wedge area encodes value — area scales as r²"; (2) "Defensible in advocacy. The same form fails in analysis unless disclosed." Tooltip on hover shows month + all three cause values. Deliverable: a single standalone HTML file, inline CSS/JS, D3 7.9.0, accessible markup, dark-mode aware.
+
+> Reference implementation: `d3/11-part-to-whole-charts-fig-03.html`
+
+---
+
+### Figure 11.4 — Decision tree: composition vs ranking
+
+Build a single-panel D3 v7 decision-tree infographic answering "is the message compositional or comparative?" Nodes (decision boxes are filled `#f5f2ee` in light mode, dark-mode equivalent in dark mode; leaves are filled `var(--color-ink)` with white text, except two leaves marked primary use `var(--color-red)`). Tree topology, positioned by fractional (x, y) across the SVG: root at (0.50, 0.10) "Is the message about composition or about ranking?"; left branch (compositional) at (0.25, 0.32) "How many categories? — apply the five-slice rule"; right branch (comparative) at (0.78, 0.32) "Use the highest-accuracy channel — position along a common baseline"; under the compositional node, two children at (0.12, 0.54) "Precision or familiarity?" and (0.40, 0.54) "Aggregate to top-5 + Other"; leaves at y=0.82: "Waffle" (0.04), "Pie / Donut" (0.22, primary), "Bar chart or pie-of-5" (0.42), "Bar chart (sorted)" (0.78, primary). Edges are 1 px lines with arrowhead markers; each edge labeled where meaningful (compositional, comparative/ranking, ≤5, >5, precision, familiarity, always). Deliverable: a single standalone HTML file, inline CSS/JS, D3 7.9.0, accessible markup, dark-mode aware.
+
+> Reference implementation: `d3/11-part-to-whole-charts-fig-04.html`
+
+---
+
+### Figure 11.5 — Five design decisions in one pie chart
+
+Build an interactive annotated D3 v7 pie chart of the pantry's five-slice funding allocation (Food Security 56, Shelter 21, Water 14, Health 6, Protection 3). On the left side of the layout, render an ordered list of five decision cards, each with a numbered badge and a one-line justification: (1) five slices — aggregated before building; (2) sort order — largest at 12 o'clock, clockwise; (3) direct labels — no legend lookup required; (4) color hue — categorical identity, no implied ranking; (5) largest slice ≈ half the circle — dominance signal. Clicking a card sets it active; the corresponding region of the pie picks up a 3 px `var(--color-ochre)` stroke. Decision 5 highlights only the largest slice; the other four highlight all slices. Pie itself: largest slice `var(--color-red)`, remaining slices on a luminance ramp through grays. Direct on-slice labels for slices whose sweep exceeds ~0.35 rad. Tooltip on hover. Cards are keyboard-reachable (`tabindex="0"`, Enter/Space toggles). Deliverable: a single standalone HTML file, inline CSS/JS, D3 7.9.0, accessible markup, dark-mode aware.
+
+> Reference implementation: `d3/11-part-to-whole-charts-fig-05.html`
 
 ---
 

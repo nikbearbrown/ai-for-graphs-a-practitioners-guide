@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t11-04 d11-04">
+  <title id="t11-04">Decision tree for part-to-whole versus comparison</title>
+  <desc id="d11-04">A two-branch decision tree starting from the question "is the message compositional or comparative" and resolving to pie, donut, waffle, aggregate, or bar chart.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .node { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .leaf { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #fdfcfb; }
+    </style>
+    <marker id="ar11d" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+
+  <text x="32" y="32" class="ti">The audit before the chart — which question are you answering?</text>
+  <text x="32" y="48" class="sm">Cairo's first step: name the key message; the message picks the form.</text>
+
+  <!-- Root node -->
+  <rect x="240" y="70" width="220" height="48" fill="#f5f2ee" stroke="#2a1a0e"/>
+  <text x="350" y="90" text-anchor="middle" class="lb">Is the message about composition</text>
+  <text x="350" y="106" text-anchor="middle" class="lb">or about ranking?</text>
+
+  <!-- Branches -->
+  <path d="M 290 118 L 170 160" fill="none" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar11d)"/>
+  <text x="220" y="140" class="sm">compositional</text>
+  <path d="M 410 118 L 540 160" fill="none" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar11d)"/>
+  <text x="470" y="140" class="sm">comparative / ranking</text>
+
+  <!-- LEFT — compositional sub-node "how many categories?" -->
+  <rect x="60" y="166" width="220" height="48" fill="#f5f2ee" stroke="#2a1a0e"/>
+  <text x="170" y="186" text-anchor="middle" class="lb">How many categories?</text>
+  <text x="170" y="202" text-anchor="middle" class="sm">apply the five-slice rule</text>
+
+  <!-- left branch ≤5 -->
+  <path d="M 110 214 L 60 256" fill="none" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar11d)"/>
+  <text x="60" y="238" class="sm">≤ 5</text>
+
+  <!-- right branch >5 -->
+  <path d="M 230 214 L 280 256" fill="none" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar11d)"/>
+  <text x="262" y="238" class="sm">&gt; 5</text>
+
+  <!-- sub-node: precision vs familiarity (under ≤5) -->
+  <rect x="6" y="262" width="180" height="48" fill="#f5f2ee" stroke="#2a1a0e"/>
+  <text x="96" y="282" text-anchor="middle" class="lb">Precision or familiarity?</text>
+  <text x="96" y="298" text-anchor="middle" class="sm">audience graphicacy decides</text>
+
+  <!-- aggregate node (under >5) -->
+  <rect x="200" y="262" width="180" height="48" fill="#f5f2ee" stroke="#2a1a0e"/>
+  <text x="290" y="282" text-anchor="middle" class="lb">Aggregate to top-5 + Other</text>
+  <text x="290" y="298" text-anchor="middle" class="sm">or switch to a bar chart</text>
+
+  <!-- Leaves from precision/familiarity -->
+  <path d="M 40 310 L 30 350" fill="none" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar11d)"/>
+  <text x="14" y="332" class="sm">precision</text>
+  <path d="M 152 310 L 162 350" fill="none" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar11d)"/>
+  <text x="142" y="332" class="sm">familiarity</text>
+
+  <!-- WAFFLE leaf -->
+  <rect x="0"  y="354" width="60" height="36" fill="#2a1a0e"/>
+  <text x="30" y="376" text-anchor="middle" class="leaf">Waffle</text>
+
+  <!-- PIE / DONUT leaf -->
+  <rect x="120" y="354" width="84" height="36" fill="#2a1a0e"/>
+  <text x="162" y="376" text-anchor="middle" class="leaf">Pie / Donut</text>
+
+  <!-- Leaves from aggregate node -->
+  <path d="M 290 310 L 290 350" fill="none" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar11d)"/>
+
+  <!-- BAR/PIE leaf -->
+  <rect x="220" y="354" width="140" height="36" fill="#2a1a0e"/>
+  <text x="290" y="376" text-anchor="middle" class="leaf">Bar chart or pie-of-5</text>
+
+  <!-- RIGHT — comparative path -->
+  <rect x="440" y="166" width="220" height="48" fill="#f5f2ee" stroke="#2a1a0e"/>
+  <text x="550" y="186" text-anchor="middle" class="lb">Use the highest-accuracy channel</text>
+  <text x="550" y="202" text-anchor="middle" class="sm">position along a common baseline</text>
+
+  <path d="M 550 214 L 550 350" fill="none" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar11d)"/>
+  <text x="556" y="280" class="sm">always</text>
+
+  <!-- BAR leaf -->
+  <rect x="480" y="354" width="140" height="36" fill="#2a1a0e"/>
+  <text x="550" y="376" text-anchor="middle" class="leaf">Bar chart (sorted)</text>
+
+  <!-- caption -->
+  <text x="350" y="430" text-anchor="middle" class="cap">Composition wants part-to-whole. Ranking wants comparison. The question chooses the form.</text>
+</svg>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 8.3 — Three encodings for one temperature series</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; }
+  .chart { width: 100%; height: 240px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .area-fill { fill: var(--color-secondary); fill-opacity: 0.55; stroke: var(--color-ink); stroke-width: 1.2; }
+  .line-mark { fill: none; stroke: var(--color-ink); stroke-width: 1.6; }
+  .dot-highlight { fill: var(--color-red); }
+  .ratio { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--color-ink); margin-top: 8px; }
+  .verdict { padding: 6px 10px; font-size: 12px; font-weight: 600; text-align: center; border: 1px solid var(--color-border); }
+  .verdict.bad { color: var(--color-red); border-color: var(--color-red); }
+  .verdict.good { color: var(--color-ink); }
+  .annot { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 80ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 8.3 — Three encodings for one temperature series</h1>
+<p class="subtitle">Thirty daily temperatures (65–85°F). The truncated-baseline area amplifies the 70:80 ratio threefold; the zero-baseline area is honest but wasteful; the line escapes the area channel altogether.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Area, y-axis from 50°F</div>
+    <div class="panel-sub">visual area encodes temp − 50, not temp</div>
+    <div id="chartA" class="chart"></div>
+    <div class="ratio">70:80 visual ratio ≈ 1.5×</div>
+    <div class="verdict bad">verdict: distorts</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Area, y-axis from 0°F</div>
+    <div class="panel-sub">visual area encodes temperature</div>
+    <div id="chartB" class="chart"></div>
+    <div class="ratio">70:80 visual ratio ≈ 1.14× (true)</div>
+    <div class="verdict good">verdict: honest</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">C. Line, y-axis 60°F–90°F</div>
+    <div class="panel-sub">channel is point position</div>
+    <div id="chartC" class="chart"></div>
+    <div class="ratio">y-range is a design choice</div>
+    <div class="verdict good">verdict: honest</div>
+  </div>
+</div>
+<p class="caption">Kelleher's worked example. Once the channel is area, the zero baseline is not an aesthetic preference — it is the requirement that keeps the visual ratio equal to the data ratio.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const tempData = [66, 68, 67, 70, 72, 71, 73, 75, 74, 76, 78, 77, 80, 82, 81, 83, 85, 84, 82, 80, 78, 77, 75, 73, 72, 70, 69, 71, 68, 67]
+  .map((value, i) => ({ day: i + 1, value, dateObj: new Date(Date.UTC(2024, 5, i + 1)) }));
+
+const fmtDay = d3.utcFormat('%b %d');
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawArea(sel, yMin, yMax, label) {
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 320;
+  const totalHeight = container.clientHeight || 240;
+  const margin = { top: 16, right: 12, bottom: 36, left: 44 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(sel).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', `${sel.slice(1)}-t ${sel.slice(1)}-d`);
+  svg.append('title').attr('id', `${sel.slice(1)}-t`).text(`Area chart of daily temperature with y-axis from ${yMin} to ${yMax}`);
+  svg.append('desc').attr('id', `${sel.slice(1)}-d`).text(`${label}`);
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleUtc = d3.scaleUtc()
+    .domain(d3.extent(tempData, d => d.dateObj))
+    .range([0, chartWidth]);
+
+  const yScaleLinear = d3.scaleLinear()
+    .domain([yMin, yMax])
+    .range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleUtc).ticks(5).tickFormat(fmtDay));
+  gChart.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(yScaleLinear).ticks(5).tickFormat(d => `${d}°`));
+
+  const areaGen = d3.area()
+    .x(d => xScaleUtc(d.dateObj))
+    .y0(yScaleLinear(yMin))
+    .y1(d => yScaleLinear(d.value))
+    .curve(d3.curveLinear);
+
+  gChart.append('path')
+    .datum(tempData)
+    .attr('class', 'area-fill')
+    .attr('d', areaGen)
+    .attr('tabindex', 0)
+    .attr('aria-label', `${label}`);
+
+  // Highlight the 70°F and 80°F days
+  const targets = [70, 80];
+  targets.forEach(t => {
+    const d = tempData.find(x => x.value === t);
+    if (!d) return;
+    gChart.append('circle')
+      .attr('class', 'dot-highlight')
+      .attr('cx', xScaleUtc(d.dateObj))
+      .attr('cy', yScaleLinear(d.value))
+      .attr('r', 3.5);
+    gChart.append('text')
+      .attr('class', 'annot')
+      .attr('x', xScaleUtc(d.dateObj))
+      .attr('y', yScaleLinear(d.value) - 6)
+      .attr('text-anchor', 'middle')
+      .text(`${t}°`);
+  });
+}
+
+function drawLine(sel) {
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 320;
+  const totalHeight = container.clientHeight || 240;
+  const margin = { top: 16, right: 12, bottom: 36, left: 44 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(sel).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', `${sel.slice(1)}-t ${sel.slice(1)}-d`);
+  svg.append('title').attr('id', `${sel.slice(1)}-t`).text('Line chart of daily temperature with y-axis 60 to 90');
+  svg.append('desc').attr('id', `${sel.slice(1)}-d`).text('Point position carries the value; the y-range is a design choice.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleUtc = d3.scaleUtc()
+    .domain(d3.extent(tempData, d => d.dateObj))
+    .range([0, chartWidth]);
+
+  const yScaleLinear = d3.scaleLinear()
+    .domain([60, 90])
+    .range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleUtc).ticks(5).tickFormat(fmtDay));
+  gChart.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(yScaleLinear).ticks(4).tickFormat(d => `${d}°`));
+
+  const lineGen = d3.line()
+    .x(d => xScaleUtc(d.dateObj))
+    .y(d => yScaleLinear(d.value))
+    .curve(d3.curveLinear);
+
+  gChart.append('path')
+    .datum(tempData)
+    .attr('class', 'line-mark')
+    .attr('d', lineGen);
+
+  // Mark the 70 and 80 days
+  [70, 80].forEach(t => {
+    const d = tempData.find(x => x.value === t);
+    if (!d) return;
+    gChart.append('circle')
+      .attr('class', 'dot-highlight')
+      .attr('cx', xScaleUtc(d.dateObj))
+      .attr('cy', yScaleLinear(d.value))
+      .attr('r', 3.5);
+    gChart.append('text')
+      .attr('class', 'annot')
+      .attr('x', xScaleUtc(d.dateObj))
+      .attr('y', yScaleLinear(d.value) - 6)
+      .attr('text-anchor', 'middle')
+      .text(`${t}°`);
+  });
+}
+
+function draw() {
+  drawArea('#chartA', 50, 90, 'Visual area encodes temperature minus fifty.');
+  drawArea('#chartB', 0, 100, 'Visual area encodes temperature itself; most of the area is empty but the encoding is honest.');
+  drawLine('#chartC');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartA'));
+ro.observe(document.getElementById('chartB'));
+ro.observe(document.getElementById('chartC'));
+</script>
+</body>
+</html>

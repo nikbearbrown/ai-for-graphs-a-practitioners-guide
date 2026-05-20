@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 12.6 — Treemap vs circle packing, irregular depth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 400px; }
+  .leaf { stroke: var(--color-white); stroke-width: 1.2; }
+  .pack-leaf { stroke: var(--color-white); stroke-width: 1; }
+  .pack-parent { fill: none; }
+  .label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-white); pointer-events: none; }
+  .label-dark { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); pointer-events: none; }
+  .footnote { color: var(--color-secondary); font-size: 12px; margin-top: 8px; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 12.6 — Treemap vs circle packing, irregular depth</h1>
+<p class="subtitle">Five humanitarian organizations with uneven depth. The treemap collapses depth to a uniform grid; circle packing preserves it.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Treemap — depth hidden</div>
+    <div class="panel-sub">A 1-level org looks formally identical to a 3-level org.</div>
+    <div id="chartTreemap" class="chart"></div>
+    <div class="footnote">Treemap forces a uniform grid onto unequal structure.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Circle packing — depth preserved</div>
+    <div class="panel-sub">Nested circles only where the data nests.</div>
+    <div id="chartPack" class="chart"></div>
+    <div class="footnote">Topology matches the data; cost is lower area-comparison accuracy.</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const orgData = {
+  name: 'aid',
+  children: [
+    { name: 'Multinational', children: [
+      { name: 'Program 1', children: [{ name: 'Project A', value: 8 }, { name: 'Project B', value: 6 }, { name: 'Project C', value: 4 }] },
+      { name: 'Program 2', children: [{ name: 'Project D', value: 8 }, { name: 'Project E', value: 6 }] },
+      { name: 'Program 3', children: [{ name: 'Project F', value: 8 }] }
+    ]},
+    { name: 'Regional A', children: [
+      { name: 'Program A1', value: 12 },
+      { name: 'Program A2', value: 10 }
+    ]},
+    { name: 'Regional B', children: [
+      { name: 'Program B1', value: 10 },
+      { name: 'Program B2', value: 8 }
+    ]},
+    { name: 'Local A', value: 12 },
+    { name: 'Local B', value: 8 }
+  ]
+};
+const orgFill = {
+  'Multinational': 'var(--color-ink)',
+  'Regional A':    '#404040',
+  'Regional B':    '#404040',
+  'Local A':       '#787878',
+  'Local B':       '#787878'
+};
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function topOrg(d) { let n = d; while (n.depth > 1) n = n.parent; return n.data.name; }
+
+function drawTreemap() {
+  const sel = '#chartTreemap';
+  const el = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = el.clientWidth || 480, h = el.clientHeight || 400;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', 'tmt tmd');
+  svg.append('title').attr('id', 'tmt').text('Humanitarian aid treemap with irregular depth');
+  svg.append('desc').attr('id', 'tmd').text('Five organizations of different depths rendered as a flat treemap.');
+
+  const root = d3.hierarchy(orgData).sum(d => d.value || 0).sort((a, b) => b.value - a.value);
+  d3.treemap().tile(d3.treemapSquarify).size([w, h]).paddingOuter(2).paddingInner(1)(root);
+
+  svg.selectAll('rect')
+    .data(root.descendants().filter(d => d.depth >= 1))
+    .join('rect')
+      .attr('class', 'leaf')
+      .attr('x', d => d.x0).attr('y', d => d.y0)
+      .attr('width', d => d.x1 - d.x0).attr('height', d => d.y1 - d.y0)
+      .attr('fill', d => orgFill[topOrg(d)] || '#ADADAD')
+      .attr('fill-opacity', d => d.depth === 1 ? 1 : d.depth === 2 ? 0.85 : 0.7)
+      .attr('tabindex', 0).attr('aria-label', d => `${d.data.name}: ${d.value}`)
+      .on('mouseover', (event, d) => showTip(event, `<strong>${d.data.name}</strong> · ${d.value}`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  svg.selectAll('text.label')
+    .data(root.descendants().filter(d => d.depth === 1 && (d.x1 - d.x0) > 60 && (d.y1 - d.y0) > 22))
+    .join('text')
+      .attr('class', 'label')
+      .attr('x', d => d.x0 + 6).attr('y', d => d.y0 + 16)
+      .text(d => `${d.data.name} ${d.value}`);
+}
+
+function drawPack() {
+  const sel = '#chartPack';
+  const el = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = el.clientWidth || 480, h = el.clientHeight || 400;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', 'pkt pkd');
+  svg.append('title').attr('id', 'pkt').text('Humanitarian aid circle packing');
+  svg.append('desc').attr('id', 'pkd').text('Same organizations rendered as nested circles; depth varies branch by branch.');
+
+  const root = d3.hierarchy(orgData).sum(d => d.value || 0).sort((a, b) => b.value - a.value);
+  d3.pack().size([w - 4, h - 4]).padding(4)(root);
+
+  const gPack = svg.append('g').attr('transform', 'translate(2,2)');
+  gPack.selectAll('circle')
+    .data(root.descendants())
+    .join('circle')
+      .attr('cx', d => d.x).attr('cy', d => d.y).attr('r', d => d.r)
+      .attr('fill', d => d.children ? 'none' : (orgFill[topOrg(d)] || '#ADADAD'))
+      .attr('stroke', d => d.depth === 1 ? 'var(--color-ink)' : d.depth === 2 ? '#404040' : 'var(--color-white)')
+      .attr('stroke-width', d => d.depth === 1 ? 1.6 : d.depth === 2 ? 1.2 : 1)
+      .attr('tabindex', 0).attr('aria-label', d => `${d.data.name}: ${d.value}`)
+      .on('mouseover', (event, d) => showTip(event, `<strong>${d.data.name}</strong> · ${d.value}`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  gPack.selectAll('text.label-dark')
+    .data(root.descendants().filter(d => d.depth === 1 && d.r > 28))
+    .join('text')
+      .attr('class', 'label-dark')
+      .attr('x', d => d.x).attr('y', d => d.y - d.r - 4)
+      .attr('text-anchor', 'middle')
+      .text(d => d.data.name);
+}
+
+function draw() {
+  drawTreemap();
+  drawPack();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartTreemap'));
+ro.observe(document.getElementById('chartPack'));
+</script>
+</body>
+</html>

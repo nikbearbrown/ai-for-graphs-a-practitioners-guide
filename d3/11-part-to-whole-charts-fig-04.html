@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 11.4 — Decision tree: composition vs ranking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #chart { width: 100%; height: 520px; border: 1px solid var(--color-border); padding: 16px; }
+  .node-box rect { fill: #f5f2ee; stroke: var(--color-ink); stroke-width: 1px; }
+  @media (prefers-color-scheme: dark) {
+    .node-box rect { fill: #1c1c1c; }
+  }
+  .node-box.leaf rect { fill: var(--color-ink); }
+  .node-box.leaf.primary rect { fill: var(--color-red); }
+  .node-title { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; fill: var(--color-ink); }
+  .node-sub   { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .leaf-text  { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; fill: var(--color-white); }
+  .edge-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .edge { fill: none; stroke: var(--color-ink); stroke-width: 1px; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 11.4 — Decision tree: composition vs ranking</h1>
+<p class="subtitle">The audit before the chart. The question determines the form.</p>
+<div id="chart" role="img" aria-label="Decision tree for choosing between pie, donut, waffle, or bar chart"></div>
+<p class="caption">Composition wants part-to-whole. Ranking wants comparison. The question chooses the form, the form determines the channel, the channel determines the accuracy the reader gets.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const nodes = [
+  { id: 'root',  x: 0.50, y: 0.10, w: 240, type: 'decision',
+    title: 'Is the message about composition',
+    sub:   'or about ranking?' },
+  { id: 'comp',  x: 0.25, y: 0.32, w: 220, type: 'decision',
+    title: 'How many categories?',
+    sub:   'apply the five-slice rule' },
+  { id: 'rank',  x: 0.78, y: 0.32, w: 220, type: 'decision',
+    title: 'Use the highest-accuracy channel',
+    sub:   'position along a common baseline' },
+  { id: 'prec',  x: 0.12, y: 0.54, w: 200, type: 'decision',
+    title: 'Precision or familiarity?',
+    sub:   'audience graphicacy decides' },
+  { id: 'agg',   x: 0.40, y: 0.54, w: 220, type: 'decision',
+    title: 'Aggregate to top-5 + Other',
+    sub:   'or switch to a bar chart' },
+  { id: 'waffle',x: 0.04, y: 0.82, w: 110, type: 'leaf', primary: false, text: 'Waffle' },
+  { id: 'pie',   x: 0.22, y: 0.82, w: 130, type: 'leaf', primary: true,  text: 'Pie / Donut' },
+  { id: 'agbar', x: 0.42, y: 0.82, w: 180, type: 'leaf', primary: false, text: 'Bar chart or pie-of-5' },
+  { id: 'bar',   x: 0.78, y: 0.82, w: 180, type: 'leaf', primary: true,  text: 'Bar chart (sorted)' }
+];
+
+const edges = [
+  { from: 'root', to: 'comp', label: 'compositional' },
+  { from: 'root', to: 'rank', label: 'comparative / ranking' },
+  { from: 'comp', to: 'prec', label: '≤ 5' },
+  { from: 'comp', to: 'agg',  label: '> 5' },
+  { from: 'prec', to: 'waffle', label: 'precision' },
+  { from: 'prec', to: 'pie',    label: 'familiarity' },
+  { from: 'agg',  to: 'agbar',  label: '' },
+  { from: 'rank', to: 'bar',    label: 'always' }
+];
+
+function draw() {
+  const container = document.getElementById('chart');
+  d3.select('#chart').selectAll('*').remove();
+  const totalWidth  = container.clientWidth  - 32 || 800;
+  const totalHeight = 488;
+
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img');
+  svg.append('title').text('Decision tree for part-to-whole vs ranking');
+  svg.append('desc').text('A two-branch decision tree from the root question — composition or ranking — through five-slice rule, precision-vs-familiarity, and aggregation, resolving to waffle, pie or donut, bar chart, or bar chart with aggregation.');
+
+  // Arrow marker
+  svg.append('defs').append('marker')
+    .attr('id', 'arrow-fig11-4')
+    .attr('markerWidth', 8).attr('markerHeight', 6).attr('refX', 7).attr('refY', 3).attr('orient', 'auto')
+    .append('polygon').attr('points', '0 0, 8 3, 0 6').attr('fill', 'currentColor');
+
+  function nodePos(n) {
+    return {
+      cx: n.x * totalWidth,
+      cy: n.y * totalHeight,
+      w:  n.w,
+      h:  n.type === 'leaf' ? 40 : 56
+    };
+  }
+
+  // Draw edges first
+  edges.forEach(e => {
+    const a = nodes.find(n => n.id === e.from);
+    const b = nodes.find(n => n.id === e.to);
+    const ap = nodePos(a);
+    const bp = nodePos(b);
+    const x1 = ap.cx;
+    const y1 = ap.cy + ap.h / 2;
+    const x2 = bp.cx;
+    const y2 = bp.cy - bp.h / 2;
+    svg.append('path')
+      .attr('class', 'edge')
+      .attr('d', 'M ' + x1 + ' ' + y1 + ' L ' + x2 + ' ' + y2)
+      .attr('marker-end', 'url(#arrow-fig11-4)');
+    if (e.label) {
+      svg.append('text')
+        .attr('class', 'edge-label')
+        .attr('x', (x1 + x2) / 2 + 6)
+        .attr('y', (y1 + y2) / 2)
+        .text(e.label);
+    }
+  });
+
+  // Draw nodes
+  nodes.forEach(n => {
+    const p = nodePos(n);
+    const g = svg.append('g')
+      .attr('class', 'node-box' + (n.type === 'leaf' ? ' leaf' : '') + (n.primary ? ' primary' : ''))
+      .attr('transform', 'translate(' + (p.cx - p.w / 2) + ',' + (p.cy - p.h / 2) + ')');
+    g.append('rect').attr('width', p.w).attr('height', p.h);
+    if (n.type === 'leaf') {
+      g.append('text').attr('class', 'leaf-text')
+        .attr('x', p.w / 2).attr('y', p.h / 2 + 4).attr('text-anchor', 'middle')
+        .text(n.text);
+    } else {
+      g.append('text').attr('class', 'node-title')
+        .attr('x', p.w / 2).attr('y', 20).attr('text-anchor', 'middle')
+        .text(n.title);
+      g.append('text').attr('class', 'node-sub')
+        .attr('x', p.w / 2).attr('y', 38).attr('text-anchor', 'middle')
+        .text(n.sub);
+    }
+  });
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

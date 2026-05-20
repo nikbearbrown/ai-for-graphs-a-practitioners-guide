@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 500" role="img" aria-labelledby="t05 d05">
+  <title id="t05">Three forms for one dataset — stacked, multiset, small multiples</title>
+  <desc id="d05">Same humanitarian funding dataset of five countries across four sectors rendered three ways. Each answers a different communication question.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .q   { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+  </defs>
+  <rect width="700" height="500" fill="#fdfcfb"/>
+  <text x="350" y="28" text-anchor="middle" class="ti">Same 5-country × 4-sector dataset, three forms. The question chooses the chart.</text>
+
+  <!-- legend at top -->
+  <g transform="translate(180,40)">
+    <rect x="0"   y="0" width="12" height="10" fill="#2a1a0e"/><text x="16"  y="9" class="sm">Food</text>
+    <rect x="60"  y="0" width="12" height="10" fill="#4a4540"/><text x="76"  y="9" class="sm">Health</text>
+    <rect x="130" y="0" width="12" height="10" fill="#8a8480"/><text x="146" y="9" class="sm">Shelter</text>
+    <rect x="200" y="0" width="12" height="10" fill="#c8c4c0"/><text x="216" y="9" class="sm">Protection</text>
+  </g>
+
+  <!-- PANEL A: STACKED -->
+  <g transform="translate(32,80)">
+    <text x="0" y="0" class="ti">A. Stacked bars</text>
+    <text x="0" y="14" class="q">Q: which country received the most total funding?</text>
+    <line x1="40" y1="40" x2="40" y2="240" stroke="#8a8480"/>
+    <line x1="40" y1="240" x2="200" y2="240" stroke="#8a8480"/>
+    <text x="36" y="243" text-anchor="end" class="sm">0</text>
+    <text x="36" y="143" text-anchor="end" class="sm">250</text>
+    <text x="36" y="43" text-anchor="end" class="sm">500</text>
+    <!-- 5 countries, totals 480,385,330,255,215. Bar width 20, gap 8. x start 52. scale 0..500 → 0..200 px -->
+    <!-- YEMEN total 480; Food 180, Health 140, Shelter 90, Protection 70; segment heights: 72, 56, 36, 28 -->
+    <g><rect x="52" y="168" width="20" height="72" fill="#2a1a0e"/>
+       <rect x="52" y="112" width="20" height="56" fill="#4a4540"/>
+       <rect x="52" y="76"  width="20" height="36" fill="#8a8480"/>
+       <rect x="52" y="48"  width="20" height="28" fill="#c8c4c0"/></g>
+    <!-- SUDAN 385: F160 H100 S70 P55 -> 64 40 28 22 -->
+    <g><rect x="80" y="176" width="20" height="64" fill="#2a1a0e"/>
+       <rect x="80" y="136" width="20" height="40" fill="#4a4540"/>
+       <rect x="80" y="108" width="20" height="28" fill="#8a8480"/>
+       <rect x="80" y="86"  width="20" height="22" fill="#c8c4c0"/></g>
+    <!-- DRC 330: F110 H95 S80 P45 -> 44 38 32 18 -->
+    <g><rect x="108" y="196" width="20" height="44" fill="#2a1a0e"/>
+       <rect x="108" y="158" width="20" height="38" fill="#4a4540"/>
+       <rect x="108" y="126" width="20" height="32" fill="#8a8480"/>
+       <rect x="108" y="108" width="20" height="18" fill="#c8c4c0"/></g>
+    <!-- SOMALIA 255: F95 H70 S50 P40 -> 38 28 20 16 -->
+    <g><rect x="136" y="202" width="20" height="38" fill="#2a1a0e"/>
+       <rect x="136" y="174" width="20" height="28" fill="#4a4540"/>
+       <rect x="136" y="154" width="20" height="20" fill="#8a8480"/>
+       <rect x="136" y="138" width="20" height="16" fill="#c8c4c0"/></g>
+    <!-- ETHIOPIA 215: F85 H65 S35 P30 -> 34 26 14 12 -->
+    <g><rect x="164" y="206" width="20" height="34" fill="#2a1a0e"/>
+       <rect x="164" y="180" width="20" height="26" fill="#4a4540"/>
+       <rect x="164" y="166" width="20" height="14" fill="#8a8480"/>
+       <rect x="164" y="154" width="20" height="12" fill="#c8c4c0"/></g>
+    <!-- x labels -->
+    <g class="sm">
+      <text x="62"  y="258" text-anchor="end" transform="rotate(-30 62 258)">Yemen</text>
+      <text x="90"  y="258" text-anchor="end" transform="rotate(-30 90 258)">Sudan</text>
+      <text x="118" y="258" text-anchor="end" transform="rotate(-30 118 258)">DRC</text>
+      <text x="146" y="258" text-anchor="end" transform="rotate(-30 146 258)">Somalia</text>
+      <text x="174" y="258" text-anchor="end" transform="rotate(-30 174 258)">Ethiopia</text>
+    </g>
+    <text x="100" y="296" text-anchor="middle" class="sm">total bar uses position from zero (ch. 1)</text>
+    <text x="100" y="308" text-anchor="middle" class="sm">segments above the first lose their baseline</text>
+  </g>
+
+  <!-- PANEL B: MULTISET -->
+  <g transform="translate(252,80)">
+    <text x="0" y="0" class="ti">B. Multiset (grouped)</text>
+    <text x="0" y="14" class="q">Q: in which sectors did each country receive most?</text>
+    <line x1="40" y1="40" x2="40" y2="240" stroke="#8a8480"/>
+    <line x1="40" y1="240" x2="200" y2="240" stroke="#8a8480"/>
+    <text x="36" y="243" text-anchor="end" class="sm">0</text>
+    <text x="36" y="143" text-anchor="end" class="sm">100</text>
+    <text x="36" y="43" text-anchor="end" class="sm">200</text>
+    <!-- 5 countries × 4 bars. bar width 6, sub-gap 0, group width 24, group gap 8. x start 50 -->
+    <!-- scale 0..200 → 0..200 px (1:1 ratio for height) heights = value -->
+    <!-- YEMEN -->
+    <g transform="translate(50,0)">
+      <rect x="0"  y="60" width="6" height="180" fill="#2a1a0e"/>
+      <rect x="6"  y="100" width="6" height="140" fill="#4a4540"/>
+      <rect x="12" y="150" width="6" height="90"  fill="#8a8480"/>
+      <rect x="18" y="170" width="6" height="70"  fill="#c8c4c0"/>
+    </g>
+    <!-- SUDAN -->
+    <g transform="translate(82,0)">
+      <rect x="0"  y="80"  width="6" height="160" fill="#2a1a0e"/>
+      <rect x="6"  y="140" width="6" height="100" fill="#4a4540"/>
+      <rect x="12" y="170" width="6" height="70"  fill="#8a8480"/>
+      <rect x="18" y="185" width="6" height="55"  fill="#c8c4c0"/>
+    </g>
+    <!-- DRC -->
+    <g transform="translate(114,0)">
+      <rect x="0"  y="130" width="6" height="110" fill="#2a1a0e"/>
+      <rect x="6"  y="145" width="6" height="95"  fill="#4a4540"/>
+      <rect x="12" y="160" width="6" height="80"  fill="#8a8480"/>
+      <rect x="18" y="195" width="6" height="45"  fill="#c8c4c0"/>
+    </g>
+    <!-- SOMALIA -->
+    <g transform="translate(146,0)">
+      <rect x="0"  y="145" width="6" height="95"  fill="#2a1a0e"/>
+      <rect x="6"  y="170" width="6" height="70"  fill="#4a4540"/>
+      <rect x="12" y="190" width="6" height="50"  fill="#8a8480"/>
+      <rect x="18" y="200" width="6" height="40"  fill="#c8c4c0"/>
+    </g>
+    <!-- ETHIOPIA -->
+    <g transform="translate(178,0)">
+      <rect x="0"  y="155" width="6" height="85"  fill="#2a1a0e"/>
+      <rect x="6"  y="175" width="6" height="65"  fill="#4a4540"/>
+      <rect x="12" y="205" width="6" height="35"  fill="#8a8480"/>
+      <rect x="18" y="210" width="6" height="30"  fill="#c8c4c0"/>
+    </g>
+    <g class="sm">
+      <text x="62"  y="258" text-anchor="end" transform="rotate(-30 62 258)">Yemen</text>
+      <text x="94"  y="258" text-anchor="end" transform="rotate(-30 94 258)">Sudan</text>
+      <text x="126" y="258" text-anchor="end" transform="rotate(-30 126 258)">DRC</text>
+      <text x="158" y="258" text-anchor="end" transform="rotate(-30 158 258)">Somalia</text>
+      <text x="190" y="258" text-anchor="end" transform="rotate(-30 190 258)">Ethiopia</text>
+    </g>
+    <text x="100" y="296" text-anchor="middle" class="sm">each bar on its own baseline (ch. 1)</text>
+    <text x="100" y="308" text-anchor="middle" class="sm">cross-sector across countries is hard</text>
+  </g>
+
+  <!-- PANEL C: SMALL MULTIPLES -->
+  <g transform="translate(472,80)">
+    <text x="0" y="0" class="ti">C. Small multiples</text>
+    <text x="0" y="14" class="q">Q: which sector was funded most across all countries?</text>
+    <!-- 4 mini panels in a 2x2 grid -->
+    <g transform="translate(0,30)">
+      <!-- panel: Food -->
+      <g>
+        <text x="2" y="6" class="sm">Food</text>
+        <rect x="2" y="10" width="96" height="50" fill="none" stroke="#c8c4c0"/>
+        <g transform="translate(2,60)">
+          <rect x="2"  y="-36" width="14" height="36" fill="#2a1a0e"/>
+          <rect x="20" y="-32" width="14" height="32" fill="#2a1a0e"/>
+          <rect x="38" y="-22" width="14" height="22" fill="#2a1a0e"/>
+          <rect x="56" y="-19" width="14" height="19" fill="#2a1a0e"/>
+          <rect x="74" y="-17" width="14" height="17" fill="#2a1a0e"/>
+        </g>
+      </g>
+      <!-- panel: Health -->
+      <g transform="translate(108,0)">
+        <text x="2" y="6" class="sm">Health</text>
+        <rect x="2" y="10" width="96" height="50" fill="none" stroke="#c8c4c0"/>
+        <g transform="translate(2,60)">
+          <rect x="2"  y="-28" width="14" height="28" fill="#4a4540"/>
+          <rect x="20" y="-20" width="14" height="20" fill="#4a4540"/>
+          <rect x="38" y="-19" width="14" height="19" fill="#4a4540"/>
+          <rect x="56" y="-14" width="14" height="14" fill="#4a4540"/>
+          <rect x="74" y="-13" width="14" height="13" fill="#4a4540"/>
+        </g>
+      </g>
+    </g>
+    <g transform="translate(0,120)">
+      <!-- panel: Shelter -->
+      <g>
+        <text x="2" y="6" class="sm">Shelter</text>
+        <rect x="2" y="10" width="96" height="50" fill="none" stroke="#c8c4c0"/>
+        <g transform="translate(2,60)">
+          <rect x="2"  y="-18" width="14" height="18" fill="#8a8480"/>
+          <rect x="20" y="-14" width="14" height="14" fill="#8a8480"/>
+          <rect x="38" y="-16" width="14" height="16" fill="#8a8480"/>
+          <rect x="56" y="-10" width="14" height="10" fill="#8a8480"/>
+          <rect x="74" y="-7"  width="14" height="7"  fill="#8a8480"/>
+        </g>
+      </g>
+      <!-- panel: Protection -->
+      <g transform="translate(108,0)">
+        <text x="2" y="6" class="sm">Protection</text>
+        <rect x="2" y="10" width="96" height="50" fill="none" stroke="#c8c4c0"/>
+        <g transform="translate(2,60)">
+          <rect x="2"  y="-14" width="14" height="14" fill="#c8c4c0"/>
+          <rect x="20" y="-11" width="14" height="11" fill="#c8c4c0"/>
+          <rect x="38" y="-9"  width="14" height="9"  fill="#c8c4c0"/>
+          <rect x="56" y="-8"  width="14" height="8"  fill="#c8c4c0"/>
+          <rect x="74" y="-6"  width="14" height="6"  fill="#c8c4c0"/>
+        </g>
+      </g>
+    </g>
+    <text x="100" y="288" text-anchor="middle" class="sm">shared y-axis across panels</text>
+    <text x="100" y="300" text-anchor="middle" class="sm">aligned-scale comparison (ch. 2)</text>
+  </g>
+
+  <!-- footer caption -->
+  <text x="350" y="478" text-anchor="middle" class="cap">Same data. Three questions. Three charts. The question determines the form, and the form determines the channel.</text>
+</svg>

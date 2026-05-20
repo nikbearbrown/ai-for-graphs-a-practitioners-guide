@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 13.3 — Sankey vs alluvial vs ribbon chord</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-q { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 280px; }
+  .panel-foot { color: var(--color-secondary); font-size: 11px; margin-top: 8px; }
+  .node rect { fill: var(--color-ink); }
+  .node text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .link { fill: none; stroke: var(--color-ink); stroke-opacity: 0.32; }
+  .link.primary { stroke: var(--color-red); stroke-opacity: 0.45; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 13.3 — Three magnitude-family forms</h1>
+<p class="subtitle">Sankey, alluvial, ribbon chord. Each uses width as the magnitude channel. Each answers a different structural question.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Sankey</div>
+    <div class="panel-q">Q: how much flows A → B → C?</div>
+    <div id="chartSankey" class="chart" role="img" aria-label="Sankey diagram with three columns of nodes"></div>
+    <div class="panel-foot">Left-to-right, directional. 5–30 nodes, 2–4 columns.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Alluvial</div>
+    <div class="panel-q">Q: how did categories shift across time?</div>
+    <div id="chartAlluvial" class="chart" role="img" aria-label="Alluvial diagram across three time points"></div>
+    <div class="panel-foot">Longitudinal categorical. 3–6 time points typical.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">C. Ribbon chord</div>
+    <div class="panel-q">Q: how much flows between any pair?</div>
+    <div id="chartChord" class="chart" role="img" aria-label="Ribbon chord diagram between four entities"></div>
+    <div class="panel-foot">Circular, symmetric. 6–20 entities.</div>
+  </div>
+</div>
+<p class="caption">Width ranks third in Cleveland and McGill. Less accurate than position; more accurate than area or color intensity. Choose the form by question structure.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-sankey/0.12.3/d3-sankey.min.js"></script>
+<script>
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+// ===== SANKEY =====
+function drawSankey() {
+  const sel = '#chartSankey';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const W = container.clientWidth || 300, H = container.clientHeight || 280;
+  const svg = d3.select(sel).append('svg').attr('width', W).attr('height', H).attr('role', 'img');
+
+  const data = {
+    nodes: [{ name: 'S1' }, { name: 'S2' }, { name: 'T1' }, { name: 'T2' }, { name: 'E1' }, { name: 'E2' }],
+    links: [
+      { source: 0, target: 2, value: 30 },
+      { source: 0, target: 3, value: 10 },
+      { source: 1, target: 3, value: 18 },
+      { source: 2, target: 4, value: 22 },
+      { source: 2, target: 5, value: 8 },
+      { source: 3, target: 4, value: 14 },
+      { source: 3, target: 5, value: 14 }
+    ]
+  };
+
+  const sankey = d3.sankey()
+    .nodeWidth(10).nodePadding(10)
+    .extent([[40, 16], [W - 40, H - 16]]);
+
+  const graph = sankey({ nodes: data.nodes.map(n => ({ ...n })), links: data.links.map(l => ({ ...l })) });
+
+  svg.append('g').selectAll('path').data(graph.links).join('path')
+    .attr('class', (d, i) => i === 0 ? 'link primary' : 'link')
+    .attr('d', d3.sankeyLinkHorizontal())
+    .attr('stroke-width', d => Math.max(1, d.width))
+    .on('mouseover', (event, d) => showTip(event, `<strong>${d.source.name} → ${d.target.name}</strong>: ${d.value}`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  const node = svg.append('g').selectAll('g').data(graph.nodes).join('g').attr('class', 'node');
+  node.append('rect').attr('x', d => d.x0).attr('y', d => d.y0).attr('width', d => d.x1 - d.x0).attr('height', d => d.y1 - d.y0);
+  node.append('text').attr('x', d => d.x0 < W / 2 ? d.x1 + 4 : d.x0 - 4).attr('y', d => (d.y0 + d.y1) / 2)
+    .attr('dy', '0.35em').attr('text-anchor', d => d.x0 < W / 2 ? 'start' : 'end').text(d => d.name);
+}
+
+// ===== ALLUVIAL (built on top of d3-sankey across 3 time points) =====
+function drawAlluvial() {
+  const sel = '#chartAlluvial';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const W = container.clientWidth || 300, H = container.clientHeight || 280;
+  const svg = d3.select(sel).append('svg').attr('width', W).attr('height', H).attr('role', 'img');
+
+  // 3 categories x 3 time points => 9 nodes
+  const cats = ['A', 'B', 'C'];
+  const times = ['2018', '2020', '2022'];
+  const nodes = [];
+  times.forEach(t => cats.forEach(c => nodes.push({ name: `${c}·${t}` })));
+  function idx(t, c) { return times.indexOf(t) * 3 + cats.indexOf(c); }
+  const links = [
+    // 2018 -> 2020 transitions
+    { source: idx('2018', 'A'), target: idx('2020', 'A'), value: 24 },
+    { source: idx('2018', 'A'), target: idx('2020', 'B'), value: 6 },
+    { source: idx('2018', 'B'), target: idx('2020', 'B'), value: 15 },
+    { source: idx('2018', 'B'), target: idx('2020', 'C'), value: 6 },
+    { source: idx('2018', 'C'), target: idx('2020', 'C'), value: 12 },
+    // 2020 -> 2022
+    { source: idx('2020', 'A'), target: idx('2022', 'A'), value: 18 },
+    { source: idx('2020', 'A'), target: idx('2022', 'B'), value: 6 },
+    { source: idx('2020', 'B'), target: idx('2022', 'B'), value: 14 },
+    { source: idx('2020', 'B'), target: idx('2022', 'C'), value: 7 },
+    { source: idx('2020', 'C'), target: idx('2022', 'C'), value: 18 }
+  ];
+
+  const sankey = d3.sankey()
+    .nodeWidth(8).nodePadding(8)
+    .extent([[40, 20], [W - 24, H - 16]]);
+  const graph = sankey({ nodes: nodes.map(n => ({ ...n })), links: links.map(l => ({ ...l })) });
+
+  // time labels above
+  graph.nodes.filter((_, i) => i % 3 === 0).forEach((n, i) => {
+    svg.append('text').attr('x', (n.x0 + n.x1) / 2).attr('y', 14).attr('text-anchor', 'middle')
+      .style('font-family', "'JetBrains Mono', monospace").style('font-size', '10px').style('fill', 'var(--color-secondary)')
+      .text(times[i]);
+  });
+
+  svg.append('g').selectAll('path').data(graph.links).join('path')
+    .attr('class', 'link')
+    .attr('d', d3.sankeyLinkHorizontal())
+    .attr('stroke-width', d => Math.max(1, d.width))
+    .on('mouseover', (event, d) => showTip(event, `<strong>${d.source.name} → ${d.target.name}</strong>: ${d.value}`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  const node = svg.append('g').selectAll('g').data(graph.nodes).join('g').attr('class', 'node');
+  node.append('rect').attr('x', d => d.x0).attr('y', d => d.y0).attr('width', d => d.x1 - d.x0).attr('height', d => d.y1 - d.y0);
+  // category label only on leftmost column
+  node.filter((_, i) => i < 3).append('text')
+    .attr('x', d => d.x0 - 4).attr('y', d => (d.y0 + d.y1) / 2)
+    .attr('dy', '0.35em').attr('text-anchor', 'end')
+    .text((d, i) => cats[i]);
+}
+
+// ===== RIBBON CHORD =====
+function drawChord() {
+  const sel = '#chartChord';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const W = container.clientWidth || 300, H = container.clientHeight || 280;
+  const svg = d3.select(sel).append('svg').attr('width', W).attr('height', H).attr('role', 'img');
+
+  const outer = Math.min(W, H) / 2 - 28;
+  const inner = outer - 8;
+  const g = svg.append('g').attr('transform', `translate(${W / 2},${H / 2})`);
+
+  const names = ['FR', 'DE', 'IT', 'UK'];
+  const matrix = [
+    [0, 28, 8, 18],
+    [28, 0, 12, 10],
+    [8, 12, 0, 6],
+    [18, 10, 6, 0]
+  ];
+  const chord = d3.chord().padAngle(0.06).sortSubgroups(d3.descending)(matrix);
+  const arc = d3.arc().innerRadius(inner).outerRadius(outer);
+  const ribbon = d3.ribbon().radius(inner);
+
+  // group arcs
+  g.append('g').selectAll('path').data(chord.groups).join('path')
+    .attr('d', arc).attr('fill', 'var(--color-ink)');
+  // labels
+  g.append('g').selectAll('text').data(chord.groups).join('text')
+    .each(d => { d.angle = (d.startAngle + d.endAngle) / 2; })
+    .attr('dy', '0.35em')
+    .attr('transform', d => `rotate(${(d.angle * 180 / Math.PI - 90)}) translate(${outer + 8})${d.angle > Math.PI ? ' rotate(180)' : ''}`)
+    .attr('text-anchor', d => d.angle > Math.PI ? 'end' : null)
+    .style('font-family', "'JetBrains Mono', monospace").style('font-size', '10px').style('fill', 'var(--color-secondary)')
+    .text((d, i) => names[i]);
+
+  // ribbons
+  g.append('g').selectAll('path').data(chord).join('path')
+    .attr('d', ribbon)
+    .attr('fill', (d, i) => i === 0 ? 'var(--color-red)' : 'var(--color-ink)')
+    .attr('fill-opacity', 0.5).attr('stroke', 'none')
+    .on('mouseover', (event, d) => showTip(event, `<strong>${names[d.source.index]} ↔ ${names[d.target.index]}</strong><br/>${matrix[d.source.index][d.target.index]}`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+}
+
+function draw() {
+  drawSankey();
+  drawAlluvial();
+  drawChord();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartSankey'));
+ro.observe(document.getElementById('chartAlluvial'));
+ro.observe(document.getElementById('chartChord'));
+</script>
+</body>
+</html>

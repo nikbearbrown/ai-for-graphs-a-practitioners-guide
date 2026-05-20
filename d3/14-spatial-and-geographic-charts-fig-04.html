@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 14.4 — Choropleth vs dot map (Snow's Soho)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; background: var(--color-white); }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 360px; }
+  .parish { stroke: var(--color-white); stroke-width: 1; cursor: pointer; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .parish-label { font-family: 'Inter', sans-serif; font-size: 11px; pointer-events: none; }
+  .street { stroke: var(--color-border); stroke-width: 0.75; fill: none; }
+  .death { fill: var(--color-ink); }
+  .death-sparse { fill: var(--color-secondary); opacity: 0.85; }
+  .pump-ring { fill: none; stroke: var(--color-ochre); stroke-width: 2; }
+  .pump-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; fill: var(--color-ink); }
+  .legend-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 14.4 — Choropleth vs dot map (Snow's Soho)</h1>
+<p class="subtitle">Same 1854 cholera dataset, two resolutions. The parish choropleth hides the cluster; the dot-per-death map reveals it. The Broad Street pump stands at the cluster's center.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Parish choropleth</div>
+    <div class="panel-sub">Deaths per parish — resolution = parish boundary.</div>
+    <div id="chartChoro" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Dot map (Snow-style)</div>
+    <div class="panel-sub">One dot per death at its address. Seeded reproducible placement.</div>
+    <div id="chartDots" class="chart"></div>
+  </div>
+</div>
+<p class="caption">The form that answers the question is set by the resolution the question requires. Aggregating to parishes erased the spatial pattern that mattered.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const SHADES = ['#ECE8E3', '#C8C4C0', '#8A8480', '#4A4540', '#2A1A0E'];
+const PARISHES = [
+  { name: 'St James', deaths: 34, path: 'M 10 30 L 240 30 L 260 150 L 10 180 Z' },
+  { name: 'St Anne (Soho)', deaths: 72, path: 'M 240 30 L 500 30 L 520 170 L 260 150 Z' },
+  { name: 'Westminster', deaths: 28, path: 'M 10 180 L 260 150 L 520 170 L 520 380 L 10 380 Z' }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(e, h) { tooltip.html(h).style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px').transition().duration(150).style('opacity', 1); }
+function moveTip(e) { tooltip.style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawChoropleth() {
+  d3.select('#chartChoro').selectAll('*').remove();
+  const c = document.getElementById('chartChoro');
+  const w = c.clientWidth || 400;
+  const h = c.clientHeight || 360;
+  const svg = d3.select('#chartChoro').append('svg')
+    .attr('width', w).attr('height', h)
+    .attr('viewBox', '0 0 530 380').attr('preserveAspectRatio', 'xMidYMid meet')
+    .attr('role', 'img').attr('aria-labelledby', 'choro-t choro-d');
+  svg.append('title').attr('id', 'choro-t').text('Parish-level choropleth of cholera deaths');
+  svg.append('desc').attr('id', 'choro-d').text('Three parishes shaded by total deaths during the 1854 outbreak.');
+
+  const colorScaleSequential = d3.scaleQuantile()
+    .domain(PARISHES.map(p => p.deaths))
+    .range(SHADES);
+
+  svg.selectAll('.parish')
+    .data(PARISHES)
+    .join('path')
+      .attr('class', 'parish')
+      .attr('d', d => d.path)
+      .attr('fill', d => colorScaleSequential(d.deaths))
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.name}: ${d.deaths} deaths`)
+      .on('mouseover', (e, d) => showTip(e, `<strong>${d.name}</strong><br>${d.deaths} deaths`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // Labels (dark text on light fills, light text on dark fills)
+  PARISHES.forEach(p => {
+    const bbox = d3.select(`path[d="${p.path}"]`).node().getBBox();
+    const cx = bbox.x + bbox.width / 2, cy = bbox.y + bbox.height / 2;
+    const binIndex = SHADES.indexOf(colorScaleSequential(p.deaths));
+    const labelFill = binIndex >= 2 ? '#FFFFFF' : '#121212';
+    svg.append('text').attr('class', 'parish-label')
+      .attr('x', cx).attr('y', cy).attr('text-anchor', 'middle')
+      .attr('fill', labelFill).text(p.name);
+    svg.append('text').attr('class', 'parish-label')
+      .attr('x', cx).attr('y', cy + 14).attr('text-anchor', 'middle')
+      .attr('fill', labelFill).attr('font-size', 10).text(`${p.deaths} deaths`);
+  });
+}
+
+// Seeded RNG so dot placement is reproducible
+function seededRandom(seed) {
+  let state = seed % 2147483647;
+  return () => { state = (state * 16807) % 2147483647; return state / 2147483647; };
+}
+
+function drawDots() {
+  d3.select('#chartDots').selectAll('*').remove();
+  const c = document.getElementById('chartDots');
+  const w = c.clientWidth || 400;
+  const h = c.clientHeight || 360;
+  const svg = d3.select('#chartDots').append('svg')
+    .attr('width', w).attr('height', h)
+    .attr('viewBox', '0 0 530 380').attr('preserveAspectRatio', 'xMidYMid meet')
+    .attr('role', 'img').attr('aria-labelledby', 'dots-t dots-d');
+  svg.append('title').attr('id', 'dots-t').text('Dot map of cholera deaths in Soho');
+  svg.append('desc').attr('id', 'dots-d').text('Each dot represents one death at its street address. A dense cluster surrounds the Broad Street pump.');
+
+  // street grid
+  svg.append('rect').attr('width', 530).attr('height', 380).attr('fill', 'var(--color-white)').attr('stroke', 'var(--color-border)');
+  const hStreets = [70, 140, 210, 280, 350];
+  const vStreets = [80, 180, 280, 380, 480];
+  hStreets.forEach(y => svg.append('line').attr('class', 'street').attr('x1', 0).attr('y1', y).attr('x2', 530).attr('y2', y));
+  vStreets.forEach(x => svg.append('line').attr('class', 'street').attr('x1', x).attr('y1', 0).attr('x2', x).attr('y2', 380));
+
+  svg.append('text').attr('x', 8).attr('y', 138).attr('class', 'legend-label').text('Cambridge St');
+  svg.append('text').attr('x', 286).attr('y', 64).attr('class', 'legend-label').text('Broad St');
+
+  // Pump at (280, 180)
+  const pumpX = 280, pumpY = 180;
+
+  // Cluster: 60 dots gaussian around pump
+  const rng = seededRandom(20251104);
+  const cluster = [];
+  for (let i = 0; i < 60; i++) {
+    // box-muller
+    const u1 = rng(), u2 = rng();
+    const z1 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    const z2 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math.PI * u2);
+    cluster.push({ x: pumpX + z1 * 18, y: pumpY + z2 * 14 });
+  }
+  // Sparse: 25 dots spread uniformly
+  const sparse = [];
+  for (let i = 0; i < 25; i++) sparse.push({ x: 30 + rng() * 470, y: 30 + rng() * 320 });
+
+  svg.selectAll('.death-sparse').data(sparse).join('circle')
+    .attr('class', 'death-sparse').attr('cx', d => d.x).attr('cy', d => d.y).attr('r', 2);
+  svg.selectAll('.death').data(cluster).join('circle')
+    .attr('class', 'death').attr('cx', d => d.x).attr('cy', d => d.y).attr('r', 2.4);
+
+  // pump ring
+  svg.append('circle').attr('class', 'pump-ring').attr('cx', pumpX).attr('cy', pumpY).attr('r', 14);
+  svg.append('text').attr('class', 'pump-label').attr('x', pumpX).attr('y', pumpY + 36)
+    .attr('text-anchor', 'middle').text('Broad Street pump');
+}
+
+function drawAll() { drawChoropleth(); drawDots(); }
+drawAll();
+const ro = new ResizeObserver(drawAll);
+['#chartChoro', '#chartDots'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

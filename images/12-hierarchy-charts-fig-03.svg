@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t12-03 d12-03">
+  <title id="t12-03">Rectangles vs circles — the alignment-anchor advantage</title>
+  <desc id="d12-03">Two pairs of shapes encoding the same areas 100 and 200 square units. The left pair shows rectangles sharing a common baseline; the right pair shows two free-floating circles. Annotations name the Stevens-exponent area perception cost in each case.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar12-03" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="26" text-anchor="middle" class="ti">Both encode 100 and 200 sq units. Rectangles supply an anchor; circles do not.</text>
+
+  <!-- LEFT: RECTANGLES (aligned) -->
+  <text x="32" y="60" class="ti">Rectangles — shared baseline</text>
+  <text x="32" y="76" class="sm">eye anchors right edges against each other</text>
+
+  <!-- baseline at y=320 -->
+  <line x1="32" y1="320" x2="332" y2="320" stroke="#2a1a0e" stroke-width="1"/>
+  <line x1="32" y1="100" x2="32" y2="320" stroke="#8a8480" stroke-width="0.6" stroke-dasharray="3 3"/>
+
+  <!-- 100 sq: 10×10 px area scaled — show as 100 px wide × 100 px tall = 10000? Use scaled units 1 unit = 10 px area? -->
+  <!-- For pedagogy: render rectangles with relative areas 100 and 200, both width 80; heights 100 and 200 respectively. Baseline y=320 -->
+  <rect x="80"  y="220" width="80" height="100" fill="#4a4540"/>
+  <rect x="200" y="120" width="80" height="200" fill="#2a1a0e"/>
+
+  <!-- right-edge alignment hint -->
+  <line x1="160" y1="220" x2="200" y2="220" stroke="#2a1a0e" stroke-width="0.6" stroke-dasharray="2 2"/>
+  <text x="180" y="214" text-anchor="middle" class="sm">2× height visible</text>
+
+  <!-- labels -->
+  <text x="120" y="338" text-anchor="middle" class="sm">100 sq</text>
+  <text x="240" y="338" text-anchor="middle" class="sm">200 sq</text>
+
+  <!-- Stevens estimate -->
+  <text x="32" y="368" class="lb">true ratio 2.0×</text>
+  <text x="32" y="384" class="sm">perceived ≈ 1.6–1.7× (Stevens area exponent ≈ 0.7)</text>
+  <text x="32" y="398" class="sm">edge alignment reduces estimation error</text>
+
+  <!-- DIVIDER -->
+  <line x1="350" y1="50" x2="350" y2="400" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT: CIRCLES (no alignment) -->
+  <text x="370" y="60" class="ti">Circles — no alignment</text>
+  <text x="370" y="76" class="sm">eye estimates radius, then squares it</text>
+
+  <!-- area 100 → r ≈ 5.64 (in same scaled units); area 200 → r ≈ 7.98. Use r1=40, r2=56.6 for visibility -->
+  <circle cx="440" cy="220" r="40"   fill="#4a4540"/>
+  <circle cx="570" cy="220" r="56.6" fill="#2a1a0e"/>
+
+  <!-- center markers -->
+  <line x1="440" y1="220" x2="440" y2="180" stroke="#fdfcfb" stroke-width="0.6"/>
+  <line x1="570" y1="220" x2="570" y2="163" stroke="#fdfcfb" stroke-width="0.6"/>
+
+  <!-- labels -->
+  <text x="440" y="296" text-anchor="middle" class="sm">100 sq</text>
+  <text x="570" y="296" text-anchor="middle" class="sm">200 sq</text>
+
+  <!-- annotation pointing at gap -->
+  <path d="M 510 130 L 510 160 L 510 175" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar12-03)"/>
+  <text x="510" y="124" text-anchor="middle" class="lb">no shared edge to anchor</text>
+
+  <text x="370" y="368" class="lb">true ratio 2.0×</text>
+  <text x="370" y="384" class="sm">perceived ≈ 1.5–1.6× (same Stevens exponent…</text>
+  <text x="370" y="398" class="sm">…compounded by radius-to-area estimation)</text>
+
+  <!-- FOOTER CAPTION -->
+</svg>

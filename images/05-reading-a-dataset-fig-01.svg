@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 440" role="img" aria-labelledby="t051 d051">
+  <title id="t051">Analyst's question vs reader's question — three MBTA contrasts</title>
+  <desc id="d051">Two-column diagram. Left column lists three analyst-framed questions about the MBTA system. Right column lists the matching reader-framed versions. A center column names what separates each pair.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .hd { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .q  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .ax { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar51" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="440" fill="#fdfcfb"/>
+
+  <!-- Title -->
+  <text x="350" y="30" text-anchor="middle" class="ti">Same data, different framing — three pairs from the MBTA project</text>
+
+  <!-- Column headers -->
+  <rect x="32"  y="50" width="220" height="28" fill="#f5f2ee" stroke="#8a8480"/>
+  <text x="142" y="69" text-anchor="middle" class="hd">Analyst's question</text>
+
+  <rect x="262" y="50" width="176" height="28" fill="#fdfcfb" stroke="#c8c4c0"/>
+  <text x="350" y="69" text-anchor="middle" class="hd">What differs</text>
+
+  <rect x="448" y="50" width="220" height="28" fill="#f5f2ee" stroke="#8a8480"/>
+  <text x="558" y="69" text-anchor="middle" class="hd">Reader's question</text>
+
+  <!-- Row 1 -->
+  <g>
+    <rect x="32"  y="90" width="220" height="80" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <text x="44" y="111" class="q">What is the system's load</text>
+    <text x="44" y="127" class="q">distribution across stations</text>
+    <text x="44" y="143" class="q">and time-of-day?</text>
+
+    <line x1="252" y1="130" x2="448" y2="130" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar51)"/>
+    <rect x="262" y="115" width="176" height="30" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <text x="350" y="135" text-anchor="middle" class="ax">exploratory  →  summative</text>
+
+    <rect x="448" y="90" width="220" height="80" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <text x="460" y="111" class="q">When and where are the</text>
+    <text x="460" y="127" class="q">trains crowded or delayed?</text>
+  </g>
+
+  <!-- Row 2 -->
+  <g>
+    <rect x="32"  y="180" width="220" height="80" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <text x="44" y="201" class="q">How does ridership respond</text>
+    <text x="44" y="217" class="q">to weather variables across</text>
+    <text x="44" y="233" class="q">multiple winters?</text>
+
+    <line x1="252" y1="220" x2="448" y2="220" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar51)"/>
+    <rect x="262" y="205" width="176" height="30" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <text x="350" y="225" text-anchor="middle" class="ax">producer's interest  →  audience's need</text>
+
+    <rect x="448" y="180" width="220" height="80" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <text x="460" y="201" class="q">How do snowstorms affect</text>
+    <text x="460" y="217" class="q">the system?</text>
+  </g>
+
+  <!-- Row 3 -->
+  <g>
+    <rect x="32"  y="270" width="220" height="80" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <text x="44" y="291" class="q">What patterns exist in</text>
+    <text x="44" y="307" class="q">passenger-trip duration</text>
+    <text x="44" y="323" class="q">across the network?</text>
+
+    <line x1="252" y1="310" x2="448" y2="310" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar51)"/>
+    <rect x="262" y="295" width="176" height="30" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <text x="350" y="315" text-anchor="middle" class="ax">open-ended  →  actionable</text>
+
+    <rect x="448" y="270" width="220" height="80" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <text x="460" y="291" class="q">How congested is</text>
+    <text x="460" y="307" class="q">my route?</text>
+  </g>
+
+  <!-- Footer rule -->
+  <line x1="32" y1="370" x2="668" y2="370" stroke="#c8c4c0" stroke-width="0.75"/>
+  <text x="350" y="392" text-anchor="middle" class="ti">The chart must answer the right column.</text>
+  <text x="350" y="420" text-anchor="middle" class="cap">Same data. Different framing. Different chart.</text>
+</svg>

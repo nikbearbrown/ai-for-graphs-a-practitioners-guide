@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 15.4 — The earn-your-strangeness decision tree</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #chart { width: 100%; min-height: 520px; border: 1px solid var(--color-border); padding: 16px; }
+  .node-box { fill: var(--color-white); stroke: var(--color-ink); stroke-width: 1.4; }
+  .node-box.outcome { stroke-dasharray: none; }
+  .node-text { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .node-sub { font-family: 'Inter', sans-serif; font-size: 10px; fill: var(--color-secondary); }
+  .edge { stroke: var(--color-ink); stroke-width: 1.2; fill: none; }
+  .edge-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; fill: var(--color-ink); }
+  .example-box { fill: none; stroke: var(--color-ochre); stroke-width: 1; stroke-dasharray: 4 3; }
+  .example-title { font-family: 'EB Garamond', Georgia, serif; font-size: 12px; font-style: italic; fill: var(--color-ink); }
+  .example-text { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .example-outcome { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; fill: var(--color-ink); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 15.4 — The earn-your-strangeness decision tree</h1>
+<p class="subtitle">A specialized chart earns its cost only when it answers a specific analytical question better than a standard form and the audience reads the convention fluently.</p>
+<div id="chart" role="img" aria-labelledby="dt-t dt-d"></div>
+<p class="caption">The test is the discipline. Two example paths: the candlestick earns its use; the gauge does not — it is replaced by a bullet graph.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(e, h) { tooltip.html(h).style('left', (e.pageX + 12) + 'px').style('top', (e.pageY - 28) + 'px').transition().duration(150).style('opacity', 1); }
+function moveTip(e) { tooltip.style('left', (e.pageX + 12) + 'px').style('top', (e.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  d3.select('#chart').selectAll('svg').remove();
+  const container = document.getElementById('chart');
+  const w = container.clientWidth || 800;
+  const h = 520;
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', w).attr('height', h)
+    .attr('viewBox', `0 0 ${w} ${h}`)
+    .attr('role', 'img').attr('aria-labelledby', 'dt-t dt-d');
+  svg.append('title').attr('id', 'dt-t').text('Earn-your-strangeness decision tree');
+  svg.append('desc').attr('id', 'dt-d').text('A decision tree from a root question through audience-graphicacy and motive branches to outcomes, with candlestick and gauge example paths.');
+
+  // Use proportional coordinates against w
+  const cx = w / 2;
+
+  // ROOT
+  const rootW = Math.min(380, w * 0.6);
+  const rootX = cx - rootW / 2;
+  drawNode(svg, rootX, 24, rootW, 56,
+    ['Does this form answer a specific analytical',
+     'question better than any standard chart?']);
+
+  // YES / NO edges
+  const yesX = cx - w * 0.25;
+  const noX  = cx + w * 0.25;
+  drawEdge(svg, cx - 60, 80, yesX, 130, 'YES');
+  drawEdge(svg, cx + 60, 80, noX,  130, 'NO');
+
+  // YES branch
+  drawNode(svg, yesX - 150, 136, 300, 56,
+    ['Is the audience familiar',
+     'with the convention?']);
+
+  // NO branch
+  drawNode(svg, noX - 150, 136, 300, 56,
+    ['Why are you using this form?',
+     '"It looks professional" is not an answer.'], true);
+
+  // YES → yes (use it)
+  drawEdge(svg, yesX - 60, 192, yesX - 60, 234, 'YES');
+  drawNode(svg, yesX - 160, 240, 200, 54,
+    ['Use the specialized form',
+     'document the convention briefly'], false, true);
+
+  // YES → no (teach convention)
+  drawEdge(svg, yesX + 60, 192, yesX + 60, 234, 'NO');
+  drawNode(svg, yesX + 40, 240, 200, 54,
+    ['Teach the convention first',
+     'or pick a standard alternative'], false, true);
+
+  // NO branch → replace
+  drawEdge(svg, noX, 192, noX, 234, '');
+  drawNode(svg, noX - 130, 240, 260, 54,
+    ['Replace with the standard form',
+     'the specialized look is decoration, not signal'], false, true);
+
+  // Examples row
+  svg.append('text').attr('class', 'example-title').attr('x', 16).attr('y', 332).text('Two worked examples:');
+
+  const exW = (w - 80) / 2;
+  drawExample(svg, 24, 348, exW, 'Candlestick for a trading audience',
+    ['Q1 root → YES (four OHLC values in one glyph)',
+     'Q2 graphicacy → YES (financial literacy widespread)'],
+    '→ Use the candlestick.');
+  drawExample(svg, w - 24 - exW, 348, exW, 'Gauge chart on a KPI dashboard',
+    ['Q1 root → NO (bullet graph answers the same question)',
+     'Q2 motive → "it looks technical"'],
+    '→ Replace with a bullet graph.');
+}
+
+function drawNode(svg, x, y, w, h, lines, dimSub = false, outcome = false) {
+  const g = svg.append('g')
+    .attr('tabindex', 0)
+    .attr('aria-label', lines.join(' '))
+    .on('mouseover', (e) => showTip(e, lines.map(l => l).join('<br>')))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+  g.append('rect').attr('class', outcome ? 'node-box outcome' : 'node-box')
+    .attr('x', x).attr('y', y).attr('width', w).attr('height', h);
+  lines.forEach((line, i) => {
+    g.append('text')
+      .attr('class', (dimSub && i === lines.length - 1) ? 'node-sub' : 'node-text')
+      .attr('x', x + w / 2).attr('y', y + 22 + i * 16)
+      .attr('text-anchor', 'middle').text(line);
+  });
+}
+
+function drawEdge(svg, x1, y1, x2, y2, label) {
+  // arrowhead via marker
+  if (!svg.select('defs').size()) {
+    const defs = svg.append('defs');
+    defs.append('marker').attr('id', 'arrow-dt')
+      .attr('markerWidth', 8).attr('markerHeight', 6).attr('refX', 7).attr('refY', 3).attr('orient', 'auto')
+      .append('polygon').attr('points', '0 0, 8 3, 0 6').attr('fill', 'var(--color-ink)');
+  }
+  svg.append('line').attr('class', 'edge')
+    .attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2)
+    .attr('marker-end', 'url(#arrow-dt)');
+  if (label) {
+    svg.append('text').attr('class', 'edge-label')
+      .attr('x', (x1 + x2) / 2 + 6).attr('y', (y1 + y2) / 2)
+      .text(label);
+  }
+}
+
+function drawExample(svg, x, y, w, title, bullets, outcome) {
+  svg.append('rect').attr('class', 'example-box')
+    .attr('x', x).attr('y', y).attr('width', w).attr('height', 92);
+  svg.append('text').attr('class', 'example-title')
+    .attr('x', x + 12).attr('y', y + 20).text(title);
+  bullets.forEach((b, i) => {
+    svg.append('text').attr('class', 'example-text')
+      .attr('x', x + 12).attr('y', y + 40 + i * 16).text(b);
+  });
+  svg.append('text').attr('class', 'example-outcome')
+    .attr('x', x + 12).attr('y', y + 80).text(outcome);
+}
+
+draw();
+const ro = new ResizeObserver(draw);
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 14.6 — Refugee choropleth vs bubble map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; background: var(--color-white); }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 340px; }
+  .country { stroke: var(--color-white); stroke-width: 0.4; }
+  .outline { fill: #F4F1EC; stroke: var(--color-border); stroke-width: 0.5; }
+  .bubble { fill: var(--color-ink); fill-opacity: 0.55; stroke: var(--color-ink); stroke-width: 0.6; }
+  .legend-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 14.6 — Refugee choropleth vs bubble map</h1>
+<p class="subtitle">Same absolute refugee-count dataset, two encodings. The choropleth lets land area drown the data signal. The bubble map (d3.scaleSqrt) makes circle area equal to count, severing the area-size distortion.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Choropleth (absolute count)</div>
+    <div class="panel-sub">Color luminance encodes the host country's refugee count.</div>
+    <div id="chartChoro" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Bubble map (absolute count)</div>
+    <div class="panel-sub">Circle area encodes the count. d3.scaleSqrt for the radius.</div>
+    <div id="chartBubble" class="chart"></div>
+  </div>
+</div>
+<p class="caption">Same data. The choropleth's signal is hijacked by Russia, Canada, and Australia. The bubble map lets Turkey, Iran, and Colombia show their actual magnitude.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Refugees hosted (thousands), illustrative
+const REFUGEES = {
+  Turkey: 3500, 'Iran (Islamic Republic of)': 3400, Iran: 3400,
+  Colombia: 2500, Germany: 2100, Pakistan: 1700, Uganda: 1500,
+  Bangladesh: 950, 'United States of America': 360, USA: 360,
+  France: 600, 'United Kingdom': 230, Sudan: 1100, Ethiopia: 880,
+  Russia: 12, Canada: 90, Australia: 60, China: 320, India: 250, Brazil: 60
+};
+function refugeesFor(name) { return REFUGEES[name] !== undefined ? REFUGEES[name] : 5; }
+
+const FALLBACK_WORLD = {
+  type: 'FeatureCollection',
+  features: [
+    { type: 'Feature', properties: { name: 'Russia' },    geometry: { type: 'Polygon', coordinates: [[[30,50],[180,55],[180,75],[30,75],[30,50]]] } },
+    { type: 'Feature', properties: { name: 'Canada' },    geometry: { type: 'Polygon', coordinates: [[[-140,50],[-60,50],[-55,72],[-140,72],[-140,50]]] } },
+    { type: 'Feature', properties: { name: 'USA' },       geometry: { type: 'Polygon', coordinates: [[[-125,30],[-75,30],[-72,48],[-125,48],[-125,30]]] } },
+    { type: 'Feature', properties: { name: 'Turkey' },    geometry: { type: 'Polygon', coordinates: [[[26,36],[45,36],[45,42],[26,42],[26,36]]] } },
+    { type: 'Feature', properties: { name: 'Iran' },      geometry: { type: 'Polygon', coordinates: [[[44,25],[63,25],[63,40],[44,40],[44,25]]] } },
+    { type: 'Feature', properties: { name: 'Colombia' },  geometry: { type: 'Polygon', coordinates: [[[-79,-4],[-67,-4],[-67,12],[-79,12],[-79,-4]]] } },
+    { type: 'Feature', properties: { name: 'Germany' },   geometry: { type: 'Polygon', coordinates: [[[6,47],[15,47],[15,55],[6,55],[6,47]]] } },
+    { type: 'Feature', properties: { name: 'Uganda' },    geometry: { type: 'Polygon', coordinates: [[[29,-1],[35,-1],[35,4],[29,4],[29,-1]]] } },
+    { type: 'Feature', properties: { name: 'Pakistan' },  geometry: { type: 'Polygon', coordinates: [[[61,24],[77,24],[77,37],[61,37],[61,24]]] } },
+    { type: 'Feature', properties: { name: 'Australia' }, geometry: { type: 'Polygon', coordinates: [[[115,-38],[155,-38],[155,-12],[115,-12],[115,-38]]] } },
+    { type: 'Feature', properties: { name: 'China' },     geometry: { type: 'Polygon', coordinates: [[[75,18],[135,18],[135,50],[75,50],[75,18]]] } },
+    { type: 'Feature', properties: { name: 'India' },     geometry: { type: 'Polygon', coordinates: [[[68,8],[90,8],[90,32],[68,32],[68,8]]] } },
+    { type: 'Feature', properties: { name: 'Brazil' },    geometry: { type: 'Polygon', coordinates: [[[-70,-30],[-35,-30],[-35,5],[-70,5],[-70,-30]]] } }
+  ]
+};
+
+function toGeoJSON(topo, obj) {
+  const transform = topo.transform, arcs = topo.arcs;
+  const t = transform ? transform.translate : [0,0];
+  const s = transform ? transform.scale : [1,1];
+  function decodeArc(arc) {
+    if (!transform) return arc.slice();
+    let x = 0, y = 0;
+    return arc.map(p => { x += p[0]; y += p[1]; return [x * s[0] + t[0], y * s[1] + t[1]]; });
+  }
+  const decoded = arcs.map(decodeArc);
+  function ringToCoords(ring) {
+    const coords = [];
+    ring.forEach(a => {
+      const arc = a < 0 ? decoded[~a].slice().reverse() : decoded[a].slice();
+      if (coords.length) arc.shift();
+      coords.push(...arc);
+    });
+    return coords;
+  }
+  function gtoc(geom) {
+    if (geom.type === 'Polygon') return geom.arcs.map(ringToCoords);
+    if (geom.type === 'MultiPolygon') return geom.arcs.map(rings => rings.map(ringToCoords));
+    return null;
+  }
+  const features = obj.geometries.map(g => ({
+    type: 'Feature', properties: g.properties || {},
+    geometry: { type: g.type, coordinates: gtoc(g) }
+  })).filter(f => f.geometry.coordinates);
+  return { type: 'FeatureCollection', features };
+}
+
+async function loadWorld() {
+  try {
+    const res = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    if (!res.ok) throw new Error('cdn');
+    const topo = await res.json();
+    return toGeoJSON(topo, topo.objects.countries);
+  } catch { return FALLBACK_WORLD; }
+}
+
+const colorScaleSequential = d3.scaleQuantize().domain([0, 3500]).range(['#ECE8E3', '#C8C4C0', '#8A8480', '#4A4540', '#2A1A0E']);
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+
+function drawChoropleth(world) {
+  d3.select('#chartChoro').selectAll('*').remove();
+  const c = document.getElementById('chartChoro');
+  const w = c.clientWidth || 400, h = c.clientHeight || 340;
+  const svg = d3.select('#chartChoro').append('svg')
+    .attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', 'choro-t choro-d');
+  svg.append('title').attr('id', 'choro-t').text('Choropleth of absolute refugee counts');
+  svg.append('desc').attr('id', 'choro-d').text('World map shaded by absolute refugees hosted per country, Equal Earth projection.');
+
+  const projection = d3.geoEqualEarth().fitSize([w, h - 30], { type: 'Sphere' });
+  const path = d3.geoPath(projection);
+  svg.selectAll('.country')
+    .data(world.features)
+    .join('path')
+      .attr('class', 'country')
+      .attr('d', path)
+      .attr('fill', d => colorScaleSequential(refugeesFor((d.properties && d.properties.name) || '')))
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${(d.properties && d.properties.name) || 'country'}: ${refugeesFor((d.properties && d.properties.name) || '')}k`)
+      .on('mouseover', (e, d) => {
+        const name = (d.properties && d.properties.name) || 'country';
+        tooltip.html(`<strong>${name}</strong><br>${refugeesFor(name).toLocaleString()}k refugees hosted`)
+          .style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px')
+          .transition().duration(150).style('opacity', 1);
+      })
+      .on('mousemove', e => tooltip.style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px'))
+      .on('mouseout', () => tooltip.transition().duration(100).style('opacity', 0));
+
+  // Legend
+  const lg = svg.append('g').attr('transform', `translate(8, ${h - 18})`);
+  const swatchW = (w - 80) / 5;
+  ['#ECE8E3', '#C8C4C0', '#8A8480', '#4A4540', '#2A1A0E'].forEach((col, i) => {
+    lg.append('rect').attr('x', 24 + i * swatchW).attr('y', 0).attr('width', swatchW - 2).attr('height', 10)
+      .attr('fill', col).attr('stroke', 'var(--color-white)');
+  });
+  lg.append('text').attr('x', 0).attr('y', 9).attr('class', 'legend-label').text('low');
+  lg.append('text').attr('x', 24 + 5 * swatchW + 4).attr('y', 9).attr('class', 'legend-label').text('high');
+}
+
+function drawBubble(world) {
+  d3.select('#chartBubble').selectAll('*').remove();
+  const c = document.getElementById('chartBubble');
+  const w = c.clientWidth || 400, h = c.clientHeight || 340;
+  const svg = d3.select('#chartBubble').append('svg')
+    .attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', 'bub-t bub-d');
+  svg.append('title').attr('id', 'bub-t').text('Bubble map of absolute refugee counts');
+  svg.append('desc').attr('id', 'bub-d').text('World map with circles at country centroids sized by refugees hosted. Radius scaled by d3.scaleSqrt so area equals magnitude.');
+
+  const projection = d3.geoEqualEarth().fitSize([w, h - 30], { type: 'Sphere' });
+  const path = d3.geoPath(projection);
+
+  svg.selectAll('.outline')
+    .data(world.features)
+    .join('path').attr('class', 'outline').attr('d', path);
+
+  const maxR = Math.min(w, h) / 8;
+  const rScaleSqrt = d3.scaleSqrt().domain([0, 3500]).range([0, maxR]);
+
+  // Compute centroids and bubble data
+  const bubbles = world.features.map(f => {
+    const name = (f.properties && f.properties.name) || 'country';
+    const v = refugeesFor(name);
+    const [cx, cy] = path.centroid(f);
+    return { name, v, cx, cy };
+  }).filter(b => b.v > 0 && !isNaN(b.cx) && !isNaN(b.cy))
+    .sort((a, b) => b.v - a.v);
+
+  svg.selectAll('.bubble')
+    .data(bubbles)
+    .join('circle')
+      .attr('class', 'bubble')
+      .attr('cx', d => d.cx).attr('cy', d => d.cy)
+      .attr('r', d => rScaleSqrt(d.v))
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.name}: ${d.v}k refugees hosted`)
+      .on('mouseover', (e, d) => {
+        tooltip.html(`<strong>${d.name}</strong><br>${d.v.toLocaleString()}k refugees hosted`)
+          .style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px')
+          .transition().duration(150).style('opacity', 1);
+      })
+      .on('mousemove', e => tooltip.style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px'))
+      .on('mouseout', () => tooltip.transition().duration(100).style('opacity', 0));
+
+  // Legend — three reference circles
+  const lg = svg.append('g').attr('transform', `translate(12, ${h - 20})`);
+  lg.append('text').attr('x', 0).attr('y', 4).attr('class', 'legend-label').text('count');
+  [500, 1500, 3500].forEach((v, i) => {
+    const r = rScaleSqrt(v);
+    lg.append('circle').attr('cx', 50 + i * 60).attr('cy', 0).attr('r', r).attr('class', 'bubble');
+    lg.append('text').attr('x', 50 + i * 60).attr('y', 16).attr('class', 'legend-label').attr('text-anchor', 'middle').text(`${v}k`);
+  });
+  lg.append('text').attr('x', 250).attr('y', 4).attr('class', 'legend-label').text('radius = √(count) so visual area ∝ value');
+}
+
+loadWorld().then(world => {
+  drawChoropleth(world);
+  drawBubble(world);
+  const ro = new ResizeObserver(() => { drawChoropleth(world); drawBubble(world); });
+  ro.observe(document.getElementById('chartChoro'));
+  ro.observe(document.getElementById('chartBubble'));
+});
+</script>
+</body>
+</html>

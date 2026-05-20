@@ -12,7 +12,8 @@ Now suppose someone made the same diagram with every band the same width. It wou
 
 That distinction — *does this connection exist* versus *how much flows along it* — is the organizing principle of this entire chapter. Every choice between a Sankey diagram and a force-directed graph, between a ribbon chord diagram and an arc diagram, reduces to it. Get the distinction clear and the form selection almost selects itself.
 
-<!-- → [IMAGE: two versions of the same three-column flow data — left: Sankey with proportional band widths (oil-to-transportation-fuel band visibly dominant, thin bands for smaller flows); right: the same topology drawn with uniform-width bands. Annotations on the left version: "Width = quantity (Bertin's magnitude channel)." Annotations on the right: "Uniform width = topology only. Cannot answer 'how much?'" Caption: "The same connections. Different questions. Different charts."] -->
+![Two versions of the same three-column flow topology. The left panel encodes magnitude as band width — oil-to-transportation is the dominant flow. The right panel uses uniform widths and answers topology only.](../images/13-flow-and-network-charts-fig-01.png)
+*Figure 13.1 — Same connections. Different questions. Different charts.*
 
 ---
 
@@ -26,7 +27,8 @@ Tufte's proportional ink principle applies directly. The visual area of a Sankey
 
 When auditing Claude Code output for Sankey diagrams, the first check is always proportionality: measure the width of the two largest flows and confirm the ratio matches the data ratio. It is the most common failure in AI-generated flow charts — the algorithm places nodes correctly but the scaling is off.
 
-<!-- → [INFOGRAPHIC: Sankey proportionality audit diagram — three flows shown: Flow A (400 units, correct width ~40px), Flow B (200 units, correct width ~20px), Flow C (80 units, correct width ~8px). Below, a "common failure" version where Flow A is 30px, Flow B is 20px, Flow C is 12px — the proportions are wrong. Annotations show the correct ratios (A:B = 2:1, A:C = 5:1) and the failure ratios (A:B = 1.5:1, A:C = 2.5:1). Caption: "Tufte's proportional ink applies: band area must be proportional to value. Verify the ratio, not just the order."] -->
+![Three flows of values 400, 200, and 80 units rendered with correct proportional widths (40, 20, 8 pixels) and again with failure widths (30, 20, 12 pixels). Width ratios checked against data ratios.](../images/13-flow-and-network-charts-fig-02.png)
+*Figure 13.2 — Tufte's proportional ink applied to Sankey. Audit the ratio, not just the order.*
 
 ---
 
@@ -48,7 +50,8 @@ The form is Sankey generalized to longitudinal categorical data. Where Sankey as
 
 The circular layout distributes attention evenly across all entities, which is appropriate when there is no natural left-to-right directionality (trade is mutual; energy flow is directional). The trade-off is that circular layouts are harder for many audiences to read than the left-to-right flow of a Sankey. Past about fifteen to twenty entities, the ribbons fill the circle and the chart becomes unreadable.
 
-<!-- → [INFOGRAPHIC: three-panel comparison of the magnitude family — left: Sankey (three columns, left-to-right flow, bands proportional to quantity); center: alluvial (same structure but showing three time points with categorical transitions); right: ribbon chord (same entities arranged on a circle, ribbons of varying width). Each panel labeled with the question it answers: "How much flows A→B→C?" / "How did categories shift across time?" / "How much flows between any pair?" Caption: "Three forms, one channel (width), three layouts for three question structures."] -->
+![Three side-by-side panels of the magnitude-family flow forms. Left: a Sankey with three columns. Center: an alluvial across three time points. Right: a ribbon chord around a circle of four entities.](../images/13-flow-and-network-charts-fig-03.png)
+*Figure 13.3 — Three forms, one channel (width), three layouts for three question structures.*
 
 ---
 
@@ -86,7 +89,8 @@ Four mitigations:
 
 The choice of mitigation depends on what the question is. Filtering preserves the network structure at the cost of completeness. Clustering answers a different question (what are the communities?) rather than the original one (what is the full connection structure?). Matrix views answer the full connection question but require a different reading strategy.
 
-<!-- → [IMAGE: four-panel hairball mitigation comparison — all four panels use the same 200-node high-density network. Panel 1: unmitigated force-directed layout (hairball, no structure visible). Panel 2: filtered to top-30 nodes by degree (sparse, structure visible). Panel 3: clustered to 8 super-nodes (community structure visible; individual nodes invisible). Panel 4: adjacency matrix sorted by degree (all connections visible; spatial clustering invisible). Caption under each panel names what the mitigation reveals and what it gives up."] -->
+![Four panels of the same dense network rendered as an unmitigated hairball, a top-30 degree filter, an eight-cluster aggregation, and a degree-sorted adjacency matrix. Each panel names what it reveals and what it gives up.](../images/13-flow-and-network-charts-fig-04.png)
+*Figure 13.4 — Four mitigations. Each reveals a structural feature and hides a different one.*
 
 ---
 
@@ -128,7 +132,8 @@ Return to `sankey-diagram.html`. The chart works because specific decisions were
 
 None of these is decoration. Each is a channel decision made explicit before the code was written. Claude Code can implement them precisely when the specification names them precisely. A prompt that says "make a Sankey diagram" leaves these decisions to the model's defaults, which may or may not match the data's structure. A prompt that says "proportional widths, color follows source, labels on flows above $50M, tooltip on smaller flows" leaves nothing to chance.
 
-<!-- → [IMAGE: annotated screenshot of the pantry's sankey-diagram.html with four callout arrows — (1) "Proportional widths: oil-to-transportation band ~2× coal-to-electricity band, matching data ratio" pointing to the two dominant flows; (2) "Node ordering: columns sorted to minimize crossing bands" pointing to the middle column; (3) "Color follows source: nuclear hue traceable through all downstream flows" following the nuclear color; (4) "Labels on dominant flows; tooltip on smaller flows" pointing to an annotated band and a thin band. Caption: "Every decision is a channel specification. None is a default."] -->
+![Annotated Sankey with four numbered callouts naming proportional widths, node ordering, color-follows-source, and labels on dominant flows.](../images/13-flow-and-network-charts-fig-05.png)
+*Figure 13.5 — Four decisions, each a channel specification. Nothing here is a default.*
 
 ---
 
@@ -294,6 +299,58 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 ---
 
 *Tags: flow-charts, network-charts, Sankey, alluvial, chord-diagram, ribbon-chord, arc-diagram, force-directed, hairball, Bertin-width, Gestalt-connection, d3-sankey, d3-force, D3, Claude-Code*
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 13.1 — Proportional vs uniform Sankey
+
+Build a two-panel D3 v7 figure rendering the same three-column flow data twice. Data: a small energy-flow graph with sources Oil, Coal, Gas; transforms Transport, Electricity; end uses Industrial, Residential. Provide nine links with values: Oil→Transport 50, Oil→Electricity 10, Coal→Electricity 30, Coal→Transport 6, Gas→Electricity 20, Transport→Industrial 35, Transport→Residential 21, Electricity→Industrial 22, Electricity→Residential 38. Chart type: `d3.sankey()` from the d3-sankey plugin (CDN). Left panel uses the real values so band widths are proportional. Right panel substitutes every link value with 1 so all bands are uniform width — topology only. Highlight the largest link in `var(--color-red)` on the proportional panel; on the uniform panel highlight nothing. Both panels share node positions, fonts, and labels. Tooltip shows source, target, and value (or "topology only" on the uniform panel). Standalone HTML, D3 v7, d3-sankey plugin, inline CSS/JS, accessible markup, responsive via ResizeObserver.
+
+> Reference implementation: `d3/13-flow-and-network-charts-fig-01.html`
+
+---
+
+### Figure 13.2 — Sankey proportionality audit
+
+Build a two-panel D3 v7 audit figure for three flows of values 400, 200, and 80 units. Panel A renders the flows with correct widths (40, 20, 8 px) from a single source rect to three target rects. Panel B renders the same three flows with failure widths (30, 20, 12 px). For each panel, render an audit log below the chart showing two computed ratios — A:B and A:C — each compared to the data ratio (2:1 and 5:1), with a check mark on match and a cross on mismatch. Panel A ends with a verdict chip "honest"; Panel B with a verdict chip "distorts" in `var(--color-red)`. Manual band geometry — use cubic Bézier curves from the source rect to each target rect with width set in pixels, not by `d3.sankey()`. Tooltip names each flow's id, value, and rendered width. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/13-flow-and-network-charts-fig-02.html`
+
+---
+
+### Figure 13.3 — Sankey vs alluvial vs ribbon chord
+
+Build a three-panel D3 v7 figure rendering each member of the magnitude family on the same line. Panel A: a `d3.sankey()` of two source nodes, two transform nodes, and two end-use nodes with seven flows. Panel B: an alluvial built on `d3.sankey()` across three time points (2018, 2020, 2022) with three categories (A, B, C) and ten transitions that include a few category switches. Panel C: a `d3.chord()` ribbon diagram between four entities (FR, DE, IT, UK) using a 4×4 symmetric matrix. Each panel has its own title and a "Q:" line naming the question it answers. Use `var(--color-ink)` for nodes, `var(--color-red)` for the single dominant ribbon or link in each panel, grays elsewhere. Tooltip on every link or ribbon shows source, target, and value. Standalone HTML, D3 v7 + d3-sankey plugin, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/13-flow-and-network-charts-fig-03.html`
+
+---
+
+### Figure 13.4 — Four hairball mitigations
+
+Build a four-panel D3 v7 figure rendering the same dense network four ways. Generate a 60-node graph with average degree 8 using a deterministic seeded RNG so the layout is reproducible. Panel 1: an unmitigated `d3.forceSimulation()` with `forceLink`, `forceManyBody`, `forceCenter`, `forceCollide` — visibly a hairball. Panel 2: filter to the top 12 nodes by degree before running the simulation — sparse and structured. Panel 3: aggregate the 60 nodes into 8 super-nodes (one per cluster of 8 adjacent ids), edges weighted by inter-cluster edge counts — community structure visible. Panel 4: an adjacency matrix with rows and columns ordered by node degree, cells shaded where edges exist. Each panel labels what it reveals and what it gives up in a small caption beneath. Tooltip on each form. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/13-flow-and-network-charts-fig-04.html`
+
+---
+
+### Figure 13.5 — Four design decisions in one Sankey
+
+Build an interactive D3 v7 figure that renders a `d3.sankey()` of energy sources (Oil, Coal, Gas) through transforms (Transport, Electricity) to end uses (Industrial, Residential), alongside a numbered list of four design decisions: (1) proportional widths; (2) node ordering; (3) color follows source; (4) labels on dominant flows. Color flows by source — Oil flows in `var(--color-red)`, Coal flows in `var(--color-ink)`, Gas flows in mid-gray. Annotate the top four flows by value with their numeric value rendered in white on an ink halo. Clicking a decision in the list highlights the relevant region of the chart: decision 1 outlines the two widest bands with an ochre dashed stroke; decision 2 frames the middle node column with an ochre dashed rectangle; decision 3 dims all non-source-traced flows to 0.18 opacity; decision 4 circles each value label with an ochre dashed ring. Tooltip on every flow. Standalone HTML, D3 v7 + d3-sankey plugin, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/13-flow-and-network-charts-fig-05.html`
 
 ---
 

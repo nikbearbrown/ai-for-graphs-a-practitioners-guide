@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 14.1 — Total uninsured vs uninsured rate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; background: var(--color-white); }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 320px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .state { stroke: var(--color-white); stroke-width: 0.75; cursor: pointer; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .state-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; pointer-events: none; }
+  .legend-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 14.1 — Total uninsured vs uninsured rate</h1>
+<p class="subtitle">Same US states. Same underlying health dataset. Two encodings produce two visual stories. The left map mostly shows where people live; the right map shows where residents are most likely to be uninsured.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Total uninsured people by state</div>
+    <div class="panel-sub">Absolute count — mostly tracks state population.</div>
+    <div id="chartCount" class="chart" role="img" aria-label="Tile-grid US choropleth shaded by total uninsured population"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Uninsured rate (%) by state</div>
+    <div class="panel-sub">Per-capita encoding — genuinely geographic pattern.</div>
+    <div id="chartRate" class="chart" role="img" aria-label="Tile-grid US choropleth shaded by uninsured rate per capita"></div>
+  </div>
+</div>
+<p class="caption">California flips from very dark to mid-light; Wyoming flips from pale to darker than California; Rhode Island disappears, then reappears near the national average. Same data — different question.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Tile-grid layout (col, row) approximating US state geography for a schematic Albers-style grid.
+const TILES = [
+  { s: 'WA', col: 0, row: 0 }, { s: 'MT', col: 1, row: 0 }, { s: 'ND', col: 2, row: 0 },
+  { s: 'MN', col: 3, row: 0 }, { s: 'WI', col: 4, row: 0 }, { s: 'MI', col: 5, row: 0 },
+  { s: 'NY', col: 6, row: 0 }, { s: 'VT', col: 7, row: 0 },
+  { s: 'OR', col: 0, row: 1 }, { s: 'ID', col: 1, row: 1 }, { s: 'SD', col: 2, row: 1 },
+  { s: 'IA', col: 3, row: 1 }, { s: 'IL', col: 4, row: 1 }, { s: 'OH', col: 5, row: 1 },
+  { s: 'PA', col: 6, row: 1 }, { s: 'RI', col: 7, row: 1 },
+  { s: 'CA', col: 0, row: 2 }, { s: 'UT', col: 1, row: 2 }, { s: 'CO', col: 2, row: 2 },
+  { s: 'MO', col: 3, row: 2 }, { s: 'IN', col: 4, row: 2 }, { s: 'NC', col: 5, row: 2 },
+  { s: 'VA', col: 6, row: 2 }, { s: 'NJ', col: 7, row: 2 },
+  { s: 'AZ', col: 0, row: 3 }, { s: 'NM', col: 1, row: 3 }, { s: 'TX', col: 2, row: 3 },
+  { s: 'LA', col: 3, row: 3 }, { s: 'GA', col: 4, row: 3 }, { s: 'FL', col: 5, row: 3 },
+  { s: 'WV', col: 6, row: 3 }, { s: 'WY', col: 7, row: 3 }
+];
+
+// Synthetic but plausible values, scaled to chapter narrative.
+// Count (uninsured population, thousands)
+const COUNT = {
+  WA: 480, MT: 90, ND: 60, MN: 250, WI: 360, MI: 540, NY: 1100, VT: 25,
+  OR: 320, ID: 110, SD: 65, IA: 200, IL: 1180, OH: 880, PA: 870, RI: 40,
+  CA: 3200, UT: 290, CO: 520, MO: 510, IN: 580, NC: 1080, VA: 720, NJ: 720,
+  AZ: 760, NM: 200, TX: 4900, LA: 380, GA: 1320, FL: 2700, WV: 130, WY: 35
+};
+// Rate (uninsured rate, percent)
+const RATE = {
+  WA: 6.6, MT: 8.4, ND: 7.8, MN: 4.4, WI: 5.6, MI: 5.4, NY: 5.2, VT: 3.8,
+  OR: 6.1, ID: 9.8, SD: 8.6, IA: 5.0, IL: 7.0, OH: 6.6, PA: 5.8, RI: 4.1,
+  CA: 7.0, UT: 9.0, CO: 7.8, MO: 8.5, IN: 7.6, NC: 10.4, VA: 7.4, NJ: 6.8,
+  AZ: 10.2, NM: 9.5, TX: 17.3, LA: 9.6, GA: 12.6, FL: 12.1, WV: 5.7, WY: 11.2
+};
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(e, html) { tooltip.html(html).style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px').transition().duration(150).style('opacity', 1); }
+function moveTip(e) { tooltip.style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawTileMap(selector, values, unitLabel, valueFormat) {
+  d3.select(selector).selectAll('*').remove();
+  const c = document.querySelector(selector);
+  const w = c.clientWidth || 380;
+  const h = c.clientHeight || 320;
+  const margin = { top: 16, right: 16, bottom: 56, left: 16 };
+  const cw = w - margin.left - margin.right;
+  const ch = h - margin.top - margin.bottom;
+  const cols = 8, rows = 4;
+  const tileW = cw / cols;
+  const tileH = Math.min(ch / rows, tileW * 0.7);
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${selector.slice(1)}-t ${selector.slice(1)}-d`);
+  svg.append('title').attr('id', `${selector.slice(1)}-t`).text(`US tile-grid choropleth — ${unitLabel}`);
+  svg.append('desc').attr('id', `${selector.slice(1)}-d`).text(`Schematic tile-grid of US states. Each tile is shaded by ${unitLabel} for that state.`);
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const max = d3.max(Object.values(values));
+  const min = d3.min(Object.values(values));
+
+  // Sequential scale: light warm neutral to ink. Use CSS-variable interpolation by reading computed style.
+  const inkColor = getComputedStyle(document.documentElement).getPropertyValue('--color-ink').trim() || '#121212';
+  const lightColor = getComputedStyle(document.documentElement).getPropertyValue('--color-white').trim() || '#FFFFFF';
+  // Use 5 quantile bins from a neutral sequence
+  const colorScaleSequential = d3.scaleQuantile()
+    .domain(Object.values(values))
+    .range(['#ECE8E3', '#C8C4C0', '#8A8480', '#4A4540', '#2A1A0E']);
+
+  g.selectAll('.state')
+    .data(TILES)
+    .join('rect')
+      .attr('class', 'state')
+      .attr('x', d => d.col * tileW + 1)
+      .attr('y', d => d.row * tileH + 1)
+      .attr('width', tileW - 2)
+      .attr('height', tileH - 2)
+      .attr('fill', d => colorScaleSequential(values[d.s]))
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.s}: ${valueFormat(values[d.s])}`)
+      .on('mouseover', (event, d) => showTip(event, `<strong>${d.s}</strong>: ${valueFormat(values[d.s])}`))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip)
+      .on('keydown', (event, d) => { if (event.key === 'Enter' || event.key === ' ') showTip(event, `<strong>${d.s}</strong>: ${valueFormat(values[d.s])}`); });
+
+  g.selectAll('.state-label')
+    .data(TILES)
+    .join('text')
+      .attr('class', 'state-label')
+      .attr('x', d => d.col * tileW + tileW / 2)
+      .attr('y', d => d.row * tileH + tileH / 2 + 4)
+      .attr('text-anchor', 'middle')
+      .attr('fill', d => {
+        const bin = ['#ECE8E3', '#C8C4C0', '#8A8480', '#4A4540', '#2A1A0E'].indexOf(colorScaleSequential(values[d.s]));
+        return bin >= 3 ? lightColor : inkColor;
+      })
+      .text(d => d.s);
+
+  // Legend
+  const legendY = rows * tileH + 18;
+  const swatchW = (cw - 80) / 5;
+  const bins = ['#ECE8E3', '#C8C4C0', '#8A8480', '#4A4540', '#2A1A0E'];
+  g.append('text').attr('x', 0).attr('y', legendY + 9).attr('class', 'legend-label').text('low');
+  bins.forEach((col, i) => {
+    g.append('rect')
+      .attr('x', 30 + i * swatchW).attr('y', legendY)
+      .attr('width', swatchW - 2).attr('height', 10)
+      .attr('fill', col).attr('stroke', lightColor);
+  });
+  g.append('text').attr('x', 30 + bins.length * swatchW + 4).attr('y', legendY + 9).attr('class', 'legend-label').text('high');
+  g.append('text').attr('x', 0).attr('y', legendY + 26).attr('class', 'legend-label').text(unitLabel);
+}
+
+function draw() {
+  drawTileMap('#chartCount', COUNT, 'uninsured population (thousands)', v => `${v.toLocaleString()}k`);
+  drawTileMap('#chartRate', RATE, 'uninsured rate (% of residents)', v => `${v.toFixed(1)}%`);
+}
+draw();
+const ro = new ResizeObserver(draw);
+ro.observe(document.getElementById('chartCount'));
+ro.observe(document.getElementById('chartRate'));
+</script>
+</body>
+</html>

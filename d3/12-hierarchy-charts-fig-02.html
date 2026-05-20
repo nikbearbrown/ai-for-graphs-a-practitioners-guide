@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 12.2 — Four hierarchy forms (reference grid)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .card { border: 1px solid var(--color-border); padding: 16px; }
+  .card-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; letter-spacing: 0.05em; }
+  .thumb { width: 100%; height: 180px; margin: 12px 0; }
+  .channel { font-size: 13px; color: var(--color-ink); margin-top: 8px; }
+  .use { font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-size: 13px; color: var(--color-secondary); margin-top: 4px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 12.2 — Four hierarchy forms (reference grid)</h1>
+<p class="subtitle">One card per form. Each names the encoded channel and the condition under which it earns its keep.</p>
+<div id="grid">
+  <div class="card">
+    <div class="card-name">TREEMAP</div>
+    <div id="thumbTreemap" class="thumb"></div>
+    <div class="channel">channel — area</div>
+    <div class="use">use when proportions are the question</div>
+  </div>
+  <div class="card">
+    <div class="card-name">SUNBURST</div>
+    <div id="thumbSunburst" class="thumb"></div>
+    <div class="channel">channel — ring position + angle</div>
+    <div class="use">use when depth is the question</div>
+  </div>
+  <div class="card">
+    <div class="card-name">CIRCLE PACKING</div>
+    <div id="thumbPack" class="thumb"></div>
+    <div class="channel">channel — area + nesting</div>
+    <div class="use">use when depth is irregular</div>
+  </div>
+  <div class="card">
+    <div class="card-name">TREE DIAGRAM</div>
+    <div id="thumbTree" class="thumb"></div>
+    <div class="channel">channel — edges, no area</div>
+    <div class="use">use when topology is the question</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const data = {
+  name: 'root',
+  children: [
+    { name: 'A', children: [{ name: 'A1', value: 12 }, { name: 'A2', value: 8 }, { name: 'A3', value: 6 }] },
+    { name: 'B', children: [{ name: 'B1', value: 10 }, { name: 'B2', value: 6 }] },
+    { name: 'C', children: [{ name: 'C1', value: 5 }, { name: 'C2', value: 3 }] },
+    { name: 'D', children: [{ name: 'D1', value: 4 }] }
+  ]
+};
+const shades = ['var(--color-ink)', '#404040', '#787878', '#ADADAD'];
+
+function sizeOf(selector) {
+  const el = document.querySelector(selector);
+  return { w: el.clientWidth || 280, h: el.clientHeight || 180 };
+}
+
+function thumbTreemap() {
+  const sel = '#thumbTreemap';
+  const { w, h } = sizeOf(sel);
+  d3.select(sel).selectAll('*').remove();
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-label', 'Treemap thumbnail');
+  const root = d3.hierarchy(data).sum(d => d.value || 0).sort((a, b) => b.value - a.value);
+  d3.treemap().tile(d3.treemapSquarify).size([w, h]).paddingInner(1.5)(root);
+  svg.selectAll('rect')
+    .data(root.leaves())
+    .join('rect')
+      .attr('x', d => d.x0).attr('y', d => d.y0)
+      .attr('width', d => d.x1 - d.x0).attr('height', d => d.y1 - d.y0)
+      .attr('fill', d => shades[(d.parent.data.name.charCodeAt(0) - 65) % shades.length])
+      .attr('stroke', 'var(--color-white)').attr('stroke-width', 1);
+}
+
+function thumbSunburst() {
+  const sel = '#thumbSunburst';
+  const { w, h } = sizeOf(sel);
+  d3.select(sel).selectAll('*').remove();
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-label', 'Sunburst thumbnail');
+  const r = Math.min(w, h) / 2 - 4;
+  const g = svg.append('g').attr('transform', `translate(${w / 2},${h / 2})`);
+  const root = d3.hierarchy(data).sum(d => d.value || 0).sort((a, b) => b.value - a.value);
+  d3.partition().size([2 * Math.PI, r])(root);
+  const arc = d3.arc().startAngle(d => d.x0).endAngle(d => d.x1).innerRadius(d => d.y0).outerRadius(d => d.y1);
+  g.selectAll('path')
+    .data(root.descendants().filter(d => d.depth > 0))
+    .join('path')
+      .attr('d', arc)
+      .attr('fill', d => shades[Math.min(d.depth - 1, 3)])
+      .attr('stroke', 'var(--color-white)').attr('stroke-width', 1);
+}
+
+function thumbPack() {
+  const sel = '#thumbPack';
+  const { w, h } = sizeOf(sel);
+  d3.select(sel).selectAll('*').remove();
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-label', 'Circle packing thumbnail');
+  const root = d3.hierarchy(data).sum(d => d.value || 0).sort((a, b) => b.value - a.value);
+  d3.pack().size([w - 4, h - 4]).padding(3)(root);
+  svg.append('g').attr('transform', 'translate(2,2)')
+    .selectAll('circle')
+    .data(root.descendants())
+    .join('circle')
+      .attr('cx', d => d.x).attr('cy', d => d.y).attr('r', d => d.r)
+      .attr('fill', d => d.children ? 'none' : shades[Math.min(d.depth - 1, 3)])
+      .attr('stroke', d => d.children ? shades[Math.min(d.depth, 3)] : 'var(--color-white)')
+      .attr('stroke-width', d => d.children ? 1.4 : 1);
+}
+
+function thumbTree() {
+  const sel = '#thumbTree';
+  const { w, h } = sizeOf(sel);
+  d3.select(sel).selectAll('*').remove();
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-label', 'Tree diagram thumbnail');
+  const root = d3.hierarchy(data);
+  d3.tree().size([w - 24, h - 24])(root);
+  const g = svg.append('g').attr('transform', 'translate(12,12)');
+  g.selectAll('path').data(root.links()).join('path')
+    .attr('d', d3.linkVertical().x(d => d.x).y(d => d.y))
+    .attr('fill', 'none').attr('stroke', 'var(--color-secondary)').attr('stroke-width', 0.8).attr('stroke-opacity', 0.6);
+  g.selectAll('circle').data(root.descendants()).join('circle')
+    .attr('cx', d => d.x).attr('cy', d => d.y)
+    .attr('r', d => 5 - d.depth)
+    .attr('fill', d => shades[Math.min(d.depth, 3)]);
+}
+
+function draw() {
+  thumbTreemap();
+  thumbSunburst();
+  thumbPack();
+  thumbTree();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+['#thumbTreemap', '#thumbSunburst', '#thumbPack', '#thumbTree'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

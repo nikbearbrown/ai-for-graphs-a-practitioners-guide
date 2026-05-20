@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t09f05 d09f05">
+  <title id="t09f05">Box plot, violin, hybrid — three views of the same bimodal distribution</title>
+  <desc id="d09f05">Same bimodal dataset rendered as a box plot (shape invisible), a violin plot (shape visible, quartiles invisible), and a hybrid box-violin (both visible).</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .v { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; }
+    </style>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Same bimodal data. Each form reveals what the others hide.</text>
+
+  <!-- vertical guides between panels -->
+  <line x1="233" y1="50" x2="233" y2="380" stroke="#c8c4c0" stroke-width="0.5"/>
+  <line x1="466" y1="50" x2="466" y2="380" stroke="#c8c4c0" stroke-width="0.5"/>
+
+  <!-- shared y axis label scheme — value 0..100; y plot range 80..320; one unit = 2.4 px -->
+  <!-- For positioning: y(v) = 320 - v*2.4 -->
+
+  <!-- PANEL A: BOX PLOT alone -->
+  <g transform="translate(0,0)">
+    <text x="32" y="60" class="ti">A. Box plot alone</text>
+    <text x="32" y="76" class="sm">two-bulge shape invisible</text>
+
+    <line x1="62" y1="80" x2="62" y2="320" stroke="#8a8480"/>
+    <line x1="62" y1="320" x2="220" y2="320" stroke="#8a8480"/>
+    <g class="sm">
+      <text x="58" y="323" text-anchor="end">0</text>
+      <text x="58" y="203" text-anchor="end">50</text>
+      <text x="58" y="83" text-anchor="end">100</text>
+    </g>
+
+    <!-- Box plot at x=141: median=50 (y=200), Q1=28 (y=252.8), Q3=72 (y=147.2), whisker lo=8 (y=300.8), whisker hi=92 (y=99.2) -->
+    <line x1="141" y1="99.2" x2="141" y2="300.8" stroke="#2a1a0e"/>
+    <line x1="121" y1="99.2" x2="161" y2="99.2" stroke="#2a1a0e"/>
+    <line x1="121" y1="300.8" x2="161" y2="300.8" stroke="#2a1a0e"/>
+    <rect x="111" y="147.2" width="60" height="105.6" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <line x1="111" y1="200" x2="171" y2="200" stroke="#2a1a0e" stroke-width="2"/>
+
+    <text x="141" y="340" text-anchor="middle" class="sm">"box only"</text>
+    <rect x="32" y="355" width="190" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="127" y="370" text-anchor="middle" class="v" fill="#2a1a0e">quartiles yes, shape no</text>
+  </g>
+
+  <!-- PANEL B: VIOLIN alone -->
+  <g transform="translate(233,0)">
+    <text x="32" y="60" class="ti">B. Violin alone</text>
+    <text x="32" y="76" class="sm">bimodality unmistakable, quartiles unreadable</text>
+
+    <line x1="62" y1="80" x2="62" y2="320" stroke="#8a8480"/>
+    <line x1="62" y1="320" x2="220" y2="320" stroke="#8a8480"/>
+    <g class="sm">
+      <text x="58" y="323" text-anchor="end">0</text>
+      <text x="58" y="203" text-anchor="end">50</text>
+      <text x="58" y="83" text-anchor="end">100</text>
+    </g>
+
+    <!-- Bimodal violin centered at x=141, vertical range 99..301; two bulges near top (peak2 ~75) and near bottom (peak1 ~25) -->
+    <path d="
+      M 141 99
+      C 138 105, 134 115, 130 122
+      C 122 140, 114 150, 108 158
+      C 114 168, 122 176, 130 180
+      C 134 188, 138 196, 141 200
+      C 144 206, 148 220, 150 232
+      C 144 244, 134 252, 124 256
+      C 116 260, 110 268, 108 278
+      C 116 285, 128 292, 138 297
+      C 140 298, 141 300, 141 301
+      L 141 301
+      C 142 300, 142 298, 144 297
+      C 154 292, 166 285, 174 278
+      C 172 268, 166 260, 158 256
+      C 148 252, 138 244, 132 232
+      C 134 220, 138 206, 141 200
+      C 144 196, 148 188, 152 180
+      C 160 176, 168 168, 174 158
+      C 168 150, 160 140, 152 122
+      C 148 115, 144 105, 141 99
+      Z" fill="#c8c4c0" stroke="#2a1a0e"/>
+    <!-- a faint median marker -->
+    <line x1="125" y1="200" x2="157" y2="200" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="2 2"/>
+
+    <text x="141" y="340" text-anchor="middle" class="sm">"violin only"</text>
+    <rect x="32" y="355" width="190" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="127" y="370" text-anchor="middle" class="v" fill="#2a1a0e">shape yes, quartiles no</text>
+  </g>
+
+  <!-- PANEL C: HYBRID -->
+  <g transform="translate(466,0)">
+    <text x="32" y="60" class="ti">C. Hybrid box-violin</text>
+    <text x="32" y="76" class="sm">density envelope + quartile readout</text>
+
+    <line x1="62" y1="80" x2="62" y2="320" stroke="#8a8480"/>
+    <line x1="62" y1="320" x2="220" y2="320" stroke="#8a8480"/>
+    <g class="sm">
+      <text x="58" y="323" text-anchor="end">0</text>
+      <text x="58" y="203" text-anchor="end">50</text>
+      <text x="58" y="83" text-anchor="end">100</text>
+    </g>
+
+    <!-- Same violin shape, then thin box overlay -->
+    <path d="
+      M 141 99
+      C 138 105, 134 115, 130 122
+      C 122 140, 114 150, 108 158
+      C 114 168, 122 176, 130 180
+      C 134 188, 138 196, 141 200
+      C 144 206, 148 220, 150 232
+      C 144 244, 134 252, 124 256
+      C 116 260, 110 268, 108 278
+      C 116 285, 128 292, 138 297
+      C 140 298, 141 300, 141 301
+      L 141 301
+      C 142 300, 142 298, 144 297
+      C 154 292, 166 285, 174 278
+      C 172 268, 166 260, 158 256
+      C 148 252, 138 244, 132 232
+      C 134 220, 138 206, 141 200
+      C 144 196, 148 188, 152 180
+      C 160 176, 168 168, 174 158
+      C 168 150, 160 140, 152 122
+      C 148 115, 144 105, 141 99
+      Z" fill="#c8c4c0" stroke="#2a1a0e"/>
+    <!-- thin box overlay, narrower than violin (width=14) -->
+    <line x1="141" y1="99.2" x2="141" y2="300.8" stroke="#2a1a0e" stroke-width="1"/>
+    <rect x="134" y="147.2" width="14" height="105.6" fill="#fdfcfb" stroke="#2a1a0e"/>
+    <line x1="134" y1="200" x2="148" y2="200" stroke="#2a1a0e" stroke-width="1.5"/>
+
+    <text x="141" y="340" text-anchor="middle" class="sm">"box + violin"</text>
+    <rect x="32" y="355" width="190" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="127" y="370" text-anchor="middle" class="v" fill="#2a1a0e">both readouts at a density cost</text>
+  </g>
+
+  <text x="350" y="402" text-anchor="middle" class="cap">The hybrid pays in visual complexity. Earn the cost only when both reading tasks matter.</text>
+</svg>

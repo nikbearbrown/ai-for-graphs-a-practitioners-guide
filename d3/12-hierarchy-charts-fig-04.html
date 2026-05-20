@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 12.4 — Depth-limit failure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 380px; }
+  .leaf { stroke: var(--color-white); }
+  .ring-seg { stroke: var(--color-white); }
+  .callout { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-ink); }
+  .footnote { color: var(--color-secondary); font-size: 12px; margin-top: 8px; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 12.4 — Depth-limit failure</h1>
+<p class="subtitle">A five-level treemap collapses its innermost rectangles to sub-pixel slivers. A seven-level sunburst with 200 leaves drops its outermost ring below glyph-readable size.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Treemap — 5 levels, 10% share each</div>
+    <div class="panel-sub">Level 5 occupies 0.001 of the chart area.</div>
+    <div id="chartTreemap" class="chart"></div>
+    <div class="footnote">800×600 chart → 0.48 sq px at L5. Below pixel resolution.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Sunburst — 7 levels, 200 leaves</div>
+    <div class="panel-sub">Outer ring punishes the deepest, most detailed nodes.</div>
+    <div id="chartSunburst" class="chart"></div>
+    <div class="footnote">Ring width = total radius / depth. Outer arc = 2πr / 200 ≈ 12 px wide.</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+// Build a 5-level hierarchy where each node has roughly 4 children with 10% shares
+function buildDeepHierarchy(depth, branching, value) {
+  function makeNode(d) {
+    if (d === depth) return { name: `L${d}`, value };
+    return { name: `L${d}`, children: d3.range(branching).map(() => makeNode(d + 1)) };
+  }
+  return makeNode(0);
+}
+
+function drawTreemap() {
+  const sel = '#chartTreemap';
+  const el = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = el.clientWidth || 480, h = el.clientHeight || 380;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', 't4t t4d');
+  svg.append('title').attr('id', 't4t').text('Five-level treemap');
+  svg.append('desc').attr('id', 't4d').text('Five levels of nested rectangles where the deepest rectangles are visually negligible.');
+
+  const data = buildDeepHierarchy(5, 4, 1);
+  const root = d3.hierarchy(data).sum(d => d.value || 0);
+  d3.treemap().tile(d3.treemapSquarify).size([w, h]).paddingInner(0.5)(root);
+
+  const greys = ['var(--color-ink)', '#404040', '#787878', '#9a9a9a', '#c0c0c0'];
+
+  svg.selectAll('rect')
+    .data(root.descendants().filter(d => d.depth >= 1))
+    .join('rect')
+      .attr('class', 'leaf')
+      .attr('x', d => d.x0).attr('y', d => d.y0)
+      .attr('width', d => Math.max(0, d.x1 - d.x0))
+      .attr('height', d => Math.max(0, d.y1 - d.y0))
+      .attr('fill', d => greys[Math.min(d.depth - 1, greys.length - 1)])
+      .attr('stroke-width', d => d.depth === 1 ? 1.5 : 0.4)
+      .attr('fill-opacity', d => 0.95 - 0.05 * d.depth)
+      .on('mouseover', (event, d) => showTip(event, `<strong>L${d.depth}</strong> · ${((d.x1 - d.x0) * (d.y1 - d.y0)).toFixed(2)} sq px`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // Ochre callout around one L1 corner
+  const first = root.descendants().find(d => d.depth === 1);
+  if (first) {
+    svg.append('rect')
+      .attr('x', first.x0).attr('y', first.y0)
+      .attr('width', first.x1 - first.x0).attr('height', first.y1 - first.y0)
+      .attr('fill', 'none').attr('stroke', 'var(--color-ochre)').attr('stroke-width', 2);
+  }
+}
+
+function drawSunburst() {
+  const sel = '#chartSunburst';
+  const el = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = el.clientWidth || 480, h = el.clientHeight || 380;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', 's4t s4d');
+  svg.append('title').attr('id', 's4t').text('Seven-level sunburst');
+  svg.append('desc').attr('id', 's4d').text('A seven-level sunburst with around 200 outer-ring leaves, each compressed to a sliver.');
+
+  // Build 7-level hierarchy with branching tuned to produce ~128 leaves (we cap rendering at 200-equivalent density)
+  const data = buildDeepHierarchy(7, 2, 1);
+  const root = d3.hierarchy(data).sum(d => d.value || 0);
+
+  const r = Math.min(w, h) / 2 - 6;
+  const g = svg.append('g').attr('transform', `translate(${w / 2},${h / 2})`);
+  d3.partition().size([2 * Math.PI, r])(root);
+
+  const arc = d3.arc().startAngle(d => d.x0).endAngle(d => d.x1)
+    .innerRadius(d => d.y0).outerRadius(d => d.y1);
+
+  const greys = ['#2a2a2a', '#3a3a3a', '#525252', '#6c6c6c', '#888888', '#a8a8a8', '#c8c8c8'];
+
+  g.selectAll('path')
+    .data(root.descendants().filter(d => d.depth > 0))
+    .join('path')
+      .attr('class', 'ring-seg')
+      .attr('d', arc)
+      .attr('fill', d => greys[Math.min(d.depth - 1, greys.length - 1)])
+      .attr('stroke-width', d => d.depth <= 4 ? 1 : 0.4)
+      .on('mouseover', (event, d) => showTip(event, `<strong>L${d.depth}</strong> · arc width ≈ ${(r * (d.x1 - d.x0)).toFixed(1)} px`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // Ochre callout marking a single outer wedge to draw the eye
+  const outermost = root.descendants().filter(d => d.depth === 7);
+  if (outermost.length) {
+    const target = outermost[0];
+    g.append('path').attr('d', arc(target))
+      .attr('fill', 'none').attr('stroke', 'var(--color-ochre)').attr('stroke-width', 2);
+  }
+}
+
+function draw() {
+  drawTreemap();
+  drawSunburst();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartTreemap'));
+ro.observe(document.getElementById('chartSunburst'));
+</script>
+</body>
+</html>

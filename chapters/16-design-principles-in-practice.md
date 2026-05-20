@@ -18,7 +18,8 @@ The heavy gridlines crowd the chart. The rotated labels slow the reader by a mea
 
 Fourteen of the twenty-two items on the Evergreen/Emery design checklist fail. The chart is more failure than success.
 
-<!-- → [IMAGE: the flawed chart described in the opening, annotated with numbered failure callouts — (1) y-axis starts at $400K, not zero; (2) 3D perspective on bar tops; (3) five gradient rainbow colors encoding nothing; (4) heavy gridlines at every dollar increment; (5) 45° rotated labels in 8pt italic; (6) title names the occasion, not the finding; (7) no comparison reference. Caption: "Seven visible failures. Fourteen of twenty-two checklist items fail. The chart is more failure than success."] -->
+![The flawed quarterly chart from the opening, with seven numbered failure callouts: truncated y-axis, 3D perspective, rainbow gradients, heavy gridlines, rotated 8pt italic labels, an occasion-named title, and no comparison reference.](../images/16-design-principles-in-practice-fig-01.png)
+*Figure 16.1 — Seven visible failures. Fourteen of twenty-two checklist items fail. The chart is more failure than success.*
 
 The redesign is a horizontal bar chart, sorted by Q4 sales descending, zero baseline, no three-dimensional effects, single muted color, light gridlines at axis ticks only, 16-point sans-serif title, value annotations on the bars, and a subtitle that makes the comparison explicit. Every change traces to a specific principle. The chapter is about those principles — four of them, synthesized into a single audit framework.
 
@@ -40,7 +41,8 @@ The book's adopted position is Few's: clarity over minimization. Functional redu
 
 The four sources are not alternatives. They are complementary. Tufte names the heuristics. Few resolves them into a working criterion. Cairo frames the responsibility. Gestalt provides the mechanism. Together they produce a single synthesis that an audit checklist can operationalize.
 
-<!-- → [INFOGRAPHIC: four-quadrant diagram showing the complementary contributions — top-left: Tufte (heuristics: data-ink ratio, proportional ink); top-right: Few (working criterion: "does this support the message?"); bottom-left: Cairo (ethical frame: responsibility to the reader, "compared with what?", graphicacy); bottom-right: Gestalt (perceptual mechanism: proximity, similarity, continuity, figure-ground). A center node labeled "Evergreen/Emery 22-point checklist" with arrows from all four quadrants pointing to it. Caption: "Each source contributes a different kind of knowledge. The checklist operationalizes all four."] -->
+![Four-quadrant infographic: Tufte (heuristics — data-ink ratio, proportional ink), Few (working criterion — "does this support the message?"), Cairo (ethical frame — responsibility, "compared with what?", graphicacy), Gestalt (perceptual mechanism — proximity, similarity, continuity, figure-ground). Arrows converge on a central node labeled "Evergreen/Emery 22-point checklist."](../images/16-design-principles-in-practice-fig-02.png)
+*Figure 16.2 — Each source contributes a different kind of knowledge. The checklist operationalizes all four.*
 
 ---
 
@@ -101,7 +103,8 @@ Cairo's responsibility frame applies to color accessibility. A palette that fail
 
 For Claude Code work, specify the palette type and endpoints explicitly. "Sequential palette from #F5F0E8 to #8B0000, color-blind safe, consistent with dark-mode inversion via prefers-color-scheme" is a complete color specification. "Use nice colors" is not.
 
-<!-- → [IMAGE: three-panel color vocabulary reference — left: categorical (five distinct hues, similar luminance, for five unordered product categories); center: sequential (single hue from pale to dark, for a quantitative income scale); right: diverging (two hues, blue for negative, red for positive, white at zero, for budget variance). Each panel labeled with data type (unordered categorical / ordered/quantitative / centered with meaningful midpoint) and a one-sentence use-case description. Caption: "Three data types. Three color vocabularies. Using the wrong one introduces false order or hides true structure."] -->
+![Three panels showing the three color vocabularies: categorical (five distinct hues at matched luminance for five unordered product categories), sequential (single hue from pale to dark for an income scale), and diverging (two hues meeting at a neutral midpoint for budget variance).](../images/16-design-principles-in-practice-fig-03.png)
+*Figure 16.3 — Three data types, three color vocabularies. Using the wrong one introduces false order or hides true structure.*
 
 ---
 
@@ -213,7 +216,8 @@ Most of the checklist items become prompt specifications rather than post-produc
 
 The chart that passes all twenty-two items is not necessarily the most visually striking chart. It is the chart that most reliably produces accurate comprehension in its intended audience. That is the goal the checklist serves. The Tufte heuristics, Few's refinement, Cairo's ethical frame, and Gestalt's perceptual mechanism are all in service of that goal — and the twenty-two items are how the service becomes checkable.
 
-<!-- → [IMAGE: before/after side-by-side of the opening-case chart — left: the original flawed version with the seven annotated failures; right: the redesigned horizontal bar chart (sorted descending, zero baseline, single muted hue, light gridlines, 16pt sans-serif title, direct value labels, "compared with Q3" subtitle). A checklist overlay on the right panel shows all 22 items checked. Caption: "Same data. Different encoding decisions. The redesign passes all 22 items because every design decision traces to a specific principle."] -->
+![Before-and-after side-by-side of the opening-case chart: the left panel shows the flawed 3D rainbow truncated chart; the right panel shows the redesigned horizontal bar chart — sorted descending, zero baseline, single muted hue, light gridlines, 16pt sans-serif title, direct value labels, and a "compared with Q3" subtitle. A checklist overlay on the right confirms all 22 items pass.](../images/16-design-principles-in-practice-fig-04.png)
+*Figure 16.4 — Same data, different encoding decisions. The redesign passes all twenty-two items because every design decision traces to a specific principle.*
 
 ---
 
@@ -367,6 +371,50 @@ Walk me through the full design audit:
 ---
 
 *Tags: design-principles, audit, Tufte, Few, Cairo, chartjunk-debate, data-ink-ratio, proportional-ink, Stevens-power-law, Gestalt, Evergreen-Emery, 22-point-checklist, accessibility, color-blind, dark-mode, annotation-strategy, D3, Claude-Code*
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 16.1 — Seven visible failures
+
+Build a two-column D3 v7 figure pairing a deliberately flawed quarterly bar chart with an interactive failure list. Left column: render five regional sales bars (North 480, South 470, East 450, West 440, Central 430) with a truncated y-axis from 400 to 500, faux 3D perspective (front face plus a side and top trapezoid), a rainbow palette across five regions, heavy gridlines at every $10K, and 8pt italic 45°-rotated x-labels. Above the chart, a tiny italic title reads "Q4 Performance Highlights." Overlay seven numbered black callout circles on the chart positioned at each failure — y-axis baseline, bar-top 3D, rainbow color, gridlines, rotated labels, title, missing comparison reference. Right column: a clickable list of those seven failures, each with a numbered badge, a one-line description, and the principle violated (Tufte proportional ink, Bertin false order, Cairo "compared with what?", and so on). Hovering or clicking a list item highlights the matching callout in var(--color-red). Below the list, a static score chip reads "14 of 22 items fail." Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/16-design-principles-in-practice-fig-01.html`
+
+---
+
+### Figure 16.2 — Four sources, one synthesis
+
+Build a single-panel D3 v7 quadrant infographic. Four rectangular cards arranged in a 2×2 grid: top-left Tufte ("the heuristics" — data-ink ratio, proportional ink); top-right Few ("the working criterion" — "does this support the message?"); bottom-left Cairo ("the ethical frame" — responsibility to the reader, "compared with what?", graphicacy); bottom-right Gestalt ("the perceptual mechanism" — proximity, similarity, continuity, figure–ground). At the center, a smaller rectangle in a warm tint reads "Evergreen/Emery 22-point checklist — five categories, one audit instrument." Four curved arrows flow from the inner edge of each quadrant card to the center node; arrows use var(--color-secondary) at rest. Hovering a quadrant tints the card with var(--color-ochre) at low opacity and highlights its connecting arrow in var(--color-red). Card titles set in EB Garamond, italic role lines beneath them, bullet items in Inter, and a one-sentence note at the bottom of each card. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/16-design-principles-in-practice-fig-02.html`
+
+---
+
+### Figure 16.3 — Three color vocabularies
+
+Build a three-panel D3 v7 swatch reference. Each panel contains a horizontal strip of color swatches, a label below indicating the use case, a one-paragraph description, and a small monospace footer naming canonical palettes. Panel A (categorical): five swatches with distinct hues at matched luminance, labeled Apparel / Home / Sports / Beauty / Tech; description names the "no inherent order" property and the seven-hue ceiling; footer reads "ColorBrewer qualitative · color-blind safe." Panel B (sequential): six swatches forming a single-hue luminance ramp from pale to dark, labeled "low" and "high" at the ends; description names the pale-equals-low convention; footer reads "viridis · magma · grays." Panel C (diverging): seven swatches as a two-hue ramp with a neutral middle, labeled −, 0, + at the ends and middle; description names the meaningful-midpoint requirement; footer reads "RdBu · BrBG · PRGn." All swatches use var(--color-*) ramps consistent with the book's warm-grayscale palette extended only as needed for the three categories of demonstration. Hovering a swatch shows a tooltip naming the swatch's position in its scale. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/16-design-principles-in-practice-fig-03.html`
+
+---
+
+### Figure 16.4 — Before and after redesign
+
+Build a two-panel D3 v7 before/after figure using the same five-region dataset (North 480, South 470, East 450, West 440, Central 430). Left panel ("Before"): rerender the flawed chart from Figure 16.1 in miniature — truncated 400–500 y-axis, faux 3D bars, rainbow palette, heavy gridlines, tiny italic 45°-rotated labels, occasion-named "Q4 Performance Highlights" title. Below the chart, a verdict chip reads "8 pass / 14 fail" with a neutral border. Right panel ("After"): a horizontal bar chart of the same five values, sorted descending, zero baseline, single var(--color-secondary) fill, light gridlines at axis ticks only, JetBrains Mono category labels reading left-to-right, direct value labels at bar ends. Panel title reads "Food Security funding leads Q4 by a wide margin"; subtitle reads "compared with Q3 2024 target — five regions, $K." Below the chart, a verdict chip in var(--color-ochre) tint reads "22 pass / 0 fail" followed by a five-cell mini-checklist showing checkmarks for Text, Arrangement, Color, Lines, and Overall. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive, with tooltips on both panels.
+
+> Reference implementation: `d3/16-design-principles-in-practice-fig-04.html`
 
 ---
 

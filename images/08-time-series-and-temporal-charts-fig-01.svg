@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t08-01 d08-01">
+  <title id="t08-01">Bar chart vs line chart, same data, same non-zero y-axis</title>
+  <desc id="d08-01">Twelve monthly revenue values (range $83k–$91k) rendered as a column bar chart with truncated baseline on the left and as a line chart with the same y-range on the right. The bars distort; the line is legitimate.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .chip { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+    <marker id="ar8-01" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <!-- LEFT PANEL — BAR CHART, y from 80 -->
+  <text x="32" y="32" class="ti">Column bar chart, y-axis from $80k</text>
+  <text x="32" y="48" class="sm">channel: bar length (area) — violates proportional ink</text>
+  <!-- axis frame -->
+  <line x1="62" y1="68" x2="62" y2="340" stroke="#8a8480"/>
+  <line x1="62" y1="340" x2="330" y2="340" stroke="#8a8480"/>
+  <!-- y ticks 80, 85, 90 -->
+  <text x="58" y="343" text-anchor="end" class="sm">80</text>
+  <line x1="60" y1="340" x2="62" y2="340" stroke="#4a4540"/>
+  <text x="58" y="207" text-anchor="end" class="sm">85</text>
+  <line x1="60" y1="204" x2="62" y2="204" stroke="#4a4540"/>
+  <text x="58" y="71" text-anchor="end" class="sm">90</text>
+  <line x1="60" y1="68" x2="62" y2="68" stroke="#4a4540"/>
+  <!-- 12 bars; values $k: 83, 86, 84, 88, 87, 90, 89, 91, 88, 85, 86, 84 -->
+  <!-- scale: (val-80)/10 * 272 px range (68..340). y = 340 - (val-80)*27.2; h = (val-80)*27.2 -->
+  <g>
+    <rect x="72"  y="258.4" width="18" height="81.6"  fill="#4a4540"/>
+    <rect x="94"  y="176.8" width="18" height="163.2" fill="#4a4540"/>
+    <rect x="116" y="231.2" width="18" height="108.8" fill="#4a4540"/>
+    <rect x="138" y="122.4" width="18" height="217.6" fill="#4a4540"/>
+    <rect x="160" y="149.6" width="18" height="190.4" fill="#4a4540"/>
+    <rect x="182" y="68"    width="18" height="272"   fill="#2a1a0e"/>
+    <rect x="204" y="95.2"  width="18" height="244.8" fill="#4a4540"/>
+    <rect x="226" y="40.8"  width="18" height="299.2" fill="#2a1a0e"/>
+    <rect x="248" y="122.4" width="18" height="217.6" fill="#4a4540"/>
+    <rect x="270" y="204"   width="18" height="136"   fill="#4a4540"/>
+    <rect x="292" y="176.8" width="18" height="163.2" fill="#4a4540"/>
+    <rect x="314" y="231.2" width="18" height="108.8" fill="#4a4540"/>
+  </g>
+  <!-- baseline-shift warning bracket -->
+  <line x1="62" y1="350" x2="332" y2="350" stroke="#2a1a0e" stroke-width="0.75"/>
+  <text x="197" y="364" text-anchor="middle" class="sm">baseline cut at $80k — bar lengths exaggerate variation</text>
+  <text x="197" y="376" text-anchor="middle" class="sm">true range only $83k–$91k (≈10% spread)</text>
+  <!-- month labels every 2 months -->
+  <g class="sm">
+    <text x="81"  y="396" text-anchor="middle">Jan</text>
+    <text x="125" y="396" text-anchor="middle">Mar</text>
+    <text x="169" y="396" text-anchor="middle">May</text>
+    <text x="213" y="396" text-anchor="middle">Jul</text>
+    <text x="257" y="396" text-anchor="middle">Sep</text>
+    <text x="301" y="396" text-anchor="middle">Nov</text>
+  </g>
+  <!-- channel chip -->
+  <rect x="32" y="55" width="135" height="14" fill="none" stroke="#2a1a0e" stroke-width="0.75"/>
+  <text x="36" y="65" class="chip">channel: bar length (area)</text>
+
+  <!-- divider -->
+  <line x1="350" y1="20" x2="350" y2="400" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT PANEL — LINE CHART, y from 80 -->
+  <text x="370" y="32" class="ti">Line chart, y-axis from $80k</text>
+  <text x="370" y="48" class="sm">channel: point position — tight y-range is legitimate</text>
+  <line x1="400" y1="68" x2="400" y2="340" stroke="#8a8480"/>
+  <line x1="400" y1="340" x2="668" y2="340" stroke="#8a8480"/>
+  <text x="396" y="343" text-anchor="end" class="sm">80</text>
+  <line x1="398" y1="340" x2="400" y2="340" stroke="#4a4540"/>
+  <text x="396" y="207" text-anchor="end" class="sm">85</text>
+  <line x1="398" y1="204" x2="400" y2="204" stroke="#4a4540"/>
+  <text x="396" y="71" text-anchor="end" class="sm">90</text>
+  <line x1="398" y1="68" x2="400" y2="68" stroke="#4a4540"/>
+  <!-- same 12 values; x spaced over 268 px starting at 410, step ~24 -->
+  <!-- x positions: 410, 434, 458, 482, 506, 530, 554, 578, 602, 626, 650, 668 -->
+  <!-- y positions: y = 340 - (val-80)*27.2 -->
+  <!-- 83→258.4, 86→176.8, 84→231.2, 88→122.4, 87→149.6, 90→68, 89→95.2, 91→40.8, 88→122.4, 85→204, 86→176.8, 84→231.2 -->
+  <polyline points="410,258.4 434,176.8 458,231.2 482,122.4 506,149.6 530,68 554,95.2 578,40.8 602,122.4 626,204 650,176.8 668,231.2"
+            fill="none" stroke="#2a1a0e" stroke-width="1.5"/>
+  <g fill="#2a1a0e">
+    <circle cx="410" cy="258.4" r="2.5"/>
+    <circle cx="434" cy="176.8" r="2.5"/>
+    <circle cx="458" cy="231.2" r="2.5"/>
+    <circle cx="482" cy="122.4" r="2.5"/>
+    <circle cx="506" cy="149.6" r="2.5"/>
+    <circle cx="530" cy="68" r="2.5"/>
+    <circle cx="554" cy="95.2" r="2.5"/>
+    <circle cx="578" cy="40.8" r="2.5"/>
+    <circle cx="602" cy="122.4" r="2.5"/>
+    <circle cx="626" cy="204" r="2.5"/>
+    <circle cx="650" cy="176.8" r="2.5"/>
+    <circle cx="668" cy="231.2" r="2.5"/>
+  </g>
+  <!-- slope annotation -->
+  <path d="M 578 28 L 540 50" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar8-01)"/>
+  <text x="582" y="25" class="sm">peak Aug, $91k</text>
+  <!-- baseline note: line works -->
+  <line x1="400" y1="350" x2="670" y2="350" stroke="#2a1a0e" stroke-width="0.75"/>
+  <text x="535" y="364" text-anchor="middle" class="sm">point position does not encode area</text>
+  <text x="535" y="376" text-anchor="middle" class="sm">trajectory and slope are the channels — y-range is design</text>
+  <!-- month labels -->
+  <g class="sm">
+    <text x="410" y="396" text-anchor="middle">Jan</text>
+    <text x="458" y="396" text-anchor="middle">Mar</text>
+    <text x="506" y="396" text-anchor="middle">May</text>
+    <text x="554" y="396" text-anchor="middle">Jul</text>
+    <text x="602" y="396" text-anchor="middle">Sep</text>
+    <text x="650" y="396" text-anchor="middle">Nov</text>
+  </g>
+  <rect x="370" y="55" width="150" height="14" fill="none" stroke="#2a1a0e" stroke-width="0.75"/>
+  <text x="374" y="65" class="chip">channel: point position</text>
+
+  <!-- footer caption -->
+  <text x="350" y="412" text-anchor="middle" class="cap">Same data, same y-axis range. The channel decides the verdict — area must zero-base; position need not.</text>
+</svg>

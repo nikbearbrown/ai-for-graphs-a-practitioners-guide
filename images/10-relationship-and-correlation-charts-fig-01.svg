@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t10-01 d10-01">
+  <title id="t10-01">Same scatterplot, with and without the causation caveat</title>
+  <desc id="d10-01">Two identical scatterplots of education index versus life expectancy with r = 0.79. The right panel adds a callout that distinguishes correlation from causation.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .call { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; }
+      .callb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+    <marker id="ar01" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+
+  <!-- LEFT PANEL — no caveat -->
+  <text x="32" y="30" class="ti">Without caveat — invites causal reading</text>
+  <text x="32" y="46" class="sm">170 countries · education index vs life expectancy</text>
+  <!-- axes -->
+  <line x1="62" y1="70" x2="62" y2="340" stroke="#8a8480" stroke-width="1"/>
+  <line x1="62" y1="340" x2="330" y2="340" stroke="#8a8480" stroke-width="1"/>
+  <!-- y ticks 50, 65, 80 (life expectancy years) -->
+  <line x1="60" y1="340" x2="62" y2="340" stroke="#4a4540"/>
+  <text x="56" y="343" text-anchor="end" class="sm">50</text>
+  <line x1="60" y1="205" x2="62" y2="205" stroke="#4a4540"/>
+  <text x="56" y="208" text-anchor="end" class="sm">65</text>
+  <line x1="60" y1="70" x2="62" y2="70" stroke="#4a4540"/>
+  <text x="56" y="73" text-anchor="end" class="sm">80</text>
+  <text x="36" y="200" class="sm" transform="rotate(-90 36 200)">life expectancy (yrs)</text>
+  <!-- x ticks 0.3, 0.6, 0.9 -->
+  <line x1="98"  y1="340" x2="98"  y2="342" stroke="#4a4540"/>
+  <text x="98"  y="353" text-anchor="middle" class="sm">0.3</text>
+  <line x1="196" y1="340" x2="196" y2="342" stroke="#4a4540"/>
+  <text x="196" y="353" text-anchor="middle" class="sm">0.6</text>
+  <line x1="294" y1="340" x2="294" y2="342" stroke="#4a4540"/>
+  <text x="294" y="353" text-anchor="middle" class="sm">0.9</text>
+  <text x="196" y="370" text-anchor="middle" class="sm">education index</text>
+  <!-- 60 point cloud (left), pseudo-random but stable -->
+  <g fill="#4a4540" fill-opacity="0.55">
+    <circle cx="86"  cy="318" r="2.4"/><circle cx="92"  cy="305" r="2.4"/><circle cx="100" cy="312" r="2.4"/>
+    <circle cx="108" cy="296" r="2.4"/><circle cx="116" cy="288" r="2.4"/><circle cx="120" cy="306" r="2.4"/>
+    <circle cx="128" cy="278" r="2.4"/><circle cx="134" cy="290" r="2.4"/><circle cx="140" cy="262" r="2.4"/>
+    <circle cx="146" cy="280" r="2.4"/><circle cx="154" cy="254" r="2.4"/><circle cx="160" cy="270" r="2.4"/>
+    <circle cx="166" cy="244" r="2.4"/><circle cx="172" cy="258" r="2.4"/><circle cx="178" cy="232" r="2.4"/>
+    <circle cx="184" cy="226" r="2.4"/><circle cx="190" cy="244" r="2.4"/><circle cx="196" cy="218" r="2.4"/>
+    <circle cx="202" cy="208" r="2.4"/><circle cx="208" cy="222" r="2.4"/><circle cx="214" cy="198" r="2.4"/>
+    <circle cx="220" cy="210" r="2.4"/><circle cx="226" cy="188" r="2.4"/><circle cx="232" cy="200" r="2.4"/>
+    <circle cx="238" cy="178" r="2.4"/><circle cx="244" cy="170" r="2.4"/><circle cx="250" cy="184" r="2.4"/>
+    <circle cx="256" cy="162" r="2.4"/><circle cx="262" cy="154" r="2.4"/><circle cx="268" cy="168" r="2.4"/>
+    <circle cx="274" cy="148" r="2.4"/><circle cx="280" cy="138" r="2.4"/><circle cx="286" cy="152" r="2.4"/>
+    <circle cx="292" cy="132" r="2.4"/><circle cx="298" cy="120" r="2.4"/><circle cx="304" cy="140" r="2.4"/>
+    <circle cx="310" cy="114" r="2.4"/><circle cx="316" cy="108" r="2.4"/><circle cx="320" cy="122" r="2.4"/>
+    <circle cx="104" cy="320" r="2.4"/><circle cx="142" cy="298" r="2.4"/><circle cx="178" cy="266" r="2.4"/>
+    <circle cx="214" cy="230" r="2.4"/><circle cx="246" cy="198" r="2.4"/><circle cx="278" cy="172" r="2.4"/>
+    <circle cx="118" cy="316" r="2.4"/><circle cx="156" cy="288" r="2.4"/><circle cx="192" cy="252" r="2.4"/>
+    <circle cx="228" cy="216" r="2.4"/><circle cx="260" cy="184" r="2.4"/><circle cx="292" cy="158" r="2.4"/>
+  </g>
+  <!-- OLS trend line (left) -->
+  <line x1="78" y1="322" x2="318" y2="98" stroke="#2a1a0e" stroke-width="1.4"/>
+  <!-- r annotation -->
+  <text x="316" y="120" text-anchor="end" class="callb">r = 0.79</text>
+
+  <!-- divider -->
+  <line x1="350" y1="20" x2="350" y2="420" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT PANEL — with caveat -->
+  <text x="370" y="30" class="ti">With caveat — completes the claim</text>
+  <text x="370" y="46" class="sm">same data, same r = 0.79</text>
+  <line x1="400" y1="70" x2="400" y2="340" stroke="#8a8480" stroke-width="1"/>
+  <line x1="400" y1="340" x2="668" y2="340" stroke="#8a8480" stroke-width="1"/>
+  <line x1="398" y1="340" x2="400" y2="340" stroke="#4a4540"/>
+  <text x="394" y="343" text-anchor="end" class="sm">50</text>
+  <line x1="398" y1="205" x2="400" y2="205" stroke="#4a4540"/>
+  <text x="394" y="208" text-anchor="end" class="sm">65</text>
+  <line x1="398" y1="70" x2="400" y2="70" stroke="#4a4540"/>
+  <text x="394" y="73" text-anchor="end" class="sm">80</text>
+  <text x="374" y="200" class="sm" transform="rotate(-90 374 200)">life expectancy (yrs)</text>
+  <line x1="436" y1="340" x2="436" y2="342" stroke="#4a4540"/>
+  <text x="436" y="353" text-anchor="middle" class="sm">0.3</text>
+  <line x1="534" y1="340" x2="534" y2="342" stroke="#4a4540"/>
+  <text x="534" y="353" text-anchor="middle" class="sm">0.6</text>
+  <line x1="632" y1="340" x2="632" y2="342" stroke="#4a4540"/>
+  <text x="632" y="353" text-anchor="middle" class="sm">0.9</text>
+  <text x="534" y="370" text-anchor="middle" class="sm">education index</text>
+  <g fill="#4a4540" fill-opacity="0.55">
+    <circle cx="424" cy="318" r="2.4"/><circle cx="430" cy="305" r="2.4"/><circle cx="438" cy="312" r="2.4"/>
+    <circle cx="446" cy="296" r="2.4"/><circle cx="454" cy="288" r="2.4"/><circle cx="458" cy="306" r="2.4"/>
+    <circle cx="466" cy="278" r="2.4"/><circle cx="472" cy="290" r="2.4"/><circle cx="478" cy="262" r="2.4"/>
+    <circle cx="484" cy="280" r="2.4"/><circle cx="492" cy="254" r="2.4"/><circle cx="498" cy="270" r="2.4"/>
+    <circle cx="504" cy="244" r="2.4"/><circle cx="510" cy="258" r="2.4"/><circle cx="516" cy="232" r="2.4"/>
+    <circle cx="522" cy="226" r="2.4"/><circle cx="528" cy="244" r="2.4"/><circle cx="534" cy="218" r="2.4"/>
+    <circle cx="540" cy="208" r="2.4"/><circle cx="546" cy="222" r="2.4"/><circle cx="552" cy="198" r="2.4"/>
+    <circle cx="558" cy="210" r="2.4"/><circle cx="564" cy="188" r="2.4"/><circle cx="570" cy="200" r="2.4"/>
+    <circle cx="576" cy="178" r="2.4"/><circle cx="582" cy="170" r="2.4"/><circle cx="588" cy="184" r="2.4"/>
+    <circle cx="594" cy="162" r="2.4"/><circle cx="600" cy="154" r="2.4"/><circle cx="606" cy="168" r="2.4"/>
+    <circle cx="612" cy="148" r="2.4"/><circle cx="618" cy="138" r="2.4"/><circle cx="624" cy="152" r="2.4"/>
+    <circle cx="630" cy="132" r="2.4"/><circle cx="636" cy="120" r="2.4"/><circle cx="642" cy="140" r="2.4"/>
+    <circle cx="648" cy="114" r="2.4"/><circle cx="654" cy="108" r="2.4"/><circle cx="658" cy="122" r="2.4"/>
+    <circle cx="442" cy="320" r="2.4"/><circle cx="480" cy="298" r="2.4"/><circle cx="516" cy="266" r="2.4"/>
+    <circle cx="552" cy="230" r="2.4"/><circle cx="584" cy="198" r="2.4"/><circle cx="616" cy="172" r="2.4"/>
+    <circle cx="456" cy="316" r="2.4"/><circle cx="494" cy="288" r="2.4"/><circle cx="530" cy="252" r="2.4"/>
+    <circle cx="566" cy="216" r="2.4"/><circle cx="598" cy="184" r="2.4"/><circle cx="630" cy="158" r="2.4"/>
+  </g>
+  <line x1="416" y1="322" x2="656" y2="98" stroke="#2a1a0e" stroke-width="1.4"/>
+  <text x="654" y="120" text-anchor="end" class="callb">r = 0.79</text>
+
+  <!-- callout box near trend line -->
+  <rect x="416" y="232" width="200" height="68" fill="#fdfcfb" stroke="#C8860E" stroke-width="2"/>
+  <text x="424" y="248" class="callb">Correlation ≠ causation.</text>
+  <text x="424" y="262" class="call">These variables are associated;</text>
+  <text x="424" y="274" class="call">the causal mechanism is not</text>
+  <text x="424" y="286" class="call">established by this chart.</text>
+  <!-- pointer arrow from box to line -->
+  <path d="M 540 232 L 558 196" fill="none" stroke="#C8860E" stroke-width="1.2" marker-end="url(#ar01)"/>
+
+  <!-- caption -->
+  <text x="350" y="430" text-anchor="middle" class="cap">Same chart, same r. The left invites an inference the data cannot support; the right closes the gap.</text>
+  <text x="350" y="446" text-anchor="middle" class="cap">The caveat is not decoration — it is the difference between misleading and informing.</text>
+</svg>

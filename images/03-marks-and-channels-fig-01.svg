@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t01 d01">
+  <title id="t01">Position versus luminance for the same fifty-country dataset</title>
+  <desc id="d01">Two scatterplots of the same 50 countries. The left panel encodes life expectancy with y-position; the right panel collapses every point to a single horizontal line and encodes life expectancy as dot luminance.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <!-- LEFT PANEL — POSITION ENCODING -->
+  <text x="32" y="32" class="ti">Position encodes life expectancy (rank 1)</text>
+  <text x="32" y="48" class="sm">y-axis: years of life expectancy · x-axis: GDP per capita</text>
+  <!-- frame -->
+  <line x1="62" y1="62" x2="62" y2="340" stroke="#8a8480"/>
+  <line x1="62" y1="340" x2="330" y2="340" stroke="#8a8480"/>
+  <!-- y ticks -->
+  <text x="56" y="343" text-anchor="end" class="sm">50</text>
+  <text x="56" y="270" text-anchor="end" class="sm">60</text>
+  <text x="56" y="200" text-anchor="end" class="sm">70</text>
+  <text x="56" y="130" text-anchor="end" class="sm">80</text>
+  <text x="56" y="65" text-anchor="end" class="sm">85</text>
+  <!-- x ticks -->
+  <text x="62" y="354" text-anchor="middle" class="sm">$1k</text>
+  <text x="196" y="354" text-anchor="middle" class="sm">$30k</text>
+  <text x="330" y="354" text-anchor="middle" class="sm">$80k</text>
+  <!-- 50 dots — pseudo-random but biased: high GDP → high LE -->
+  <g fill="#2a1a0e">
+    <circle cx="72"  cy="305" r="3"/>
+    <circle cx="78"  cy="288" r="3"/>
+    <circle cx="85"  cy="312" r="3"/>
+    <circle cx="92"  cy="278" r="3"/>
+    <circle cx="98"  cy="260" r="3"/>
+    <circle cx="104" cy="295" r="3"/>
+    <circle cx="112" cy="244" r="3"/>
+    <circle cx="118" cy="270" r="3"/>
+    <circle cx="124" cy="226" r="3"/>
+    <circle cx="132" cy="252" r="3"/>
+    <circle cx="138" cy="208" r="3"/>
+    <circle cx="144" cy="232" r="3"/>
+    <circle cx="152" cy="190" r="3"/>
+    <circle cx="158" cy="214" r="3"/>
+    <circle cx="166" cy="172" r="3"/>
+    <circle cx="172" cy="195" r="3"/>
+    <circle cx="180" cy="156" r="3"/>
+    <circle cx="186" cy="178" r="3"/>
+    <circle cx="194" cy="142" r="3"/>
+    <circle cx="200" cy="162" r="3"/>
+    <circle cx="208" cy="128" r="3"/>
+    <circle cx="214" cy="148" r="3"/>
+    <circle cx="222" cy="118" r="3"/>
+    <circle cx="228" cy="135" r="3"/>
+    <circle cx="236" cy="110" r="3"/>
+    <circle cx="242" cy="125" r="3"/>
+    <circle cx="250" cy="105" r="3"/>
+    <circle cx="256" cy="118" r="3"/>
+    <circle cx="262" cy="98"  r="3"/>
+    <circle cx="268" cy="112" r="3"/>
+    <circle cx="274" cy="92"  r="3"/>
+    <circle cx="278" cy="106" r="3"/>
+    <circle cx="284" cy="88"  r="3"/>
+    <circle cx="288" cy="100" r="3"/>
+    <circle cx="294" cy="84"  r="3"/>
+    <circle cx="298" cy="95"  r="3"/>
+    <circle cx="302" cy="78"  r="3"/>
+    <circle cx="306" cy="90"  r="3"/>
+    <circle cx="310" cy="74"  r="3"/>
+    <circle cx="314" cy="85"  r="3"/>
+    <circle cx="318" cy="71"  r="3"/>
+    <circle cx="320" cy="80"  r="3"/>
+    <circle cx="322" cy="68"  r="3"/>
+    <circle cx="324" cy="76"  r="3"/>
+    <circle cx="326" cy="66"  r="3"/>
+    <circle cx="327" cy="73"  r="3"/>
+    <circle cx="328" cy="70"  r="3"/>
+    <circle cx="329" cy="68"  r="3"/>
+    <circle cx="330" cy="72"  r="3"/>
+    <circle cx="328" cy="66"  r="3"/>
+  </g>
+  <!-- highlight upper-right region -->
+  <rect x="270" y="60" width="62" height="48" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2"/>
+  <path d="M 360 90 L 332 84" fill="none" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar1)"/>
+  <text x="368" y="80" class="lb">highest LE</text>
+  <text x="368" y="94" class="sm">found in &lt; 1 second</text>
+
+  <!-- divider -->
+  <line x1="350" y1="20" x2="350" y2="400" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT PANEL — LUMINANCE ENCODING -->
+  <text x="370" y="32" class="ti">Luminance encodes life expectancy (rank 6)</text>
+  <text x="370" y="48" class="sm">all dots collapsed onto one row · darker dot = higher LE</text>
+  <line x1="400" y1="200" x2="668" y2="200" stroke="#8a8480"/>
+  <text x="400" y="214" text-anchor="middle" class="sm">$1k</text>
+  <text x="534" y="214" text-anchor="middle" class="sm">$30k</text>
+  <text x="668" y="214" text-anchor="middle" class="sm">$80k</text>
+  <!-- 50 dots on single horizontal line, luminance varies, x same -->
+  <g>
+    <circle cx="410" cy="186" r="5" fill="#e8e4df"/>
+    <circle cx="416" cy="186" r="5" fill="#d6d2cd"/>
+    <circle cx="423" cy="186" r="5" fill="#e0dcd7"/>
+    <circle cx="430" cy="186" r="5" fill="#cdc8c3"/>
+    <circle cx="436" cy="186" r="5" fill="#bcb6b0"/>
+    <circle cx="442" cy="186" r="5" fill="#d4cfca"/>
+    <circle cx="450" cy="186" r="5" fill="#aaa49d"/>
+    <circle cx="456" cy="186" r="5" fill="#beb8b1"/>
+    <circle cx="462" cy="186" r="5" fill="#9a948c"/>
+    <circle cx="470" cy="186" r="5" fill="#b0aaa3"/>
+    <circle cx="476" cy="186" r="5" fill="#8c8579"/>
+    <circle cx="482" cy="186" r="5" fill="#a09a92"/>
+    <circle cx="490" cy="186" r="5" fill="#7c756a"/>
+    <circle cx="496" cy="186" r="5" fill="#928a80"/>
+    <circle cx="504" cy="186" r="5" fill="#6a6358"/>
+    <circle cx="510" cy="186" r="5" fill="#807870"/>
+    <circle cx="518" cy="186" r="5" fill="#5e564b"/>
+    <circle cx="524" cy="186" r="5" fill="#6e6760"/>
+    <circle cx="532" cy="186" r="5" fill="#544c42"/>
+    <circle cx="538" cy="186" r="5" fill="#605850"/>
+    <circle cx="546" cy="186" r="5" fill="#4a4238"/>
+    <circle cx="552" cy="186" r="5" fill="#544c44"/>
+    <circle cx="560" cy="186" r="5" fill="#403930"/>
+    <circle cx="566" cy="186" r="5" fill="#48413a"/>
+    <circle cx="574" cy="186" r="5" fill="#393229"/>
+    <circle cx="580" cy="186" r="5" fill="#403830"/>
+    <circle cx="588" cy="186" r="5" fill="#322b22"/>
+    <circle cx="594" cy="186" r="5" fill="#39322a"/>
+    <circle cx="600" cy="186" r="5" fill="#2e271f"/>
+    <circle cx="606" cy="186" r="5" fill="#342d25"/>
+    <circle cx="612" cy="186" r="5" fill="#2a231b"/>
+    <circle cx="616" cy="186" r="5" fill="#302921"/>
+    <circle cx="622" cy="186" r="5" fill="#27201a"/>
+    <circle cx="626" cy="186" r="5" fill="#2c2520"/>
+    <circle cx="632" cy="186" r="5" fill="#251e18"/>
+    <circle cx="636" cy="186" r="5" fill="#291e18"/>
+    <circle cx="640" cy="186" r="5" fill="#241d17"/>
+    <circle cx="644" cy="186" r="5" fill="#271f18"/>
+    <circle cx="648" cy="186" r="5" fill="#231c16"/>
+    <circle cx="652" cy="186" r="5" fill="#251d17"/>
+    <circle cx="654" cy="186" r="5" fill="#221b15"/>
+    <circle cx="656" cy="186" r="5" fill="#241c17"/>
+    <circle cx="658" cy="186" r="5" fill="#221a14"/>
+    <circle cx="660" cy="186" r="5" fill="#231b16"/>
+    <circle cx="662" cy="186" r="5" fill="#211a13"/>
+    <circle cx="663" cy="186" r="5" fill="#221a15"/>
+    <circle cx="664" cy="186" r="5" fill="#1f1812"/>
+    <circle cx="665" cy="186" r="5" fill="#211a14"/>
+    <circle cx="666" cy="186" r="5" fill="#1e1811"/>
+    <circle cx="667" cy="186" r="5" fill="#1f1812"/>
+  </g>
+  <!-- legend strip -->
+  <text x="400" y="240" class="sm">luminance scale:</text>
+  <rect x="490" y="232" width="160" height="10" fill="url(#g1)"/>
+  <linearGradient id="g1" x1="0%" x2="100%">
+    <stop offset="0%" stop-color="#e8e4df"/>
+    <stop offset="100%" stop-color="#1f1812"/>
+  </linearGradient>
+  <text x="490" y="253" class="sm">low LE</text>
+  <text x="650" y="253" text-anchor="end" class="sm">high LE</text>
+  <!-- annotation -->
+  <path d="M 534 290 L 534 200" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar1)"/>
+  <text x="534" y="305" text-anchor="middle" class="lb">where are the high-LE countries?</text>
+  <text x="534" y="320" text-anchor="middle" class="sm">scanning luminance takes &gt; 10× longer</text>
+
+  <text x="350" y="395" text-anchor="middle" class="cap">Same fifty countries, same question. Position is read in under a second; luminance asks the eye to decode rank six.</text>
+</svg>

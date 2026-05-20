@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t15-4 d15-4">
+  <title id="t15-4">The earn-your-strangeness decision tree for specialized charts</title>
+  <desc id="d15-4">A decision tree starting from a root question about whether a specialized form answers an analytical question better than a standard chart. Yes leads to audience graphicacy; no leads to replacement with the standard form. Two example paths are traced: candlestick uses the form; gauge becomes a bullet graph.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .nd { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .edge { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+      .ex { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+  <text x="350" y="28" text-anchor="middle" class="ti">The earn-your-strangeness test for any specialized chart</text>
+
+  <!-- ROOT -->
+  <rect x="200" y="48" width="300" height="50" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1.4"/>
+  <text x="350" y="68" text-anchor="middle" class="lb">Does this form answer a specific analytical</text>
+  <text x="350" y="84" text-anchor="middle" class="lb">question better than any standard chart?</text>
+
+  <!-- YES edge -->
+  <path d="M 290 98 L 200 140" fill="none" stroke="#2a1a0e" stroke-width="1.2" marker-end="url(#ar4)"/>
+  <text x="226" y="116" class="edge">YES</text>
+
+  <!-- NO edge -->
+  <path d="M 410 98 L 500 140" fill="none" stroke="#2a1a0e" stroke-width="1.2" marker-end="url(#ar4)"/>
+  <text x="466" y="116" class="edge">NO</text>
+
+  <!-- YES branch node -->
+  <rect x="50" y="146" width="300" height="50" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1.4"/>
+  <text x="200" y="166" text-anchor="middle" class="lb">Is the audience familiar</text>
+  <text x="200" y="182" text-anchor="middle" class="lb">with the convention?</text>
+
+  <!-- NO branch node -->
+  <rect x="380" y="146" width="290" height="50" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1.4"/>
+  <text x="525" y="166" text-anchor="middle" class="lb">Why are you using this form?</text>
+  <text x="525" y="182" text-anchor="middle" class="sm">("It looks professional" is not an answer.)</text>
+
+  <!-- YES → yes (use it) -->
+  <path d="M 130 196 L 130 230" fill="none" stroke="#2a1a0e" stroke-width="1.2" marker-end="url(#ar4)"/>
+  <text x="100" y="216" class="edge">YES</text>
+  <rect x="40" y="234" width="200" height="46" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1.4"/>
+  <text x="140" y="252" text-anchor="middle" class="lb">Use the specialized form</text>
+  <text x="140" y="266" text-anchor="middle" class="sm">document the convention briefly</text>
+
+  <!-- YES → no (provide convention explanation) -->
+  <path d="M 270 196 L 270 230" fill="none" stroke="#2a1a0e" stroke-width="1.2" marker-end="url(#ar4)"/>
+  <text x="290" y="216" class="edge">NO</text>
+  <rect x="250" y="234" width="190" height="46" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1.4"/>
+  <text x="345" y="252" text-anchor="middle" class="lb">Teach the convention first</text>
+  <text x="345" y="266" text-anchor="middle" class="sm">or pick a standard alternative</text>
+
+  <!-- NO branch → replace with standard form -->
+  <path d="M 525 196 L 525 230" fill="none" stroke="#2a1a0e" stroke-width="1.2" marker-end="url(#ar4)"/>
+  <rect x="425" y="234" width="220" height="46" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1.4"/>
+  <text x="535" y="252" text-anchor="middle" class="lb">Replace with the standard form</text>
+  <text x="535" y="266" text-anchor="middle" class="sm">the specialized look is decoration, not signal</text>
+
+  <!-- Example paths labelled -->
+  <text x="32" y="316" class="ti">Two worked examples:</text>
+
+  <!-- Example 1: candlestick → yes / yes / use it -->
+  <g transform="translate(40,332)">
+    <rect x="0" y="0" width="290" height="84" fill="none" stroke="#c8a060" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="10" y="18" class="ex">Candlestick for a trading audience</text>
+    <text x="10" y="36" class="sm">Q1 root → YES (four OHLC values in one glyph)</text>
+    <text x="10" y="52" class="sm">Q2 graphicacy → YES (financial literacy widespread)</text>
+    <text x="10" y="68" class="nd">→ Use the candlestick.</text>
+  </g>
+
+  <!-- Example 2: gauge → no → replace -->
+  <g transform="translate(370,332)">
+    <rect x="0" y="0" width="290" height="84" fill="none" stroke="#c8a060" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="10" y="18" class="ex">Gauge chart on a KPI dashboard</text>
+    <text x="10" y="36" class="sm">Q1 root → NO (bullet graph answers the same question)</text>
+    <text x="10" y="52" class="sm">Q2 motive → "it looks technical"</text>
+    <text x="10" y="68" class="nd">→ Replace with a bullet graph.</text>
+  </g>
+
+  <text x="350" y="436" text-anchor="middle" class="cap">The test is the discipline. Specialization earns its cost or it doesn't.</text>
+</svg>

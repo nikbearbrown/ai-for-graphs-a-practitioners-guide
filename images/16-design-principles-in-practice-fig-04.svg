@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t1604 d1604">
+  <title id="t1604">Before and after — the opening chart redesigned to pass all twenty-two checklist items</title>
+  <desc id="d1604">Left panel reprises the flawed 3D rainbow chart from the opening; right panel shows the horizontal-bar redesign with zero baseline, sorted descending, direct labels, and a comparison subtitle. A 22-item checklist overlay shows all items checked on the redesign.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .bad { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 8px; font-style: italic; fill: #4a4540; }
+      .ver { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+      .ck { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="26" text-anchor="middle" class="ti">Same data. Different encoding decisions.</text>
+
+  <!-- LEFT: BEFORE (flawed) -->
+  <g transform="translate(20,52)">
+    <text x="0" y="0" class="ti">Before</text>
+    <text x="0" y="14" class="sm">14 of 22 items fail</text>
+    <text x="160" y="0" text-anchor="middle" class="bad">Q4 Performance Highlights</text>
+
+    <!-- mini flawed chart: 3D rainbow bars, truncated y -->
+    <g transform="translate(0,24)">
+      <!-- gridlines -->
+      <g stroke="#8a8480" stroke-width="0.5">
+        <line x1="40" y1="20" x2="280" y2="20"/>
+        <line x1="40" y1="50" x2="280" y2="50"/>
+        <line x1="40" y1="80" x2="280" y2="80"/>
+        <line x1="40" y1="110" x2="280" y2="110"/>
+        <line x1="40" y1="140" x2="280" y2="140"/>
+        <line x1="40" y1="170" x2="280" y2="170"/>
+        <line x1="40" y1="200" x2="280" y2="200"/>
+      </g>
+      <line x1="40" y1="20" x2="40" y2="200" stroke="#2a1a0e"/>
+      <line x1="40" y1="200" x2="280" y2="200" stroke="#2a1a0e"/>
+
+      <text x="36" y="203" text-anchor="end" class="sm">400</text>
+      <text x="36" y="113" text-anchor="end" class="sm">450</text>
+      <text x="36" y="23" text-anchor="end" class="sm">500</text>
+
+      <!-- 5 rainbow 3D bars (truncated baseline) -->
+      <polygon points="56,60 68,52 68,200 56,200" fill="#7a1f1a"/>
+      <polygon points="68,52 80,52 80,200 68,200" fill="#a83a2a"/>
+
+      <polygon points="100,80 112,72 112,200 100,200" fill="#7a4a1a"/>
+      <polygon points="112,72 124,72 124,200 112,200" fill="#b8742a"/>
+
+      <polygon points="144,120 156,112 156,200 144,200" fill="#7a6a1a"/>
+      <polygon points="156,112 168,112 168,200 156,200" fill="#b8a02a"/>
+
+      <polygon points="188,140 200,132 200,200 188,200" fill="#1f5a2a"/>
+      <polygon points="200,132 212,132 212,200 200,200" fill="#3a8a3a"/>
+
+      <polygon points="232,160 244,152 244,200 232,200" fill="#1a3a6a"/>
+      <polygon points="244,152 256,152 256,200 232,200" fill="#2a5aa8"/>
+
+      <!-- tiny italic rotated labels -->
+      <g class="bad">
+        <text x="70" y="216" text-anchor="end" transform="rotate(-45 70 216)">North</text>
+        <text x="114" y="216" text-anchor="end" transform="rotate(-45 114 216)">South</text>
+        <text x="158" y="216" text-anchor="end" transform="rotate(-45 158 216)">East</text>
+        <text x="202" y="216" text-anchor="end" transform="rotate(-45 202 216)">West</text>
+        <text x="246" y="216" text-anchor="end" transform="rotate(-45 246 216)">Central</text>
+      </g>
+    </g>
+
+    <!-- verdict chip -->
+    <rect x="0" y="290" width="280" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="140" y="305" text-anchor="middle" class="ver">8 pass / 14 fail</text>
+  </g>
+
+  <!-- Divider -->
+  <line x1="350" y1="44" x2="350" y2="380" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT: AFTER (redesign) -->
+  <g transform="translate(370,52)">
+    <text x="0" y="0" class="ti">After</text>
+    <text x="0" y="14" class="sm">22 of 22 items pass</text>
+    <text x="0" y="32" class="lb">Food Security funding leads Q4 by a wide margin</text>
+    <text x="0" y="46" class="sm">compared with Q3 2024 target — five regions, $K</text>
+
+    <!-- horizontal bar chart, sorted desc, zero baseline, single muted hue -->
+    <g transform="translate(0,60)">
+      <!-- light gridlines -->
+      <g stroke="#c8c4c0" stroke-width="0.5">
+        <line x1="60" y1="0" x2="60" y2="180"/>
+        <line x1="120" y1="0" x2="120" y2="180"/>
+        <line x1="180" y1="0" x2="180" y2="180"/>
+        <line x1="240" y1="0" x2="240" y2="180"/>
+        <line x1="300" y1="0" x2="300" y2="180"/>
+      </g>
+      <!-- axis -->
+      <line x1="60" y1="0" x2="60" y2="180" stroke="#2a1a0e"/>
+      <line x1="60" y1="180" x2="300" y2="180" stroke="#2a1a0e"/>
+
+      <!-- bars: values 480, 470, 450, 440, 430 (scaled across 240 px) -->
+      <!-- North: 480 → width 240 -->
+      <rect x="60" y="6" width="240" height="20" fill="#4a4540"/>
+      <text x="305" y="20" class="sm">480</text>
+      <rect x="60" y="38" width="230" height="20" fill="#4a4540"/>
+      <text x="295" y="52" class="sm">470</text>
+      <rect x="60" y="70" width="210" height="20" fill="#4a4540"/>
+      <text x="275" y="84" class="sm">450</text>
+      <rect x="60" y="102" width="200" height="20" fill="#4a4540"/>
+      <text x="265" y="116" class="sm">440</text>
+      <rect x="60" y="134" width="190" height="20" fill="#4a4540"/>
+      <text x="255" y="148" class="sm">430</text>
+
+      <!-- category labels left -->
+      <text x="56" y="20" text-anchor="end" class="sm">North</text>
+      <text x="56" y="52" text-anchor="end" class="sm">South</text>
+      <text x="56" y="84" text-anchor="end" class="sm">East</text>
+      <text x="56" y="116" text-anchor="end" class="sm">West</text>
+      <text x="56" y="148" text-anchor="end" class="sm">Central</text>
+
+      <!-- axis ticks -->
+      <text x="60" y="194" text-anchor="middle" class="sm">0</text>
+      <text x="120" y="194" text-anchor="middle" class="sm">120</text>
+      <text x="180" y="194" text-anchor="middle" class="sm">240</text>
+      <text x="240" y="194" text-anchor="middle" class="sm">360</text>
+      <text x="300" y="194" text-anchor="middle" class="sm">480</text>
+    </g>
+
+    <!-- verdict chip -->
+    <rect x="0" y="290" width="280" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="140" y="305" text-anchor="middle" class="ver">22 pass / 0 fail</text>
+  </g>
+
+  <!-- Checklist overlay on the right (compact, two columns of ticks) -->
+  <g transform="translate(370,332)">
+    <text x="0" y="0" class="sm">Text</text><text x="22" y="0" class="ck">✓✓✓✓✓</text>
+    <text x="74" y="0" class="sm">Arrange</text><text x="118" y="0" class="ck">✓✓✓✓</text>
+    <text x="158" y="0" class="sm">Color</text><text x="186" y="0" class="ck">✓✓✓✓✓</text>
+    <text x="0" y="14" class="sm">Lines</text><text x="28" y="14" class="ck">✓✓✓✓</text>
+    <text x="74" y="14" class="sm">Overall</text><text x="112" y="14" class="ck">✓✓✓✓</text>
+  </g>
+
+  <text x="350" y="402" text-anchor="middle" class="cap">Every change traces to a specific principle. The redesign passes all twenty-two items.</text>
+</svg>

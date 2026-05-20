@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 11.2 — Pie vs waffle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 380px; }
+  .slice { stroke: var(--color-white); stroke-width: 1.5px; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .slice.primary { fill: var(--color-red); }
+  .slice-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-white); pointer-events: none; }
+  .cell { stroke: var(--color-white); stroke-width: 1.5px; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .cell.primary { fill: var(--color-red); }
+  .legend-text { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; font-family: 'Inter', sans-serif; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 11.2 — Pie vs waffle</h1>
+<p class="subtitle">Same data. Different perceptual channel. Different accuracy.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Pie — channel: angle</div>
+    <div class="panel-sub">Cleveland &amp; McGill rank 4.</div>
+    <div id="chartPie" class="chart" role="img"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Waffle — channel: counted cells (position)</div>
+    <div class="panel-sub">Cleveland &amp; McGill rank 1. Each cell = 1%.</div>
+    <div id="chartWaffle" class="chart" role="img"></div>
+  </div>
+</div>
+<p class="caption">The waffle chart trades familiarity for precision. The trade is worth making when the audience can decode it.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const partData = [
+  { label: 'A', value: 38 },
+  { label: 'B', value: 23 },
+  { label: 'C', value: 18 },
+  { label: 'D', value: 13 },
+  { label: 'E', value:  8 }
+];
+const grayRamp = ['#4a4540', '#8a8480', '#a8a4a0', '#c8c4c0'];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawPie(selector) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 380;
+  const totalHeight = container.clientHeight || 380;
+  const radius = Math.min(totalWidth, totalHeight) / 2 - 16;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img');
+  svg.append('title').text('Five-category pie chart');
+  svg.append('desc').text('Five proportions 38, 23, 18, 13, and 8 percent encoded as angles in a single circle.');
+
+  const gChart = svg.append('g').attr('transform', 'translate(' + totalWidth / 2 + ',' + totalHeight / 2 + ')');
+
+  const pieGen = d3.pie().value(d => d.value).sort(null).startAngle(0);
+  const arcGen = d3.arc().innerRadius(0).outerRadius(radius);
+  const labelArc = d3.arc().innerRadius(radius * 0.6).outerRadius(radius * 0.6);
+  const arcs = pieGen(partData);
+
+  gChart.selectAll('.slice')
+    .data(arcs)
+    .join('path')
+      .attr('class', (d, i) => i === 0 ? 'slice primary' : 'slice')
+      .attr('fill', (d, i) => i === 0 ? null : grayRamp[(i - 1) % grayRamp.length])
+      .attr('d', arcGen)
+      .attr('tabindex', 0)
+      .attr('aria-label', d => d.data.label + ': ' + d.data.value + '%')
+      .on('mouseover', (event, d) => showTip(event, '<strong>' + d.data.label + '</strong>: ' + d.data.value + '%'))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  gChart.selectAll('.slice-label')
+    .data(arcs.filter(d => (d.endAngle - d.startAngle) > 0.35))
+    .join('text')
+      .attr('class', 'slice-label')
+      .attr('transform', d => 'translate(' + labelArc.centroid(d) + ')')
+      .attr('text-anchor', 'middle')
+      .text(d => d.data.label + ' ' + d.data.value + '%');
+}
+
+function drawWaffle(selector) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 380;
+  const totalHeight = container.clientHeight || 380;
+  const padding = 24;
+  const gridSize = Math.min(totalWidth - padding * 2, totalHeight - padding * 2 - 40);
+  const cellSize = gridSize / 10;
+  const offsetX = (totalWidth - gridSize) / 2;
+  const offsetY = padding;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img');
+  svg.append('title').text('Ten by ten waffle chart');
+  svg.append('desc').text('Five proportions of the same data encoded as counts of one-percent cells in a ten-by-ten grid.');
+
+  // Build category for each of 100 cells
+  const cells = [];
+  let idx = 0;
+  partData.forEach((d, ci) => {
+    for (let k = 0; k < d.value; k++) {
+      cells.push({ index: idx, category: d.label, value: d.value, ci });
+      idx++;
+    }
+  });
+
+  svg.append('g').selectAll('rect')
+    .data(cells)
+    .join('rect')
+      .attr('class', d => d.ci === 0 ? 'cell primary' : 'cell')
+      .attr('fill', d => d.ci === 0 ? null : grayRamp[(d.ci - 1) % grayRamp.length])
+      .attr('x', d => offsetX + (d.index % 10) * cellSize)
+      .attr('y', d => offsetY + Math.floor(d.index / 10) * cellSize)
+      .attr('width',  cellSize - 2)
+      .attr('height', cellSize - 2)
+      .attr('tabindex', 0)
+      .attr('aria-label', d => d.category + ', cell ' + (d.index + 1) + ' of 100')
+      .on('mouseover', (event, d) => showTip(event, '<strong>' + d.category + '</strong>: ' + d.value + '%'))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // Legend below
+  const legendY = offsetY + gridSize + 16;
+  const legendG = svg.append('g').attr('transform', 'translate(' + offsetX + ',' + legendY + ')');
+  partData.forEach((d, i) => {
+    const xPos = i * (gridSize / partData.length);
+    legendG.append('rect')
+      .attr('x', xPos).attr('y', 0)
+      .attr('width', 12).attr('height', 12)
+      .attr('fill', i === 0 ? 'var(--color-red)' : grayRamp[(i - 1) % grayRamp.length]);
+    legendG.append('text')
+      .attr('class', 'legend-text')
+      .attr('x', xPos + 18).attr('y', 10)
+      .text(d.label + ' ' + d.value + '%');
+  });
+}
+
+function draw() {
+  drawPie('#chartPie');
+  drawWaffle('#chartWaffle');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartPie'));
+ro.observe(document.getElementById('chartWaffle'));
+</script>
+</body>
+</html>

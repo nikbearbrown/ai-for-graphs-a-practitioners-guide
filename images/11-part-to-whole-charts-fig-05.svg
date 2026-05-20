@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t11-05 d11-05">
+  <title id="t11-05">Five design decisions in one pie chart, with the perceptual principle behind each</title>
+  <desc id="d11-05">An annotated five-slice pie chart from the pantry with five numbered callouts naming aggregation, sort order, direct labels, color hue choice, and the dominance signal.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .num { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #fdfcfb; }
+      .onpie { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #fdfcfb; }
+    </style>
+    <marker id="ar11e" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+
+  <text x="32" y="32" class="ti">Every decision is doing work. The chart is good because the encoding fits the data.</text>
+
+  <!-- Pie centered at cx=470 cy=250, r=120. Same data as fig-01 left: 56, 21, 14, 6, 3 -->
+  <!-- slice1 56% -> end at theta -90 + 201.6 = 111.6 -> (470 + 120*cos(111.6), 250 + 120*sin(111.6)) = (425.8, 361.6) -->
+  <!-- slice2 21% -> sweep 75.6 -> theta 187.2 -> (470 + 120*-0.992, 250 + 120*-0.125) = (351, 235) -->
+  <!-- slice3 14% -> sweep 50.4 -> theta 237.6 -> (470 + 120*-0.535, 250 + 120*-0.845) = (405.8, 148.6) -->
+  <!-- slice4 6% -> sweep 21.6 -> theta 259.2 -> (470 + 120*-0.187, 250 + 120*-0.982) = (447.6, 132.2) -->
+  <!-- slice5 3% -> sweep 10.8 -> theta 270 -> (470, 130) -->
+
+  <!-- 56% large arc -->
+  <path d="M 470 250 L 470 130 A 120 120 0 1 1 425.8 361.6 Z" fill="#2a1a0e"/>
+  <path d="M 470 250 L 425.8 361.6 A 120 120 0 0 1 351 235 Z" fill="#4a4540"/>
+  <path d="M 470 250 L 351 235 A 120 120 0 0 1 405.8 148.6 Z" fill="#8a8480"/>
+  <path d="M 470 250 L 405.8 148.6 A 120 120 0 0 1 447.6 132.2 Z" fill="#a8a4a0"/>
+  <path d="M 470 250 L 447.6 132.2 A 120 120 0 0 1 470 130 Z" fill="#c8c4c0"/>
+
+  <!-- Direct labels on slices -->
+  <text x="500" y="252" text-anchor="middle" class="onpie">Food Security</text>
+  <text x="500" y="266" text-anchor="middle" class="onpie">56%</text>
+  <text x="408" y="304" text-anchor="middle" class="onpie">Shelter 21%</text>
+  <text x="402" y="208" text-anchor="middle" class="onpie">Water 14%</text>
+  <text x="430" y="170" text-anchor="middle" class="sm">Health 6%</text>
+  <text x="455" y="150" text-anchor="middle" class="sm">Prot 3%</text>
+
+  <!-- Bottom-left "Other" note -->
+  <text x="32" y="448" class="sm">Categories beyond the top five aggregated into "Other."</text>
+
+  <!-- Callouts numbered 1..5 down the left -->
+
+  <!-- 1. Five slices: aggregation -->
+  <circle cx="60" cy="90" r="11" fill="#2a1a0e"/><text x="60" y="94" text-anchor="middle" class="num">1</text>
+  <text x="78" y="86" class="lb">Five slices: data aggregated before building</text>
+  <text x="78" y="100" class="sm">Five-slice rule is a design decision, not a data fact.</text>
+  <path d="M 220 96 L 348 232" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar11e)"/>
+
+  <!-- 2. Sort order: clockwise from largest -->
+  <circle cx="60" cy="146" r="11" fill="#2a1a0e"/><text x="60" y="150" text-anchor="middle" class="num">2</text>
+  <text x="78" y="142" class="lb">Sort order: largest at 12 o'clock, clockwise</text>
+  <text x="78" y="156" class="sm">Reading direction matches reader's expected entry.</text>
+  <!-- arc showing direction -->
+  <path d="M 510 138 A 80 80 0 0 1 558 200" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#ar11e)"/>
+
+  <!-- 3. Direct labels -->
+  <circle cx="60" cy="202" r="11" fill="#2a1a0e"/><text x="60" y="206" text-anchor="middle" class="num">3</text>
+  <text x="78" y="198" class="lb">Direct labels: no legend lookup required</text>
+  <text x="78" y="212" class="sm">Two extra read-steps eliminated per slice.</text>
+  <path d="M 220 208 L 460 256" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar11e)"/>
+
+  <!-- 4. Color hue: categorical identity -->
+  <circle cx="60" cy="258" r="11" fill="#2a1a0e"/><text x="60" y="262" text-anchor="middle" class="num">4</text>
+  <text x="78" y="254" class="lb">Color hue: categorical identity, no implied ranking</text>
+  <text x="78" y="268" class="sm">Luminance scale would imply order the data doesn't have.</text>
+  <path d="M 220 264 L 358 244" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar11e)"/>
+
+  <!-- 5. Dominance signal -->
+  <circle cx="60" cy="314" r="11" fill="#2a1a0e"/><text x="60" y="318" text-anchor="middle" class="num">5</text>
+  <text x="78" y="310" class="lb">Largest slice ≈ half the circle</text>
+  <text x="78" y="324" class="sm">Dominance signal unmistakable even without precision.</text>
+  <path d="M 220 320 L 520 290" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar11e)"/>
+
+  <!-- caption -->
+  <text x="350" y="466" text-anchor="middle" class="cap">None of these decisions is stylistic. Each applies a perceptual principle to a specific constraint.</text>
+</svg>

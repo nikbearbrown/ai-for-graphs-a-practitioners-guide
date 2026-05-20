@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 3.5 — Magnitude vs identity channels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .column { border: 1px solid var(--color-border); padding: 20px; }
+  .col-title { font-family: 'EB Garamond', Georgia, serif; font-weight: 700; font-size: 18px; margin-bottom: 2px; }
+  .col-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 20px; }
+  .entry { display: grid; grid-template-columns: 60px 1fr; gap: 12px; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--color-border); }
+  .entry:last-of-type { border-bottom: none; }
+  .icon { display: flex; align-items: center; justify-content: center; height: 40px; }
+  .entry-name { font-weight: 700; font-size: 14px; color: var(--color-ink); }
+  .entry-use { font-size: 12px; color: var(--color-secondary); }
+  .entry-misuse { font-size: 12px; color: var(--color-secondary); font-style: italic; }
+  .entry-misuse::before { content: 'misuse: '; font-style: normal; color: var(--color-ochre); font-weight: 600; }
+  .principle { margin-top: 16px; padding: 12px; border-left: 3px solid var(--color-ochre); background: rgba(200, 134, 14, 0.04); }
+  .principle-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .principle-body { font-size: 12px; color: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 20px; max-width: 75ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  @media (max-width: 700px) { #grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<h1>Figure 3.5 — Magnitude channels and identity channels</h1>
+<p class="subtitle">Munzner's two families. Quantitative attributes belong on magnitude channels; categorical attributes belong on identity channels. Every channel-misuse error is a violation of one of these two rules.</p>
+<div id="grid" role="img" aria-labelledby="t-fig d-fig">
+  <span id="t-fig" hidden>Magnitude channels versus identity channels taxonomy</span>
+  <span id="d-fig" hidden>Two-column infographic. Left column lists magnitude channels (position, length, area, luminance) with icons and example uses and misuses. Right column lists identity channels (hue, shape, texture) with icons and example uses and misuses. Beneath each column, a principle box.</span>
+
+  <div class="column" id="magnitudeCol">
+    <div class="col-title">Magnitude channels</div>
+    <div class="col-sub">suited to quantitative / ordered data — convey "more" and "less"</div>
+    <div id="magnitudeEntries"></div>
+    <div class="principle">
+      <div class="principle-name">Effectiveness principle (Munzner)</div>
+      <div class="principle-body">Encode the most important attribute on the highest-ranked appropriate channel.</div>
+    </div>
+  </div>
+
+  <div class="column" id="identityCol">
+    <div class="col-title">Identity channels</div>
+    <div class="col-sub">suited to categorical data — convey "different from" but not "greater than"</div>
+    <div id="identityEntries"></div>
+    <div class="principle">
+      <div class="principle-name">Expressiveness principle (Munzner)</div>
+      <div class="principle-body">The channel must be capable of expressing the attribute type. No quantity on hue.</div>
+    </div>
+  </div>
+</div>
+<p class="caption">Two principles, generating every chart-design rule that follows. The most common encoding error in visualization — quantity on hue — is an expressiveness violation. The mirror error — categorical labels arranged along a magnitude scale — is the same violation in the other direction.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const magnitude = [
+  { name: 'Position',  use: 'x/y axis encodes a quantity (scatter, bar)', misuse: 'categories arranged along a scale without an order' },
+  { name: 'Length',    use: 'bar height encodes revenue against a zero baseline', misuse: 'bars without zero baseline; segments off the baseline' },
+  { name: 'Area',      use: 'bubble area linear in value, treemap area = total', misuse: 'radius-linear bubbles; area used for fine rank order' },
+  { name: 'Luminance', use: 'choropleth of an ordered quantity, sequential ramp', misuse: 'more than ~7 distinguishable steps; encoding 50 levels' }
+];
+
+const identity = [
+  { name: 'Hue',      use: 'each category gets a distinct color', misuse: 'rainbow ramp encoding a continuous quantity' },
+  { name: 'Shape',    use: 'distinguish overlapping series in a scatter', misuse: 'shape proxying for a numeric attribute (year)' },
+  { name: 'Texture',  use: 'print / black-and-white categorical fills', misuse: 'too many patterns at once → moire noise' }
+];
+
+function makeIcon(name) {
+  const svg = d3.create('svg').attr('width', 56).attr('height', 40).attr('viewBox', '0 0 56 40');
+  if (name === 'Position') {
+    svg.append('line').attr('x1', 6).attr('y1', 4).attr('x2', 6).attr('y2', 36).attr('stroke', 'var(--color-ink)');
+    svg.append('circle').attr('cx', 6).attr('cy', 10).attr('r', 3).attr('fill', 'var(--color-ink)');
+    svg.append('circle').attr('cx', 22).attr('cy', 22).attr('r', 3).attr('fill', 'var(--color-ink)');
+    svg.append('circle').attr('cx', 40).attr('cy', 16).attr('r', 3).attr('fill', 'var(--color-ink)');
+  } else if (name === 'Length') {
+    [6, 18, 30, 42].forEach((x, i) => {
+      const heights = [12, 22, 30, 18];
+      svg.append('rect').attr('x', x).attr('y', 36 - heights[i]).attr('width', 8).attr('height', heights[i]).attr('fill', 'var(--color-ink)');
+    });
+  } else if (name === 'Area') {
+    svg.append('circle').attr('cx', 14).attr('cy', 20).attr('r', 8).attr('fill', '#8a8480');
+    svg.append('circle').attr('cx', 38).attr('cy', 20).attr('r', 14).attr('fill', 'var(--color-ink)');
+  } else if (name === 'Luminance') {
+    ['#f5f2ee', '#c8c4c0', '#8a8480', '#4a4540', '#1f1812'].forEach((c, i) => {
+      svg.append('rect').attr('x', i * 10 + 4).attr('y', 8).attr('width', 10).attr('height', 24).attr('fill', c);
+    });
+  } else if (name === 'Hue') {
+    svg.append('circle').attr('cx', 12).attr('cy', 20).attr('r', 7).attr('fill', 'var(--color-red)');
+    svg.append('circle').attr('cx', 28).attr('cy', 20).attr('r', 7).attr('fill', 'var(--color-ink)');
+    svg.append('circle').attr('cx', 44).attr('cy', 20).attr('r', 7).attr('fill', 'var(--color-ochre)');
+  } else if (name === 'Shape') {
+    svg.append('circle').attr('cx', 12).attr('cy', 20).attr('r', 6).attr('fill', 'var(--color-ink)');
+    svg.append('rect').attr('x', 24).attr('y', 14).attr('width', 12).attr('height', 12).attr('fill', 'var(--color-ink)');
+    svg.append('polygon').attr('points', '46,14 52,26 40,26').attr('fill', 'var(--color-ink)');
+  } else if (name === 'Texture') {
+    const defs = svg.append('defs');
+    const p1 = defs.append('pattern').attr('id', 'tx1').attr('width', 4).attr('height', 4).attr('patternUnits', 'userSpaceOnUse');
+    p1.append('line').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 4).attr('stroke', 'var(--color-ink)').attr('stroke-width', 0.8);
+    const p2 = defs.append('pattern').attr('id', 'tx2').attr('width', 4).attr('height', 4).attr('patternUnits', 'userSpaceOnUse');
+    p2.append('line').attr('x1', 0).attr('y1', 0).attr('x2', 4).attr('y2', 4).attr('stroke', 'var(--color-ink)').attr('stroke-width', 0.8);
+    const p3 = defs.append('pattern').attr('id', 'tx3').attr('width', 4).attr('height', 4).attr('patternUnits', 'userSpaceOnUse');
+    p3.append('circle').attr('cx', 2).attr('cy', 2).attr('r', 1).attr('fill', 'var(--color-ink)');
+    svg.append('rect').attr('x', 4).attr('y', 8).attr('width', 14).attr('height', 24).attr('fill', 'url(#tx1)').attr('stroke', 'var(--color-ink)').attr('stroke-width', 0.6);
+    svg.append('rect').attr('x', 22).attr('y', 8).attr('width', 14).attr('height', 24).attr('fill', 'url(#tx2)').attr('stroke', 'var(--color-ink)').attr('stroke-width', 0.6);
+    svg.append('rect').attr('x', 40).attr('y', 8).attr('width', 14).attr('height', 24).attr('fill', 'url(#tx3)').attr('stroke', 'var(--color-ink)').attr('stroke-width', 0.6);
+  }
+  return svg.node();
+}
+
+function renderColumn(containerSel, entries) {
+  const container = d3.select(containerSel);
+  container.selectAll('*').remove();
+  entries.forEach(e => {
+    const row = container.append('div').attr('class', 'entry');
+    row.append('div').attr('class', 'icon').node().appendChild(makeIcon(e.name));
+    const text = row.append('div');
+    text.append('div').attr('class', 'entry-name').text(e.name);
+    text.append('div').attr('class', 'entry-use').text(e.use);
+    text.append('div').attr('class', 'entry-misuse').text(e.misuse);
+  });
+}
+
+renderColumn('#magnitudeEntries', magnitude);
+renderColumn('#identityEntries', identity);
+</script>
+</body>
+</html>

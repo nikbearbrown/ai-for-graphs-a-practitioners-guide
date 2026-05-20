@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t12-06 d12-06">
+  <title id="t12-06">Treemap vs circle packing — irregular hierarchy depth</title>
+  <desc id="d12-06">Five humanitarian aid organizations with uneven depth: a three-level multinational, two-level regional NGOs, and one-level local grassroots groups. Treemap on the left renders them all as flat rectangles. Circle packing on the right preserves each branch's actual depth.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .lbw { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #fdfcfb; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .smw { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #fdfcfb; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">Same five organizations, uneven depth. The treemap flattens what circle packing keeps.</text>
+
+  <!-- LEGEND -->
+  <g transform="translate(220,40)">
+    <rect x="0"  y="0" width="10" height="10" fill="#2a1a0e"/><text x="14" y="9" class="sm">L1 organization</text>
+    <rect x="110" y="0" width="10" height="10" fill="#8a8480"/><text x="124" y="9" class="sm">L2 program</text>
+    <rect x="210" y="0" width="10" height="10" fill="#c8c4c0"/><text x="224" y="9" class="sm">L3 project</text>
+  </g>
+
+  <!-- LEFT: TREEMAP -->
+  <text x="32" y="78" class="ti">Treemap — depth is hidden</text>
+  <text x="32" y="94" class="sm">single-level groups look identical to deep ones</text>
+
+  <!-- Frame 300×280 at (32, 108). Five orgs by total funding: Multinational 40, Regional A 22, Regional B 18, Local A 12, Local B 8. -->
+  <!-- Squarified-ish: top row [Multi 40, RegA 22] → row height 280*62/100=174, widths 300*40/62=194, 106. -->
+  <!-- bottom row [RegB 18, LocA 12, LocB 8] → row height 106, widths 300*18/38=142, 300*12/38=95, 63 -->
+
+  <!-- Multinational (3 levels) -->
+  <rect x="32" y="108" width="194" height="174" fill="#2a1a0e"/>
+  <!-- L2 programs inside multinational: P1=18, P2=14, P3=8 (sum 40). vertical splits width 194 → 87, 68, 39 -->
+  <rect x="32"  y="108" width="87" height="174" fill="#2a1a0e"/>
+  <rect x="119" y="108" width="68" height="174" fill="#2a1a0e"/>
+  <rect x="187" y="108" width="39" height="174" fill="#2a1a0e"/>
+  <line x1="119" y1="108" x2="119" y2="282" stroke="#fdfcfb" stroke-width="1.2"/>
+  <line x1="187" y1="108" x2="187" y2="282" stroke="#fdfcfb" stroke-width="1.2"/>
+  <!-- L3 projects: small subdivisions inside P1 and P2 to suggest depth -->
+  <line x1="32"  y1="195" x2="119" y2="195" stroke="#fdfcfb" stroke-width="0.7"/>
+  <line x1="32"  y1="248" x2="119" y2="248" stroke="#fdfcfb" stroke-width="0.7"/>
+  <line x1="78"  y1="195" x2="78"  y2="282" stroke="#fdfcfb" stroke-width="0.5"/>
+  <line x1="119" y1="200" x2="187" y2="200" stroke="#fdfcfb" stroke-width="0.7"/>
+  <text x="40" y="124" class="lbw">Multinational  40</text>
+  <text x="40" y="138" class="smw">L1 → L2 → L3</text>
+
+  <!-- Regional A (2 levels) -->
+  <rect x="226" y="108" width="106" height="174" fill="#4a4540"/>
+  <line x1="226" y1="195" x2="332" y2="195" stroke="#fdfcfb" stroke-width="1.2"/>
+  <line x1="279" y1="108" x2="279" y2="195" stroke="#fdfcfb" stroke-width="1"/>
+  <text x="234" y="124" class="lbw">Regional A  22</text>
+  <text x="234" y="138" class="smw">L1 → L2</text>
+
+  <!-- Regional B (2 levels) -->
+  <rect x="32" y="282" width="142" height="106" fill="#4a4540"/>
+  <line x1="32" y1="335" x2="174" y2="335" stroke="#fdfcfb" stroke-width="1"/>
+  <line x1="103" y1="282" x2="103" y2="335" stroke="#fdfcfb" stroke-width="1"/>
+  <text x="40" y="298" class="lbw">Regional B  18</text>
+  <text x="40" y="312" class="smw">L1 → L2</text>
+
+  <!-- Local A (1 level only — but in treemap it looks identical to multi-level rectangles!) -->
+  <rect x="174" y="282" width="95" height="106" fill="#8a8480"/>
+  <text x="182" y="298" class="lbw">Local A  12</text>
+  <text x="182" y="312" class="smw">L1 only</text>
+
+  <!-- Local B (1 level only) -->
+  <rect x="269" y="282" width="63" height="106" fill="#8a8480"/>
+  <text x="277" y="298" class="lbw">Local B  8</text>
+  <text x="277" y="312" class="smw">L1 only</text>
+
+  <text x="32" y="412" class="lb">flat rectangles tell the same story for every org…</text>
+  <text x="32" y="428" class="sm">…but Multinational has 3 levels and Local A has 1.</text>
+  <text x="32" y="444" class="sm">depth is not visible in this form.</text>
+
+  <!-- DIVIDER -->
+  <line x1="350" y1="50" x2="350" y2="450" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT: CIRCLE PACKING -->
+  <text x="370" y="78" class="ti">Circle packing — depth is visible</text>
+  <text x="370" y="94" class="sm">nesting reflects each branch's actual structure</text>
+
+  <!-- Frame centered around (520,250). Use scaled radii. Areas proportional. -->
+  <!-- Use π r² ∝ value. Reference: Multi 40 → r ≈ 70; RegA 22 → r ≈ 52; RegB 18 → r ≈ 47; LocA 12 → r ≈ 39; LocB 8 → r ≈ 32. -->
+  <!-- Position by hand to avoid overlap. -->
+  <g>
+    <!-- Multinational at (440, 200) -->
+    <circle cx="440" cy="200" r="70" fill="none" stroke="#2a1a0e" stroke-width="1.6"/>
+    <!-- Programs inside: P1 r ≈ 36 at (420,196), P2 r ≈ 26 at (468,178), P3 r ≈ 18 at (462,225) -->
+    <circle cx="420" cy="196" r="36" fill="none" stroke="#4a4540" stroke-width="1.2"/>
+    <circle cx="468" cy="178" r="22" fill="none" stroke="#4a4540" stroke-width="1.2"/>
+    <circle cx="466" cy="226" r="14" fill="none" stroke="#4a4540" stroke-width="1.2"/>
+    <!-- Projects inside P1 -->
+    <circle cx="408" cy="196" r="14" fill="#8a8480"/>
+    <circle cx="436" cy="186" r="10" fill="#8a8480"/>
+    <circle cx="432" cy="214" r="8"  fill="#8a8480"/>
+    <!-- Project inside P2 -->
+    <circle cx="468" cy="178" r="10" fill="#8a8480"/>
+    <text x="440" y="142" text-anchor="middle" class="lb">Multinational  40</text>
+    <text x="440" y="156" text-anchor="middle" class="sm">3 levels visible</text>
+  </g>
+
+  <g>
+    <!-- Regional A at (580, 162) — 2 levels -->
+    <circle cx="592" cy="162" r="52" fill="none" stroke="#2a1a0e" stroke-width="1.6"/>
+    <circle cx="580" cy="158" r="24" fill="#4a4540"/>
+    <circle cx="612" cy="178" r="18" fill="#4a4540"/>
+    <text x="592" y="106" text-anchor="middle" class="lb">Regional A  22</text>
+    <text x="592" y="120" text-anchor="middle" class="sm">2 levels</text>
+  </g>
+
+  <g>
+    <!-- Regional B at (610, 268) — 2 levels -->
+    <circle cx="606" cy="270" r="47" fill="none" stroke="#2a1a0e" stroke-width="1.6"/>
+    <circle cx="595" cy="266" r="22" fill="#4a4540"/>
+    <circle cx="624" cy="278" r="16" fill="#4a4540"/>
+    <text x="606" y="328" text-anchor="middle" class="lb">Regional B  18</text>
+    <text x="606" y="342" text-anchor="middle" class="sm">2 levels</text>
+  </g>
+
+  <g>
+    <!-- Local A at (424, 350) — 1 level, no children -->
+    <circle cx="424" cy="350" r="39" fill="#2a1a0e"/>
+    <text x="424" y="404" text-anchor="middle" class="lb">Local A  12</text>
+    <text x="424" y="418" text-anchor="middle" class="sm">1 level</text>
+  </g>
+
+  <g>
+    <!-- Local B at (522, 372) — 1 level -->
+    <circle cx="522" cy="372" r="32" fill="#2a1a0e"/>
+    <text x="522" y="420" text-anchor="middle" class="lb">Local B  8</text>
+    <text x="522" y="434" text-anchor="middle" class="sm">1 level</text>
+  </g>
+</svg>

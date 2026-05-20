@@ -129,7 +129,8 @@ The mirror error — putting a categorical attribute on a magnitude channel — 
 
 Munzner calls these the **expressiveness principle** (the channel must be capable of expressing the attribute type — don't put quantity on hue) and the **effectiveness principle** (encode the most important attribute on the highest-ranked channel that is appropriate for its type). Two principles. Everything else in chart design is a consequence of them.
 
-<!-- → [INFOGRAPHIC: Two-column taxonomy — Magnitude Channels vs. Identity Channels. Left column: Position, Length, Area, Luminance — each with a small icon and the note "suited to: quantitative / ordered data." Right column: Hue, Shape, Texture — each with a small icon and the note "suited to: categorical data." Below each column, a one-line example of the correct use and the most common misuse. The expressiveness and effectiveness principles appear as captions under the two columns.] -->
+![Two-column taxonomy of magnitude channels (position, length, area, luminance) and identity channels (hue, shape, texture), with example correct uses and common misuses, and the expressiveness and effectiveness principles as captions beneath each column.](../images/03-marks-and-channels-fig-05.png)
+*Figure 3.5 — Magnitude vs. identity channels*
 
 ---
 
@@ -343,6 +344,119 @@ output on the first attempt.
 - **Stevens, S. S. (1957).** "On the Psychophysical Law." *Psychological Review* 64(3). The power-law mechanism. Read for the formulation; later work has refined the exponents but not overturned the structure.
 - **Kelleher, Curran.** Observable notebooks and YouTube tutorials. The marks-and-channels material is the accessible entry point for all of this.
 - **Tufte, Edward R. (1983, 2nd ed. 2001).** *The Visual Display of Quantitative Information.* The Minard, Snow, and Nightingale readings in Chapter 1 are the most-cited treatments in the literature.
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 3.1 — Position vs luminance
+
+Build a two-panel D3 v7 figure that re-encodes the same fifty-country dataset
+two ways. Generate 50 synthetic countries with GDP per capita ranging from
+$1k to $80k (use a seeded pseudo-random sequence so the output is
+reproducible), and life expectancy positively correlated with log(GDP), range
+roughly 50–85 years with mild noise. Left panel: a scatterplot with GDP on
+x-position and life expectancy on y-position; dots in var(--color-ink). Right
+panel: collapse all dots onto one horizontal row at the same x-positions and
+encode life expectancy as dot luminance (pale near-white at the low end,
+var(--color-ink) at the high end). Include a luminance legend strip under
+the right panel. Both panels share the same x-scale and 50 dots. Tooltips on
+hover. Deliverable: a single standalone HTML file with inline CSS, inline JS,
+D3 7.9.0 from the pinned CDN, accessible markup (role="img", title, desc),
+ResizeObserver responsiveness, dark-mode block, prefers-reduced-motion
+suppression.
+
+> Reference implementation: `d3/03-marks-and-channels-fig-01.html`
+
+---
+
+### Figure 3.2 — The four mark types
+
+Build a four-panel D3 v7 figure showing one canonical example of each mark
+family. Panel A — point marks: scatterplot of 12 ascending points. Panel B —
+line marks: the same 12 points connected by a line. Panel C — area marks:
+the same 12 points as the upper boundary of a filled area from y=0. Panel D
+— glyph marks: 7 candlesticks (open, close, high, low per day; hollow body
+for up days, solid var(--color-ink) body for down days). All four panels use
+the same y-scale family and var(--color-ink) for marks. Tooltips on the
+point and glyph panels. Deliverable: a single standalone HTML file with
+inline CSS, inline JS, D3 7.9.0 from the pinned CDN, accessible markup
+(role="img", title, desc per panel), ResizeObserver responsiveness,
+dark-mode block, prefers-reduced-motion suppression.
+
+> Reference implementation: `d3/03-marks-and-channels-fig-02.html`
+
+---
+
+### Figure 3.3 — Radius-vs-area bubble distortion
+
+Build an interactive two-panel D3 v7 figure demonstrating Stevens' power law
+on bubble encoding. A slider at the top controls the data ratio between two
+bubbles (range 1× to 4×, step 0.1, default 2×). Left panel: radius-linear
+encoding — small bubble at base radius 18px, large bubble radius = base ×
+ratio. Right panel: area-linear encoding — large bubble radius = base ×
+sqrt(ratio). Each panel shows three computed numbers beneath the chart: the
+data ratio, the area ratio drawn, and the perceived ratio under Stevens'
+law (exponent 0.7 for area). Updates on slider input. Deliverable: a single
+standalone HTML file with inline CSS, inline JS, D3 7.9.0 from the pinned
+CDN, accessible markup (role="img", title, desc), ResizeObserver
+responsiveness, dark-mode block, prefers-reduced-motion suppression.
+
+> Reference implementation: `d3/03-marks-and-channels-fig-03.html`
+
+---
+
+### Figure 3.4 — Nightingale's rose, radius-linear vs area-corrected
+
+Build a two-panel D3 v7 figure rendering Florence Nightingale's 1858
+mortality data two ways. Data: 12 months starting in April, with
+illustrative preventable-disease death rates (Apr 9, May 24, Jun 38, Jul 50,
+Aug 60, Sep 68, Oct 80, Nov 110, Dec 192, Jan 220, Feb 156, Mar 80). Left
+panel — published form: 12 polar-area wedges around a clock face, each
+wedge 30° wide, radius proportional to value. Right panel — area-honest:
+same wedges but radius proportional to sqrt(value), so each wedge's area is
+proportional to the data value. Wedge fill from a sequential warm-gray ramp
+keyed to value. Month labels around the outside. Tooltips on hover.
+Deliverable: a single standalone HTML file with inline CSS, inline JS,
+D3 7.9.0 from the pinned CDN, accessible markup (role="img", title, desc),
+ResizeObserver responsiveness, dark-mode block, prefers-reduced-motion
+suppression.
+
+> Reference implementation: `d3/03-marks-and-channels-fig-04.html`
+
+---
+
+### Figure 3.5 — Magnitude vs identity channels
+
+Build a two-column infographic in HTML + D3 v7 that lays out Munzner's two
+channel families. Left column header "Magnitude channels (suited to
+quantitative / ordered data)" with four rows — Position, Length, Area,
+Luminance — each row: a small inline SVG icon (mini axis with dot, four
+bars, two circles, five-step grayscale strip), the channel name, a correct
+use line, and a misuse line. Right column header "Identity channels (suited
+to categorical data)" with three rows — Hue, Shape, Texture — each row with
+the same icon-plus-use-plus-misuse layout. Beneath each column, a callout
+box with an ochre left-border: left says "Effectiveness principle: encode
+the most important attribute on the highest-ranked appropriate channel";
+right says "Expressiveness principle: the channel must be capable of
+expressing the attribute type." Each row's icon is rendered via D3 into a
+40-pixel-tall inline SVG. Deliverable: a single standalone HTML file with
+inline CSS, inline JS, D3 7.9.0 from the pinned CDN, accessible markup
+(role="img", hidden title/desc), responsive layout that collapses to a
+single column below 700px, dark-mode block, prefers-reduced-motion
+suppression.
+
+> Reference implementation: `d3/03-marks-and-channels-fig-05.html`
 
 ---
 

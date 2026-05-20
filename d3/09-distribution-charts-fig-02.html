@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 9.2 — Same summary, different shape</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 360px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .box-body { fill: var(--color-white); stroke: var(--color-ink); stroke-width: 1; }
+  .box-line { stroke: var(--color-ink); stroke-width: 1; }
+  .box-median { stroke: var(--color-ink); stroke-width: 2; }
+  .violin { fill: color-mix(in srgb, var(--color-ink) 18%, var(--color-white)); stroke: var(--color-ink); stroke-width: 1; }
+  .group-label { font-size: 12px; fill: var(--color-ink); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .badge { display: inline-block; margin-top: 8px; padding: 2px 10px; border: 1px solid var(--color-ink); font-size: 11px; font-weight: 600; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 9.2 — Same five-number summary, different shape</h1>
+<p class="subtitle">A normal and a bimodal distribution sharing identical Q1, median, Q3, and whisker extent. The box plots are indistinguishable; the violins are not.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Box plots</div>
+    <div class="panel-sub">Five-number summary only — both look the same.</div>
+    <div id="chartBox" class="chart"></div>
+    <span class="badge">visually identical</span>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Violin plots</div>
+    <div class="panel-sub">Kernel density — shape is unmistakable.</div>
+    <div id="chartViolin" class="chart"></div>
+    <span class="badge">two peaks visible</span>
+  </div>
+</div>
+<p class="caption">The violin reveals what the five-number summary compresses away. Choose the box for compact comparison across many groups; choose the violin when shape is the message.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// generate two synthetic samples with identical five-number summaries
+function rand() { return Math.random(); }
+function rnorm(mu, sigma) {
+  let u = 0, v = 0;
+  while (u === 0) u = rand();
+  while (v === 0) v = rand();
+  return mu + sigma * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+function buildSamples() {
+  // Normal sample
+  const normal = d3.range(800).map(() => Math.max(0, Math.min(100, rnorm(50, 17))));
+  // Bimodal sample (two gaussians + a few tail values so quartiles match)
+  const lo = d3.range(380).map(() => rnorm(28, 6));
+  const hi = d3.range(380).map(() => rnorm(72, 6));
+  const ext = d3.range(40).map(() => rand() < 0.5 ? rnorm(8, 3) : rnorm(92, 3));
+  const bimodal = [...lo, ...hi, ...ext].map(v => Math.max(0, Math.min(100, v)));
+  return { normal, bimodal };
+}
+const samples = buildSamples();
+
+function fiveNumber(values) {
+  const sorted = values.slice().sort(d3.ascending);
+  return {
+    min: d3.min(sorted),
+    q1: d3.quantile(sorted, 0.25),
+    median: d3.quantile(sorted, 0.5),
+    q3: d3.quantile(sorted, 0.75),
+    max: d3.max(sorted)
+  };
+}
+
+const summaryNormal = fiveNumber(samples.normal);
+const summaryBimodal = fiveNumber(samples.bimodal);
+
+function kde(kernel, thresholds, data) {
+  return thresholds.map(t => [t, d3.mean(data, d => kernel(t - d))]);
+}
+function gaussianKernel(bandwidth) {
+  return v => Math.exp(-0.5 * (v / bandwidth) ** 2) / (bandwidth * Math.sqrt(2 * Math.PI));
+}
+
+function drawBox(selector) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth || 360;
+  const totalHeight = container.clientHeight || 360;
+  const margin = { top: 24, right: 16, bottom: 48, left: 56 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-label', 'Two box plots — normal and bimodal — both share the same five-number summary');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const groups = [
+    { label: 'Normal', summary: summaryNormal },
+    { label: 'Bimodal', summary: summaryBimodal }
+  ];
+
+  const xScaleBand = d3.scaleBand().domain(groups.map(d => d.label)).range([0, chartWidth]).padding(0.5);
+  const yScaleLinear = d3.scaleLinear().domain([0, 100]).range([chartHeight, 0]);
+
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`).call(d3.axisBottom(xScaleBand));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(5));
+
+  groups.forEach(grp => {
+    const xCenter = xScaleBand(grp.label) + xScaleBand.bandwidth() / 2;
+    const boxWidth = xScaleBand.bandwidth();
+    const s = grp.summary;
+    g.append('line').attr('class', 'box-line').attr('x1', xCenter).attr('x2', xCenter)
+      .attr('y1', yScaleLinear(s.max)).attr('y2', yScaleLinear(s.min));
+    g.append('line').attr('class', 'box-line').attr('x1', xCenter - boxWidth/3).attr('x2', xCenter + boxWidth/3)
+      .attr('y1', yScaleLinear(s.max)).attr('y2', yScaleLinear(s.max));
+    g.append('line').attr('class', 'box-line').attr('x1', xCenter - boxWidth/3).attr('x2', xCenter + boxWidth/3)
+      .attr('y1', yScaleLinear(s.min)).attr('y2', yScaleLinear(s.min));
+    g.append('rect').attr('class', 'box-body')
+      .attr('x', xCenter - boxWidth/2).attr('y', yScaleLinear(s.q3))
+      .attr('width', boxWidth).attr('height', yScaleLinear(s.q1) - yScaleLinear(s.q3));
+    g.append('line').attr('class', 'box-median')
+      .attr('x1', xCenter - boxWidth/2).attr('x2', xCenter + boxWidth/2)
+      .attr('y1', yScaleLinear(s.median)).attr('y2', yScaleLinear(s.median));
+  });
+}
+
+function drawViolin(selector) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth || 360;
+  const totalHeight = container.clientHeight || 360;
+  const margin = { top: 24, right: 16, bottom: 48, left: 56 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-label', 'Two violin plots — normal (single bell) and bimodal (two bulges) — same five-number summary, different shapes');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const groups = [
+    { label: 'Normal', data: samples.normal },
+    { label: 'Bimodal', data: samples.bimodal }
+  ];
+
+  const xScaleBand = d3.scaleBand().domain(groups.map(d => d.label)).range([0, chartWidth]).padding(0.5);
+  const yScaleLinear = d3.scaleLinear().domain([0, 100]).range([chartHeight, 0]);
+
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`).call(d3.axisBottom(xScaleBand));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(5));
+
+  const thresholds = d3.range(0, 100.5, 1);
+
+  groups.forEach(grp => {
+    const xCenter = xScaleBand(grp.label) + xScaleBand.bandwidth() / 2;
+    const bandwidth = grp.label === 'Bimodal' ? 3.5 : 6;
+    const density = kde(gaussianKernel(bandwidth), thresholds, grp.data);
+    const maxDensity = d3.max(density, d => d[1]);
+    const widthScale = d3.scaleLinear().domain([0, maxDensity]).range([0, xScaleBand.bandwidth() / 2]);
+
+    const area = d3.area()
+      .x0(d => xCenter - widthScale(d[1]))
+      .x1(d => xCenter + widthScale(d[1]))
+      .y(d => yScaleLinear(d[0]))
+      .curve(d3.curveCatmullRom);
+    g.append('path').datum(density).attr('class', 'violin').attr('d', area);
+
+    // median tick
+    const sorted = grp.data.slice().sort(d3.ascending);
+    const median = d3.quantile(sorted, 0.5);
+    g.append('line').attr('class', 'box-median')
+      .attr('x1', xCenter - 12).attr('x2', xCenter + 12)
+      .attr('y1', yScaleLinear(median)).attr('y2', yScaleLinear(median));
+  });
+}
+
+function draw() {
+  drawBox('#chartBox');
+  drawViolin('#chartViolin');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartBox'));
+ro.observe(document.getElementById('chartViolin'));
+</script>
+</body>
+</html>

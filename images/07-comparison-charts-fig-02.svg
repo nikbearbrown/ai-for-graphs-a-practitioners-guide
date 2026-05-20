@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t02 d02">
+  <title id="t02">Cleveland and McGill perceptual channel accuracy ranking</title>
+  <desc id="d02">Six perceptual channels ordered from most accurate (position along a common scale) to least accurate (color hue and saturation), with the bar chart's channel highlighted.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .rank { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+    <marker id="ar2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+  <text x="32" y="32" class="ti">Cleveland &amp; McGill (1984): perceptual accuracy by channel</text>
+  <text x="32" y="50" class="sm">Replicated by Heer &amp; Bostock (2010) for the web era. The bar chart uses channel 1.</text>
+
+  <!-- header row -->
+  <text x="58" y="80" text-anchor="middle" class="rank">rank</text>
+  <text x="110" y="80" class="rank">channel</text>
+  <text x="430" y="80" class="rank">accuracy</text>
+  <line x1="32" y1="86" x2="668" y2="86" stroke="#8a8480" stroke-width="0.75"/>
+
+  <!-- 6 rows. y top = 100, row height 50. Accuracy bar 0..1 normalized, length 200 px, x start 430 -->
+  <!-- Channels (most to least accurate): position-common-scale, position-non-aligned, length, angle/slope, area, color luminance / color hue -->
+  <g>
+    <!-- Row 1 — position along common scale (HIGHLIGHTED) -->
+    <text x="58" y="118" text-anchor="middle" class="rank">1</text>
+    <rect x="100" y="100" width="320" height="36" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="112" y="122" class="lb">Position along a common scale</text>
+    <text x="112" y="134" class="sm">bar chart, dot plot, scatter</text>
+    <rect x="430" y="108" width="200" height="20" fill="#2a1a0e"/>
+    <text x="636" y="122" class="sm">≈ 1.0</text>
+
+    <!-- Row 2 — position along identical non-aligned scales -->
+    <text x="58" y="170" text-anchor="middle" class="rank">2</text>
+    <text x="112" y="174" class="lb">Position along identical non-aligned scales</text>
+    <text x="112" y="186" class="sm">small multiples, faceted plots</text>
+    <rect x="430" y="160" width="170" height="20" fill="#4a4540"/>
+    <text x="606" y="174" class="sm">≈ 0.85</text>
+
+    <!-- Row 3 — length -->
+    <text x="58" y="222" text-anchor="middle" class="rank">3</text>
+    <text x="112" y="226" class="lb">Length (without shared baseline)</text>
+    <text x="112" y="238" class="sm">stacked bars (segments above first), span bars</text>
+    <rect x="430" y="212" width="142" height="20" fill="#4a4540"/>
+    <text x="578" y="226" class="sm">≈ 0.71</text>
+
+    <!-- Row 4 — angle / slope -->
+    <text x="58" y="274" text-anchor="middle" class="rank">4</text>
+    <text x="112" y="278" class="lb">Angle &amp; slope</text>
+    <text x="112" y="290" class="sm">pie chart, line slope</text>
+    <rect x="430" y="264" width="115" height="20" fill="#8a8480"/>
+    <text x="551" y="278" class="sm">≈ 0.58</text>
+
+    <!-- Row 5 — area -->
+    <text x="58" y="326" text-anchor="middle" class="rank">5</text>
+    <text x="112" y="330" class="lb">Area</text>
+    <text x="112" y="342" class="sm">treemap, bubble chart, packed circles</text>
+    <rect x="430" y="316" width="90" height="20" fill="#8a8480"/>
+    <text x="526" y="330" class="sm">≈ 0.45</text>
+
+    <!-- Row 6 — color luminance / hue -->
+    <text x="58" y="378" text-anchor="middle" class="rank">6</text>
+    <text x="112" y="382" class="lb">Color luminance &amp; hue / saturation</text>
+    <text x="112" y="394" class="sm">heatmap, choropleth, sequential color</text>
+    <rect x="430" y="368" width="60" height="20" fill="#c8c4c0"/>
+    <text x="496" y="382" class="sm">≈ 0.30</text>
+  </g>
+
+  <!-- callout pointing to row 1 -->
+  <path d="M 660 118 L 660 60 L 470 60" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar2)"/>
+  <text x="660" y="54" text-anchor="end" class="lb">Truncating the baseline drops you out of channel 1.</text>
+
+  <!-- caption -->
+  <text x="350" y="450" text-anchor="middle" class="cap">Why bars work: they use the most accurate channel the human visual system has for quantitative comparison.</text>
+</svg>

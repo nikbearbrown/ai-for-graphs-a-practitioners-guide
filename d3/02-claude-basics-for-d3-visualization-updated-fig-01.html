@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 2.1 — Vague vs specific prompt: five decisions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .panel.specific { border-color: var(--color-ink); }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .prompt-card { background: color-mix(in srgb, var(--color-border) 30%, var(--color-white)); border: 1px solid var(--color-border); padding: 12px; margin-bottom: 16px; font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-size: 14px; line-height: 1.5; }
+  .prompt-meta { color: var(--color-secondary); font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-top: 6px; font-style: normal; }
+  .decisions { width: 100%; height: 260px; }
+  .badge { fill: var(--color-ink); }
+  .badge-text { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; fill: var(--color-white); }
+  .row-label { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; fill: var(--color-ink); }
+  .row-detail-vague { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-secondary); font-style: italic; }
+  .row-detail-spec { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); font-weight: 500; }
+  .row-hover { fill: transparent; cursor: pointer; transition: fill 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .row-hover:hover, .row-hover:focus { fill: color-mix(in srgb, var(--color-ochre) 18%, transparent); outline: none; }
+  .verdict { padding: 12px; font-family: 'Inter', sans-serif; font-size: 13px; }
+  .verdict.bad { border: 1px dashed var(--color-secondary); color: var(--color-secondary); }
+  .verdict.good { border: 1px solid var(--color-red); color: var(--color-ink); }
+  .verdict strong { font-weight: 700; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 20px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 280px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 2.1 — Vague vs specific prompt</h1>
+<p class="subtitle">Every decision the vague prompt omits is a decision the model makes for you.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Vague prompt</div>
+    <div class="panel-sub">Five decisions left to the model.</div>
+    <div class="prompt-card">
+      "Make a chart showing AI capability across cognitive domains."
+      <div class="prompt-meta">9 words / 0 specifications</div>
+    </div>
+    <div id="vagueChart" class="decisions" role="img" aria-labelledby="v-t v-d"></div>
+    <div class="verdict bad"><strong>Result:</strong> a chart you cannot read at a glance.</div>
+  </div>
+  <div class="panel specific">
+    <div class="panel-title">Specific prompt</div>
+    <div class="panel-sub">Five decisions controlled by the author.</div>
+    <div class="prompt-card">
+      "Vertical bar chart, 8 cognitive domains, sorted descending, zero baseline, luminance redundant, values labeled."
+      <div class="prompt-meta">5 sentences / 5 specifications</div>
+    </div>
+    <div id="specChart" class="decisions" role="img" aria-labelledby="s-t s-d"></div>
+    <div class="verdict good"><strong>Result:</strong> a chart whose ranking reads in a quarter-second.</div>
+  </div>
+</div>
+<p class="caption">The two prompts differ by length and by the number of decisions named. Specificity is not politeness; it is the explicit transfer of authority from the model to the author.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const decisionData = [
+  { idx: 1, label: 'Chart type',           vague: 'model picks: scatterplot (wrong)',  spec: 'vertical bar chart' },
+  { idx: 2, label: 'Marks',                vague: 'model picks: colored circles',      spec: 'rectangles, one per domain' },
+  { idx: 3, label: 'Channels',             vague: 'model picks: size + hue (worst pair)', spec: 'y-position from zero (rank 1)' },
+  { idx: 4, label: 'Sort order',           vague: 'model picks: input order (none)',   spec: 'descending by score' },
+  { idx: 5, label: 'Baseline / annotation', vague: 'model picks: none',                spec: 'zero baseline, values above bars' }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawDecisions(selector, mode, titleText, descText) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 360;
+  const totalHeight = container.clientHeight || 260;
+  const margin = { top: 8, right: 12, bottom: 8, left: 12 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', `${selector.slice(1)}-t ${selector.slice(1)}-d`);
+  svg.append('title').attr('id', `${selector.slice(1)}-t`).text(titleText);
+  svg.append('desc').attr('id', `${selector.slice(1)}-d`).text(descText);
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const yScaleBand = d3.scaleBand()
+    .domain(decisionData.map(d => d.idx))
+    .range([0, chartHeight])
+    .padding(0.18);
+
+  const rows = gChart.selectAll('.row')
+    .data(decisionData)
+    .join('g')
+      .attr('class', 'row')
+      .attr('transform', d => `translate(0, ${yScaleBand(d.idx)})`);
+
+  // hover-able backdrop
+  rows.append('rect')
+    .attr('class', 'row-hover')
+    .attr('x', 0).attr('y', 0)
+    .attr('width', chartWidth)
+    .attr('height', yScaleBand.bandwidth())
+    .attr('tabindex', 0)
+    .attr('aria-label', d => mode === 'vague'
+      ? `Decision ${d.idx}, ${d.label}, ${d.vague}`
+      : `Decision ${d.idx}, ${d.label}, ${d.spec}`)
+    .on('mouseover', (event, d) => showTip(event,
+      `<strong>Decision ${d.idx}: ${d.label}</strong><br/>${mode === 'vague' ? d.vague : d.spec}`))
+    .on('mousemove', moveTip)
+    .on('mouseout', hideTip);
+
+  // badge circle
+  rows.append('circle')
+    .attr('class', 'badge')
+    .attr('cx', 14).attr('cy', yScaleBand.bandwidth() / 2).attr('r', 11);
+  rows.append('text')
+    .attr('class', 'badge-text')
+    .attr('x', 14).attr('y', yScaleBand.bandwidth() / 2 + 4)
+    .attr('text-anchor', 'middle')
+    .text(d => d.idx);
+
+  // label
+  rows.append('text')
+    .attr('class', 'row-label')
+    .attr('x', 34).attr('y', yScaleBand.bandwidth() / 2 - 2)
+    .text(d => d.label);
+
+  // detail
+  rows.append('text')
+    .attr('class', mode === 'vague' ? 'row-detail-vague' : 'row-detail-spec')
+    .attr('x', 34).attr('y', yScaleBand.bandwidth() / 2 + 14)
+    .text(d => mode === 'vague' ? d.vague : d.spec);
+}
+
+function draw() {
+  drawDecisions('#vagueChart', 'vague',
+    'Vague prompt — five decisions left to the model',
+    'A list of five visualization decisions, each annotated with the choice the model made on its own when given an underspecified prompt.');
+  drawDecisions('#specChart', 'spec',
+    'Specific prompt — five decisions controlled by the author',
+    'The same five decisions, each annotated with the explicit specification the author wrote into the prompt.');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('vagueChart'));
+ro.observe(document.getElementById('specChart'));
+</script>
+</body>
+</html>

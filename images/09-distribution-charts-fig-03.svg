@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t09f03 d09f03">
+  <title id="t09f03">Three bin widths on a bimodal income distribution</title>
+  <desc id="d09f03">Three histograms of the same bimodal income data. Wide bins hide the bimodality; Freedman–Diaconis binning reveals it; very narrow bins drown it in noise.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .v { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; }
+    </style>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Same bimodal income data. Three bin widths. Two of them lie.</text>
+
+  <!-- Panel A: too wide bins ($50K) -->
+  <g transform="translate(32,60)">
+    <text x="0" y="0" class="ti">A. Too wide — $50K bins</text>
+    <text x="0" y="14" class="sm">two peaks merge into one broad shape</text>
+    <!-- axes: x range 32..200, y range 40..240 -->
+    <line x1="32" y1="40" x2="32" y2="240" stroke="#8a8480"/>
+    <line x1="32" y1="240" x2="200" y2="240" stroke="#8a8480"/>
+    <!-- 3 wide bars: $0-50K (h=140), $50-100K (h=110), $100-150K (h=145) -->
+    <rect x="34"  y="100" width="54" height="140" fill="#4a4540"/>
+    <rect x="90"  y="130" width="54" height="110" fill="#4a4540"/>
+    <rect x="146" y="95"  width="54" height="145" fill="#4a4540"/>
+    <!-- x labels -->
+    <g class="sm">
+      <text x="61"  y="254" text-anchor="middle">0–50K</text>
+      <text x="117" y="254" text-anchor="middle">50–100K</text>
+      <text x="173" y="254" text-anchor="middle">100–150K</text>
+    </g>
+    <!-- y axis label -->
+    <text x="-6" y="143" text-anchor="end" class="sm">count</text>
+    <!-- verdict box -->
+    <rect x="0" y="275" width="200" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="100" y="290" text-anchor="middle" class="v" fill="#2a1a0e">verdict: bimodality hidden</text>
+  </g>
+
+  <!-- Panel B: Freedman–Diaconis -->
+  <g transform="translate(252,60)">
+    <text x="0" y="0" class="ti">B. Freedman–Diaconis</text>
+    <text x="0" y="14" class="sm">both peaks visible, gap between them legible</text>
+    <line x1="32" y1="40" x2="32" y2="240" stroke="#8a8480"/>
+    <line x1="32" y1="240" x2="200" y2="240" stroke="#8a8480"/>
+    <!-- 14 bins, two peaks at ~$40K and ~$120K -->
+    <!-- bin width = 12 px, x start 34 -->
+    <!-- heights chosen to form bimodal pattern -->
+    <g fill="#4a4540">
+      <rect x="34"  y="220" width="11" height="20"/>
+      <rect x="46"  y="200" width="11" height="40"/>
+      <rect x="58"  y="160" width="11" height="80"/>
+      <rect x="70"  y="120" width="11" height="120"/>
+      <rect x="82"  y="100" width="11" height="140"/>
+      <rect x="94"  y="150" width="11" height="90"/>
+      <rect x="106" y="190" width="11" height="50"/>
+      <rect x="118" y="200" width="11" height="40"/>
+      <rect x="130" y="170" width="11" height="70"/>
+      <rect x="142" y="135" width="11" height="105"/>
+      <rect x="154" y="115" width="11" height="125"/>
+      <rect x="166" y="150" width="11" height="90"/>
+      <rect x="178" y="190" width="11" height="50"/>
+      <rect x="190" y="218" width="11" height="22"/>
+    </g>
+    <!-- two peak labels -->
+    <text x="86" y="93" text-anchor="middle" class="sm">peak 1</text>
+    <text x="160" y="108" text-anchor="middle" class="sm">peak 2</text>
+    <g class="sm">
+      <text x="34"  y="254" text-anchor="start">0</text>
+      <text x="117" y="254" text-anchor="middle">income →</text>
+      <text x="200" y="254" text-anchor="end">$160K</text>
+    </g>
+    <text x="-6" y="143" text-anchor="end" class="sm">count</text>
+    <rect x="0" y="275" width="200" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="100" y="290" text-anchor="middle" class="v" fill="#2a1a0e">verdict: structure visible</text>
+  </g>
+
+  <!-- Panel C: too narrow bins ($1K) -->
+  <g transform="translate(472,60)">
+    <text x="0" y="0" class="ti">C. Too narrow — $1K bins</text>
+    <text x="0" y="14" class="sm">sampling noise produces spurious wiggles</text>
+    <line x1="32" y1="40" x2="32" y2="240" stroke="#8a8480"/>
+    <line x1="32" y1="240" x2="200" y2="240" stroke="#8a8480"/>
+    <!-- 56 narrow bars, jagged heights around two underlying peaks but very noisy -->
+    <g fill="#8a8480">
+      <rect x="34"  y="230" width="2.5" height="10"/>
+      <rect x="37"  y="225" width="2.5" height="15"/>
+      <rect x="40"  y="232" width="2.5" height="8"/>
+      <rect x="43"  y="218" width="2.5" height="22"/>
+      <rect x="46"  y="225" width="2.5" height="15"/>
+      <rect x="49"  y="210" width="2.5" height="30"/>
+      <rect x="52"  y="218" width="2.5" height="22"/>
+      <rect x="55"  y="200" width="2.5" height="40"/>
+      <rect x="58"  y="190" width="2.5" height="50"/>
+      <rect x="61"  y="170" width="2.5" height="70"/>
+      <rect x="64"  y="178" width="2.5" height="62"/>
+      <rect x="67"  y="155" width="2.5" height="85"/>
+      <rect x="70"  y="140" width="2.5" height="100"/>
+      <rect x="73"  y="148" width="2.5" height="92"/>
+      <rect x="76"  y="125" width="2.5" height="115"/>
+      <rect x="79"  y="135" width="2.5" height="105"/>
+      <rect x="82"  y="118" width="2.5" height="122"/>
+      <rect x="85"  y="125" width="2.5" height="115"/>
+      <rect x="88"  y="140" width="2.5" height="100"/>
+      <rect x="91"  y="150" width="2.5" height="90"/>
+      <rect x="94"  y="165" width="2.5" height="75"/>
+      <rect x="97"  y="175" width="2.5" height="65"/>
+      <rect x="100" y="190" width="2.5" height="50"/>
+      <rect x="103" y="178" width="2.5" height="62"/>
+      <rect x="106" y="200" width="2.5" height="40"/>
+      <rect x="109" y="210" width="2.5" height="30"/>
+      <rect x="112" y="195" width="2.5" height="45"/>
+      <rect x="115" y="208" width="2.5" height="32"/>
+      <rect x="118" y="200" width="2.5" height="40"/>
+      <rect x="121" y="190" width="2.5" height="50"/>
+      <rect x="124" y="175" width="2.5" height="65"/>
+      <rect x="127" y="180" width="2.5" height="60"/>
+      <rect x="130" y="160" width="2.5" height="80"/>
+      <rect x="133" y="170" width="2.5" height="70"/>
+      <rect x="136" y="150" width="2.5" height="90"/>
+      <rect x="139" y="155" width="2.5" height="85"/>
+      <rect x="142" y="140" width="2.5" height="100"/>
+      <rect x="145" y="135" width="2.5" height="105"/>
+      <rect x="148" y="148" width="2.5" height="92"/>
+      <rect x="151" y="138" width="2.5" height="102"/>
+      <rect x="154" y="145" width="2.5" height="95"/>
+      <rect x="157" y="155" width="2.5" height="85"/>
+      <rect x="160" y="165" width="2.5" height="75"/>
+      <rect x="163" y="155" width="2.5" height="85"/>
+      <rect x="166" y="170" width="2.5" height="70"/>
+      <rect x="169" y="180" width="2.5" height="60"/>
+      <rect x="172" y="195" width="2.5" height="45"/>
+      <rect x="175" y="185" width="2.5" height="55"/>
+      <rect x="178" y="205" width="2.5" height="35"/>
+      <rect x="181" y="215" width="2.5" height="25"/>
+      <rect x="184" y="205" width="2.5" height="35"/>
+      <rect x="187" y="220" width="2.5" height="20"/>
+      <rect x="190" y="225" width="2.5" height="15"/>
+      <rect x="193" y="218" width="2.5" height="22"/>
+      <rect x="196" y="228" width="2.5" height="12"/>
+    </g>
+    <g class="sm">
+      <text x="34"  y="254" text-anchor="start">0</text>
+      <text x="117" y="254" text-anchor="middle">income →</text>
+      <text x="200" y="254" text-anchor="end">$160K</text>
+    </g>
+    <text x="-6" y="143" text-anchor="end" class="sm">count</text>
+    <rect x="0" y="275" width="200" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="100" y="290" text-anchor="middle" class="v" fill="#2a1a0e">verdict: noise amplified</text>
+  </g>
+
+  <text x="350" y="398" text-anchor="middle" class="cap">Three bin widths. The middle one tells the truth. The structure that survives across widths is the structure that is real.</text>
+</svg>

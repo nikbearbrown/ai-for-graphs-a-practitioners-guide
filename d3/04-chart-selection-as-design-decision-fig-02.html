@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 4.2 — Cairo's four-step chart-selection framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #flow { width: 100%; }
+  .step-box { fill: var(--color-white); stroke: var(--color-border); stroke-width: 1; transition: fill 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .step-box:hover, .step-box:focus { fill: color-mix(in srgb, var(--color-ochre) 8%, var(--color-white)); outline: none; }
+  .example-box { fill: var(--color-white); stroke: var(--color-secondary); stroke-width: 1; }
+  .step-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; fill: var(--color-secondary); }
+  .step-title { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; fill: var(--color-ink); letter-spacing: 0.4px; }
+  .step-body { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-secondary); }
+  .step-body-italic { font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-size: 12px; fill: var(--color-secondary); }
+  .example-text { font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-size: 12px; fill: var(--color-ink); }
+  .example-caption { font-family: 'Inter', sans-serif; font-size: 10px; fill: var(--color-secondary); }
+  .row-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); letter-spacing: 0.3px; }
+  .flow-arrow { stroke: var(--color-ink); stroke-width: 1.25; fill: none; }
+  .divider { stroke: var(--color-border); stroke-dasharray: 3 3; }
+  .mini-bar { fill: var(--color-ink); }
+  .mini-bar.primary { fill: var(--color-red); }
+  .mini-baseline { stroke: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 65ch; font-style: italic; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 280px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 4.2 — Cairo's four-step chart-selection framework</h1>
+<p class="subtitle">Key message, data structure, functional category, specific form. Each step constrains the next; the worked example shows the path taken by the fourteen-sector humanitarian funding case.</p>
+<div id="flow" role="img" aria-labelledby="flow-t flow-d"></div>
+<p class="caption">Hover a step or example for the connection between them. Source: Cairo, <em>The Truthful Art</em> (2016), reformatted.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const steps = [
+  {
+    num: '01',
+    name: 'KEY MESSAGE',
+    body: ['One sentence.', 'What does the reader need to', 'understand in five seconds?'],
+    example: {
+      lines: ['"Food security received more', 'than twice the funding of the', 'next-largest category."'],
+      caption: 'a ranking claim'
+    }
+  },
+  {
+    num: '02',
+    name: 'DATA STRUCTURE',
+    body: ['How many variables?', 'Which types? Temporal, geographic,', 'or hierarchical dimensions?'],
+    example: {
+      lines: ['14 categories, one quantitative', 'variable per row, summing', 'to 100%. No time, no geography.'],
+      caption: 'tabular, one-dimensional'
+    }
+  },
+  {
+    num: '03',
+    name: 'FUNCTIONAL CATEGORY',
+    body: ['One of eight (comparison, time,', 'distribution, ...). The FT', 'Visual Vocabulary is the lookup.'],
+    example: {
+      lines: ['COMPARISON', '(not part-to-whole — the', 'message dominates the structure)'],
+      caption: 'the question, not the table'
+    }
+  },
+  {
+    num: '04',
+    name: 'SPECIFIC FORM',
+    body: ['Within the category, which chart?', 'Choose on perceptual grounds —', 'a named candidate.'],
+    example: {
+      lines: ['sorted horizontal bar chart'],
+      caption: 'length, common baseline, sorted',
+      drawMini: true
+    }
+  }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  const host = document.getElementById('flow');
+  d3.select(host).selectAll('*').remove();
+  const width = host.clientWidth || 900;
+  const cols = width < 720 ? 1 : 4;
+  const padding = 16;
+  const arrowSpace = cols === 4 ? 24 : 0;
+  const boxWidth = (width - (cols - 1) * arrowSpace - padding * 2) / cols;
+  const boxHeight = 130;
+  const rowGap = 36;
+
+  const totalHeight = cols === 4
+    ? (boxHeight * 2 + rowGap + 80)
+    : (steps.length * (boxHeight * 2 + rowGap + 36) + 40);
+
+  const svg = d3.select('#flow').append('svg')
+    .attr('width', width).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'flow-t flow-d');
+  svg.append('title').attr('id', 'flow-t').text('Cairo four-step framework');
+  svg.append('desc').attr('id', 'flow-d').text('Four steps in left-to-right order with a worked example beneath each step showing how the humanitarian funding case flows through the framework.');
+
+  if (cols === 4) {
+    // Row 1: step boxes
+    steps.forEach((s, i) => {
+      const x = padding + i * (boxWidth + arrowSpace);
+      const g = svg.append('g')
+        .attr('class', 'step-g')
+        .attr('transform', `translate(${x}, 16)`)
+        .attr('tabindex', 0)
+        .attr('aria-label', `Step ${s.num}: ${s.name}. ${s.body.join(' ')}`)
+        .on('mouseover', (e) => showTip(e, `<strong>Step ${s.num} · ${s.name}</strong><br/>${s.body.join(' ')}`))
+        .on('mousemove', moveTip).on('mouseout', hideTip);
+
+      g.append('rect').attr('class', 'step-box').attr('width', boxWidth).attr('height', boxHeight);
+      g.append('text').attr('class', 'step-num').attr('x', 14).attr('y', 22).text(s.num);
+      g.append('text').attr('class', 'step-title').attr('x', 14).attr('y', 44).text(s.name);
+      s.body.forEach((line, j) => {
+        g.append('text').attr('class', j === s.body.length - 1 ? 'step-body-italic' : 'step-body')
+          .attr('x', 14).attr('y', 70 + j * 16).text(line);
+      });
+
+      // arrow to next
+      if (i < steps.length - 1) {
+        const ay = 16 + boxHeight / 2;
+        svg.append('path').attr('class', 'flow-arrow')
+          .attr('d', `M ${x + boxWidth + 4} ${ay} L ${x + boxWidth + arrowSpace - 6} ${ay}`)
+          .attr('marker-end', 'url(#arr2)');
+      }
+    });
+
+    // arrow marker def
+    const defs = svg.append('defs');
+    defs.append('marker').attr('id', 'arr2')
+      .attr('markerWidth', 9).attr('markerHeight', 7).attr('refX', 8).attr('refY', 3.5).attr('orient', 'auto')
+      .append('polygon').attr('points', '0 0, 9 3.5, 0 7').attr('fill', 'var(--color-ink)');
+
+    // Divider
+    const divY = 16 + boxHeight + 16;
+    svg.append('line').attr('class', 'divider')
+      .attr('x1', padding).attr('x2', width - padding).attr('y1', divY).attr('y2', divY);
+    svg.append('text').attr('class', 'row-label')
+      .attr('x', padding).attr('y', divY + 18)
+      .text('WORKED EXAMPLE · the 14-sector humanitarian funding case');
+
+    // Row 2: examples
+    const row2Y = divY + 30;
+    steps.forEach((s, i) => {
+      const x = padding + i * (boxWidth + arrowSpace);
+      const g = svg.append('g').attr('transform', `translate(${x}, ${row2Y})`);
+      g.append('rect').attr('class', 'example-box').attr('width', boxWidth).attr('height', boxHeight);
+
+      const ex = s.example;
+      const startY = ex.drawMini ? 26 : 32;
+      ex.lines.forEach((line, j) => {
+        g.append('text').attr('class', 'example-text')
+          .attr('x', boxWidth / 2).attr('y', startY + j * 18).attr('text-anchor', 'middle').text(line);
+      });
+
+      if (ex.drawMini) {
+        // mini horizontal bar chart
+        const baseX = 24, baseY = 60, barH = 6, gap = 3, baseWidth = boxWidth - 48;
+        const values = [21, 14, 12, 11, 9, 7];
+        const maxV = 21;
+        values.forEach((v, j) => {
+          g.append('rect').attr('class', j === 0 ? 'mini-bar primary' : 'mini-bar')
+            .attr('x', baseX).attr('y', baseY + j * (barH + gap))
+            .attr('width', (v / maxV) * baseWidth).attr('height', barH);
+        });
+        g.append('line').attr('class', 'mini-baseline')
+          .attr('x1', baseX).attr('x2', baseX)
+          .attr('y1', baseY).attr('y2', baseY + values.length * (barH + gap) - gap);
+      }
+
+      g.append('text').attr('class', 'example-caption')
+        .attr('x', boxWidth / 2).attr('y', boxHeight - 12).attr('text-anchor', 'middle')
+        .text(ex.caption);
+    });
+  } else {
+    // Stacked layout for narrow viewports
+    const defs = svg.append('defs');
+    defs.append('marker').attr('id', 'arr2')
+      .attr('markerWidth', 9).attr('markerHeight', 7).attr('refX', 8).attr('refY', 3.5).attr('orient', 'auto')
+      .append('polygon').attr('points', '0 0, 9 3.5, 0 7').attr('fill', 'var(--color-ink)');
+
+    let cursorY = 16;
+    steps.forEach((s, i) => {
+      const x = padding;
+      const stepG = svg.append('g').attr('transform', `translate(${x}, ${cursorY})`);
+      stepG.append('rect').attr('class', 'step-box').attr('width', boxWidth).attr('height', boxHeight);
+      stepG.append('text').attr('class', 'step-num').attr('x', 14).attr('y', 22).text(s.num);
+      stepG.append('text').attr('class', 'step-title').attr('x', 14).attr('y', 44).text(s.name);
+      s.body.forEach((line, j) => {
+        stepG.append('text').attr('class', j === s.body.length - 1 ? 'step-body-italic' : 'step-body')
+          .attr('x', 14).attr('y', 70 + j * 16).text(line);
+      });
+      cursorY += boxHeight + 8;
+
+      const exG = svg.append('g').attr('transform', `translate(${x}, ${cursorY})`);
+      exG.append('rect').attr('class', 'example-box').attr('width', boxWidth).attr('height', boxHeight);
+      const ex = s.example;
+      const startY = ex.drawMini ? 26 : 32;
+      ex.lines.forEach((line, j) => {
+        exG.append('text').attr('class', 'example-text')
+          .attr('x', boxWidth / 2).attr('y', startY + j * 18).attr('text-anchor', 'middle').text(line);
+      });
+      if (ex.drawMini) {
+        const baseX = 24, baseY = 60, barH = 6, gap = 3, baseWidth = boxWidth - 48;
+        const values = [21, 14, 12, 11, 9, 7];
+        const maxV = 21;
+        values.forEach((v, j) => {
+          exG.append('rect').attr('class', j === 0 ? 'mini-bar primary' : 'mini-bar')
+            .attr('x', baseX).attr('y', baseY + j * (barH + gap))
+            .attr('width', (v / maxV) * baseWidth).attr('height', barH);
+        });
+        exG.append('line').attr('class', 'mini-baseline')
+          .attr('x1', baseX).attr('x2', baseX)
+          .attr('y1', baseY).attr('y2', baseY + values.length * (barH + gap) - gap);
+      }
+      exG.append('text').attr('class', 'example-caption')
+        .attr('x', boxWidth / 2).attr('y', boxHeight - 12).attr('text-anchor', 'middle').text(ex.caption);
+      cursorY += boxHeight + 12;
+
+      if (i < steps.length - 1) {
+        svg.append('path').attr('class', 'flow-arrow')
+          .attr('d', `M ${x + boxWidth / 2} ${cursorY} L ${x + boxWidth / 2} ${cursorY + 18}`)
+          .attr('marker-end', 'url(#arr2)');
+        cursorY += 24;
+      }
+    });
+  }
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('flow'));
+</script>
+</body>
+</html>

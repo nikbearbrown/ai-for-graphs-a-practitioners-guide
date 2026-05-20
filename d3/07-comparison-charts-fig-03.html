@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 7.3 — Three responses to nearly identical values</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 280px; }
+  .verdict { margin-top: 12px; padding: 6px 10px; font-size: 12px; font-weight: 600; text-align: center; border: 1px solid var(--color-border); }
+  .verdict.bad { color: var(--color-red); border-color: var(--color-red); }
+  .verdict.good { color: var(--color-ink); }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .bar { fill: var(--color-ink); }
+  .bar.primary { fill: var(--color-red); }
+  .dot { fill: var(--color-red); }
+  .value-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-ink); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 7.3 — Three responses to nearly identical values</h1>
+<p class="subtitle">Same three quarterly percentages: 12.4%, 12.8%, 13.2%. The truncated bar chart distorts; the dot plot and the difference chart do not.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Truncated bar chart</div>
+    <div class="panel-sub">y-axis 12–14: visual ratio inflated</div>
+    <div id="chartA" class="chart"></div>
+    <div class="verdict bad">verdict: distorts</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Dot plot, zoomed axis</div>
+    <div class="panel-sub">channel: point position, not area</div>
+    <div id="chartB" class="chart"></div>
+    <div class="verdict good">verdict: honest</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">C. Change from Q1 baseline</div>
+    <div class="panel-sub">zero is meaningful — no change</div>
+    <div id="chartC" class="chart"></div>
+    <div class="verdict good">verdict: honest</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const quarterData = [
+  { quarter: 'Q1', value: 12.4 },
+  { quarter: 'Q2', value: 12.8 },
+  { quarter: 'Q3', value: 13.2 }
+];
+
+function setupSvg(selector, title, desc) {
+  d3.select(selector).selectAll('*').remove();
+  const c = document.querySelector(selector);
+  const w = c.clientWidth || 240;
+  const h = c.clientHeight || 280;
+  const svg = d3.select(selector).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${selector.slice(1)}-t ${selector.slice(1)}-d`);
+  svg.append('title').attr('id', `${selector.slice(1)}-t`).text(title);
+  svg.append('desc').attr('id', `${selector.slice(1)}-d`).text(desc);
+  return { svg, w, h };
+}
+
+function drawTruncated() {
+  const { svg, w, h } = setupSvg('#chartA',
+    'Truncated bar chart of three quarterly percentages',
+    'Bars for 12.4, 12.8, 13.2 percent with a y-axis from 12 to 14, exaggerating differences.');
+  const margin = { top: 16, right: 16, bottom: 32, left: 36 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleBand().domain(quarterData.map(d => d.quarter)).range([0, cw]).padding(0.2);
+  const y = d3.scaleLinear().domain([12, 14]).range([ch, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(3));
+  g.selectAll('.bar').data(quarterData).join('rect').attr('class', 'bar primary')
+    .attr('x', d => x(d.quarter)).attr('y', d => y(d.value))
+    .attr('width', x.bandwidth()).attr('height', d => ch - y(d.value));
+  g.selectAll('.lbl').data(quarterData).join('text').attr('class', 'value-label')
+    .attr('x', d => x(d.quarter) + x.bandwidth()/2)
+    .attr('y', d => y(d.value) - 4).attr('text-anchor', 'middle').text(d => d.value);
+}
+
+function drawDot() {
+  const { svg, w, h } = setupSvg('#chartB',
+    'Dot plot of three quarterly percentages',
+    'Three dots at 12.4, 12.8, 13.2 percent with a y-axis from 12 to 14; point position is the channel.');
+  const margin = { top: 16, right: 16, bottom: 32, left: 36 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleBand().domain(quarterData.map(d => d.quarter)).range([0, cw]).padding(0.2);
+  const y = d3.scaleLinear().domain([12, 14]).range([ch, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(3));
+  g.selectAll('.dot').data(quarterData).join('circle').attr('class', 'dot')
+    .attr('cx', d => x(d.quarter) + x.bandwidth()/2)
+    .attr('cy', d => y(d.value)).attr('r', 6);
+  g.selectAll('.lbl').data(quarterData).join('text').attr('class', 'value-label')
+    .attr('x', d => x(d.quarter) + x.bandwidth()/2)
+    .attr('y', d => y(d.value) - 12).attr('text-anchor', 'middle').text(d => d.value);
+}
+
+function drawDiff() {
+  const diffData = quarterData.map(d => ({ quarter: d.quarter, value: +(d.value - 12.4).toFixed(1) }));
+  const { svg, w, h } = setupSvg('#chartC',
+    'Difference chart from Q1 baseline',
+    'Bars showing the change in percentage points from Q1 — zero, plus 0.4, plus 0.8; zero baseline is meaningful.');
+  const margin = { top: 16, right: 16, bottom: 32, left: 36 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleBand().domain(diffData.map(d => d.quarter)).range([0, cw]).padding(0.2);
+  const y = d3.scaleLinear().domain([0, 1]).range([ch, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(3));
+  g.selectAll('.bar').data(diffData).join('rect').attr('class', 'bar primary')
+    .attr('x', d => x(d.quarter)).attr('y', d => y(d.value))
+    .attr('width', x.bandwidth()).attr('height', d => ch - y(d.value));
+  g.selectAll('.lbl').data(diffData).join('text').attr('class', 'value-label')
+    .attr('x', d => x(d.quarter) + x.bandwidth()/2)
+    .attr('y', d => y(d.value) - 4).attr('text-anchor', 'middle').text(d => '+' + d.value + ' pp');
+}
+
+function drawAll() { drawTruncated(); drawDot(); drawDiff(); }
+drawAll();
+const ro = new ResizeObserver(() => drawAll());
+['#chartA', '#chartB', '#chartC'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

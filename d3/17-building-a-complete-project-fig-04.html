@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 17.4 — Phase C deliverables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-ink); padding: 0; }
+  .panel-head { background: var(--color-ink); color: var(--color-white); padding: 6px 12px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; }
+  .chart { width: 100%; height: 220px; padding: 8px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .panel-footer { padding: 12px; border-top: 1px solid var(--color-border); display: grid; grid-template-columns: auto 1fr; row-gap: 4px; column-gap: 12px; font-size: 12px; }
+  .panel-footer .label { font-family: 'Inter', sans-serif; font-weight: 700; color: var(--color-ink); }
+  .panel-footer .value { color: var(--color-secondary); text-align: right; }
+  .panel-footer .summary { grid-column: 1 / -1; color: var(--color-secondary); font-style: italic; margin-top: 4px; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; font-style: italic; max-width: 80ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  @media (max-width: 900px) { #wrap { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<h1>Figure 17.4 — Phase C deliverables</h1>
+<p class="subtitle">Three questions, three charts, three families. The sequence is the project.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-head">Q1 · Origins (heatmap)</div>
+    <div id="heatmap" class="chart" role="img" aria-labelledby="t-heat d-heat"></div>
+    <div class="panel-footer">
+      <span class="label">Family</span><span class="value">heatmap</span>
+      <span class="label">Channel</span><span class="value">colour luminance</span>
+      <span class="label">Sort</span><span class="value">by 2024 total ↓</span>
+      <span class="summary">ranking + change over time</span>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head">Q2 · Destinations (bars)</div>
+    <div id="bars" class="chart" role="img" aria-labelledby="t-bars d-bars"></div>
+    <div class="panel-footer">
+      <span class="label">Family</span><span class="value">comparison</span>
+      <span class="label">Channel</span><span class="value">position from baseline</span>
+      <span class="label">Sort</span><span class="value">by value ↓ · zero baseline</span>
+      <span class="summary">ranks the host countries</span>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head">Q3 · Composition (stacked)</div>
+    <div id="stack" class="chart" role="img" aria-labelledby="t-stack d-stack"></div>
+    <div class="panel-footer">
+      <span class="label">Family</span><span class="value">part-to-whole</span>
+      <span class="label">Channel</span><span class="value">length proportion</span>
+      <span class="label">Form</span><span class="value">two-segment stacked</span>
+      <span class="summary">labels inside segments</span>
+    </div>
+  </div>
+</div>
+<p class="caption">The sequence establishes context (Q1), answers the primary question (Q2), and adds the compositional dimension (Q3). Same project, three families.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const heatData = [
+  { country: 'Syria',    by_year: { 2020: 6.7, 2021: 6.8, 2022: 6.8, 2023: 6.4, 2024: 6.4 } },
+  { country: 'Ukraine',  by_year: { 2020: 0.1, 2021: 0.1, 2022: 5.7, 2023: 6.0, 2024: 6.3 } },
+  { country: 'Afghan.',  by_year: { 2020: 2.6, 2021: 2.7, 2022: 5.7, 2023: 6.4, 2024: 6.4 } },
+  { country: 'Sudan',    by_year: { 2020: 0.8, 2021: 0.8, 2022: 1.1, 2023: 1.5, 2024: 3.9 } },
+  { country: 'S. Sudan', by_year: { 2020: 2.2, 2021: 2.3, 2022: 2.3, 2023: 2.3, 2024: 2.3 } },
+  { country: 'Myanmar',  by_year: { 2020: 1.1, 2021: 1.2, 2022: 1.2, 2023: 1.3, 2024: 1.3 } }
+];
+const barData = [
+  { country: 'Turkey',   value: 3.6 },
+  { country: 'Iran',     value: 3.4 },
+  { country: 'Germany',  value: 2.5 },
+  { country: 'Pakistan', value: 1.7 },
+  { country: 'Uganda',   value: 1.5 },
+  { country: 'Poland',   value: 1.0 }
+];
+const stackData = [
+  { type: 'Internal (IDP)',  share: 0.60 },
+  { type: 'International',   share: 0.40 }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawHeatmap() {
+  const sel = d3.select('#heatmap');
+  sel.selectAll('*').remove();
+  const node = document.getElementById('heatmap');
+  const W = node.clientWidth || 280;
+  const H = node.clientHeight || 220;
+  const margin = { top: 16, right: 12, bottom: 24, left: 64 };
+  const cw = W - margin.left - margin.right;
+  const ch = H - margin.top - margin.bottom;
+  const svg = sel.append('svg').attr('width', W).attr('height', H)
+    .attr('role', 'img').attr('aria-labelledby', 't-heat d-heat');
+  svg.append('title').attr('id', 't-heat').text('Heatmap of refugee-origin countries by year');
+  svg.append('desc').attr('id', 'd-heat').text('Top refugee-origin countries on the y-axis, years 2020 to 2024 on the x-axis, refugee count encoded by sequential colour luminance.');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const years = [2020, 2021, 2022, 2023, 2024];
+  const xScaleBand = d3.scaleBand().domain(years).range([0, cw]).padding(0.04);
+  const yScaleBand = d3.scaleBand().domain(heatData.map(d => d.country)).range([0, ch]).padding(0.08);
+  const max = d3.max(heatData, d => d3.max(years, y => d.by_year[y]));
+  const colorScaleSequential = d3.scaleSequential()
+    .domain([0, max])
+    .interpolator(d3.interpolateLab('#F0EBE3', getComputedStyle(document.documentElement).getPropertyValue('--color-ink').trim()));
+
+  const cells = [];
+  heatData.forEach(row => years.forEach(y => cells.push({ country: row.country, year: y, value: row.by_year[y] })));
+  g.selectAll('rect').data(cells).join('rect')
+    .attr('x', d => xScaleBand(d.year))
+    .attr('y', d => yScaleBand(d.country))
+    .attr('width', xScaleBand.bandwidth())
+    .attr('height', yScaleBand.bandwidth())
+    .attr('fill', d => colorScaleSequential(d.value))
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `${d.country}, ${d.year}: ${d.value} million`)
+    .on('mouseover', (event, d) => showTip(event, `<strong>${d.country}</strong> · ${d.year}<br>${d.value.toFixed(1)}M refugees`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleBand).tickSize(0))
+    .call(s => s.select('.domain').remove());
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`)
+    .call(d3.axisBottom(xScaleBand).tickFormat(d => `'${String(d).slice(2)}`).tickSize(0))
+    .call(s => s.select('.domain').remove());
+}
+
+function drawBars() {
+  const sel = d3.select('#bars');
+  sel.selectAll('*').remove();
+  const node = document.getElementById('bars');
+  const W = node.clientWidth || 280;
+  const H = node.clientHeight || 220;
+  const margin = { top: 16, right: 40, bottom: 24, left: 70 };
+  const cw = W - margin.left - margin.right;
+  const ch = H - margin.top - margin.bottom;
+  const svg = sel.append('svg').attr('width', W).attr('height', H)
+    .attr('role', 'img').attr('aria-labelledby', 't-bars d-bars');
+  svg.append('title').attr('id', 't-bars').text('Horizontal bar chart of destination countries');
+  svg.append('desc').attr('id', 'd-bars').text('Top destination countries on the y-axis sorted descending, refugee count on the x-axis from a zero baseline.');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const yScaleBand = d3.scaleBand().domain(barData.map(d => d.country)).range([0, ch]).padding(0.18);
+  const xScaleLinear = d3.scaleLinear().domain([0, d3.max(barData, d => d.value)]).nice().range([0, cw]);
+  g.selectAll('rect').data(barData).join('rect')
+    .attr('class', 'bar-rect')
+    .attr('x', 0)
+    .attr('y', d => yScaleBand(d.country))
+    .attr('width', d => xScaleLinear(d.value))
+    .attr('height', yScaleBand.bandwidth())
+    .attr('fill', (d, i) => i === 0 ? 'var(--color-ink)' : (i < 3 ? '#4a4540' : (i < 5 ? '#8a8480' : 'var(--color-border)')))
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `${d.country}: ${d.value} million refugees`)
+    .on('mouseover', (event, d) => showTip(event, `<strong>${d.country}</strong><br>${d.value.toFixed(1)}M refugees`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  g.selectAll('.value-label').data(barData).join('text')
+    .attr('x', d => xScaleLinear(d.value) + 4)
+    .attr('y', d => yScaleBand(d.country) + yScaleBand.bandwidth() / 2 + 4)
+    .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 10).attr('fill', 'var(--color-ink)')
+    .text(d => `${d.value.toFixed(1)}M`);
+
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleBand).tickSize(0))
+    .call(s => s.select('.domain').remove());
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`)
+    .call(d3.axisBottom(xScaleLinear).ticks(3).tickFormat(d => `${d}M`));
+}
+
+function drawStack() {
+  const sel = d3.select('#stack');
+  sel.selectAll('*').remove();
+  const node = document.getElementById('stack');
+  const W = node.clientWidth || 280;
+  const H = node.clientHeight || 220;
+  const margin = { top: 36, right: 16, bottom: 24, left: 16 };
+  const cw = W - margin.left - margin.right;
+  const ch = 44;
+  const svg = sel.append('svg').attr('width', W).attr('height', H)
+    .attr('role', 'img').attr('aria-labelledby', 't-stack d-stack');
+  svg.append('title').attr('id', 't-stack').text('Stacked bar of internal versus international displacement');
+  svg.append('desc').attr('id', 'd-stack').text('A single horizontal bar split into two segments encoding the proportion of internal versus international forced displacement.');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const xScaleLinear = d3.scaleLinear().domain([0, 1]).range([0, cw]);
+  let cum = 0;
+  const seg = stackData.map(d => { const o = { ...d, x0: cum, x1: cum + d.share }; cum += d.share; return o; });
+  g.selectAll('rect').data(seg).join('rect')
+    .attr('x', d => xScaleLinear(d.x0))
+    .attr('y', 0)
+    .attr('width', d => xScaleLinear(d.x1) - xScaleLinear(d.x0))
+    .attr('height', ch)
+    .attr('fill', (d, i) => i === 0 ? 'var(--color-ink)' : '#8a8480')
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `${d.type}: ${(d.share * 100).toFixed(0)} percent`)
+    .on('mouseover', (event, d) => showTip(event, `<strong>${d.type}</strong><br>${(d.share * 100).toFixed(0)}% of total`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  g.selectAll('.seg-label').data(seg).join('text')
+    .attr('x', d => xScaleLinear((d.x0 + d.x1) / 2))
+    .attr('y', ch / 2 + 4).attr('text-anchor', 'middle')
+    .attr('font-family', "'EB Garamond', Georgia, serif").attr('font-size', 13).attr('fill', 'var(--color-white)')
+    .text(d => `${(d.share * 100).toFixed(0)}% ${d.type.split(' ')[0].toLowerCase()}`);
+
+  // legend
+  const legend = svg.append('g').attr('transform', `translate(${margin.left},${margin.top + ch + 20})`);
+  legend.selectAll('g').data(seg).join('g')
+    .attr('transform', (d, i) => `translate(${i * 140},0)`)
+    .each(function(d, i) {
+      const node = d3.select(this);
+      node.append('rect').attr('width', 10).attr('height', 10).attr('fill', i === 0 ? 'var(--color-ink)' : '#8a8480');
+      node.append('text').attr('x', 14).attr('y', 9)
+        .attr('font-family', 'Inter, sans-serif').attr('font-size', 11).attr('fill', 'var(--color-secondary)')
+        .text(d.type);
+    });
+}
+
+function drawAll() { drawHeatmap(); drawBars(); drawStack(); }
+drawAll();
+const ro = new ResizeObserver(() => drawAll());
+ro.observe(document.getElementById('heatmap'));
+ro.observe(document.getElementById('bars'));
+ro.observe(document.getElementById('stack'));
+</script>
+</body>
+</html>

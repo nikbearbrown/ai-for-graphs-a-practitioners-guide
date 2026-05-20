@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 5.4 — End-to-end pipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #chart { width: 100%; height: 520px; }
+  .stage-rect { fill: var(--color-white); stroke: var(--color-secondary); stroke-width: 1; transition: stroke 200ms cubic-bezier(0.2,0.8,0.2,1), stroke-width 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .stage-rect.here { stroke: var(--color-red); stroke-width: 2; }
+  .stage-rect:hover { stroke: var(--color-red); stroke-width: 2; cursor: pointer; }
+  .stage-title  { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; fill: var(--color-ink); pointer-events: none; }
+  .stage-chap   { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); pointer-events: none; }
+  .stage-chap.here { fill: var(--color-red); font-weight: 700; font-style: italic; }
+  .stage-rule   { stroke: var(--color-border); }
+  .stage-bullet { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); pointer-events: none; }
+  .stage-file   { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); pointer-events: none; }
+  .edge { fill: none; stroke: var(--color-ink); stroke-width: 1.25; }
+  .edge.feedback { stroke-dasharray: 5 3; }
+  .edge-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); font-style: italic; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; font-style: italic; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 280px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 5.4 — End-to-end pipeline</h1>
+<p class="subtitle">Five stages, one direction. Stages 1–3 are upstream. Stage 4 is this chapter. Stage 5 is the loop that closes the gap.</p>
+<div id="chart" role="img" aria-labelledby="chart-title chart-desc"></div>
+<p class="caption">A structural failure in stage 5 returns to stage 4 — sometimes further back. Stylistic failures resolve in place.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const stages = [
+  {
+    id: 1, title: '1. Data audit', chap: 'Chapter 3',
+    bullets: ['attribute types', 'n observations', 'analyst vs reader', '"compared with what?"', 'relationship type'],
+    file: '01-data-audit.md',
+    note: 'Chapter 3 deliverable. Without this, the prompt is built on assumptions about what the data actually is.'
+  },
+  {
+    id: 2, title: '2. Chart selection', chap: 'Chapter 4',
+    bullets: ['Cairo step 1: key message', 'functional category', 'specific form'],
+    file: '02-selection-audit.md',
+    note: 'Chapter 4 deliverable. Cairo\'s four steps narrow to one specific chart form, not a category.'
+  },
+  {
+    id: 3, title: '3. Channel decomposition', chap: 'Chapter 3',
+    bullets: ['marks named', 'channel ↔ attribute', 'sort, ticks, scale', 'palette endpoints', 'annotations'],
+    file: '03-channel-decomp.md',
+    note: 'Chapter 3 deliverable. Every channel-to-attribute mapping and every design constraint that flows from chapters 3 and 4.'
+  },
+  {
+    id: 4, title: '4. Four-move prompt', chap: 'Chapter 5 — here', here: true,
+    bullets: ['show what you have', 'say what you want', 'constrain it', 'verify', '→ working chart (≈ 12s)'],
+    file: '04-prompt.txt',
+    note: 'This chapter. Translates the upstream work into a prompt Claude Code can execute reliably.'
+  },
+  {
+    id: 5, title: '5. Audit & iterate', chap: 'Evergreen/Emery',
+    bullets: ['text', 'arrangement', 'color', 'lines', 'overall'],
+    file: '05-iteration-log.md',
+    note: 'Five-category checklist applied to the rendered artifact. Loop typically resolves in 1–3 iterations.'
+  }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.title}</strong><br>${d.note}`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  d3.select('#chart').selectAll('*').remove();
+  const container = document.getElementById('chart');
+  const totalWidth  = container.clientWidth  || 900;
+  const totalHeight = container.clientHeight || 520;
+
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'chart-title chart-desc');
+  svg.append('title').attr('id', 'chart-title').text('End-to-end pipeline');
+  svg.append('desc').attr('id', 'chart-desc').text('Five stages laid out horizontally: data audit, chart selection, channel decomposition, four-move prompt, audit and iterate. A dashed feedback arrow loops stage 5 back to stage 4.');
+
+  const defs = svg.append('defs');
+  defs.append('marker')
+    .attr('id', 'arrow').attr('markerWidth', 9).attr('markerHeight', 7)
+    .attr('refX', 8).attr('refY', 3.5).attr('orient', 'auto')
+    .append('polygon').attr('points', '0 0, 9 3.5, 0 7').attr('fill', 'var(--color-ink)');
+
+  const margin = { top: 80, right: 30, bottom: 80, left: 30 };
+  const stageHeight = 240;
+  const stageWidth  = (totalWidth - margin.left - margin.right - 4 * 18) / stages.length;
+  const stageGap = 18;
+
+  stages.forEach((s, i) => {
+    const x = margin.left + i * (stageWidth + stageGap);
+    const y = margin.top;
+    const g = svg.append('g').attr('tabindex', 0).attr('aria-label', `${s.title}. ${s.note}`);
+    g.append('rect')
+      .attr('class', 'stage-rect' + (s.here ? ' here' : ''))
+      .attr('x', x).attr('y', y)
+      .attr('width', stageWidth).attr('height', stageHeight);
+    g.append('text')
+      .attr('class', 'stage-title')
+      .attr('x', x + stageWidth / 2).attr('y', y + 24)
+      .attr('text-anchor', 'middle')
+      .text(s.title);
+    g.append('text')
+      .attr('class', 'stage-chap' + (s.here ? ' here' : ''))
+      .attr('x', x + stageWidth / 2).attr('y', y + 40)
+      .attr('text-anchor', 'middle')
+      .text(s.chap);
+    g.append('line')
+      .attr('class', 'stage-rule')
+      .attr('x1', x + 12).attr('x2', x + stageWidth - 12)
+      .attr('y1', y + 50).attr('y2', y + 50);
+    s.bullets.forEach((b, j) => {
+      g.append('text')
+        .attr('class', 'stage-bullet')
+        .attr('x', x + 14).attr('y', y + 68 + j * 16)
+        .text('• ' + b);
+    });
+    g.append('text')
+      .attr('class', 'stage-file')
+      .attr('x', x + 14).attr('y', y + stageHeight - 14)
+      .text(s.file);
+
+    g
+      .on('mouseover', (event) => showTip(event, s))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip)
+      .on('focus', (event) => showTip(event, s))
+      .on('blur', hideTip)
+      .on('keydown', (event, d) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          showTip(event, s);
+        }
+      });
+
+    // forward arrow to next stage
+    if (i < stages.length - 1) {
+      const arrowY = y + stageHeight / 2;
+      svg.append('path')
+        .attr('class', 'edge')
+        .attr('d', `M ${x + stageWidth + 1} ${arrowY} L ${x + stageWidth + stageGap - 1} ${arrowY}`)
+        .attr('marker-end', 'url(#arrow)');
+    }
+  });
+
+  // feedback arrow: stage 5 → stage 4
+  const stage4X = margin.left + 3 * (stageWidth + stageGap);
+  const stage5X = margin.left + 4 * (stageWidth + stageGap);
+  const arcStartX = stage5X + stageWidth / 2;
+  const arcEndX   = stage4X + stageWidth / 2;
+  const arcY      = margin.top + stageHeight;
+  const arcLowY   = arcY + 50;
+  svg.append('path')
+    .attr('class', 'edge feedback')
+    .attr('d', `M ${arcStartX} ${arcY} L ${arcStartX} ${arcLowY} L ${arcEndX} ${arcLowY} L ${arcEndX} ${arcY + 2}`)
+    .attr('marker-end', 'url(#arrow)');
+  svg.append('text')
+    .attr('class', 'edge-label')
+    .attr('x', (arcStartX + arcEndX) / 2).attr('y', arcLowY + 16)
+    .attr('text-anchor', 'middle')
+    .text('structural failure → revise decomposition');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

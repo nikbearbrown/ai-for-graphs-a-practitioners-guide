@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 10.2 — Same r, four very different clouds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 8px; }
+  .chart { width: 100%; height: 220px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .dot { fill: var(--color-secondary); fill-opacity: 0.6; }
+  .dot.outlier { fill: var(--color-red); fill-opacity: 1; }
+  .trend { stroke: var(--color-ink); stroke-width: 1.4; fill: none; }
+  .r-badge { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; fill: var(--color-ink); }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 10.2 — Same r ≈ 0.7, four very different clouds</h1>
+<p class="subtitle">Pearson r is a one-number summary. The shape of the scatter carries everything r cannot.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">1. Linear cloud</div>
+    <div class="panel-sub">Trend line summarises it correctly.</div>
+    <div id="chart1" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">2. Curved cloud (quadratic)</div>
+    <div class="panel-sub">Linear fit misrepresents the shape.</div>
+    <div id="chart2" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">3. Fan-shaped (heteroscedastic)</div>
+    <div class="panel-sub">Variance grows with x — the model is unstable at high x.</div>
+    <div id="chart3" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">4. Cloud dominated by one outlier</div>
+    <div class="panel-sub">Remove the red point and r drops to ≈ 0.3.</div>
+    <div id="chart4" class="chart"></div>
+  </div>
+</div>
+<p class="caption">The same Pearson r fits all four. Always look at the cloud, not just the statistic.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+let seed = 7;
+function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+
+function makeLinear() {
+  const data = [];
+  for (let i = 0; i < 60; i++) {
+    const x = i / 59;
+    const y = 0.2 + 0.7 * x + (rand() - 0.5) * 0.32;
+    data.push({ x, y });
+  }
+  return data;
+}
+function makeCurved() {
+  const data = [];
+  for (let i = 0; i < 60; i++) {
+    const x = i / 59;
+    const y = 0.15 + 1.5 * x - 1.45 * x * x + (rand() - 0.5) * 0.12;
+    data.push({ x, y });
+  }
+  return data;
+}
+function makeFan() {
+  const data = [];
+  for (let i = 0; i < 60; i++) {
+    const x = i / 59;
+    const y = 0.2 + 0.6 * x + (rand() - 0.5) * (0.06 + 0.7 * x);
+    data.push({ x, y });
+  }
+  return data;
+}
+function makeOutlier() {
+  const data = [];
+  for (let i = 0; i < 60; i++) {
+    const x = (i / 59) * 0.7;
+    const y = 0.25 + 0.18 * x + (rand() - 0.5) * 0.1;
+    data.push({ x, y, outlier: false });
+  }
+  data.push({ x: 0.97, y: 0.96, outlier: true });
+  return data;
+}
+
+function ols(data) {
+  const mx = d3.mean(data, d => d.x);
+  const my = d3.mean(data, d => d.y);
+  let sxy = 0, sxx = 0, syy = 0;
+  data.forEach(d => { sxy += (d.x - mx) * (d.y - my); sxx += (d.x - mx) ** 2; syy += (d.y - my) ** 2; });
+  return { slope: sxy / sxx, intercept: my - (sxy / sxx) * mx, r: sxy / Math.sqrt(sxx * syy) };
+}
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`x=${d.x.toFixed(2)}<br/>y=${d.y.toFixed(2)}`)
+    .style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawPanel(selector, data, label) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 320;
+  const totalHeight = container.clientHeight || 220;
+  const margin = { top: 16, right: 16, bottom: 32, left: 36 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-label', label);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const xScaleLinear = d3.scaleLinear().domain([0, 1]).range([0, chartWidth]);
+  const yScaleLinear = d3.scaleLinear().domain([0, 1]).range([chartHeight, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleLinear).ticks(4));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(4));
+  g.selectAll('.dot').data(data).join('circle')
+    .attr('class', d => 'dot' + (d.outlier ? ' outlier' : ''))
+    .attr('cx', d => xScaleLinear(d.x)).attr('cy', d => yScaleLinear(d.y))
+    .attr('r', d => d.outlier ? 5 : 2.4)
+    .attr('tabindex', 0).attr('aria-label', d => `x=${d.x.toFixed(2)} y=${d.y.toFixed(2)}`)
+    .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+  const fit = ols(data);
+  g.append('line').attr('class', 'trend')
+    .attr('x1', xScaleLinear(0)).attr('y1', yScaleLinear(fit.intercept))
+    .attr('x2', xScaleLinear(1)).attr('y2', yScaleLinear(fit.intercept + fit.slope));
+  g.append('text').attr('class', 'r-badge')
+    .attr('x', chartWidth - 4).attr('y', 12).attr('text-anchor', 'end')
+    .text(`r = ${fit.r.toFixed(2)}`);
+}
+
+function drawAll() {
+  seed = 7; drawPanel('#chart1', makeLinear(), 'linear cloud');
+  seed = 11; drawPanel('#chart2', makeCurved(), 'curved cloud');
+  seed = 19; drawPanel('#chart3', makeFan(), 'fan-shaped cloud');
+  seed = 23; drawPanel('#chart4', makeOutlier(), 'cloud with outlier');
+}
+drawAll();
+const ro = new ResizeObserver(() => drawAll());
+['#chart1', '#chart2', '#chart3', '#chart4'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

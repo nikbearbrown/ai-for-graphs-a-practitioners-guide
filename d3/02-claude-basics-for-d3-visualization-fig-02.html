@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 2.2 — The instruction budget</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 20px; max-width: 65ch; }
+  .scenario { margin-bottom: 28px; }
+  .scenario-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; }
+  .scenario-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 10px; }
+  .chart { width: 100%; height: 110px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .seg-system   { fill: var(--color-ink); }
+  .seg-coding   { fill: var(--color-secondary); }
+  .seg-design   { fill: var(--color-white); stroke: var(--color-secondary); stroke-width: 1; }
+  .seg-merged   { fill: var(--color-secondary); }
+  .seg-overflow { fill: var(--color-red); fill-opacity: 0.18; stroke: var(--color-red); stroke-dasharray: 4 3; }
+  .seg-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; fill: var(--color-white); }
+  .seg-label.dark { fill: var(--color-ink); }
+  .ceiling { stroke: var(--color-red); stroke-dasharray: 3 3; }
+  .ceiling-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-red); }
+  .verdict { display: inline-block; padding: 4px 10px; border: 1px solid var(--color-ink); font-size: 12px; }
+  .verdict.bad { border-color: var(--color-red); color: var(--color-red); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 8px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 2.2 — The instruction budget</h1>
+<p class="subtitle">A Claude Code session can reliably track about 150–200 behavioral rules. The system prompt already consumes ~50. The rest is yours to spend.</p>
+
+<div class="scenario">
+  <div class="scenario-title">Two files, separated</div>
+  <div class="scenario-sub">CLAUDE.md every session · DESIGN.md loaded on demand · <span class="verdict">within budget</span></div>
+  <div id="chartSplit" class="chart"></div>
+</div>
+
+<div class="scenario">
+  <div class="scenario-title">One merged file</div>
+  <div class="scenario-sub">coding + design + voice in a single CLAUDE.md · <span class="verdict bad">budget exceeded</span></div>
+  <div id="chartMerged" class="chart"></div>
+</div>
+
+<p class="caption">A merged file does not error. It tracks the later rules less reliably, and the chart almost follows them.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const BUDGET_MAX = 200;     // visual scale endpoint
+const CEILING    = 200;     // reliable-tracking ceiling
+const splitData = [
+  { id: 'sys',     label: 'system prompt · ~50', size: 50, kind: 'system' },
+  { id: 'coding',  label: 'CLAUDE.md · coding · ~100', size: 100, kind: 'coding' },
+  { id: 'design',  label: 'DESIGN.md · ~50 (on-demand, separate session)', size: 50, kind: 'design' }
+];
+const mergedData = [
+  { id: 'sys',     label: 'system prompt · ~50', size: 50, kind: 'system' },
+  { id: 'merged',  label: 'merged file · coding + design + voice · ~200+', size: 230, kind: 'merged' }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.label}</strong><br>~${d.size} instructions`)
+    .style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawScenario(selector, data, opts) {
+  d3.select(selector).selectAll('*').remove();
+  const container = document.querySelector(selector);
+  const totalWidth  = container.clientWidth || 700;
+  const totalHeight = container.clientHeight || 110;
+  const margin = { top: 14, right: 24, bottom: 28, left: 24 };
+  const cw = totalWidth - margin.left - margin.right;
+  const ch = totalHeight - margin.top - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', `${selector.slice(1)}-t ${selector.slice(1)}-d`);
+  svg.append('title').attr('id', `${selector.slice(1)}-t`).text(opts.title);
+  svg.append('desc').attr('id', `${selector.slice(1)}-d`).text(opts.desc);
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const total = d3.sum(data, d => d.size);
+  const visMax = Math.max(total, BUDGET_MAX + 30); // give room to show overflow
+
+  const x = d3.scaleLinear().domain([0, visMax]).range([0, cw]);
+  const barHeight = 38;
+
+  // segments
+  let acc = 0;
+  const segs = data.map(d => {
+    const seg = { ...d, x0: acc, x1: acc + d.size };
+    acc += d.size;
+    return seg;
+  });
+
+  // base segments
+  g.selectAll('.seg').data(segs, d => d.id).join('rect')
+    .attr('class', d => `seg seg-${d.kind}`)
+    .attr('x', d => x(d.x0))
+    .attr('y', 0)
+    .attr('width', d => Math.max(0, x(d.x1) - x(d.x0)))
+    .attr('height', barHeight)
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `${d.label}, ~${d.size} instructions`)
+    .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // overflow stripes (only for merged scenario)
+  if (opts.showOverflow) {
+    const overflowSeg = segs.find(d => d.x1 > CEILING);
+    if (overflowSeg && overflowSeg.x1 > CEILING) {
+      g.append('rect').attr('class', 'seg-overflow')
+        .attr('x', x(CEILING)).attr('y', 0)
+        .attr('width', x(overflowSeg.x1) - x(CEILING))
+        .attr('height', barHeight)
+        .attr('aria-hidden', 'true');
+    }
+  }
+
+  // labels inside segments
+  g.selectAll('.seg-label').data(segs).join('text')
+    .attr('class', d => 'seg-label' + (d.kind === 'design' ? ' dark' : ''))
+    .attr('x', d => x(d.x0) + (x(d.x1) - x(d.x0)) / 2)
+    .attr('y', barHeight / 2 + 4)
+    .attr('text-anchor', 'middle')
+    .text(d => (x(d.x1) - x(d.x0)) > 90 ? d.label : '');
+
+  // ceiling marker at 200
+  g.append('line').attr('class', 'ceiling')
+    .attr('x1', x(CEILING)).attr('x2', x(CEILING))
+    .attr('y1', -6).attr('y2', barHeight + 6);
+  g.append('text').attr('class', 'ceiling-label')
+    .attr('x', x(CEILING)).attr('y', barHeight + 22)
+    .attr('text-anchor', 'middle')
+    .text('reliable-tracking ceiling ≈ 200');
+
+  // tick scale on bottom
+  const axis = g.append('g').attr('class', 'axis')
+    .attr('transform', `translate(0,${barHeight + 2})`)
+    .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('d')).tickSize(2));
+  axis.select('.domain').remove();
+}
+
+function drawAll() {
+  drawScenario('#chartSplit', splitData, {
+    showOverflow: false,
+    title: 'Split file scenario — within instruction budget',
+    desc:  'Three segments totalling about 200 instructions: system prompt, CLAUDE.md, and DESIGN.md shown separately because it loads on demand.'
+  });
+  drawScenario('#chartMerged', mergedData, {
+    showOverflow: true,
+    title: 'Merged file scenario — instruction budget exceeded',
+    desc:  'Two segments. The merged file pushes total instructions past the reliable-tracking ceiling at 200, marked by a striped overflow zone.'
+  });
+}
+
+drawAll();
+const ro = new ResizeObserver(drawAll);
+['#chartSplit', '#chartMerged'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

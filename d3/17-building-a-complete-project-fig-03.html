@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 17.3 — The session-loading split</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; position: relative; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-ink); padding: 0; }
+  .panel-head { background: var(--color-ink); color: var(--color-white); padding: 8px 14px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-body { padding: 18px; }
+  .panel-eyebrow { color: var(--color-secondary); font-style: italic; font-size: 12px; margin-bottom: 12px; }
+  .rule { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent); align-items: flex-start; transition: background 200ms cubic-bezier(0.2,0.8,0.2,1); cursor: default; }
+  .rule:hover { background: color-mix(in srgb, var(--color-ochre) 8%, transparent); }
+  .rule:last-child { border-bottom: none; }
+  .rule .dot { flex: 0 0 6px; width: 6px; height: 6px; background: var(--color-ink); margin-top: 6px; border-radius: 50%; }
+  .rule .body { flex: 1; font-size: 13px; line-height: 1.4; }
+  .rule .body code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--color-secondary); }
+  .panel-footer { padding: 12px 18px; color: var(--color-secondary); font-size: 12px; font-style: italic; border-top: 1px solid var(--color-border); }
+  .divider-note { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-90deg); color: var(--color-secondary); font-style: italic; font-size: 11px; pointer-events: none; }
+  .budget-strap { background: color-mix(in srgb, var(--color-border) 30%, var(--color-white)); border: 1px solid var(--color-border); padding: 12px 16px; margin-top: 20px; font-size: 13px; color: var(--color-ink); }
+  .budget-strap strong { font-family: 'Inter', sans-serif; font-weight: 700; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; font-style: italic; max-width: 80ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  @media (max-width: 720px) { #wrap { grid-template-columns: 1fr; } .divider-note { display: none; } }
+</style>
+</head>
+<body>
+<h1>Figure 17.3 — The session-loading split</h1>
+<p class="subtitle">CLAUDE.md every session; DESIGN.md only when a visual decision is in scope.</p>
+<div id="wrap" role="img" aria-labelledby="t-split d-split">
+  <span id="t-split" hidden>The session-loading split between CLAUDE.md and DESIGN.md</span>
+  <span id="d-split" hidden>Two columns of rules: coding rules that load every session on the left, visual rules that load only on visual-decision sessions on the right.</span>
+  <div class="panel">
+    <div class="panel-head">Every session · CLAUDE.md</div>
+    <div class="panel-body">
+      <div class="panel-eyebrow">Coding constitution — rules Claude Code might silently violate</div>
+      <div id="codeRules"></div>
+    </div>
+    <div class="panel-footer">these rules apply to every chart in the project, no matter the family</div>
+  </div>
+  <div class="panel">
+    <div class="panel-head">Visual sessions · +DESIGN.md</div>
+    <div class="panel-body">
+      <div class="panel-eyebrow">Visual constitution — irrelevant on data-only sessions</div>
+      <div id="visualRules"></div>
+    </div>
+    <div class="panel-footer">loading these on every session wastes ≈ 50 budget slots that have no effect</div>
+  </div>
+  <div class="divider-note">load on demand</div>
+</div>
+<div class="budget-strap">
+  <strong>The instruction budget is finite.</strong> Claude Code retains roughly 60 lines per file reliably. Combine both files into one and the rules at the bottom drop silently. The split disciplines that limit.
+</div>
+<p class="caption">If the session involves any visual choice — colour, type, spacing — load both. If it is data processing, scale construction, or layout logic, load CLAUDE.md alone.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const codeRules = [
+  { code: 'D3 7.9.0', text: 'pinned CDN; never substitute a fork' },
+  { code: '[0, max]', text: 'zero baseline for bars and areas, always' },
+  { code: 'd3.scaleSqrt', text: 'for bubble and symbol radius — never scaleLinear' },
+  { code: 'geoEqualEarth', text: 'equal-area projection for world choropleths' },
+  { code: 'camelCase', text: 'naming conventions with type suffix (xScaleBand, yScaleLinear)' },
+  { code: 'role="img"', text: 'ARIA defaults — title, desc, aria-labelledby' },
+  { code: '(event, d)', text: 'v7 event handler signature, never d3.event' },
+  { code: 'ResizeObserver', text: 'tooltip and resize patterns' }
+];
+
+const visualRules = [
+  { code: '6 vars',     text: 'colour palette — six CSS custom properties, hex pinned' },
+  { code: 'EB Garamond', text: 'typography — Inter for body, JetBrains Mono for code' },
+  { code: '4–64 px',   text: 'spacing scale, 4 px base unit, eight steps' },
+  { code: 'prefers-color-scheme', text: 'dark-mode inversion table' },
+  { code: 'breakpoints',text: 'responsive layout rules per surface' },
+  { code: '200 ms',    text: 'animation durations and easing curve' },
+  { code: 'tokens',    text: 'border, radius, and shadow tokens' },
+  { code: 'hover/focus', text: 'state system for interactive elements' }
+];
+
+function renderRules(selector, data) {
+  d3.select(selector).selectAll('.rule').data(data).join('div').attr('class', 'rule')
+    .html(d => `<div class="dot"></div><div class="body"><code>${d.code}</code> · ${d.text}</div>`);
+}
+
+renderRules('#codeRules', codeRules);
+renderRules('#visualRules', visualRules);
+</script>
+</body>
+</html>

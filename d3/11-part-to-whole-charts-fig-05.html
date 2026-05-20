@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 11.5 — Five design decisions in one pie chart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
+  .decisions { display: flex; flex-direction: column; gap: 12px; }
+  .decision { display: flex; gap: 12px; padding: 12px; border: 1px solid var(--color-border); cursor: pointer; transition: background 120ms cubic-bezier(0.2,0.8,0.2,1); }
+  .decision:hover, .decision.active { background: #f5f2ee; }
+  @media (prefers-color-scheme: dark) {
+    .decision:hover, .decision.active { background: #1c1c1c; }
+  }
+  .decision .badge { flex: 0 0 28px; height: 28px; border-radius: 14px; background: var(--color-ink); color: var(--color-white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .decision.active .badge { background: var(--color-red); }
+  .decision .body { font-size: 13px; }
+  .decision .title { font-weight: 700; margin-bottom: 2px; }
+  .decision .sub { color: var(--color-secondary); }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .chart { width: 100%; height: 460px; position: relative; }
+  .slice { stroke: var(--color-white); stroke-width: 1.5px; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .slice.primary { fill: var(--color-red); }
+  .slice.highlighted { stroke: var(--color-ochre); stroke-width: 3px; }
+  .slice-label { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-white); pointer-events: none; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; font-family: 'Inter', sans-serif; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 11.5 — Five design decisions in one pie chart</h1>
+<p class="subtitle">Click a decision to highlight the part of the chart it serves.</p>
+<div id="wrap">
+  <div class="decisions" id="decisions"></div>
+  <div class="panel">
+    <div id="chart" class="chart" role="img"></div>
+  </div>
+</div>
+<p class="caption">None of these decisions is stylistic. Each applies a perceptual principle to a specific constraint. The chart is good because the encoding fits the data.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const pantryData = [
+  { label: 'Food Security', value: 56 },
+  { label: 'Shelter',       value: 21 },
+  { label: 'Water',         value: 14 },
+  { label: 'Health',        value:  6 },
+  { label: 'Protection',    value:  3 }
+];
+const grayRamp = ['#4a4540', '#8a8480', '#a8a4a0', '#c8c4c0'];
+
+const decisions = [
+  { n: 1, title: 'Five slices — data aggregated before building',
+    sub: 'Five-slice rule is a design decision, not a data fact.',
+    highlight: 'all' },
+  { n: 2, title: 'Sort order — largest at 12 o’clock, clockwise',
+    sub: 'Reading direction matches reader’s expected entry.',
+    highlight: 'all' },
+  { n: 3, title: 'Direct labels — no legend lookup required',
+    sub: 'Two extra read-steps eliminated per slice.',
+    highlight: 'all' },
+  { n: 4, title: 'Color hue — categorical identity, no implied ranking',
+    sub: 'Luminance scale would imply order the data doesn’t have.',
+    highlight: 'all' },
+  { n: 5, title: 'Largest slice ≈ half the circle — dominance signal',
+    sub: 'Dominance is unmistakable even without precise reading.',
+    highlight: 'primary' }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html('<strong>' + d.data.label + '</strong>: ' + d.data.value + '%')
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+let activeDecision = null;
+
+function renderDecisions() {
+  const list = d3.select('#decisions');
+  list.selectAll('*').remove();
+  decisions.forEach(dec => {
+    const item = list.append('div')
+      .attr('class', 'decision' + (activeDecision === dec.n ? ' active' : ''))
+      .attr('tabindex', 0)
+      .attr('role', 'button')
+      .attr('aria-pressed', activeDecision === dec.n ? 'true' : 'false')
+      .on('click', () => { activeDecision = activeDecision === dec.n ? null : dec.n; draw(); })
+      .on('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          activeDecision = activeDecision === dec.n ? null : dec.n;
+          draw();
+        }
+      });
+    item.append('div').attr('class', 'badge').text(dec.n);
+    const body = item.append('div').attr('class', 'body');
+    body.append('div').attr('class', 'title').text(dec.title);
+    body.append('div').attr('class', 'sub').text(dec.sub);
+  });
+}
+
+function drawPie() {
+  const container = document.getElementById('chart');
+  d3.select('#chart').selectAll('svg').remove();
+  const totalWidth  = container.clientWidth  || 460;
+  const totalHeight = container.clientHeight || 460;
+  const radius = Math.min(totalWidth, totalHeight) / 2 - 24;
+
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img');
+  svg.append('title').text('Annotated five-slice pie chart');
+  svg.append('desc').text('A five-category pie chart of pantry funding allocations with the largest slice at twelve o’clock and direct labels on each slice.');
+
+  const gChart = svg.append('g').attr('transform', 'translate(' + totalWidth / 2 + ',' + totalHeight / 2 + ')');
+
+  const pieGen = d3.pie().value(d => d.value).sort(null).startAngle(0);
+  const arcGen = d3.arc().innerRadius(0).outerRadius(radius);
+  const labelArc = d3.arc().innerRadius(radius * 0.6).outerRadius(radius * 0.6);
+  const arcs = pieGen(pantryData);
+
+  const dec = decisions.find(d => d.n === activeDecision);
+
+  gChart.selectAll('.slice')
+    .data(arcs)
+    .join('path')
+      .attr('class', (d, i) => {
+        let cls = 'slice' + (i === 0 ? ' primary' : '');
+        if (dec) {
+          if (dec.highlight === 'all') cls += ' highlighted';
+          if (dec.highlight === 'primary' && i === 0) cls += ' highlighted';
+        }
+        return cls;
+      })
+      .attr('fill', (d, i) => i === 0 ? null : grayRamp[(i - 1) % grayRamp.length])
+      .attr('d', arcGen)
+      .attr('tabindex', 0)
+      .attr('aria-label', d => d.data.label + ': ' + d.data.value + '%')
+      .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  gChart.selectAll('.slice-label')
+    .data(arcs.filter(d => (d.endAngle - d.startAngle) > 0.35))
+    .join('text')
+      .attr('class', 'slice-label')
+      .attr('transform', d => 'translate(' + labelArc.centroid(d) + ')')
+      .attr('text-anchor', 'middle')
+      .text(d => d.data.label + ' ' + d.data.value + '%');
+}
+
+function draw() {
+  renderDecisions();
+  drawPie();
+}
+draw();
+const ro = new ResizeObserver(() => drawPie());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

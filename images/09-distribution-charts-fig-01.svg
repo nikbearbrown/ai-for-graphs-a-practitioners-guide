@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t09f01 d09f01">
+  <title id="t09f01">Five zone box plots — the Inner Suburbs outlier cluster</title>
+  <desc id="d09f01">Five side-by-side box plots of household income by residential zone with an annotation pointing at a cluster of high-income outliers above the Inner Suburbs whisker.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .q   { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-style: italic; fill: #2a1a0e; }
+    </style>
+    <marker id="ar09a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Household income by residential zone — five box plots</text>
+  <text x="350" y="44" text-anchor="middle" class="sm">y-axis: household income, $0–$220K</text>
+
+  <!-- axis: plot area from y=70 (top) to y=330 (bottom); zero at 330, 220 at 70; 260 px / 220 units -->
+  <line x1="80" y1="70" x2="80" y2="330" stroke="#8a8480" stroke-width="1"/>
+  <line x1="80" y1="330" x2="640" y2="330" stroke="#8a8480" stroke-width="1"/>
+
+  <!-- y ticks 0, 50, 100, 150, 200 -->
+  <g class="sm">
+    <line x1="78" y1="330" x2="80" y2="330" stroke="#4a4540"/><text x="74" y="333" text-anchor="end">0</text>
+    <line x1="78" y1="271" x2="80" y2="271" stroke="#4a4540"/><text x="74" y="274" text-anchor="end">50</text>
+    <line x1="78" y1="212" x2="80" y2="212" stroke="#4a4540"/><text x="74" y="215" text-anchor="end">100</text>
+    <line x1="78" y1="153" x2="80" y2="153" stroke="#4a4540"/><text x="74" y="156" text-anchor="end">150</text>
+    <line x1="78" y1="94"  x2="80" y2="94"  stroke="#4a4540"/><text x="74" y="97" text-anchor="end">200</text>
+  </g>
+  <text x="38" y="200" text-anchor="middle" transform="rotate(-90 38 200)" class="sm">income ($000s)</text>
+
+  <!-- helper: y = 330 - value * (260/220) = 330 - value * 1.1818 -->
+  <!-- Zone 1: URBAN CORE — min 18, Q1 32, med 46, Q3 62, max 90; whisker hi 92; one outlier 108 -->
+  <!-- x center 140, box from 115 to 165 -->
+  <g>
+    <!-- whisker vertical -->
+    <line x1="140" y1="221" x2="140" y2="271" stroke="#2a1a0e"/>
+    <line x1="125" y1="221" x2="155" y2="221" stroke="#2a1a0e"/>
+    <line x1="125" y1="271" x2="155" y2="271" stroke="#2a1a0e"/>
+    <!-- box Q1=32 (y=292.18), Q3=62 (y=256.73) -->
+    <rect x="115" y="256.7" width="50" height="35.5" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <!-- median 46 (y=275.64) -->
+    <line x1="115" y1="275.6" x2="165" y2="275.6" stroke="#2a1a0e" stroke-width="2"/>
+    <!-- outlier point 108 (y=202.36) -->
+    <circle cx="140" cy="202.4" r="2.5" fill="#2a1a0e"/>
+    <text x="140" y="348" text-anchor="middle" class="sm">Urban Core</text>
+  </g>
+
+  <!-- Zone 2: INNER SUBURBS — min 28, Q1 48, med 64, Q3 84, max 112; whisker hi ≈ 118 -->
+  <!-- CLUSTER of outliers high: 150, 158, 168, 174, 182, 188 -->
+  <g>
+    <line x1="240" y1="187.3" x2="240" y2="259" stroke="#2a1a0e"/>
+    <line x1="225" y1="187.3" x2="255" y2="187.3" stroke="#2a1a0e"/>
+    <line x1="225" y1="259" x2="255" y2="259" stroke="#2a1a0e"/>
+    <!-- box Q1=48 (y=273.27), Q3=84 (y=230.73) -->
+    <rect x="215" y="230.7" width="50" height="42.6" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <!-- median 64 (y=254.36) -->
+    <line x1="215" y1="254.4" x2="265" y2="254.4" stroke="#2a1a0e" stroke-width="2"/>
+    <!-- outlier cluster -->
+    <circle cx="232" cy="152.7" r="2.5" fill="#2a1a0e"/>
+    <circle cx="244" cy="143.3" r="2.5" fill="#2a1a0e"/>
+    <circle cx="236" cy="131.5" r="2.5" fill="#2a1a0e"/>
+    <circle cx="248" cy="124.4" r="2.5" fill="#2a1a0e"/>
+    <circle cx="240" cy="115" r="2.5" fill="#2a1a0e"/>
+    <circle cx="232" cy="107.9" r="2.5" fill="#2a1a0e"/>
+    <text x="240" y="348" text-anchor="middle" class="sm">Inner Suburbs</text>
+  </g>
+
+  <!-- Zone 3: OUTER SUBURBS — min 36, Q1 58, med 72, Q3 90, max 122 -->
+  <g>
+    <line x1="340" y1="185" x2="340" y2="251.4" stroke="#2a1a0e"/>
+    <line x1="325" y1="185" x2="355" y2="185" stroke="#2a1a0e"/>
+    <line x1="325" y1="251.4" x2="355" y2="251.4" stroke="#2a1a0e"/>
+    <!-- box Q1=58 (y=261.45), Q3=90 (y=223.64) -->
+    <rect x="315" y="223.6" width="50" height="37.8" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <!-- median 72 (y=244.91) -->
+    <line x1="315" y1="244.9" x2="365" y2="244.9" stroke="#2a1a0e" stroke-width="2"/>
+    <text x="340" y="348" text-anchor="middle" class="sm">Outer Suburbs</text>
+  </g>
+
+  <!-- Zone 4: EXURBAN — min 30, Q1 50, med 62, Q3 78, max 108 -->
+  <g>
+    <line x1="440" y1="202.4" x2="440" y2="271" stroke="#2a1a0e"/>
+    <line x1="425" y1="202.4" x2="455" y2="202.4" stroke="#2a1a0e"/>
+    <line x1="425" y1="271" x2="455" y2="271" stroke="#2a1a0e"/>
+    <!-- box Q1=50 (y=270.91), Q3=78 (y=237.82) -->
+    <rect x="415" y="237.8" width="50" height="33.1" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <!-- median 62 (y=256.73) -->
+    <line x1="415" y1="256.7" x2="465" y2="256.7" stroke="#2a1a0e" stroke-width="2"/>
+    <text x="440" y="348" text-anchor="middle" class="sm">Exurban</text>
+  </g>
+
+  <!-- Zone 5: RURAL — min 16, Q1 26, med 38, Q3 52, max 78 -->
+  <g>
+    <line x1="540" y1="237.8" x2="540" y2="311.1" stroke="#2a1a0e"/>
+    <line x1="525" y1="237.8" x2="555" y2="237.8" stroke="#2a1a0e"/>
+    <line x1="525" y1="311.1" x2="555" y2="311.1" stroke="#2a1a0e"/>
+    <!-- box Q1=26 (y=299.27), Q3=52 (y=268.55) -->
+    <rect x="515" y="268.5" width="50" height="30.7" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <!-- median 38 (y=285.09) -->
+    <line x1="515" y1="285.1" x2="565" y2="285.1" stroke="#2a1a0e" stroke-width="2"/>
+    <text x="540" y="348" text-anchor="middle" class="sm">Rural</text>
+  </g>
+
+  <!-- annotation arrow pointing at Inner Suburbs cluster -->
+  <path d="M 620 100 L 580 115 L 270 130" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar09a)"/>
+  <text x="640" y="92" text-anchor="end" class="lb">outlier cluster above whisker</text>
+  <text x="640" y="106" text-anchor="end" class="sm">bimodal sub-population,</text>
+  <text x="640" y="118" text-anchor="end" class="sm">or just a long tail?</text>
+
+  <!-- secondary callout: box plot cannot answer -->
+  <rect x="80" y="365" width="560" height="22" fill="#f5f2ee" stroke="#c8c4c0"/>
+  <text x="360" y="380" text-anchor="middle" class="q">The cluster is visible. What it means is not — two distributions can share a five-number summary.</text>
+
+  <text x="350" y="408" text-anchor="middle" class="cap">Tukey whiskers = most extreme value within 1.5 × IQR. Points beyond are outliers, not data extrema.</text>
+</svg>

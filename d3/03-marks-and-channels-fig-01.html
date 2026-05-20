@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 3.1 — Position versus luminance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 360px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .annotation { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 3.1 — Position vs luminance</h1>
+<p class="subtitle">Same fifty countries. Same question: which countries have the highest life expectancy? Position answers it in under a second; luminance does not.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Position encoding (rank 1)</div>
+    <div class="panel-sub">y-axis: life expectancy · x-axis: GDP per capita</div>
+    <div id="chartPos" class="chart" role="img" aria-labelledby="t-pos d-pos"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Luminance encoding (rank 6)</div>
+    <div class="panel-sub">all dots on one row · darker = higher life expectancy</div>
+    <div id="chartLum" class="chart" role="img" aria-labelledby="t-lum d-lum"></div>
+  </div>
+</div>
+<p class="caption">Each panel shows the same fifty country dots in the same x-order. The right panel collapses y-position and re-encodes the same life-expectancy value as dot luminance.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Generate 50 synthetic countries: GDP from 1 to 80 (thousands), LE biased upward with GDP.
+const rng = (() => { let s = 42; return () => (s = (s * 9301 + 49297) % 233280) / 233280; })();
+const countries = d3.range(50).map(i => {
+  const gdp = 1 + (i / 49) * 79 + (rng() - 0.5) * 6;
+  const baseLE = 52 + Math.log(gdp) * 7.2;
+  const le = Math.max(50, Math.min(85, baseLE + (rng() - 0.5) * 3.6));
+  return { id: i, gdp, le };
+});
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>Country ${d.id + 1}</strong><br>GDP/cap $${d.gdp.toFixed(1)}k<br>Life exp ${d.le.toFixed(1)} yrs`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawPosition() {
+  const sel = '#chartPos';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = container.clientWidth || 400, h = container.clientHeight || 360;
+  const margin = { top: 16, right: 16, bottom: 40, left: 44 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', 't-pos d-pos');
+  svg.append('title').attr('id', 't-pos').text('Position-encoded scatterplot of 50 countries');
+  svg.append('desc').attr('id', 'd-pos').text('Scatterplot with GDP per capita on x and life expectancy on y, showing the upward GDP-LE relationship.');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleLinear().domain([0, 85]).range([0, cw]).nice();
+  const y = d3.scaleLinear().domain([50, 85]).range([ch, 0]).nice();
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x).ticks(5).tickFormat(d => `$${d}k`));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5));
+  g.selectAll('circle').data(countries).join('circle')
+    .attr('cx', d => x(d.gdp)).attr('cy', d => y(d.le)).attr('r', 4)
+    .attr('fill', 'var(--color-ink)').attr('tabindex', 0)
+    .attr('aria-label', d => `Country ${d.id + 1}, GDP $${d.gdp.toFixed(1)}k, life expectancy ${d.le.toFixed(1)}`)
+    .on('mouseover', (event, d) => showTip(event, d))
+    .on('mousemove', moveTip)
+    .on('mouseout', hideTip);
+}
+
+function drawLuminance() {
+  const sel = '#chartLum';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = container.clientWidth || 400, h = container.clientHeight || 360;
+  const margin = { top: 80, right: 16, bottom: 40, left: 44 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', 't-lum d-lum');
+  svg.append('title').attr('id', 't-lum').text('Luminance-encoded line of 50 countries');
+  svg.append('desc').attr('id', 'd-lum').text('Single row of fifty country dots arranged by GDP on x, with life expectancy encoded as dot luminance.');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleLinear().domain([0, 85]).range([0, cw]).nice();
+  const lum = d3.scaleLinear().domain([50, 85]).range(['#e8e4df', '#1f1812']);
+  const yMid = ch / 2;
+  g.append('line').attr('x1', 0).attr('y1', yMid).attr('x2', cw).attr('y2', yMid).attr('stroke', 'var(--color-secondary)');
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch - 8})`).call(d3.axisBottom(x).ticks(5).tickFormat(d => `$${d}k`));
+  g.selectAll('circle').data(countries).join('circle')
+    .attr('cx', d => x(d.gdp)).attr('cy', yMid).attr('r', 6)
+    .attr('fill', d => lum(d.le)).attr('tabindex', 0)
+    .attr('aria-label', d => `Country ${d.id + 1}, life expectancy ${d.le.toFixed(1)}, encoded by luminance`)
+    .on('mouseover', (event, d) => showTip(event, d))
+    .on('mousemove', moveTip)
+    .on('mouseout', hideTip);
+  // legend
+  const lg = svg.append('g').attr('transform', `translate(${margin.left}, 24)`);
+  const defs = svg.append('defs');
+  const grad = defs.append('linearGradient').attr('id', 'lumGrad').attr('x1', '0%').attr('x2', '100%');
+  grad.append('stop').attr('offset', '0%').attr('stop-color', '#e8e4df');
+  grad.append('stop').attr('offset', '100%').attr('stop-color', '#1f1812');
+  lg.append('rect').attr('x', 0).attr('y', 4).attr('width', 160).attr('height', 10).attr('fill', 'url(#lumGrad)');
+  lg.append('text').attr('x', 0).attr('y', 30).attr('font-size', 11).attr('fill', 'var(--color-secondary)').text('low LE');
+  lg.append('text').attr('x', 160).attr('y', 30).attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-secondary)').text('high LE');
+}
+
+function drawAll() { drawPosition(); drawLuminance(); }
+drawAll();
+const ro = new ResizeObserver(drawAll);
+['#chartPos', '#chartLum'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

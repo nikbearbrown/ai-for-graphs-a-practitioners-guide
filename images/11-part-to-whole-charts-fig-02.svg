@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t11-02 d11-02">
+  <title id="t11-02">Pie vs waffle — angle channel vs position channel for the same five proportions</title>
+  <desc id="d11-02">Two panels of the same five-category distribution: a pie chart on the left encoding angle, a 10 by 10 waffle on the right encoding counted cells.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .onpie { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #fdfcfb; }
+    </style>
+    <marker id="ar11b" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+
+  <!-- LEFT — pie chart -->
+  <text x="32" y="32" class="ti">Pie — channel: angle</text>
+  <text x="32" y="48" class="sm">Cleveland &amp; McGill rank 4</text>
+
+  <!-- data: A 38, B 23, C 18, D 13, E 8 (sums to 100) -->
+  <!-- start at top (-90°), sweep clockwise. -->
+  <!-- A 38% -> 136.8° sweep, ends at theta=46.8 → (175 + 110*cos(46.8), 220 + 110*sin(46.8)) = (175 + 75.4, 220 + 80.2) = (250.4, 300.2) -->
+  <!-- B 23% -> 82.8° sweep, ends at theta=129.6 → (175 + 110*-0.637, 220 + 110*0.771) = (104.9, 304.8) -->
+  <!-- C 18% -> 64.8° sweep, ends at theta=194.4 → (175 + 110*-0.969, 220 + 110*-0.249) = (68.4, 192.6) -->
+  <!-- D 13% -> 46.8° sweep, ends at theta=241.2 → (175 + 110*-0.483, 220 + 110*-0.876) = (122.0, 123.6) -->
+  <!-- E 8% -> 28.8° sweep, ends at theta=270 → (175, 110) -->
+
+  <path d="M 175 220 L 175 110 A 110 110 0 0 1 250.4 300.2 Z" fill="#2a1a0e"/>
+  <path d="M 175 220 L 250.4 300.2 A 110 110 0 0 1 104.9 304.8 Z" fill="#4a4540"/>
+  <path d="M 175 220 L 104.9 304.8 A 110 110 0 0 1 68.4 192.6 Z" fill="#8a8480"/>
+  <path d="M 175 220 L 68.4 192.6 A 110 110 0 0 1 122.0 123.6 Z" fill="#a8a4a0"/>
+  <path d="M 175 220 L 122.0 123.6 A 110 110 0 0 1 175 110 Z" fill="#c8c4c0"/>
+
+  <!-- labels -->
+  <text x="195" y="222" text-anchor="middle" class="onpie">A 38%</text>
+  <text x="155" y="278" text-anchor="middle" class="onpie">B 23%</text>
+  <text x="115" y="218" text-anchor="middle" class="onpie">C 18%</text>
+  <text x="143" y="170" text-anchor="middle" class="onpie">D 13%</text>
+  <text x="172" y="132" text-anchor="middle" class="onpie">E 8%</text>
+
+  <!-- annotation: which is bigger, C or D? hard at small angles -->
+  <path d="M 280 145 L 145 150" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar11b)"/>
+  <text x="284" y="142" class="lb">eye estimates angle</text>
+  <text x="284" y="156" class="sm">5 vs 13 vs 18 — hard to rank</text>
+
+  <!-- divider -->
+  <line x1="350" y1="20" x2="350" y2="430" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT — waffle 10x10 -->
+  <text x="370" y="32" class="ti">Waffle — channel: counted cells (position)</text>
+  <text x="370" y="48" class="sm">Cleveland &amp; McGill rank 1; each cell = 1%</text>
+
+  <!-- 10x10 grid, cell 22x22, origin x=395, y=80 -->
+  <!-- Fill order: A 38 (rows 0..3 + 8 in row 4), B 23 (next 23 cells), C 18, D 13, E 8 -->
+  <!-- Strategy: row-major fill bottom-up to read like a stacked column. But waffle convention is often left-to-right top-to-bottom. We'll go top-to-bottom, left-to-right. -->
+  <!-- Cell coords: x = 395 + col*22, y = 80 + row*22 -->
+  <!-- We'll emit cells as rects in groups by category. -->
+
+  <g>
+    <!-- Category A: cells 0..37 (38 cells) -->
+    <g fill="#2a1a0e">
+      <!-- row 0 (cells 0..9) -->
+      <rect x="395" y="80" width="20" height="20"/><rect x="417" y="80" width="20" height="20"/><rect x="439" y="80" width="20" height="20"/><rect x="461" y="80" width="20" height="20"/><rect x="483" y="80" width="20" height="20"/><rect x="505" y="80" width="20" height="20"/><rect x="527" y="80" width="20" height="20"/><rect x="549" y="80" width="20" height="20"/><rect x="571" y="80" width="20" height="20"/><rect x="593" y="80" width="20" height="20"/>
+      <!-- row 1 (cells 10..19) -->
+      <rect x="395" y="102" width="20" height="20"/><rect x="417" y="102" width="20" height="20"/><rect x="439" y="102" width="20" height="20"/><rect x="461" y="102" width="20" height="20"/><rect x="483" y="102" width="20" height="20"/><rect x="505" y="102" width="20" height="20"/><rect x="527" y="102" width="20" height="20"/><rect x="549" y="102" width="20" height="20"/><rect x="571" y="102" width="20" height="20"/><rect x="593" y="102" width="20" height="20"/>
+      <!-- row 2 (cells 20..29) -->
+      <rect x="395" y="124" width="20" height="20"/><rect x="417" y="124" width="20" height="20"/><rect x="439" y="124" width="20" height="20"/><rect x="461" y="124" width="20" height="20"/><rect x="483" y="124" width="20" height="20"/><rect x="505" y="124" width="20" height="20"/><rect x="527" y="124" width="20" height="20"/><rect x="549" y="124" width="20" height="20"/><rect x="571" y="124" width="20" height="20"/><rect x="593" y="124" width="20" height="20"/>
+      <!-- row 3 (cells 30..37, only first 8) -->
+      <rect x="395" y="146" width="20" height="20"/><rect x="417" y="146" width="20" height="20"/><rect x="439" y="146" width="20" height="20"/><rect x="461" y="146" width="20" height="20"/><rect x="483" y="146" width="20" height="20"/><rect x="505" y="146" width="20" height="20"/><rect x="527" y="146" width="20" height="20"/><rect x="549" y="146" width="20" height="20"/>
+    </g>
+    <!-- Category B: 23 cells (38..60). row 3 cells 8..9, then row 4..6 full (30 cells) — that's 32 cells too many; let's count carefully: -->
+    <!-- 38..60 inclusive = 23 cells. row 3 has cells 30..39, so 38,39 are 2 cells. Row 4 (40..49) full = 10. Row 5 (50..59) full = 10. Row 6 cell 60 = 1. Total 23. -->
+    <g fill="#4a4540">
+      <rect x="571" y="146" width="20" height="20"/><rect x="593" y="146" width="20" height="20"/>
+      <rect x="395" y="168" width="20" height="20"/><rect x="417" y="168" width="20" height="20"/><rect x="439" y="168" width="20" height="20"/><rect x="461" y="168" width="20" height="20"/><rect x="483" y="168" width="20" height="20"/><rect x="505" y="168" width="20" height="20"/><rect x="527" y="168" width="20" height="20"/><rect x="549" y="168" width="20" height="20"/><rect x="571" y="168" width="20" height="20"/><rect x="593" y="168" width="20" height="20"/>
+      <rect x="395" y="190" width="20" height="20"/><rect x="417" y="190" width="20" height="20"/><rect x="439" y="190" width="20" height="20"/><rect x="461" y="190" width="20" height="20"/><rect x="483" y="190" width="20" height="20"/><rect x="505" y="190" width="20" height="20"/><rect x="527" y="190" width="20" height="20"/><rect x="549" y="190" width="20" height="20"/><rect x="571" y="190" width="20" height="20"/><rect x="593" y="190" width="20" height="20"/>
+      <rect x="395" y="212" width="20" height="20"/>
+    </g>
+    <!-- Category C: 18 cells (61..78). row 6: 61..69 = 9. row 7: 70..78 = 9. Total 18. -->
+    <g fill="#8a8480">
+      <rect x="417" y="212" width="20" height="20"/><rect x="439" y="212" width="20" height="20"/><rect x="461" y="212" width="20" height="20"/><rect x="483" y="212" width="20" height="20"/><rect x="505" y="212" width="20" height="20"/><rect x="527" y="212" width="20" height="20"/><rect x="549" y="212" width="20" height="20"/><rect x="571" y="212" width="20" height="20"/><rect x="593" y="212" width="20" height="20"/>
+      <rect x="395" y="234" width="20" height="20"/><rect x="417" y="234" width="20" height="20"/><rect x="439" y="234" width="20" height="20"/><rect x="461" y="234" width="20" height="20"/><rect x="483" y="234" width="20" height="20"/><rect x="505" y="234" width="20" height="20"/><rect x="527" y="234" width="20" height="20"/><rect x="549" y="234" width="20" height="20"/><rect x="571" y="234" width="20" height="20"/>
+    </g>
+    <!-- Category D: 13 cells (79..91). row 7: 79 = 1. row 8: 80..89 = 10. row 9: 90..91 = 2. Total 13. -->
+    <g fill="#a8a4a0">
+      <rect x="593" y="234" width="20" height="20"/>
+      <rect x="395" y="256" width="20" height="20"/><rect x="417" y="256" width="20" height="20"/><rect x="439" y="256" width="20" height="20"/><rect x="461" y="256" width="20" height="20"/><rect x="483" y="256" width="20" height="20"/><rect x="505" y="256" width="20" height="20"/><rect x="527" y="256" width="20" height="20"/><rect x="549" y="256" width="20" height="20"/><rect x="571" y="256" width="20" height="20"/><rect x="593" y="256" width="20" height="20"/>
+      <rect x="395" y="278" width="20" height="20"/><rect x="417" y="278" width="20" height="20"/>
+    </g>
+    <!-- Category E: 8 cells (92..99). row 9: 92..99 = 8 cells. -->
+    <g fill="#c8c4c0">
+      <rect x="439" y="278" width="20" height="20"/><rect x="461" y="278" width="20" height="20"/><rect x="483" y="278" width="20" height="20"/><rect x="505" y="278" width="20" height="20"/><rect x="527" y="278" width="20" height="20"/><rect x="549" y="278" width="20" height="20"/><rect x="571" y="278" width="20" height="20"/><rect x="593" y="278" width="20" height="20"/>
+    </g>
+  </g>
+
+  <!-- legend below waffle -->
+  <g transform="translate(395,320)">
+    <rect x="0"   y="0" width="14" height="14" fill="#2a1a0e"/><text x="20" y="12" class="sm">A 38%</text>
+    <rect x="55"  y="0" width="14" height="14" fill="#4a4540"/><text x="75" y="12" class="sm">B 23%</text>
+    <rect x="110" y="0" width="14" height="14" fill="#8a8480"/><text x="130" y="12" class="sm">C 18%</text>
+    <rect x="165" y="0" width="14" height="14" fill="#a8a4a0"/><text x="185" y="12" class="sm">D 13%</text>
+    <rect x="220" y="0" width="14" height="14" fill="#c8c4c0"/><text x="240" y="12" class="sm">E 8%</text>
+  </g>
+
+  <!-- callout on the waffle: each cell = 1% -->
+  <path d="M 660 95 L 622 100" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar11b)"/>
+  <text x="660" y="88" text-anchor="end" class="lb">each cell = 1%</text>
+  <text x="660" y="102" text-anchor="end" class="sm">count directly. no estimation.</text>
+
+  <text x="660" y="280" text-anchor="end" class="lb">C = 18 cells = 18%</text>
+
+  <!-- caption -->
+  <text x="350" y="450" text-anchor="middle" class="cap">The waffle chart trades familiarity for precision. The trade is worth making when the audience can decode it.</text>
+</svg>

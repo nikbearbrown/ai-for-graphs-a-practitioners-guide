@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t06-03 d06-03">
+  <title id="t06-03">The MBTA iteration loop</title>
+  <desc id="d06-03">A four-node circular flow diagram. Four-move prompt leads to a working chart in twelve seconds, then to a ninety-second audit using the Evergreen/Emery subset, then to a targeted follow-up prompt that returns to the working-chart node. A fifth node breaks out of the loop labeled "audit passes — publishable chart." Typical traversals are one to three iterations.</desc>
+  <defs>
+    <style>
+      .ti    { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb    { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm    { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap   { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .node  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+      .quote { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-style: italic; fill: #2a1a0e; }
+    </style>
+    <marker id="ar06c" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+  <text x="350" y="28" text-anchor="middle" class="ti">The MBTA iteration loop</text>
+  <text x="350" y="44" text-anchor="middle" class="cap">Iterate on the artifact, not the specification.</text>
+
+  <!-- Four-node loop laid out as diamond. Center: 290, 240. -->
+  <!-- (1) TOP — Four-move prompt -->
+  <g>
+    <rect x="200" y="80" width="180" height="56" fill="#f5f2ee" stroke="#4a4540" stroke-width="1"/>
+    <text x="290" y="103" text-anchor="middle" class="node">1. Four-move prompt</text>
+    <text x="290" y="120" text-anchor="middle" class="sm">show · say · constrain · verify</text>
+  </g>
+
+  <!-- (2) RIGHT — Working chart -->
+  <g>
+    <rect x="440" y="212" width="180" height="56" fill="#f5f2ee" stroke="#4a4540" stroke-width="1"/>
+    <text x="530" y="235" text-anchor="middle" class="node">2. Working chart</text>
+    <text x="530" y="252" text-anchor="middle" class="sm">≈ 12 seconds</text>
+  </g>
+
+  <!-- (3) BOTTOM — Audit -->
+  <g>
+    <rect x="200" y="344" width="180" height="56" fill="#f5f2ee" stroke="#4a4540" stroke-width="1"/>
+    <text x="290" y="367" text-anchor="middle" class="node">3. Audit</text>
+    <text x="290" y="384" text-anchor="middle" class="sm">Evergreen/Emery subset · ≈ 90s</text>
+  </g>
+
+  <!-- (4) LEFT — Targeted follow-up -->
+  <g>
+    <rect x="-40" y="212" width="200" height="56" fill="#f5f2ee" stroke="#4a4540" stroke-width="1"/>
+    <text x="60" y="235" text-anchor="middle" class="node">4. Targeted follow-up</text>
+    <text x="60" y="252" text-anchor="middle" class="sm">one concern · names the rule</text>
+  </g>
+
+  <!-- arrows between nodes -->
+  <!-- 1 → 2 -->
+  <path d="M 360 136 Q 470 170 470 212" fill="none" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar06c)"/>
+  <!-- 2 → 3 -->
+  <path d="M 470 268 Q 470 320 360 344" fill="none" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar06c)"/>
+  <!-- 3 → 4 -->
+  <path d="M 220 344 Q 110 320 110 268" fill="none" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar06c)"/>
+  <!-- 4 → 2 (back to working chart, not back to prompt) -->
+  <path d="M 160 240 L 440 240" fill="none" stroke="#2a1a0e" stroke-width="1.25" stroke-dasharray="5 3" marker-end="url(#ar06c)"/>
+  <text x="300" y="232" text-anchor="middle" class="sm">small targeted change · one concern per iteration</text>
+
+  <!-- (5) EXIT — Publishable -->
+  <g>
+    <rect x="468" y="380" width="200" height="40" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1.25"/>
+    <text x="568" y="405" text-anchor="middle" class="node">5. Publishable chart</text>
+  </g>
+  <!-- audit passes arrow from 3 to 5 -->
+  <path d="M 380 380 Q 420 400 468 400" fill="none" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar06c)"/>
+  <text x="424" y="376" text-anchor="middle" class="sm">audit passes</text>
+
+  <!-- Loop annotations -->
+  <text x="350" y="305" text-anchor="middle" class="sm">Typical traversals: 1–3 iterations.</text>
+  <text x="350" y="319" text-anchor="middle" class="sm">Order: structural failures before stylistic.</text>
+
+  <!-- MBTA quote -->
+  <text x="350" y="450" text-anchor="middle" class="quote">"Nothing beat iterating on working code."</text>
+  <text x="350" y="466" text-anchor="middle" class="sm">— Barry &amp; Card, 2014</text>
+</svg>

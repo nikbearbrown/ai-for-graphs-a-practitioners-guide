@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 460" role="img" aria-labelledby="t14-06 d14-06">
+  <title id="t14-06">Refugee data — choropleth misleads, bubble map matches</title>
+  <desc id="d14-06">Two world maps in Equal Earth projection with identical absolute refugee-count data. Left: choropleth — large land masses with few refugees draw the eye. Right: bubble map with d3.scaleSqrt — bubble area equals the count, severing the area-size distortion.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .land { stroke: #fdfcfb; stroke-width: 0.6; }
+      .outline { fill: #f4f1ec; stroke: #c8c4c0; stroke-width: 0.6; }
+    </style>
+    <marker id="ar14-06" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="760" height="460" fill="#fdfcfb"/>
+
+  <!-- LEFT: CHOROPLETH OF ABSOLUTE COUNTS -->
+  <text x="32" y="28" class="ti">Choropleth — absolute refugee count</text>
+  <text x="32" y="44" class="sm">Equal Earth · color encodes total count</text>
+
+  <g transform="translate(32,60)">
+    <rect x="0" y="0" width="340" height="280" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <!-- Canada — few refugees, large area, light fill but visually dominant -->
+    <path class="land" d="M 30 60 Q 80 48 145 52 Q 165 72 160 98 Q 120 112 70 108 Q 40 90 30 60 Z" fill="#ece8e3"/>
+    <!-- USA — moderate -->
+    <path class="land" d="M 45 110 Q 90 110 140 122 Q 140 142 115 150 Q 78 152 50 142 Q 38 128 45 110 Z" fill="#c8c4c0"/>
+    <!-- Russia — large area, few refugees -->
+    <path class="land" d="M 195 65 Q 245 55 305 65 Q 310 92 285 105 Q 240 108 200 98 Q 188 85 195 65 Z" fill="#ece8e3"/>
+    <!-- Europe (Germany etc) — moderate-high -->
+    <path class="land" d="M 170 108 Q 200 105 222 115 Q 220 130 205 138 Q 178 138 170 125 Z" fill="#8a8480"/>
+    <!-- Africa -->
+    <path class="land" d="M 180 142 Q 215 140 240 152 Q 248 195 232 232 Q 210 250 192 232 Q 170 195 180 142 Z" fill="#c8c4c0"/>
+    <!-- Uganda blob (within Africa, slightly highlighted) -->
+    <path class="land" d="M 215 175 L 225 175 L 228 188 L 218 188 Z" fill="#4a4540"/>
+    <!-- Turkey (highest) — small area, hardest to see -->
+    <path class="land" d="M 225 122 L 248 120 L 250 130 L 226 132 Z" fill="#2a1a0e"/>
+    <!-- South America -->
+    <path class="land" d="M 95 172 Q 118 170 135 188 Q 140 228 122 255 Q 105 248 96 218 Q 90 192 95 172 Z" fill="#ece8e3"/>
+    <!-- Asia -->
+    <path class="land" d="M 240 125 Q 285 122 320 138 Q 320 168 290 178 Q 252 178 240 165 Z" fill="#c8c4c0"/>
+    <!-- Pakistan -->
+    <path class="land" d="M 248 138 L 262 140 L 263 158 L 250 156 Z" fill="#4a4540"/>
+    <!-- India -->
+    <path class="land" d="M 262 168 Q 278 186 282 208 Q 270 218 260 198 Z" fill="#8a8480"/>
+    <!-- Australia — large, few refugees -->
+    <path class="land" d="M 268 218 Q 305 213 322 228 Q 318 246 295 250 Q 272 243 268 228 Z" fill="#ece8e3"/>
+    <!-- Indonesia -->
+    <path class="land" d="M 280 188 Q 300 188 315 198 Q 308 210 288 205 Z" fill="#ece8e3"/>
+  </g>
+
+  <!-- Legend left -->
+  <g transform="translate(32,348)">
+    <text x="0" y="0" class="sm">low</text>
+    <rect x="22" y="-9" width="18" height="11" fill="#ece8e3" stroke="#fdfcfb"/>
+    <rect x="40" y="-9" width="18" height="11" fill="#c8c4c0" stroke="#fdfcfb"/>
+    <rect x="58" y="-9" width="18" height="11" fill="#8a8480" stroke="#fdfcfb"/>
+    <rect x="76" y="-9" width="18" height="11" fill="#4a4540" stroke="#fdfcfb"/>
+    <rect x="94" y="-9" width="18" height="11" fill="#2a1a0e" stroke="#fdfcfb"/>
+    <text x="118" y="0" class="sm">high</text>
+    <text x="0" y="16" class="sm">absolute refugees hosted</text>
+  </g>
+
+  <!-- Annotation left -->
+  <path d="M 32 410 L 90 380 L 100 80" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-06)"/>
+  <text x="32" y="426" class="lb">Canada · few refugees, visually loud</text>
+  <path d="M 360 412 L 320 360 L 240 130" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-06)"/>
+  <text x="360" y="426" text-anchor="end" class="lb">Turkey · highest count, hardly visible</text>
+
+  <!-- divider -->
+  <line x1="384" y1="16" x2="384" y2="444" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT: BUBBLE MAP -->
+  <text x="404" y="28" class="ti">Bubble map — same data, d3.scaleSqrt radius</text>
+  <text x="404" y="44" class="sm">Equal Earth · circle area = absolute count</text>
+
+  <g transform="translate(400,60)">
+    <rect x="0" y="0" width="340" height="280" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <!-- Same outlines, neutral fill -->
+    <path class="outline" d="M 30 60 Q 80 48 145 52 Q 165 72 160 98 Q 120 112 70 108 Q 40 90 30 60 Z"/>
+    <path class="outline" d="M 45 110 Q 90 110 140 122 Q 140 142 115 150 Q 78 152 50 142 Q 38 128 45 110 Z"/>
+    <path class="outline" d="M 195 65 Q 245 55 305 65 Q 310 92 285 105 Q 240 108 200 98 Q 188 85 195 65 Z"/>
+    <path class="outline" d="M 170 108 Q 200 105 222 115 Q 220 130 205 138 Q 178 138 170 125 Z"/>
+    <path class="outline" d="M 180 142 Q 215 140 240 152 Q 248 195 232 232 Q 210 250 192 232 Q 170 195 180 142 Z"/>
+    <path class="outline" d="M 95 172 Q 118 170 135 188 Q 140 228 122 255 Q 105 248 96 218 Q 90 192 95 172 Z"/>
+    <path class="outline" d="M 240 125 Q 285 122 320 138 Q 320 168 290 178 Q 252 178 240 165 Z"/>
+    <path class="outline" d="M 262 168 Q 278 186 282 208 Q 270 218 260 198 Z"/>
+    <path class="outline" d="M 268 218 Q 305 213 322 228 Q 318 246 295 250 Q 272 243 268 228 Z"/>
+    <path class="outline" d="M 280 188 Q 300 188 315 198 Q 308 210 288 205 Z"/>
+    <!-- Bubbles at centroids — radius from sqrt(value). Largest = Turkey, then Iran, Colombia, Germany, Uganda, Pakistan. -->
+    <!-- Turkey (≈ 3.5M) — largest -->
+    <circle cx="236" cy="126" r="18" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <!-- Iran -->
+    <circle cx="250" cy="142" r="14" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <!-- Colombia -->
+    <circle cx="108" cy="180" r="12" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <!-- Germany -->
+    <circle cx="195" cy="120" r="11" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <!-- Pakistan -->
+    <circle cx="256" cy="150" r="11" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <!-- Uganda -->
+    <circle cx="222" cy="184" r="10" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <!-- Bangladesh (small) -->
+    <circle cx="282" cy="160" r="9"  fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <!-- Russia, Canada, Australia — tiny or absent (low count) -->
+    <circle cx="95" cy="80" r="2" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <circle cx="260" cy="85" r="2.5" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <circle cx="295" cy="232" r="2" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+  </g>
+
+  <!-- Legend right (scaled circles) -->
+  <g transform="translate(404,348)">
+    <text x="0" y="0" class="sm">count</text>
+    <circle cx="42" cy="-3" r="4" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <circle cx="70" cy="-3" r="8" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <circle cx="108" cy="-3" r="14" fill="#2a1a0e" fill-opacity="0.55" stroke="#2a1a0e"/>
+    <text x="138" y="0" class="sm">→ refugees hosted (area, not radius)</text>
+    <text x="0" y="16" class="sm">radius = √(value) so visual area ∝ count</text>
+  </g>
+
+  <!-- Annotation right -->
+  <path d="M 720 412 L 660 360 L 640 130" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-06)"/>
+  <text x="720" y="426" text-anchor="end" class="lb">Turkey · biggest bubble matches biggest count</text>
+  <path d="M 404 412 L 460 380 L 495 95" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-06)"/>
+  <text x="404" y="426" class="lb">Canada · tiny bubble, honest</text>
+
+  <!-- caption -->
+  <text x="380" y="448" text-anchor="middle" class="cap">Bubble area is independent of country area. The visual story now matches the data.</text>
+</svg>

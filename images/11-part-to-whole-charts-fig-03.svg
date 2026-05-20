@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t11-03 d11-03">
+  <title id="t11-03">Nightingale's polar area chart with the area-as-radius-squared distortion named</title>
+  <desc id="d11-03">A simplified rendering of Florence Nightingale's 1858 polar area chart showing twelve months of Crimean War mortality split into three causes, with a callout that the wedge area scales as the square of the radial length.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .mo { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; fill: #4a4540; }
+    </style>
+    <marker id="ar11c" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+
+  <text x="32" y="32" class="ti">Diagram of the causes of mortality in the army in the East (Nightingale, 1858)</text>
+  <text x="32" y="48" class="sm">Twelve months, three causes — preventable disease, wounds, other</text>
+
+  <!-- Polar chart: cx 270, cy 240, 12 wedges of 30° each, anchored at -90° (top), going clockwise. -->
+  <!-- For each wedge we need three radii (cumulative): disease (largest), then wounds, then other. -->
+  <!-- We'll render as: for each cause, a wedge with the appropriate outer radius. Order of rendering matters: render disease first (largest), then wounds (medium), then other (smallest) so the smaller ones sit on top. -->
+  <!-- Months Apr 1854..Mar 1855: roughly historical magnitudes (mortality / 1000 per month) -->
+  <!-- Disease radii (px): Apr 28, May 35, Jun 40, Jul 50, Aug 65, Sep 75, Oct 80, Nov 95, Dec 105, Jan 110, Feb 90, Mar 70 -->
+  <!-- Wounds radii (px): Apr 14, May 18, Jun 20, Jul 22, Aug 28, Sep 38, Oct 40, Nov 32, Dec 28, Jan 24, Feb 22, Mar 18 -->
+  <!-- Other radii  (px): Apr 8, May 10, Jun 11, Jul 13, Aug 15, Sep 18, Oct 20, Nov 18, Dec 16, Jan 14, Feb 12, Mar 10 -->
+
+  <!-- Compute wedge corners for each month k (0..11): theta1 = -90 + 30*k, theta2 = theta1 + 30 -->
+  <!-- For radius r: x1 = 270 + r*cos(theta1), y1 = 240 + r*sin(theta1); x2 = 270 + r*cos(theta2), y2 = 240 + r*sin(theta2) -->
+  <!-- We'll precompute angles in radians: -->
+  <!-- k=0: theta1=-90 (0,-1), theta2=-60 (0.5,-0.866) -->
+  <!-- k=1: -60→-30  (0.5,-0.866)→(0.866,-0.5) -->
+  <!-- k=2: -30→0    (0.866,-0.5)→(1,0) -->
+  <!-- k=3: 0→30     (1,0)→(0.866,0.5) -->
+  <!-- k=4: 30→60    (0.866,0.5)→(0.5,0.866) -->
+  <!-- k=5: 60→90    (0.5,0.866)→(0,1) -->
+  <!-- k=6: 90→120   (0,1)→(-0.5,0.866) -->
+  <!-- k=7: 120→150  (-0.5,0.866)→(-0.866,0.5) -->
+  <!-- k=8: 150→180  (-0.866,0.5)→(-1,0) -->
+  <!-- k=9: 180→210  (-1,0)→(-0.866,-0.5) -->
+  <!-- k=10: 210→240 (-0.866,-0.5)→(-0.5,-0.866) -->
+  <!-- k=11: 240→270 (-0.5,-0.866)→(0,-1) -->
+
+  <!-- DISEASE WEDGES (color: #2a1a0e dark) -->
+  <g fill="#2a1a0e" stroke="#fdfcfb" stroke-width="0.5">
+    <path d="M 270 240 L 270 212 A 28 28 0 0 1 294.2 225.9 Z"/>
+    <path d="M 270 240 L 287.5 209.7 A 35 35 0 0 1 300.3 222.5 Z"/>
+    <path d="M 270 240 L 304.6 220 A 40 40 0 0 1 310 240 Z"/>
+    <path d="M 270 240 L 320 240 A 50 50 0 0 1 313.3 265 Z"/>
+    <path d="M 270 240 L 326.3 272.5 A 65 65 0 0 1 302.5 296.3 Z"/>
+    <path d="M 270 240 L 307.5 304.95 A 75 75 0 0 1 270 315 Z"/>
+    <path d="M 270 240 L 270 320 A 80 80 0 0 1 230.7 309.3 Z"/>
+    <path d="M 270 240 L 222.5 322.3 A 95 95 0 0 1 187.7 287.5 Z"/>
+    <path d="M 270 240 L 179.05 292.5 A 105 105 0 0 1 165 240 Z"/>
+    <path d="M 270 240 L 160 240 A 110 110 0 0 1 174.74 185 Z"/>
+    <path d="M 270 240 L 192.06 197.06 A 90 90 0 0 1 225 161.97 Z"/>
+    <path d="M 270 240 L 235 179.38 A 70 70 0 0 1 270 170 Z"/>
+  </g>
+
+  <!-- WOUNDS WEDGES (color: #8a8480 lighter gray) -->
+  <g fill="#8a8480" stroke="#fdfcfb" stroke-width="0.5">
+    <path d="M 270 240 L 270 226 A 14 14 0 0 1 282.12 232.99 Z"/>
+    <path d="M 270 240 L 279 224.41 A 18 18 0 0 1 285.59 231 Z"/>
+    <path d="M 270 240 L 287.32 230 A 20 20 0 0 1 290 240 Z"/>
+    <path d="M 270 240 L 292 240 A 22 22 0 0 1 289.06 251 Z"/>
+    <path d="M 270 240 L 294.25 254 A 28 28 0 0 1 283.99 264.25 Z"/>
+    <path d="M 270 240 L 289 272.91 A 38 38 0 0 1 270 278 Z"/>
+    <path d="M 270 240 L 270 280 A 40 40 0 0 1 250.4 274.64 Z"/>
+    <path d="M 270 240 L 254 267.71 A 32 32 0 0 1 242.29 256 Z"/>
+    <path d="M 270 240 L 245.76 254 A 28 28 0 0 1 242 240 Z"/>
+    <path d="M 270 240 L 246 240 A 24 24 0 0 1 249.22 228 Z"/>
+    <path d="M 270 240 L 250.94 229 A 22 22 0 0 1 259.36 220.64 Z"/>
+    <path d="M 270 240 L 261 224.41 A 18 18 0 0 1 270 222 Z"/>
+  </g>
+
+  <!-- OTHER WEDGES (color: #c8c4c0 lightest) -->
+  <g fill="#c8c4c0" stroke="#fdfcfb" stroke-width="0.5">
+    <path d="M 270 240 L 270 232 A 8 8 0 0 1 276.93 236 Z"/>
+    <path d="M 270 240 L 275 231.34 A 10 10 0 0 1 278.66 235 Z"/>
+    <path d="M 270 240 L 279.53 234.5 A 11 11 0 0 1 281 240 Z"/>
+    <path d="M 270 240 L 283 240 A 13 13 0 0 1 281.26 246.5 Z"/>
+    <path d="M 270 240 L 282.99 247.5 A 15 15 0 0 1 277.5 252.99 Z"/>
+    <path d="M 270 240 L 279 255.59 A 18 18 0 0 1 270 258 Z"/>
+    <path d="M 270 240 L 270 260 A 20 20 0 0 1 260.2 257.32 Z"/>
+    <path d="M 270 240 L 261 255.59 A 18 18 0 0 1 254.41 249 Z"/>
+    <path d="M 270 240 L 256.14 248 A 16 16 0 0 1 254 240 Z"/>
+    <path d="M 270 240 L 256 240 A 14 14 0 0 1 257.88 233 Z"/>
+    <path d="M 270 240 L 259.61 234.5 A 12 12 0 0 1 264.2 229.94 Z"/>
+    <path d="M 270 240 L 265 231.34 A 10 10 0 0 1 270 230 Z"/>
+  </g>
+
+  <!-- month labels around the outside (small) -->
+  <g class="mo">
+    <text x="270" y="120" text-anchor="middle">Apr</text>
+    <text x="345" y="143" text-anchor="middle">May</text>
+    <text x="395" y="195" text-anchor="middle">Jun</text>
+    <text x="412" y="244" text-anchor="middle">Jul</text>
+    <text x="395" y="296" text-anchor="middle">Aug</text>
+    <text x="345" y="348" text-anchor="middle">Sep</text>
+    <text x="270" y="368" text-anchor="middle">Oct</text>
+    <text x="195" y="348" text-anchor="middle">Nov</text>
+    <text x="142" y="296" text-anchor="middle">Dec</text>
+    <text x="125" y="244" text-anchor="middle">Jan</text>
+    <text x="142" y="195" text-anchor="middle">Feb</text>
+    <text x="195" y="143" text-anchor="middle">Mar</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(440,90)">
+    <text x="0" y="0" class="lb">Cause of death</text>
+    <rect x="0"  y="14" width="14" height="14" fill="#2a1a0e"/><text x="20" y="26" class="sm">Preventable disease</text>
+    <rect x="0"  y="34" width="14" height="14" fill="#8a8480"/><text x="20" y="46" class="sm">Wounds from battle</text>
+    <rect x="0"  y="54" width="14" height="14" fill="#c8c4c0"/><text x="20" y="66" class="sm">Other causes</text>
+  </g>
+
+  <!-- Annotation 1: area scales as r² -->
+  <path d="M 480 200 L 200 195" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar11c)"/>
+  <text x="485" y="190" class="lb">wedge twice as long</text>
+  <text x="485" y="204" class="sm">appears ≈ 4× larger in area</text>
+  <text x="485" y="216" class="sm">(area ∝ r²)</text>
+
+  <!-- Annotation 2: context -->
+  <g transform="translate(440,260)">
+    <rect width="225" height="74" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="12" y="20" class="lb">Context: advocacy for sanitary reform</text>
+    <text x="12" y="36" class="sm">The visual force was the point.</text>
+    <text x="12" y="50" class="sm">Nightingale knew about the distortion.</text>
+    <text x="12" y="64" class="sm">She used the form anyway, and was right to.</text>
+  </g>
+
+  <!-- caption -->
+  <text x="350" y="440" text-anchor="middle" class="cap">The conditions that made the choice defensible are named in this chapter.</text>
+</svg>

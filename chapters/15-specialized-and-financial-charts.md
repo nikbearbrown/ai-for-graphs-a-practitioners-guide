@@ -14,7 +14,8 @@ This is what specialized chart conventions earn. They encode information that st
 
 This chapter is about that compact — where it works, and where it fails.
 
-<!-- → [IMAGE: single candlestick period annotated with all four OHLC values — body top labeled "Close (or Open if down-period)," body bottom labeled "Open (or Close if down-period)," upper wick top labeled "High," lower wick bottom labeled "Low," body fill color labeled "Direction: green = close > open, red = close < open." A second panel shows a line chart of closing prices for the same time series. Caption: "The candlestick encodes four variables per period; the line chart encodes one. The efficiency is the convention's claim to exist."] -->
+![Two panels showing a single annotated candlestick on the left — body top labeled close, body bottom labeled open, upper wick reaching the high, lower wick reaching the low, and body color encoding direction — and on the right a line chart of closing prices for the same eight periods, which shows the trend but discards the within-period range and direction.](../images/15-specialized-and-financial-charts-fig-01.png)
+*Figure 15.1 — Candlestick anatomy versus a closing-price line chart. Four variables per glyph versus one.*
 
 ---
 
@@ -82,7 +83,8 @@ The design decisions in a bullet graph are deliberate. The background bands shou
 
 The pantry's `bullet-graph.html` shows the standard Few-original form. Compare it to any gauge chart you can find and the argument becomes empirical rather than rhetorical.
 
-<!-- → [IMAGE: side-by-side comparison of the same KPI rendered as a gauge chart and as a bullet graph — left: semicircular gauge dial with needle at 87%, decorative face, red-yellow-green arcs, legend below; right: horizontal bullet graph with dark bar to 87%, small vertical tick at target (85%), three sequential-luminance background bands, direct value label. Annotations: on the gauge, "Angular position: Cleveland & McGill rank 4." On the bullet: "Position along common scale: Cleveland & McGill rank 1." A size comparison at the bottom shows the gauge occupying ~6× the vertical space of the bullet. Caption: "Same data. The bullet graph is more accurate and uses less space. Few's argument is not stylistic."] -->
+![Side-by-side comparison: a semicircular gauge with a needle at 87 percent and three sequential-luminance arcs on the left, and a horizontal bullet graph for the same KPI on the right — bar to 87, target tick at 85, three luminance bands behind. Footprint annotations show the bullet graph occupies a fraction of the gauge's vertical space.](../images/15-specialized-and-financial-charts-fig-02.png)
+*Figure 15.2 — Gauge chart versus bullet graph. Position outranks angle; the bullet wins on accuracy and on pixels.*
 
 ---
 
@@ -104,7 +106,8 @@ Small multiples are the most conservative alternative: one bar chart per dimensi
 
 Radar charts earn their use when the audience has the graphicacy to decode them, the polygon shape reflects a meaningful conceptual grouping, and the goal is a gestalt comparison across a small number of observations (three or four overlapping polygons remain readable; eight become a tangled web). They fail when the axis order is arbitrary, when the polygon count is high, or when the audience lacks radar-chart literacy.
 
-<!-- → [IMAGE: three-panel radar chart demonstration — all three panels use the same six-attribute dataset for the same three observations. Left: axes in original order (Speed, Strength, Endurance, Agility, Technique, Recovery). Center: axes reordered (Strength, Recovery, Speed, Technique, Endurance, Agility). Right: axes reordered again (Agility, Endurance, Recovery, Speed, Technique, Strength). The polygon shapes in all three panels look meaningfully different despite representing identical data. Caption: "Same data. Three axis orders. Three different-looking performance profiles. The shape is not the data — it is the axis order."] -->
+![Three radar charts of the same six attribute values for one observation, drawn in three different axis orders. The polygons look meaningfully different despite encoding identical numbers — a visible demonstration that the chart's "shape" is partly a design decision, not the data.](../images/15-specialized-and-financial-charts-fig-03.png)
+*Figure 15.3 — Same data, three axis orders, three shapes. The polygon you read is partly the axis order.*
 
 ---
 
@@ -132,7 +135,8 @@ The test is always: what specific analytical question does this form answer bett
 
 When the answer to the test is "it looks more professional" or "it looks more sophisticated," the specialized form is decorative. The standard alternative is almost certainly better.
 
-<!-- → [INFOGRAPHIC: the earn-your-strangeness decision tree — root: "Does this form answer a specific analytical question better than any standard chart?" Yes branch: "Is the audience familiar with the convention?" Yes → use the specialized form with documentation. No → provide the convention explanation. No branch: "Why are you using this form?" → "It looks professional" → replace with the standard form. Two example paths labeled: Candlestick (yes/yes → use it) and Gauge chart (no → replace with bullet graph). Caption: "The test is the discipline. Specialization earns its cost or it doesn't."] -->
+![A decision tree starting from a root question about whether a specialized form answers an analytical question better than a standard chart; the yes branch leads to an audience-graphicacy check, the no branch leads to replacement with a standard form. Two example paths are traced: candlestick (yes/yes → use it) and gauge (no → replace with a bullet graph).](../images/15-specialized-and-financial-charts-fig-04.png)
+*Figure 15.4 — The earn-your-strangeness decision tree. The test is the discipline.*
 
 ---
 
@@ -292,6 +296,50 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 ---
 
 *Tags: specialized-charts, candlestick, OHLC, Kagi, Point-and-Figure, bullet-graph, Few, radar-chart, spider-chart, polar-area, Nightingale, axis-order-problem, Cleveland-McGill, position-vs-angle, dashboard, D3, Claude-Code*
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 15.1 — Candlestick anatomy versus a line chart
+
+Build a two-panel D3 v7 figure. Panel A: a single annotated candlestick for one up-period (open 110, high 119, low 109, close 117) plotted against a price y-axis spanning roughly 100 to 122. Render the body as a hollow rectangle stroked in var(--color-ink) for the up direction; render upper and lower wicks as vertical lines from the body edges to the high and the low. Label four price points to the right of the body — High (119), Close (117), Open (110), Low (109) — with short dashed guide lines from each label back to the price level. Below the candle, include a legend chip for hollow up / filled down. Panel B: a line chart of eight closing prices for the same time series — periods t1 through t8, closes 106, 110, 117, 113, 116, 112, 109, 114. Highlight the t3 datapoint (which corresponds to Panel A's candle) in var(--color-red). Both panels share a price y-axis range. Use Inter for labels, JetBrains Mono for ticks, EB Garamond for the page heading. Standalone HTML, D3 7.9.0 from cdnjs, inline CSS/JS, accessible markup (role="img", title, desc), tooltips on hover, ResizeObserver redraw, dark-mode CSS variables.
+
+> Reference implementation: `d3/15-specialized-and-financial-charts-fig-01.html`
+
+---
+
+### Figure 15.2 — Gauge chart versus bullet graph
+
+Build a two-panel D3 v7 figure comparing the same KPI (actual 87, target 85, scale 0–100, bands at 0–60 / 60–85 / 85–100) rendered as a gauge chart and as a bullet graph. Panel A: a flat-bottom semicircular gauge with three sequential-luminance arc bands (light → mid → dark gray), a needle from the center to 87 stroked in var(--color-ink), a target tick at 85 stroked in var(--color-red), tick labels at 0, 50, 100, and a centered value label below the dial. Panel B: a horizontal bullet graph — three sequential-luminance band rectangles spanning 0–60, 60–85, 85–100; a primary bar from 0 to 87 in var(--color-ink) overlaid at the bullet's center; a vertical target tick at 85 in var(--color-red); axis ticks at 0, 25, 50, 75, 100. Annotate Panel A with "Needle angle → Cleveland & McGill rank 4" and Panel B with "Bar endpoint → Cleveland & McGill rank 1." Both panels should make the gauge's larger footprint visible. Standalone HTML, D3 7.9.0 from cdnjs, inline CSS/JS, accessible, tooltips on bands and bar, ResizeObserver redraw, dark-mode CSS variables.
+
+> Reference implementation: `d3/15-specialized-and-financial-charts-fig-02.html`
+
+---
+
+### Figure 15.3 — Radar chart axis-order failure
+
+Build a three-panel D3 v7 figure rendering the same six attribute values for one observation in three different axis orders. Values held constant across all three panels: Speed 70, Strength 90, Endurance 55, Agility 80, Technique 60, Recovery 40. Panel A axis order: Speed, Strength, Endurance, Agility, Technique, Recovery. Panel B axis order: Strength, Recovery, Speed, Technique, Endurance, Agility. Panel C axis order: Agility, Endurance, Recovery, Speed, Technique, Strength. Each radar panel uses four concentric grid rings (25%, 50%, 75%, 100% of max=100), six spokes at 60° increments starting from the top, a polygon for the observation filled at low opacity in var(--color-ink) with a 1.6 px var(--color-ink) stroke, and small data-point markers at each vertex (hoverable, tooltip showing attribute and value). Axis labels positioned just beyond the outer ring, anchored by quadrant. Standalone HTML, D3 7.9.0 from cdnjs, inline CSS/JS, accessible, ResizeObserver redraw, dark-mode CSS variables.
+
+> Reference implementation: `d3/15-specialized-and-financial-charts-fig-03.html`
+
+---
+
+### Figure 15.4 — The earn-your-strangeness decision tree
+
+Build a single-panel D3 v7 infographic rendering a decision tree as boxed nodes connected by labeled edges. Root node centered at the top: "Does this form answer a specific analytical question better than any standard chart?" Two child branches labeled YES (left) and NO (right). The YES branch leads to "Is the audience familiar with the convention?" with two children: YES → "Use the specialized form / document the convention briefly" and NO → "Teach the convention first / or pick a standard alternative." The NO branch leads to "Why are you using this form? / 'It looks professional' is not an answer" with one outcome: "Replace with the standard form / the specialized look is decoration, not signal." Below the tree, render two side-by-side example boxes (var(--color-ochre) dashed border) — one tracing the candlestick path (YES, YES → use it), one tracing the gauge path (NO → replace with bullet graph). Each example shows the two question answers as bullet lines and the outcome as a bold final line. Nodes are rectangles with var(--color-ink) strokes; edges are arrows via a defs marker. Standalone HTML, D3 7.9.0 from cdnjs, inline CSS/JS, accessible (each node tabindex and aria-label), tooltips on node hover, ResizeObserver redraw, dark-mode CSS variables.
+
+> Reference implementation: `d3/15-specialized-and-financial-charts-fig-04.html`
 
 ---
 

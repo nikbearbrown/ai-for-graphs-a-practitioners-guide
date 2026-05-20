@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 14.2 — Four geographic forms</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-card { border: 1px solid var(--color-border); padding: 20px; background: var(--color-white); display: grid; grid-template-rows: auto auto 1fr auto; gap: 8px; }
+  .form-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; letter-spacing: 1px; color: var(--color-ink); }
+  .form-channel { color: var(--color-secondary); font-size: 12px; }
+  .thumb { width: 100%; height: 120px; }
+  .use-when { border-top: 1px solid var(--color-border); padding-top: 8px; }
+  .use-when .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px; color: var(--color-secondary); }
+  .use-when p { font-size: 13px; margin-top: 4px; }
+  .axis-line { stroke: var(--color-border); stroke-width: 0.5; }
+  .land-stub { fill: #F4F1EC; stroke: var(--color-border); stroke-width: 0.6; }
+  .scale-tile { stroke: var(--color-white); stroke-width: 0.6; }
+  .dot { fill: var(--color-ink); }
+  .flow { stroke: var(--color-ink); fill: none; }
+  .bubble { fill: var(--color-ink); fill-opacity: 0.55; stroke: var(--color-ink); }
+  .pump { fill: none; stroke: var(--color-ochre); stroke-width: 1.5; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 14.2 — Four geographic forms</h1>
+<p class="subtitle">Reference grid: one card per spatial form. The data type and the reader's question choose the form — never the other way around.</p>
+<div id="grid">
+  <div class="form-card">
+    <div class="form-name">CHOROPLETH</div>
+    <div class="form-channel">channel: color luminance · mark: region polygon</div>
+    <svg class="thumb" id="thumbChoro" viewBox="0 0 280 120" role="img" aria-label="Choropleth thumbnail — grid of tiles shaded with sequential luminance"></svg>
+    <div class="use-when">
+      <div class="label">USE WHEN</div>
+      <p>Rate data (per capita, percent). Regions are roughly comparable in area.</p>
+    </div>
+  </div>
+  <div class="form-card">
+    <div class="form-name">DOT DENSITY</div>
+    <div class="form-channel">channel: point count · mark: single point per event</div>
+    <svg class="thumb" id="thumbDots" viewBox="0 0 280 120" role="img" aria-label="Dot density thumbnail — cluster of dots around a single point"></svg>
+    <div class="use-when">
+      <div class="label">USE WHEN</div>
+      <p>Absolute count at point level. Spatial pattern is sub-regional.</p>
+    </div>
+  </div>
+  <div class="form-card">
+    <div class="form-name">BUBBLE MAP</div>
+    <div class="form-channel">channel: circle area · mark: circle at centroid (d3.scaleSqrt)</div>
+    <svg class="thumb" id="thumbBubbles" viewBox="0 0 280 120" role="img" aria-label="Bubble map thumbnail — sized circles over schematic country outlines"></svg>
+    <div class="use-when">
+      <div class="label">USE WHEN</div>
+      <p>Absolute magnitude per region. You need to sever the area-size distortion.</p>
+    </div>
+  </div>
+  <div class="form-card">
+    <div class="form-name">CONNECTION · FLOW</div>
+    <div class="form-channel">channel: line width · mark: line between locations</div>
+    <svg class="thumb" id="thumbFlow" viewBox="0 0 280 120" role="img" aria-label="Connection map thumbnail — curved lines between origin and destination points"></svg>
+    <div class="use-when">
+      <div class="label">USE WHEN</div>
+      <p>Origin–destination data. Top-N filter mitigates spaghetti.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const SHADES = ['#ECE8E3', '#C8C4C0', '#8A8480', '#4A4540', '#2A1A0E'];
+
+function drawChoroplethThumb() {
+  const svg = d3.select('#thumbChoro');
+  const tileW = 28, tileH = 22, cols = 8, rows = 4;
+  const offsetX = (280 - cols * tileW) / 2, offsetY = (120 - rows * tileH) / 2;
+  const pattern = [
+    [0,1,2,3,2,1,0,0],
+    [1,2,3,4,3,2,1,0],
+    [2,3,4,4,3,2,1,1],
+    [1,2,3,3,2,1,0,0]
+  ];
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    svg.append('rect').attr('class', 'scale-tile')
+      .attr('x', offsetX + c * tileW).attr('y', offsetY + r * tileH)
+      .attr('width', tileW - 1).attr('height', tileH - 1)
+      .attr('fill', SHADES[pattern[r][c]]);
+  }
+}
+
+function drawDotsThumb() {
+  const svg = d3.select('#thumbDots');
+  // street grid hint
+  svg.append('line').attr('class', 'axis-line').attr('x1', 0).attr('y1', 60).attr('x2', 280).attr('y2', 60);
+  svg.append('line').attr('class', 'axis-line').attr('x1', 140).attr('y1', 0).attr('x2', 140).attr('y2', 120);
+  // cluster
+  const rng = d3.randomNormal.source(d3.randomLcg(42))(140, 8);
+  const rng2 = d3.randomNormal.source(d3.randomLcg(99))(60, 6);
+  for (let i = 0; i < 60; i++) {
+    svg.append('circle').attr('class', 'dot').attr('r', 1.6).attr('cx', rng()).attr('cy', rng2());
+  }
+  // sparse
+  const sparse = [[30,18],[44,90],[60,28],[80,98],[210,30],[230,90],[250,40],[265,86],[20,60],[260,60]];
+  sparse.forEach(([x,y]) => svg.append('circle').attr('class', 'dot').attr('r', 1.4).attr('cx', x).attr('cy', y).attr('opacity', 0.7));
+  svg.append('circle').attr('class', 'pump').attr('cx', 140).attr('cy', 60).attr('r', 10);
+}
+
+function drawBubblesThumb() {
+  const svg = d3.select('#thumbBubbles');
+  // schematic countries
+  const polys = [
+    'M 12 24 L 60 18 L 78 40 L 50 56 L 20 50 Z',
+    'M 88 22 L 138 18 L 156 44 L 130 60 L 96 52 Z',
+    'M 168 24 L 220 22 L 230 50 L 200 62 L 175 56 Z',
+    'M 18 70 L 70 70 L 80 96 L 30 102 Z',
+    'M 100 76 L 158 76 L 170 102 L 108 106 Z',
+    'M 188 76 L 248 78 L 250 104 L 200 108 Z'
+  ];
+  polys.forEach(p => svg.append('path').attr('class', 'land-stub').attr('d', p));
+  // bubbles (sized sqrt)
+  const bubbles = [
+    [44, 38, 14], [120, 38, 9], [200, 42, 6],
+    [48, 85, 7], [134, 90, 12], [218, 92, 4]
+  ];
+  bubbles.forEach(([x, y, r]) => svg.append('circle').attr('class', 'bubble').attr('cx', x).attr('cy', y).attr('r', r));
+}
+
+function drawFlowThumb() {
+  const svg = d3.select('#thumbFlow');
+  const polys = [
+    'M 12 28 L 56 22 L 70 46 L 40 60 L 18 52 Z',
+    'M 90 28 L 138 22 L 152 50 L 124 64 L 96 56 Z',
+    'M 170 28 L 218 26 L 230 50 L 198 62 L 178 56 Z',
+    'M 24 78 L 74 78 L 82 100 L 32 104 Z',
+    'M 110 80 L 160 80 L 170 102 L 118 106 Z',
+    'M 192 80 L 244 82 L 246 104 L 202 108 Z'
+  ];
+  polys.forEach(p => svg.append('path').attr('class', 'land-stub').attr('d', p));
+  // nodes
+  const nodes = [[40, 40], [122, 42], [200, 44], [48, 88], [134, 90], [218, 92]];
+  nodes.forEach(([x, y]) => svg.append('circle').attr('class', 'dot').attr('r', 2.5).attr('cx', x).attr('cy', y));
+  // flows
+  const flows = [
+    { from: 0, to: 1, w: 3.5 },
+    { from: 1, to: 2, w: 2.5 },
+    { from: 3, to: 1, w: 1.5 },
+    { from: 4, to: 5, w: 2 },
+    { from: 0, to: 3, w: 1 }
+  ];
+  flows.forEach(f => {
+    const [x1, y1] = nodes[f.from], [x2, y2] = nodes[f.to];
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2 - 18;
+    svg.append('path').attr('class', 'flow')
+      .attr('d', `M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`)
+      .attr('stroke-width', f.w).attr('opacity', 0.7);
+  });
+}
+
+drawChoroplethThumb();
+drawDotsThumb();
+drawBubblesThumb();
+drawFlowThumb();
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t08-02 d08-02">
+  <title id="t08-02">The seven temporal chart forms and the question each answers</title>
+  <desc id="d08-02">Seven thumbnails, one per temporal form: line, area, stacked area, stream graph, spiral plot, Gantt chart, timeline. Each panel names the primary channel and the use-when condition.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .name { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; letter-spacing: 0.06em; }
+    </style>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+  <text x="350" y="28" text-anchor="middle" class="ti">Seven temporal forms — each is the right answer to a different question</text>
+
+  <!-- Panel layout: 4 columns top row (x = 16,184,352,520), 3 columns bottom row (x = 100,268,436,604 → centered: 86,254,422) -->
+  <!-- panel width 160, height 180; thumbnail box 144×84 -->
+
+  <!-- 1. LINE CHART -->
+  <g transform="translate(16,48)">
+    <rect width="160" height="184" fill="none" stroke="#c8c4c0"/>
+    <text x="8" y="14" class="name">LINE CHART</text>
+    <!-- thumbnail -->
+    <g transform="translate(8,22)">
+      <rect width="144" height="84" fill="none" stroke="#c8c4c0"/>
+      <line x1="6" y1="78" x2="138" y2="78" stroke="#8a8480"/>
+      <polyline points="6,62 26,52 46,58 66,40 86,46 106,28 126,34 138,18"
+                fill="none" stroke="#2a1a0e" stroke-width="1.4"/>
+    </g>
+    <text x="8" y="124" class="lb">channel:</text>
+    <text x="8" y="138" class="sm">point position</text>
+    <text x="8" y="156" class="lb">use when:</text>
+    <text x="8" y="170" class="sm">trajectory — slope,</text>
+    <text x="8" y="182" class="sm">inflection, trend</text>
+  </g>
+
+  <!-- 2. AREA CHART -->
+  <g transform="translate(184,48)">
+    <rect width="160" height="184" fill="none" stroke="#c8c4c0"/>
+    <text x="8" y="14" class="name">AREA CHART</text>
+    <g transform="translate(8,22)">
+      <rect width="144" height="84" fill="none" stroke="#c8c4c0"/>
+      <line x1="6" y1="78" x2="138" y2="78" stroke="#8a8480"/>
+      <path d="M 6,62 L 26,52 L 46,58 L 66,40 L 86,46 L 106,28 L 126,34 L 138,18 L 138,78 L 6,78 Z"
+            fill="#8a8480" fill-opacity="0.55" stroke="#2a1a0e" stroke-width="1.2"/>
+    </g>
+    <text x="8" y="124" class="lb">channel:</text>
+    <text x="8" y="138" class="sm">area (zero baseline)</text>
+    <text x="8" y="156" class="lb">use when:</text>
+    <text x="8" y="170" class="sm">magnitude — how much</text>
+    <text x="8" y="182" class="sm">accumulated</text>
+  </g>
+
+  <!-- 3. STACKED AREA -->
+  <g transform="translate(352,48)">
+    <rect width="160" height="184" fill="none" stroke="#c8c4c0"/>
+    <text x="8" y="14" class="name">STACKED AREA</text>
+    <g transform="translate(8,22)">
+      <rect width="144" height="84" fill="none" stroke="#c8c4c0"/>
+      <line x1="6" y1="78" x2="138" y2="78" stroke="#8a8480"/>
+      <!-- 3 layers -->
+      <path d="M 6,68 L 26,64 L 46,66 L 66,60 L 86,62 L 106,56 L 126,58 L 138,52 L 138,78 L 6,78 Z" fill="#2a1a0e"/>
+      <path d="M 6,58 L 26,52 L 46,56 L 66,46 L 86,50 L 106,42 L 126,46 L 138,38 L 138,52 L 126,58 L 106,56 L 86,62 L 66,60 L 46,66 L 26,64 L 6,68 Z" fill="#4a4540"/>
+      <path d="M 6,46 L 26,38 L 46,44 L 66,30 L 86,36 L 106,26 L 126,32 L 138,22 L 138,38 L 126,46 L 106,42 L 86,50 L 66,46 L 46,56 L 26,52 L 6,58 Z" fill="#8a8480"/>
+    </g>
+    <text x="8" y="124" class="lb">channel:</text>
+    <text x="8" y="138" class="sm">position + area</text>
+    <text x="8" y="156" class="lb">use when:</text>
+    <text x="8" y="170" class="sm">composition + total</text>
+    <text x="8" y="182" class="sm">(most stable at bottom)</text>
+  </g>
+
+  <!-- 4. STREAM GRAPH -->
+  <g transform="translate(520,48)">
+    <rect width="160" height="184" fill="none" stroke="#c8c4c0"/>
+    <text x="8" y="14" class="name">STREAM GRAPH</text>
+    <g transform="translate(8,22)">
+      <rect width="144" height="84" fill="none" stroke="#c8c4c0"/>
+      <!-- centered baseline at y=42 -->
+      <line x1="6" y1="42" x2="138" y2="42" stroke="#c8c4c0" stroke-dasharray="2 2"/>
+      <!-- 3 stacked layers centered -->
+      <path d="M 6,46 Q 30,52 60,48 T 138,54 L 138,38 Q 110,30 60,36 T 6,38 Z" fill="#2a1a0e"/>
+      <path d="M 6,38 Q 30,30 60,36 T 138,38 L 138,28 Q 110,20 60,28 T 6,30 Z" fill="#4a4540"/>
+      <path d="M 6,30 Q 30,22 60,28 T 138,28 L 138,16 Q 110,10 60,18 T 6,22 Z" fill="#8a8480"/>
+      <path d="M 6,46 Q 30,52 60,48 T 138,54 L 138,62 Q 110,68 60,60 T 6,56 Z" fill="#4a4540"/>
+      <path d="M 6,56 Q 30,62 60,60 T 138,62 L 138,72 Q 110,76 60,70 T 6,66 Z" fill="#8a8480"/>
+    </g>
+    <text x="8" y="124" class="lb">channel:</text>
+    <text x="8" y="138" class="sm">area, centered baseline</text>
+    <text x="8" y="156" class="lb">use when:</text>
+    <text x="8" y="170" class="sm">rhetorical rise/fall</text>
+    <text x="8" y="182" class="sm">(precision sacrificed)</text>
+  </g>
+
+  <!-- 5. SPIRAL PLOT -->
+  <g transform="translate(16,244)">
+    <rect width="160" height="184" fill="none" stroke="#c8c4c0"/>
+    <text x="8" y="14" class="name">SPIRAL PLOT</text>
+    <g transform="translate(8,22)">
+      <rect width="144" height="84" fill="none" stroke="#c8c4c0"/>
+      <!-- Archimedean spiral approximated via cubic path -->
+      <path d="M 72,42
+               C 72,30 90,28 94,38
+               C 100,52 80,58 64,52
+               C 44,44 46,20 70,16
+               C 100,12 116,40 100,62
+               C 80,90 36,80 30,50
+               C 26,18 64,2 100,8"
+            fill="none" stroke="#2a1a0e" stroke-width="1.3"/>
+      <!-- 12 o'clock marker -->
+      <line x1="72" y1="42" x2="72" y2="6" stroke="#8a8480" stroke-dasharray="1 2"/>
+      <text x="72" y="6" text-anchor="middle" class="sm">Jan</text>
+    </g>
+    <text x="8" y="124" class="lb">channel:</text>
+    <text x="8" y="138" class="sm">position along a curve</text>
+    <text x="8" y="156" class="lb">use when:</text>
+    <text x="8" y="170" class="sm">cyclic structure is the</text>
+    <text x="8" y="182" class="sm">primary question</text>
+  </g>
+
+  <!-- 6. GANTT CHART -->
+  <g transform="translate(184,244)">
+    <rect width="160" height="184" fill="none" stroke="#c8c4c0"/>
+    <text x="8" y="14" class="name">GANTT CHART</text>
+    <g transform="translate(8,22)">
+      <rect width="144" height="84" fill="none" stroke="#c8c4c0"/>
+      <line x1="6" y1="78" x2="138" y2="78" stroke="#8a8480"/>
+      <!-- horizontal bars at different start/end -->
+      <rect x="10" y="14" width="60" height="10" fill="#2a1a0e"/>
+      <rect x="40" y="30" width="58" height="10" fill="#4a4540"/>
+      <rect x="68" y="46" width="50" height="10" fill="#8a8480"/>
+      <rect x="92" y="62" width="42" height="10" fill="#c8c4c0" stroke="#8a8480"/>
+    </g>
+    <text x="8" y="124" class="lb">channel:</text>
+    <text x="8" y="138" class="sm">position + length</text>
+    <text x="8" y="156" class="lb">use when:</text>
+    <text x="8" y="170" class="sm">intervals, durations,</text>
+    <text x="8" y="182" class="sm">overlaps</text>
+  </g>
+
+  <!-- 7. TIMELINE -->
+  <g transform="translate(352,244)">
+    <rect width="160" height="184" fill="none" stroke="#c8c4c0"/>
+    <text x="8" y="14" class="name">TIMELINE</text>
+    <g transform="translate(8,22)">
+      <rect width="144" height="84" fill="none" stroke="#c8c4c0"/>
+      <line x1="10" y1="50" x2="134" y2="50" stroke="#2a1a0e" stroke-width="1.2"/>
+      <!-- 5 event dots -->
+      <circle cx="20" cy="50" r="3.5" fill="#2a1a0e"/>
+      <circle cx="50" cy="50" r="3.5" fill="#2a1a0e"/>
+      <circle cx="76" cy="50" r="3.5" fill="#2a1a0e"/>
+      <circle cx="100" cy="50" r="3.5" fill="#2a1a0e"/>
+      <circle cx="126" cy="50" r="3.5" fill="#2a1a0e"/>
+      <!-- annotation ticks -->
+      <line x1="20" y1="50" x2="20" y2="34" stroke="#8a8480"/>
+      <line x1="50" y1="50" x2="50" y2="22" stroke="#8a8480"/>
+      <line x1="100" y1="50" x2="100" y2="30" stroke="#8a8480"/>
+      <text x="20" y="30" class="sm" text-anchor="middle">.</text>
+    </g>
+    <text x="8" y="124" class="lb">channel:</text>
+    <text x="8" y="138" class="sm">x-position only</text>
+    <text x="8" y="156" class="lb">use when:</text>
+    <text x="8" y="170" class="sm">narrative sequence;</text>
+    <text x="8" y="182" class="sm">events with annotation</text>
+  </g>
+
+  <!-- decision callout -->
+  <g transform="translate(528,244)">
+    <rect width="152" height="184" fill="none" stroke="#c8860e" stroke-width="2"/>
+    <text x="10" y="18" class="ti">Choose by channel</text>
+    <text x="10" y="38" class="sm">1. What must the reader</text>
+    <text x="10" y="50" class="sm">    perceive?</text>
+    <text x="10" y="70" class="sm">2. Trajectory  →  line</text>
+    <text x="10" y="84" class="sm">    Magnitude  →  area</text>
+    <text x="10" y="98" class="sm">    Composition  →  stacked</text>
+    <text x="10" y="112" class="sm">    Cycle  →  spiral</text>
+    <text x="10" y="126" class="sm">    Intervals  →  Gantt</text>
+    <text x="10" y="140" class="sm">    Events  →  timeline</text>
+    <text x="10" y="162" class="lb">The form follows</text>
+    <text x="10" y="176" class="lb">from the question.</text>
+  </g>
+
+  <!-- footer caption -->
+  <text x="350" y="462" text-anchor="middle" class="cap">Each form encodes time differently. Pick the channel the question requires; the form follows.</text>
+</svg>

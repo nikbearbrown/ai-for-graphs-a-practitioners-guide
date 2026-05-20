@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 5.2 — Three honest moves decision tree</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #chart { width: 100%; min-height: 520px; }
+  .node { fill: var(--color-white); stroke: var(--color-secondary); stroke-width: 1; }
+  .node.root { fill: var(--color-white); stroke: var(--color-ink); stroke-width: 1.5; }
+  .node.outcome { fill: var(--color-white); stroke: var(--color-ink); stroke-width: 1.5; }
+  .node.failure { fill: var(--color-ink); stroke: var(--color-ink); stroke-width: 1.5; }
+  .node-text { font-family: 'Inter', sans-serif; font-size: 13px; fill: var(--color-ink); }
+  .node-text.failure { fill: var(--color-white); font-weight: 700; }
+  .outcome-title { font-family: 'EB Garamond', Georgia, serif; font-size: 16px; fill: var(--color-ink); font-weight: 500; }
+  .branch-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); font-style: italic; }
+  .edge { stroke: var(--color-secondary); stroke-width: 1.2; fill: none; }
+  .edge.failure { stroke: var(--color-red); stroke-dasharray: 4 3; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 260px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 5.2 — Three honest moves decision tree</h1>
+<p class="subtitle">When the dataset does not support the reader's question, three honest moves remain. The fourth move — substitute a different question without saying so — is the failure mode the chapter names.</p>
+<div id="chart" role="img" aria-labelledby="ct52 cd52"></div>
+<p class="caption">Three branches lead to outcomes that preserve the integrity of the chart. The fourth branch, in red, leads off the tree to the move the chapter argues against.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const treeData = {
+  root: { text: "Does the dataset support the reader's question?" },
+  proceed: { text: "Proceed", detail: "The data supports the question. Build the chart." },
+  branches: [
+    { id: 'better',
+      gate: "Can you get the missing data?",
+      outcome: "Find better data",
+      detail: "Add the missing variable, dimension, or time range. The question stays intact; the data improves to match it." },
+    { id: 'reframe',
+      gate: "Is there a related question worth answering?",
+      outcome: "Reframe the question",
+      detail: "The dataset has something genuine to say — just not quite what was originally asked." },
+    { id: 'gap',
+      gate: "Must you proceed anyway?",
+      outcome: "Acknowledge the gap",
+      detail: "Name explicitly what the chart does and does not show. Available whenever the other two are not." }
+  ],
+  failure: { text: "The failure mode", detail: "Substitute a different question without acknowledging the substitution. The visual claim outruns what the data can bear." }
+};
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top',  (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function wrapText(selection, width) {
+  selection.each(function() {
+    const textEl = d3.select(this);
+    const words = textEl.text().split(/\s+/).reverse();
+    const lineHeight = 16;
+    const x = +textEl.attr('x');
+    const y = +textEl.attr('y');
+    textEl.text(null);
+    let line = [];
+    let lineNumber = 0;
+    let tspan = textEl.append('tspan').attr('x', x).attr('y', y);
+    let word;
+    while ((word = words.pop())) {
+      line.push(word);
+      tspan.text(line.join(' '));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(' '));
+        line = [word];
+        lineNumber += 1;
+        tspan = textEl.append('tspan').attr('x', x).attr('y', y).attr('dy', `${lineNumber * lineHeight}px`).text(word);
+      }
+    }
+  });
+}
+
+function draw() {
+  const container = document.getElementById('chart');
+  d3.select('#chart').selectAll('*').remove();
+
+  const totalWidth = container.clientWidth || 800;
+  const totalHeight = 540;
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth)
+    .attr('height', totalHeight)
+    .attr('role', 'img')
+    .attr('aria-labelledby', 'ct52 cd52');
+
+  svg.append('title').attr('id', 'ct52').text('Three honest moves when the data does not support the question');
+  svg.append('desc').attr('id', 'cd52').text('Decision tree: yes proceeds; no branches into three honest options; a fourth red branch labels the failure mode.');
+
+  // Arrow markers
+  const defs = svg.append('defs');
+  defs.append('marker')
+    .attr('id', 'arrow52')
+    .attr('viewBox', '0 0 10 10')
+    .attr('refX', 9).attr('refY', 5)
+    .attr('markerWidth', 8).attr('markerHeight', 8)
+    .attr('orient', 'auto')
+    .append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('fill', 'var(--color-secondary)');
+  defs.append('marker')
+    .attr('id', 'arrow52-fail')
+    .attr('viewBox', '0 0 10 10')
+    .attr('refX', 9).attr('refY', 5)
+    .attr('markerWidth', 8).attr('markerHeight', 8)
+    .attr('orient', 'auto')
+    .append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('fill', 'var(--color-red)');
+
+  // Layout coordinates
+  const cx = totalWidth / 2;
+  const rootW = 280, rootH = 60;
+  const proceedW = 100, proceedH = 40;
+  const gateW = 200, gateH = 70;
+  const outcomeW = 200, outcomeH = 70;
+  const failW = 200, failH = 56;
+
+  const rootX = cx - rootW / 2;
+  const rootY = 56;
+
+  // Root node
+  svg.append('rect')
+    .attr('class', 'node root')
+    .attr('x', rootX).attr('y', rootY)
+    .attr('width', rootW).attr('height', rootH);
+  svg.append('text')
+    .attr('class', 'node-text')
+    .attr('x', cx).attr('y', rootY + 24)
+    .attr('text-anchor', 'middle')
+    .text(treeData.root.text)
+    .call(wrapText, rootW - 24);
+
+  // Proceed (yes) — to the right
+  const proceedX = rootX + rootW + 60;
+  svg.append('line')
+    .attr('class', 'edge')
+    .attr('x1', rootX + rootW).attr('y1', rootY + rootH / 2)
+    .attr('x2', proceedX - 4).attr('y2', rootY + rootH / 2)
+    .attr('marker-end', 'url(#arrow52)');
+  svg.append('text')
+    .attr('class', 'branch-label')
+    .attr('x', rootX + rootW + 30)
+    .attr('y', rootY + rootH / 2 - 8)
+    .attr('text-anchor', 'middle')
+    .text('yes');
+  svg.append('rect')
+    .attr('class', 'node outcome')
+    .attr('x', proceedX).attr('y', rootY + rootH / 2 - proceedH / 2)
+    .attr('width', proceedW).attr('height', proceedH);
+  svg.append('text')
+    .attr('class', 'outcome-title')
+    .attr('x', proceedX + proceedW / 2)
+    .attr('y', rootY + rootH / 2 + 4)
+    .attr('text-anchor', 'middle')
+    .text('Proceed');
+
+  // Failure mode — to the left, dashed
+  const failX = rootX - failW - 60;
+  svg.append('line')
+    .attr('class', 'edge failure')
+    .attr('x1', rootX).attr('y1', rootY + rootH / 2)
+    .attr('x2', failX + failW + 4).attr('y2', rootY + rootH / 2)
+    .attr('marker-end', 'url(#arrow52-fail)');
+  svg.append('text')
+    .attr('class', 'branch-label')
+    .attr('x', rootX - 30)
+    .attr('y', rootY + rootH / 2 - 18)
+    .attr('text-anchor', 'middle')
+    .text('substitute silently');
+  svg.append('text')
+    .attr('class', 'branch-label')
+    .attr('x', rootX - 30)
+    .attr('y', rootY + rootH / 2 - 4)
+    .attr('text-anchor', 'middle')
+    .text('(not honest)');
+  const failGroup = svg.append('g')
+    .attr('tabindex', 0)
+    .attr('aria-label', 'Failure mode: substitute a different question without acknowledging it.')
+    .on('mouseover', (event) => showTip(event, `<strong>${treeData.failure.text}</strong><br>${treeData.failure.detail}`))
+    .on('mousemove', moveTip)
+    .on('mouseout', hideTip);
+  failGroup.append('rect')
+    .attr('class', 'node failure')
+    .attr('x', failX).attr('y', rootY + rootH / 2 - failH / 2)
+    .attr('width', failW).attr('height', failH);
+  failGroup.append('text')
+    .attr('class', 'node-text failure')
+    .attr('x', failX + failW / 2).attr('y', rootY + rootH / 2 - 2)
+    .attr('text-anchor', 'middle')
+    .text(treeData.failure.text);
+  failGroup.append('text')
+    .attr('class', 'branch-label')
+    .attr('x', failX + failW / 2).attr('y', rootY + rootH / 2 + 14)
+    .attr('text-anchor', 'middle')
+    .style('fill', 'var(--color-white)')
+    .text('visual claim outruns data');
+
+  // No branch (down)
+  const branchTrunkY = rootY + rootH + 30;
+  svg.append('line')
+    .attr('class', 'edge')
+    .attr('x1', cx).attr('y1', rootY + rootH)
+    .attr('x2', cx).attr('y2', branchTrunkY)
+    .attr('marker-end', 'url(#arrow52)');
+  svg.append('text')
+    .attr('class', 'branch-label')
+    .attr('x', cx + 14)
+    .attr('y', rootY + rootH + 18)
+    .text('no');
+
+  // Three honest branches
+  const gateY = branchTrunkY + 30;
+  const branchSpacing = (totalWidth - 64 - 3 * gateW) / 2;
+  const branchStartX = 32;
+  treeData.branches.forEach((b, i) => {
+    const gateX = branchStartX + i * (gateW + branchSpacing);
+    // Trunk-to-gate connector
+    svg.append('path')
+      .attr('class', 'edge')
+      .attr('d', `M ${cx} ${branchTrunkY} L ${gateX + gateW / 2} ${gateY}`)
+      .attr('marker-end', 'url(#arrow52)');
+
+    // Gate box
+    svg.append('rect')
+      .attr('class', 'node')
+      .attr('x', gateX).attr('y', gateY)
+      .attr('width', gateW).attr('height', gateH);
+    svg.append('text')
+      .attr('class', 'node-text')
+      .attr('x', gateX + gateW / 2)
+      .attr('y', gateY + 24)
+      .attr('text-anchor', 'middle')
+      .text(b.gate)
+      .call(wrapText, gateW - 24);
+    svg.append('text')
+      .attr('class', 'branch-label')
+      .attr('x', gateX + gateW / 2)
+      .attr('y', gateY + gateH - 10)
+      .attr('text-anchor', 'middle')
+      .text('if yes →');
+
+    // Connector to outcome
+    const outcomeY = gateY + gateH + 30;
+    svg.append('line')
+      .attr('class', 'edge')
+      .attr('x1', gateX + gateW / 2).attr('y1', gateY + gateH)
+      .attr('x2', gateX + gateW / 2).attr('y2', outcomeY - 4)
+      .attr('marker-end', 'url(#arrow52)');
+
+    // Outcome
+    const outcomeGroup = svg.append('g')
+      .attr('tabindex', 0)
+      .attr('aria-label', `${b.outcome}: ${b.detail}`)
+      .on('mouseover', (event) => showTip(event, `<strong>${b.outcome}</strong><br>${b.detail}`))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
+    outcomeGroup.append('rect')
+      .attr('class', 'node outcome')
+      .attr('x', gateX).attr('y', outcomeY)
+      .attr('width', gateW).attr('height', outcomeH);
+    outcomeGroup.append('text')
+      .attr('class', 'outcome-title')
+      .attr('x', gateX + gateW / 2)
+      .attr('y', outcomeY + 28)
+      .attr('text-anchor', 'middle')
+      .text(b.outcome);
+    outcomeGroup.append('text')
+      .attr('class', 'branch-label')
+      .attr('x', gateX + gateW / 2)
+      .attr('y', outcomeY + 52)
+      .attr('text-anchor', 'middle')
+      .text(b.detail.split('.')[0] + '.');
+  });
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

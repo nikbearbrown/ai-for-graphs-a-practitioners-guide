@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t09f02 d09f02">
+  <title id="t09f02">Same five-number summary, different shapes — box plot vs violin</title>
+  <desc id="d09f02">Two distributions (normal and bimodal) with identical five-number summaries shown as box plots (indistinguishable) and as violin plots (clearly different).</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .badge { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Two distributions, identical Q1/median/Q3/whiskers, different shapes</text>
+
+  <!-- divider between left and right groups -->
+  <line x1="350" y1="50" x2="350" y2="380" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- LEFT GROUP: BOX PLOTS (indistinguishable) -->
+  <text x="32" y="64" class="ti">Box plots</text>
+  <text x="32" y="80" class="sm">five-number summary only — both look the same</text>
+
+  <!-- Normal box plot — vertical axis space from y=110 (top, value=100) to y=320 (bottom, value=0); 210 px / 100 units -->
+  <!-- Q1=35 (y=246.5), median=50 (y=215), Q3=65 (y=183.5), whisker low=10 (y=299), whisker high=90 (y=131) -->
+  <g>
+    <line x1="110" y1="131" x2="110" y2="299" stroke="#2a1a0e"/>
+    <line x1="95"  y1="131" x2="125" y2="131" stroke="#2a1a0e"/>
+    <line x1="95"  y1="299" x2="125" y2="299" stroke="#2a1a0e"/>
+    <rect x="85"  y="183.5" width="50" height="63" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <line x1="85"  y1="215" x2="135" y2="215" stroke="#2a1a0e" stroke-width="2"/>
+    <text x="110" y="338" text-anchor="middle" class="sm">Normal</text>
+  </g>
+
+  <!-- Bimodal box plot — identical summary -->
+  <g>
+    <line x1="240" y1="131" x2="240" y2="299" stroke="#2a1a0e"/>
+    <line x1="225" y1="131" x2="255" y2="131" stroke="#2a1a0e"/>
+    <line x1="225" y1="299" x2="255" y2="299" stroke="#2a1a0e"/>
+    <rect x="215" y="183.5" width="50" height="63" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <line x1="215" y1="215" x2="265" y2="215" stroke="#2a1a0e" stroke-width="2"/>
+    <text x="240" y="338" text-anchor="middle" class="sm">Bimodal</text>
+  </g>
+
+  <!-- "identical" badge -->
+  <rect x="100" y="354" width="150" height="20" fill="#f5f2ee" stroke="#2a1a0e"/>
+  <text x="175" y="368" text-anchor="middle" class="badge">visually identical</text>
+
+  <!-- RIGHT GROUP: VIOLIN PLOTS (clearly different) -->
+  <text x="370" y="64" class="ti">Violin plots</text>
+  <text x="370" y="80" class="sm">kernel density — shape is unmistakable</text>
+
+  <!-- Normal violin — single bell. Centered at x=450, axis 110..299 (same vertical range). -->
+  <!-- Build via path: symmetric about x=450, max half-width 36 near median 50 -->
+  <g>
+    <path d="
+      M 450 131
+      C 446 145, 442 165, 438 180
+      C 432 196, 422 208, 416 215
+      C 422 222, 432 234, 438 250
+      C 442 265, 446 285, 450 299
+      L 450 299
+      C 454 285, 458 265, 462 250
+      C 468 234, 478 222, 484 215
+      C 478 208, 468 196, 462 180
+      C 458 165, 454 145, 450 131
+      Z" fill="#c8c4c0" stroke="#2a1a0e"/>
+    <!-- median tick -->
+    <line x1="440" y1="215" x2="460" y2="215" stroke="#2a1a0e" stroke-width="1.5"/>
+    <text x="450" y="338" text-anchor="middle" class="sm">Normal</text>
+  </g>
+
+  <!-- Bimodal violin — two bulges -->
+  <g>
+    <path d="
+      M 590 131
+      C 586 138, 582 144, 578 152
+      C 568 165, 558 175, 552 180
+      C 558 185, 568 188, 578 188
+      C 584 192, 588 200, 590 210
+      C 592 220, 594 230, 590 244
+      C 588 252, 584 256, 578 258
+      C 568 262, 558 270, 552 280
+      C 558 286, 568 292, 578 296
+      C 582 297, 586 298, 590 299
+      L 590 299
+      C 594 298, 598 297, 602 296
+      C 612 292, 622 286, 628 280
+      C 622 270, 612 262, 602 258
+      C 596 256, 592 252, 590 244
+      C 586 230, 588 220, 590 210
+      C 592 200, 596 192, 602 188
+      C 612 188, 622 185, 628 180
+      C 622 175, 612 165, 602 152
+      C 598 144, 594 138, 590 131
+      Z" fill="#c8c4c0" stroke="#2a1a0e"/>
+    <!-- median tick -->
+    <line x1="580" y1="215" x2="600" y2="215" stroke="#2a1a0e" stroke-width="1.5"/>
+    <text x="590" y="338" text-anchor="middle" class="sm">Bimodal</text>
+  </g>
+
+  <!-- "different shapes" badge -->
+  <rect x="440" y="354" width="150" height="20" fill="#f5f2ee" stroke="#2a1a0e"/>
+  <text x="515" y="368" text-anchor="middle" class="badge">two peaks visible</text>
+
+  <text x="350" y="402" text-anchor="middle" class="cap">Same Q1, median, Q3, whisker extent. The violin reveals what the five-number summary compresses away.</text>
+</svg>

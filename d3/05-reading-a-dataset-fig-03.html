@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 5.3 — Five-step audit flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #chart { width: 100%; min-height: 620px; }
+  .step-box { fill: var(--color-white); stroke: var(--color-border); stroke-width: 1; }
+  .step-box.spec { fill: var(--color-white); stroke: var(--color-ink); stroke-width: 1.5; }
+  .step-box.active { stroke: var(--color-red); stroke-width: 2; }
+  .badge { fill: var(--color-ink); }
+  .badge-text { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; fill: var(--color-white); }
+  .step-title { font-family: 'EB Garamond', Georgia, serif; font-size: 16px; font-weight: 500; fill: var(--color-ink); }
+  .step-io { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-secondary); }
+  .step-key { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; fill: var(--color-ink); }
+  .spec-row { font-family: 'Inter', sans-serif; font-size: 13px; fill: var(--color-ink); }
+  .edge { stroke: var(--color-secondary); stroke-width: 1.2; fill: none; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 280px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 5.3 — Five-step audit flow</h1>
+<p class="subtitle">The same humanitarian dataset, audited step by step. Each step takes a defined input and produces a defined output; the chart specification falls out of step five.</p>
+<div id="chart" role="img" aria-labelledby="ct53 cd53"></div>
+<p class="caption">The audit is not overhead. It is how the chart specification gets built — and how the chart you would have produced by walking straight to Claude Code becomes the chart the question deserved.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const stepData = [
+  {
+    n: 1,
+    title: 'Identify data types',
+    input: 'the dataset columns',
+    output: 'state (geographic), assistance $ (quantitative, ratio), population (quantitative, denominator)',
+    detail: 'Types constrain the chart family before any aesthetic decision.'
+  },
+  {
+    n: 2,
+    title: "Whose question?",
+    input: 'analyst version vs reader versions',
+    output: 'policymaker, peer NGO, general reader — three readers, three potential charts',
+    detail: 'The chart must answer the right column.'
+  },
+  {
+    n: 3,
+    title: 'Compared with what?',
+    input: "the reader's primary question",
+    output: 'per-capita rate is the comparison; absolute dollars without it would lie',
+    detail: "A single-variable choropleth of dollars-by-state fails Cairo's check."
+  },
+  {
+    n: 4,
+    title: 'What does the data support?',
+    input: 'the eight relationships',
+    output: 'assistance per capita: yes. assistance per food-insecure household: no — annotate the gap.',
+    detail: 'The relationships the data does not support are as important as the ones it does.'
+  }
+];
+
+const specData = {
+  keyMessage: 'Food-assistance dollars per capita vary by ≈10× across U.S. states, highest in the rural Southwest.',
+  structure:  'state polygons + assistance/capita (derived from raw dollars ÷ population)',
+  category:   'spatial',
+  form:       'choropleth, sequential luminance, annotation noting program reach vs. need'
+};
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top',  (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function wrapText(selection, width) {
+  selection.each(function() {
+    const textEl = d3.select(this);
+    const words = textEl.text().split(/\s+/).reverse();
+    const lineHeight = 16;
+    const x = +textEl.attr('x');
+    const y = +textEl.attr('y');
+    textEl.text(null);
+    let line = [];
+    let lineNumber = 0;
+    let tspan = textEl.append('tspan').attr('x', x).attr('y', y);
+    let word;
+    while ((word = words.pop())) {
+      line.push(word);
+      tspan.text(line.join(' '));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(' '));
+        line = [word];
+        lineNumber += 1;
+        tspan = textEl.append('tspan').attr('x', x).attr('y', y).attr('dy', `${lineNumber * lineHeight}px`).text(word);
+      }
+    }
+  });
+}
+
+function draw() {
+  const container = document.getElementById('chart');
+  d3.select('#chart').selectAll('*').remove();
+
+  const totalWidth = container.clientWidth || 800;
+  const margin = { top: 32, right: 24, bottom: 16, left: 24 };
+  const stepH = 92;
+  const specH = 168;
+  const gap = 20;
+  const innerWidth = totalWidth - margin.left - margin.right;
+  const totalHeight = margin.top + 4 * (stepH + gap) + specH + margin.bottom;
+
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'ct53 cd53');
+
+  svg.append('title').attr('id', 'ct53').text('Five-step pre-chart audit for the food-assistance example');
+  svg.append('desc').attr('id', 'cd53').text('Steps 1 through 4 each take a defined input and produce a defined output, feeding the chart specification in step 5.');
+
+  const defs = svg.append('defs');
+  defs.append('marker')
+    .attr('id', 'arrow53')
+    .attr('viewBox', '0 0 10 10')
+    .attr('refX', 9).attr('refY', 5)
+    .attr('markerWidth', 8).attr('markerHeight', 8)
+    .attr('orient', 'auto')
+    .append('path').attr('d', 'M 0 0 L 10 5 L 0 10 z').attr('fill', 'var(--color-secondary)');
+
+  // Render steps 1–4
+  stepData.forEach((s, i) => {
+    const y = margin.top + i * (stepH + gap);
+    const group = svg.append('g')
+      .attr('tabindex', 0)
+      .attr('aria-label', `Step ${s.n}: ${s.title}. Input: ${s.input}. Output: ${s.output}.`)
+      .on('mouseover', function(event) {
+        d3.select(this).select('.step-box').classed('active', true);
+        showTip(event, `<strong>Step ${s.n} — ${s.title}</strong><br>${s.detail}`);
+      })
+      .on('mousemove', moveTip)
+      .on('mouseout', function() {
+        d3.select(this).select('.step-box').classed('active', false);
+        hideTip();
+      });
+
+    group.append('rect')
+      .attr('class', 'step-box')
+      .attr('x', margin.left).attr('y', y)
+      .attr('width', innerWidth).attr('height', stepH);
+
+    // Badge
+    group.append('circle')
+      .attr('class', 'badge')
+      .attr('cx', margin.left + 28).attr('cy', y + stepH / 2)
+      .attr('r', 16);
+    group.append('text')
+      .attr('class', 'badge-text')
+      .attr('x', margin.left + 28).attr('y', y + stepH / 2 + 5)
+      .attr('text-anchor', 'middle')
+      .text(s.n);
+
+    // Step title
+    group.append('text')
+      .attr('class', 'step-title')
+      .attr('x', margin.left + 60)
+      .attr('y', y + 28)
+      .text(s.title);
+
+    // Input
+    group.append('text')
+      .attr('class', 'step-key')
+      .attr('x', margin.left + 60)
+      .attr('y', y + 52)
+      .text('input:');
+    group.append('text')
+      .attr('class', 'step-io')
+      .attr('x', margin.left + 108)
+      .attr('y', y + 52)
+      .text(s.input)
+      .call(wrapText, innerWidth - 130);
+
+    // Output
+    group.append('text')
+      .attr('class', 'step-key')
+      .attr('x', margin.left + 60)
+      .attr('y', y + 74)
+      .text('output:');
+    group.append('text')
+      .attr('class', 'step-io')
+      .attr('x', margin.left + 116)
+      .attr('y', y + 74)
+      .text(s.output)
+      .call(wrapText, innerWidth - 138);
+
+    // Arrow to next box
+    if (i < stepData.length) {
+      const arrowX = margin.left + innerWidth / 2;
+      svg.append('line')
+        .attr('class', 'edge')
+        .attr('x1', arrowX).attr('y1', y + stepH)
+        .attr('x2', arrowX).attr('y2', y + stepH + gap - 4)
+        .attr('marker-end', 'url(#arrow53)');
+    }
+  });
+
+  // Step 5 — spec box
+  const specY = margin.top + 4 * (stepH + gap);
+  const specGroup = svg.append('g');
+
+  specGroup.append('rect')
+    .attr('class', 'step-box spec')
+    .attr('x', margin.left).attr('y', specY)
+    .attr('width', innerWidth).attr('height', specH);
+
+  specGroup.append('circle')
+    .attr('class', 'badge')
+    .attr('cx', margin.left + 28).attr('cy', specY + 32)
+    .attr('r', 16)
+    .attr('fill', 'var(--color-red)');
+  specGroup.append('text')
+    .attr('class', 'badge-text')
+    .attr('x', margin.left + 28).attr('y', specY + 37)
+    .attr('text-anchor', 'middle')
+    .text('5');
+
+  specGroup.append('text')
+    .attr('class', 'step-title')
+    .attr('x', margin.left + 60).attr('y', specY + 28)
+    .text('Chart specification — emerges from steps 1–4');
+
+  const rows = [
+    { key: 'key message:', val: specData.keyMessage },
+    { key: 'data structure:', val: specData.structure },
+    { key: 'functional category:', val: specData.category },
+    { key: 'specific form:', val: specData.form }
+  ];
+  rows.forEach((r, i) => {
+    const ry = specY + 64 + i * 26;
+    specGroup.append('text')
+      .attr('class', 'step-key')
+      .attr('x', margin.left + 60).attr('y', ry)
+      .text(r.key);
+    specGroup.append('text')
+      .attr('class', 'spec-row')
+      .attr('x', margin.left + 200).attr('y', ry)
+      .text(r.val)
+      .call(wrapText, innerWidth - 220);
+  });
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

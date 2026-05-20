@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 10.3 — Four overplotting strategies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 8px; }
+  .chart { width: 100%; height: 240px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .legend { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 65ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 10.3 — Four overplotting strategies</h1>
+<p class="subtitle">Same ~5,000-point dataset, four strategies. Each reveals something different and hides something different.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">1. Full opacity</div>
+    <div class="panel-sub">Reveals nothing. Hides cloud shape and outliers.</div>
+    <div id="chartSolid" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">2. Alpha transparency (0.15)</div>
+    <div class="panel-sub">Reveals density and outliers. Almost always the right first move.</div>
+    <div id="chartAlpha" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">3. Jittered (discrete data)</div>
+    <div class="panel-sub">Reveals count at each (x, y) when values cluster onto a grid.</div>
+    <div id="chartJitter" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">4. 2D binning (hexagonal)</div>
+    <div class="panel-sub">Reveals density as luminance. Individual points disappear.</div>
+    <div id="chartHex" class="chart"></div>
+  </div>
+</div>
+<p class="caption">The right strategy depends on what the reader needs to see. Specify it in the prompt; the default for large n is a black mass.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Generate ~5000-point gaussian-along-line dataset
+let seed = 13;
+function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+function gauss() {
+  const u = Math.max(rand(), 1e-9), v = rand();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+function makeContinuous(n) {
+  const data = [];
+  for (let i = 0; i < n; i++) {
+    const x = rand();
+    const y = 0.15 + 0.7 * x + gauss() * 0.08;
+    data.push({ x, y });
+  }
+  return data;
+}
+function makeDiscrete(n) {
+  const data = [];
+  for (let i = 0; i < n; i++) {
+    const ix = Math.floor(rand() * 5) + 1;
+    const iy = Math.max(1, Math.min(5, Math.round(0.5 + 0.85 * ix + gauss() * 0.7)));
+    data.push({ x: ix, y: iy });
+  }
+  return data;
+}
+
+const continuousData = makeContinuous(5000);
+seed = 17;
+const discreteData = makeDiscrete(2000);
+
+function setupChart(selector) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 320;
+  const totalHeight = container.clientHeight || 240;
+  const margin = { top: 12, right: 12, bottom: 32, left: 36 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight).attr('role', 'img');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  return { svg, g, chartWidth, chartHeight };
+}
+
+function drawSolid() {
+  const { g, chartWidth, chartHeight } = setupChart('#chartSolid');
+  const xScaleLinear = d3.scaleLinear().domain([0, 1]).range([0, chartWidth]);
+  const yScaleLinear = d3.scaleLinear().domain([0, 1]).range([chartHeight, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`).call(d3.axisBottom(xScaleLinear).ticks(4));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(4));
+  g.selectAll('circle').data(continuousData).join('circle')
+    .attr('cx', d => xScaleLinear(d.x)).attr('cy', d => yScaleLinear(d.y))
+    .attr('r', 2).attr('fill', 'var(--color-ink)').attr('fill-opacity', 1);
+}
+
+function drawAlpha() {
+  const { g, chartWidth, chartHeight } = setupChart('#chartAlpha');
+  const xScaleLinear = d3.scaleLinear().domain([0, 1]).range([0, chartWidth]);
+  const yScaleLinear = d3.scaleLinear().domain([0, 1]).range([chartHeight, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`).call(d3.axisBottom(xScaleLinear).ticks(4));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(4));
+  g.selectAll('circle').data(continuousData).join('circle')
+    .attr('cx', d => xScaleLinear(d.x)).attr('cy', d => yScaleLinear(d.y))
+    .attr('r', 2.4).attr('fill', 'var(--color-ink)').attr('fill-opacity', 0.15);
+}
+
+function drawJitter() {
+  const { g, chartWidth, chartHeight } = setupChart('#chartJitter');
+  const xScaleLinear = d3.scaleLinear().domain([0.5, 5.5]).range([0, chartWidth]);
+  const yScaleLinear = d3.scaleLinear().domain([0.5, 5.5]).range([chartHeight, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`).call(d3.axisBottom(xScaleLinear).ticks(5).tickFormat(d3.format('d')));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(5).tickFormat(d3.format('d')));
+  let s2 = 31;
+  function r2() { s2 = (s2 * 9301 + 49297) % 233280; return s2 / 233280; }
+  g.selectAll('circle').data(discreteData).join('circle')
+    .attr('cx', d => xScaleLinear(d.x + (r2() - 0.5) * 0.6))
+    .attr('cy', d => yScaleLinear(d.y + (r2() - 0.5) * 0.6))
+    .attr('r', 2).attr('fill', 'var(--color-ink)').attr('fill-opacity', 0.3);
+}
+
+function drawHex() {
+  const { g, chartWidth, chartHeight } = setupChart('#chartHex');
+  const xScaleLinear = d3.scaleLinear().domain([0, 1]).range([0, chartWidth]);
+  const yScaleLinear = d3.scaleLinear().domain([0, 1]).range([chartHeight, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`).call(d3.axisBottom(xScaleLinear).ticks(4));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(4));
+
+  // Pure-D3 hex binning (no plugin): square-grid count + flat-top hexagon path
+  const cols = 12, rows = 9;
+  const cellW = chartWidth / cols, cellH = chartHeight / rows;
+  const bins = {};
+  continuousData.forEach(d => {
+    const ix = Math.floor(d.x * cols);
+    const iy = Math.floor((1 - d.y) * rows);
+    const key = `${ix},${iy}`;
+    bins[key] = (bins[key] || 0) + 1;
+  });
+  const counts = Object.values(bins);
+  const colorScaleSequential = d3.scaleLinear()
+    .domain([0, d3.max(counts) || 1])
+    .range(['#F0EBE3', 'var(--color-ink)']);
+  function hexPath(cx, cy, rx, ry) {
+    const points = [];
+    for (let i = 0; i < 6; i++) {
+      const ang = Math.PI / 3 * i;
+      points.push([cx + rx * Math.cos(ang), cy + ry * Math.sin(ang)]);
+    }
+    return 'M' + points.map(p => p.join(',')).join('L') + 'Z';
+  }
+  Object.entries(bins).forEach(([key, count]) => {
+    const [ix, iy] = key.split(',').map(Number);
+    const cx = ix * cellW + cellW / 2;
+    const cy = iy * cellH + cellH / 2;
+    g.append('path')
+      .attr('d', hexPath(cx, cy, cellW * 0.55, cellH * 0.6))
+      .attr('fill', colorScaleSequential(count))
+      .attr('stroke', 'var(--color-white)').attr('stroke-width', 0.5);
+  });
+}
+
+function drawAll() {
+  drawSolid(); drawAlpha(); drawJitter(); drawHex();
+}
+drawAll();
+const ro = new ResizeObserver(() => drawAll());
+['#chartSolid', '#chartAlpha', '#chartJitter', '#chartHex'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

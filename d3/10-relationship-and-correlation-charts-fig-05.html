@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 10.5 — Heatmap sort order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 360px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .cell { stroke: var(--color-white); stroke-width: 1; transition: stroke 120ms cubic-bezier(0.2,0.8,0.2,1); }
+  .cell:hover { stroke: var(--color-red); stroke-width: 2; }
+  .scale-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--color-secondary); }
+  .scale-bar { display: flex; }
+  .scale-bar span { display: block; width: 18px; height: 12px; }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 10.5 — Heatmap: alphabetical hides, sorted reveals</h1>
+<p class="subtitle">Same 8-region × 6-sector adoption-rate matrix. Sort order is a design decision, not a default.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Alphabetical order</div>
+    <div class="panel-sub">No pattern visible — cells appear random.</div>
+    <div id="chartUnsorted" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Sorted by row + column maximum</div>
+    <div class="panel-sub">A bright cluster of high-adoption cells emerges in the upper-left.</div>
+    <div id="chartSorted" class="chart"></div>
+  </div>
+</div>
+<p class="caption">Sequential luminance scale carries magnitude; alphabetical is the default and almost never the right ordering.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const regions = ['Andes', 'Baltics', 'Cascadia', 'Deccan', 'Ebro', 'Frisia', 'Galicia', 'Hokkaido'];
+const sectors = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
+
+// Adoption values 0..100 — designed so sorted view shows clear cluster
+const adoptionValues = {
+  'Andes':    { S1: 64, S2: 38, S3: 78, S4: 50, S5: 70, S6: 28 },
+  'Baltics':  { S1: 18, S2: 22, S3: 32, S4: 24, S5: 26, S6: 12 },
+  'Cascadia': { S1: 82, S2: 44, S3: 92, S4: 58, S5: 88, S6: 34 },
+  'Deccan':   { S1: 76, S2: 40, S3: 86, S4: 54, S5: 82, S6: 30 },
+  'Ebro':     { S1: 30, S2: 32, S3: 40, S4: 34, S5: 38, S6: 22 },
+  'Frisia':   { S1: 42, S2: 36, S3: 54, S4: 40, S5: 50, S6: 26 },
+  'Galicia':  { S1: 14, S2: 16, S3: 22, S4: 18, S5: 20, S6: 10 },
+  'Hokkaido': { S1: 56, S2: 38, S3: 64, S4: 46, S5: 60, S6: 26 }
+};
+
+const heatData = [];
+regions.forEach(r => sectors.forEach(s => heatData.push({ region: r, sector: s, value: adoptionValues[r][s] })));
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.region} · ${d.sector}</strong><br/>adoption ${d.value}%`)
+    .style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawHeat(selector, rowOrder, colOrder, highlightCluster) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 360;
+  const totalHeight = container.clientHeight || 360;
+  const margin = { top: 28, right: 24, bottom: 24, left: 88 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight).attr('role', 'img');
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleBand = d3.scaleBand().domain(colOrder).range([0, chartWidth]).padding(0.04);
+  const yScaleBand = d3.scaleBand().domain(rowOrder).range([0, chartHeight]).padding(0.04);
+
+  const colorScaleSequential = d3.scaleSequential()
+    .domain([0, 100])
+    .interpolator(t => d3.interpolateLab('#F0EBE3', '#121212')(t));
+
+  // column labels
+  g.selectAll('.col-label').data(colOrder).join('text')
+    .attr('class', 'col-label')
+    .attr('x', d => xScaleBand(d) + xScaleBand.bandwidth() / 2)
+    .attr('y', -8).attr('text-anchor', 'middle')
+    .attr('font-family', "'JetBrains Mono', monospace")
+    .attr('font-size', 11).attr('fill', 'var(--color-secondary)').text(d => d);
+
+  // row labels
+  g.selectAll('.row-label').data(rowOrder).join('text')
+    .attr('class', 'row-label')
+    .attr('x', -8).attr('y', d => yScaleBand(d) + yScaleBand.bandwidth() / 2 + 4)
+    .attr('text-anchor', 'end')
+    .attr('font-family', "'JetBrains Mono', monospace")
+    .attr('font-size', 11).attr('fill', 'var(--color-secondary)').text(d => d);
+
+  g.selectAll('.cell').data(heatData).join('rect')
+    .attr('class', 'cell')
+    .attr('x', d => xScaleBand(d.sector))
+    .attr('y', d => yScaleBand(d.region))
+    .attr('width', xScaleBand.bandwidth())
+    .attr('height', yScaleBand.bandwidth())
+    .attr('fill', d => colorScaleSequential(d.value))
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `${d.region} ${d.sector}: ${d.value}%`)
+    .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  if (highlightCluster) {
+    // Upper-left 3x3 highlight box
+    const x0 = xScaleBand(colOrder[0]) - 3;
+    const y0 = yScaleBand(rowOrder[0]) - 3;
+    const w = xScaleBand.bandwidth() * 3 + xScaleBand.step() * 0 + xScaleBand.step() * 2 - xScaleBand.bandwidth() * 0 + 6;
+    const h = yScaleBand.bandwidth() * 3 + yScaleBand.step() * 0 + yScaleBand.step() * 2 - yScaleBand.bandwidth() * 0 + 6;
+    g.append('rect')
+      .attr('x', x0).attr('y', y0)
+      .attr('width', xScaleBand.step() * 3 + 4)
+      .attr('height', yScaleBand.step() * 3 + 4)
+      .attr('fill', 'none').attr('stroke', 'var(--color-ochre)').attr('stroke-width', 2);
+  }
+}
+
+function drawAll() {
+  // alphabetical (already alphabetical in `regions` and `sectors`)
+  drawHeat('#chartUnsorted', regions, sectors, false);
+  // sorted: descending row max, descending column average
+  const sortedRows = [...regions].sort((a, b) => d3.max(sectors.map(s => adoptionValues[b][s])) - d3.max(sectors.map(s => adoptionValues[a][s])));
+  const sortedCols = [...sectors].sort((a, b) => d3.mean(regions.map(r => adoptionValues[r][b])) - d3.mean(regions.map(r => adoptionValues[r][a])));
+  drawHeat('#chartSorted', sortedRows, sortedCols, true);
+}
+drawAll();
+const ro = new ResizeObserver(() => drawAll());
+ro.observe(document.getElementById('chartUnsorted'));
+ro.observe(document.getElementById('chartSorted'));
+</script>
+</body>
+</html>

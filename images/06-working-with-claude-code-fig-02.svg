@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 540" role="img" aria-labelledby="t06-02 d06-02">
+  <title id="t06-02">The four-move prompt, annotated</title>
+  <desc id="d06-02">The 200-word prompt from the opening case rendered as an annotated code block. Each of the four moves is bracketed on the left margin and annotated on the right: Move 1 shows what you have, Move 2 says what you want, Move 3 constrains it (the largest block), Move 4 asks for verification.</desc>
+  <defs>
+    <style>
+      .ti   { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb   { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm   { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .code { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; }
+      .codedim { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .movelabel { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+    <marker id="ar06b" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="540" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">The four-move prompt — show, say, constrain, verify</text>
+  <text x="350" y="42" text-anchor="middle" class="cap">The template every chart in this book copies.</text>
+
+  <!-- code block frame -->
+  <rect x="180" y="64" width="360" height="436" fill="#f5f2ee" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- MOVE 1: SHOW (rows 1-4) -->
+  <!-- left bracket -->
+  <path d="M 168 70 L 162 70 L 162 130 L 168 130" fill="none" stroke="#8a8480" stroke-width="1.25"/>
+  <text x="156" y="86"  text-anchor="end" class="movelabel">Move 1</text>
+  <text x="156" y="100" text-anchor="end" class="sm">Show what</text>
+  <text x="156" y="112" text-anchor="end" class="sm">you have</text>
+  <!-- code -->
+  <text x="192" y="82"  class="codedim">Show what I have:</text>
+  <text x="192" y="96"  class="code">5 rows. Columns: sector (string, 8-17 chars),</text>
+  <text x="192" y="110" class="code">funding_usd_millions (number).</text>
+  <text x="192" y="124" class="code">Sample: Food Security 380.2 / Shelter 142.7 / ...</text>
+  <!-- right annotation -->
+  <path d="M 540 110 L 580 110 L 580 80" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#ar06b)"/>
+  <text x="552" y="74" class="sm">data sample</text>
+  <text x="552" y="86" class="sm">goes here</text>
+
+  <!-- MOVE 2: SAY (rows 6-8) -->
+  <path d="M 168 146 L 162 146 L 162 196 L 168 196" fill="none" stroke="#8a8480" stroke-width="1.25"/>
+  <text x="156" y="160" text-anchor="end" class="movelabel">Move 2</text>
+  <text x="156" y="174" text-anchor="end" class="sm">Say what</text>
+  <text x="156" y="186" text-anchor="end" class="sm">you want</text>
+  <text x="192" y="158" class="codedim">Say what I want:</text>
+  <text x="192" y="172" class="code">Horizontal bar chart in D3 v7.</text>
+  <text x="192" y="186" class="code">Single HTML file, inline D3 via CDN. Responsive.</text>
+  <path d="M 540 180 L 590 180 L 590 162" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#ar06b)"/>
+  <text x="560" y="156" class="sm">chart type named</text>
+  <text x="560" y="168" class="sm">— not "comparison"</text>
+
+  <!-- MOVE 3: CONSTRAIN (largest block, rows 10-18) -->
+  <path d="M 168 212 L 162 212 L 162 358 L 168 358" fill="none" stroke="#8a8480" stroke-width="1.25"/>
+  <text x="156" y="226" text-anchor="end" class="movelabel">Move 3</text>
+  <text x="156" y="240" text-anchor="end" class="sm">Constrain it</text>
+  <text x="156" y="252" text-anchor="end" class="sm">— the longest</text>
+  <text x="156" y="264" text-anchor="end" class="sm">block</text>
+  <text x="192" y="224" class="codedim">Constrain it:</text>
+  <text x="192" y="238" class="code">- Marks: rectangles, one per sector.</text>
+  <text x="192" y="252" class="code">- y-position: sector, sorted by funding desc.</text>
+  <text x="192" y="266" class="code">- x-position from zero: funding. Zero non-negotiable.</text>
+  <text x="192" y="280" class="code">- Color luminance redundantly encoding funding.</text>
+  <text x="192" y="294" class="code">- x-axis ticks at $0, $100M, $200M, $300M, $400M.</text>
+  <text x="192" y="308" class="code">- Value labels at the right end of each bar.</text>
+  <text x="192" y="322" class="code">- Margins: top 60, right 80, bottom 40, left 160.</text>
+  <text x="192" y="336" class="code">- Dark mode via prefers-color-scheme.</text>
+  <path d="M 540 290 L 600 290 L 600 270" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#ar06b)"/>
+  <text x="552" y="252" class="sm">every channel-to-</text>
+  <text x="552" y="264" class="sm">attribute mapping</text>
+  <text x="552" y="276" class="sm">is a bullet</text>
+
+  <!-- MOVE 4: VERIFY (rows 20-23) -->
+  <path d="M 168 374 L 162 374 L 162 460 L 168 460" fill="none" stroke="#8a8480" stroke-width="1.25"/>
+  <text x="156" y="390" text-anchor="end" class="movelabel">Move 4</text>
+  <text x="156" y="404" text-anchor="end" class="sm">Verify</text>
+  <text x="156" y="416" text-anchor="end" class="sm">— always</text>
+  <text x="156" y="428" text-anchor="end" class="sm">last</text>
+  <text x="192" y="386" class="codedim">Verify:</text>
+  <text x="192" y="400" class="code">Restate the channel decomposition first.</text>
+  <text x="192" y="414" class="code">Then write D3 v7 with comments showing which</text>
+  <text x="192" y="428" class="code">line implements which channel.</text>
+  <text x="192" y="442" class="code">List any unspecified decisions.</text>
+  <path d="M 540 414 L 600 414 L 600 396" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#ar06b)"/>
+  <text x="556" y="384" class="sm">restatement catches</text>
+  <text x="556" y="396" class="sm">misinterpretation</text>
+
+  <!-- footer caption -->
+  <text x="350" y="522" text-anchor="middle" class="cap">Move 3 is always the longest. Move 4 is always the last. The structure is not style — it is protocol.</text>
+</svg>

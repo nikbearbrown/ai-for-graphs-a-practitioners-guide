@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t01 d01">
+  <title id="t01">Vague prompt versus specific prompt — every decision the vague one omits</title>
+  <desc id="d01">Side-by-side comparison of two D3 prompts. The left column is a one-sentence vague prompt with five callouts naming the decisions Claude Code had to make on its own. The right column is a five-sentence specific prompt with the same five decisions labeled as author-controlled.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .quote { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; font-style: italic; }
+      .tag-vague { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; font-style: italic; }
+      .tag-spec { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; font-weight: bold; }
+    </style>
+    <marker id="ar" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+    <marker id="ar-mid" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8a8480"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+
+  <!-- panel titles -->
+  <text x="32" y="28" class="ti">Vague prompt</text>
+  <text x="32" y="44" class="sm">five decisions left to the model</text>
+  <text x="370" y="28" class="ti">Specific prompt</text>
+  <text x="370" y="44" class="sm">five decisions controlled by the author</text>
+
+  <!-- LEFT PANEL — vague prompt card -->
+  <rect x="32" y="58" width="296" height="60" fill="#f5f2ee" stroke="#c8c4c0" stroke-width="1"/>
+  <text x="44" y="78" class="quote">"Make a chart showing AI capability</text>
+  <text x="44" y="94" class="quote">across cognitive domains."</text>
+  <text x="44" y="110" class="sm">— 9 words, 0 specifications</text>
+
+  <!-- LEFT PANEL — five model-decided items -->
+  <g>
+    <!-- 1 chart type -->
+    <circle cx="50" cy="146" r="9" fill="#2a1a0e"/>
+    <text x="50" y="150" text-anchor="middle" class="lb" fill="#fdfcfb">1</text>
+    <text x="68" y="144" class="lb">Chart type</text>
+    <text x="68" y="158" class="tag-vague">model picks: scatterplot (wrong)</text>
+
+    <!-- 2 marks -->
+    <circle cx="50" cy="186" r="9" fill="#2a1a0e"/>
+    <text x="50" y="190" text-anchor="middle" class="lb" fill="#fdfcfb">2</text>
+    <text x="68" y="184" class="lb">Marks</text>
+    <text x="68" y="198" class="tag-vague">model picks: colored circles</text>
+
+    <!-- 3 channels -->
+    <circle cx="50" cy="226" r="9" fill="#2a1a0e"/>
+    <text x="50" y="230" text-anchor="middle" class="lb" fill="#fdfcfb">3</text>
+    <text x="68" y="224" class="lb">Channels</text>
+    <text x="68" y="238" class="tag-vague">model picks: size + hue (worst pair)</text>
+
+    <!-- 4 sort order -->
+    <circle cx="50" cy="266" r="9" fill="#2a1a0e"/>
+    <text x="50" y="270" text-anchor="middle" class="lb" fill="#fdfcfb">4</text>
+    <text x="68" y="264" class="lb">Sort order</text>
+    <text x="68" y="278" class="tag-vague">model picks: input order (none)</text>
+
+    <!-- 5 baseline -->
+    <circle cx="50" cy="306" r="9" fill="#2a1a0e"/>
+    <text x="50" y="310" text-anchor="middle" class="lb" fill="#fdfcfb">5</text>
+    <text x="68" y="304" class="lb">Baseline / annotation</text>
+    <text x="68" y="318" class="tag-vague">model picks: none</text>
+  </g>
+
+  <!-- LEFT verdict -->
+  <rect x="32" y="340" width="296" height="44" fill="#fdfcfb" stroke="#8a8480" stroke-width="1" stroke-dasharray="3 2"/>
+  <text x="44" y="358" class="lb">Result:</text>
+  <text x="44" y="372" class="sm">a chart you cannot read at a glance.</text>
+
+  <!-- divider -->
+  <line x1="350" y1="20" x2="350" y2="460" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT PANEL — specific prompt card -->
+  <rect x="370" y="58" width="298" height="60" fill="#f5f2ee" stroke="#c8c4c0" stroke-width="1"/>
+  <text x="382" y="74" class="quote">"Vertical bar chart, 8 cognitive</text>
+  <text x="382" y="88" class="quote">domains, sorted desc, zero baseline,</text>
+  <text x="382" y="102" class="quote">luminance redundant, values labeled."</text>
+  <text x="382" y="114" class="sm">— 5 sentences, 5 specifications</text>
+
+  <!-- RIGHT PANEL — five author-controlled items -->
+  <g>
+    <circle cx="388" cy="146" r="9" fill="#2a1a0e"/>
+    <text x="388" y="150" text-anchor="middle" class="lb" fill="#fdfcfb">1</text>
+    <text x="406" y="144" class="lb">Chart type</text>
+    <text x="406" y="158" class="tag-spec">vertical bar chart (author-specified)</text>
+
+    <circle cx="388" cy="186" r="9" fill="#2a1a0e"/>
+    <text x="388" y="190" text-anchor="middle" class="lb" fill="#fdfcfb">2</text>
+    <text x="406" y="184" class="lb">Marks</text>
+    <text x="406" y="198" class="tag-spec">rectangles, one per domain</text>
+
+    <circle cx="388" cy="226" r="9" fill="#2a1a0e"/>
+    <text x="388" y="230" text-anchor="middle" class="lb" fill="#fdfcfb">3</text>
+    <text x="406" y="224" class="lb">Channels</text>
+    <text x="406" y="238" class="tag-spec">y-position from zero (rank 1)</text>
+
+    <circle cx="388" cy="266" r="9" fill="#2a1a0e"/>
+    <text x="388" y="270" text-anchor="middle" class="lb" fill="#fdfcfb">4</text>
+    <text x="406" y="264" class="lb">Sort order</text>
+    <text x="406" y="278" class="tag-spec">descending by score</text>
+
+    <circle cx="388" cy="306" r="9" fill="#2a1a0e"/>
+    <text x="388" y="310" text-anchor="middle" class="lb" fill="#fdfcfb">5</text>
+    <text x="406" y="304" class="lb">Baseline / annotation</text>
+    <text x="406" y="318" class="tag-spec">zero baseline, values above bars</text>
+  </g>
+
+  <!-- RIGHT verdict -->
+  <rect x="370" y="340" width="298" height="44" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1"/>
+  <text x="382" y="358" class="lb">Result:</text>
+  <text x="382" y="372" class="sm">a chart whose ranking reads in a quarter-second.</text>
+
+  <!-- connecting arrows between matching decisions -->
+  <path d="M 220 146 L 340 146" fill="none" stroke="#8a8480" stroke-width="0.75" stroke-dasharray="3 3" marker-end="url(#ar-mid)"/>
+  <path d="M 220 186 L 340 186" fill="none" stroke="#8a8480" stroke-width="0.75" stroke-dasharray="3 3" marker-end="url(#ar-mid)"/>
+  <path d="M 220 226 L 340 226" fill="none" stroke="#8a8480" stroke-width="0.75" stroke-dasharray="3 3" marker-end="url(#ar-mid)"/>
+  <path d="M 220 266 L 340 266" fill="none" stroke="#8a8480" stroke-width="0.75" stroke-dasharray="3 3" marker-end="url(#ar-mid)"/>
+  <path d="M 220 306 L 340 306" fill="none" stroke="#8a8480" stroke-width="0.75" stroke-dasharray="3 3" marker-end="url(#ar-mid)"/>
+
+  <!-- caption -->
+  <text x="350" y="420" text-anchor="middle" class="cap">Every decision the vague prompt omits is a decision the model makes for you.</text>
+  <text x="350" y="438" text-anchor="middle" class="cap">Specificity is not length. It is naming the decisions you will not delegate.</text>
+</svg>

@@ -1,0 +1,207 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t10-05 d10-05">
+  <title id="t10-05">Heatmap sort order — alphabetical hides the pattern, sorted reveals it</title>
+  <desc id="d10-05">The same eight-region by six-sector adoption-rate heatmap rendered with alphabetical ordering and with rows and columns sorted by value. The sorted version reveals a bright upper-left cluster.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .badge { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">Same heatmap, two orderings. Sort order is a design decision.</text>
+
+  <!-- LEFT: alphabetical (random-looking pattern) -->
+  <g transform="translate(40,60)">
+    <text x="130" y="0" text-anchor="middle" class="ti">A. Alphabetical order</text>
+    <text x="130" y="14" text-anchor="middle" class="sm">no pattern visible</text>
+    <!-- column labels -->
+    <g class="sm">
+      <text x="50" y="40" text-anchor="middle">S1</text>
+      <text x="80" y="40" text-anchor="middle">S2</text>
+      <text x="110" y="40" text-anchor="middle">S3</text>
+      <text x="140" y="40" text-anchor="middle">S4</text>
+      <text x="170" y="40" text-anchor="middle">S5</text>
+      <text x="200" y="40" text-anchor="middle">S6</text>
+    </g>
+    <!-- row labels -->
+    <g class="sm">
+      <text x="20" y="56" text-anchor="end">Andes</text>
+      <text x="20" y="76" text-anchor="end">Baltics</text>
+      <text x="20" y="96" text-anchor="end">Cascadia</text>
+      <text x="20" y="116" text-anchor="end">Deccan</text>
+      <text x="20" y="136" text-anchor="end">Ebro</text>
+      <text x="20" y="156" text-anchor="end">Frisia</text>
+      <text x="20" y="176" text-anchor="end">Galicia</text>
+      <text x="20" y="196" text-anchor="end">Hokkaido</text>
+    </g>
+    <!-- 8 rows x 6 cols, cell 30x20, top-left at (35,46) -->
+    <!-- shuffled values to create no pattern -->
+    <g stroke="#fdfcfb" stroke-width="1">
+      <!-- row 1 -->
+      <rect x="35" y="46" width="30" height="20" fill="#8a8480"/>
+      <rect x="65" y="46" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="95" y="46" width="30" height="20" fill="#3a3530"/>
+      <rect x="125" y="46" width="30" height="20" fill="#bfbab5"/>
+      <rect x="155" y="46" width="30" height="20" fill="#5a544f"/>
+      <rect x="185" y="46" width="30" height="20" fill="#e6e2de"/>
+      <!-- row 2 -->
+      <rect x="35" y="66" width="30" height="20" fill="#e6e2de"/>
+      <rect x="65" y="66" width="30" height="20" fill="#5a544f"/>
+      <rect x="95" y="66" width="30" height="20" fill="#bfbab5"/>
+      <rect x="125" y="66" width="30" height="20" fill="#8a8480"/>
+      <rect x="155" y="66" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="185" y="66" width="30" height="20" fill="#3a3530"/>
+      <!-- row 3 -->
+      <rect x="35" y="86" width="30" height="20" fill="#3a3530"/>
+      <rect x="65" y="86" width="30" height="20" fill="#bfbab5"/>
+      <rect x="95" y="86" width="30" height="20" fill="#5a544f"/>
+      <rect x="125" y="86" width="30" height="20" fill="#e6e2de"/>
+      <rect x="155" y="86" width="30" height="20" fill="#8a8480"/>
+      <rect x="185" y="86" width="30" height="20" fill="#c8c4c0"/>
+      <!-- row 4 -->
+      <rect x="35" y="106" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="65" y="106" width="30" height="20" fill="#e6e2de"/>
+      <rect x="95" y="106" width="30" height="20" fill="#8a8480"/>
+      <rect x="125" y="106" width="30" height="20" fill="#5a544f"/>
+      <rect x="155" y="106" width="30" height="20" fill="#3a3530"/>
+      <rect x="185" y="106" width="30" height="20" fill="#bfbab5"/>
+      <!-- row 5 -->
+      <rect x="35" y="126" width="30" height="20" fill="#bfbab5"/>
+      <rect x="65" y="126" width="30" height="20" fill="#3a3530"/>
+      <rect x="95" y="126" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="125" y="126" width="30" height="20" fill="#8a8480"/>
+      <rect x="155" y="126" width="30" height="20" fill="#e6e2de"/>
+      <rect x="185" y="126" width="30" height="20" fill="#5a544f"/>
+      <!-- row 6 -->
+      <rect x="35" y="146" width="30" height="20" fill="#5a544f"/>
+      <rect x="65" y="146" width="30" height="20" fill="#8a8480"/>
+      <rect x="95" y="146" width="30" height="20" fill="#e6e2de"/>
+      <rect x="125" y="146" width="30" height="20" fill="#3a3530"/>
+      <rect x="155" y="146" width="30" height="20" fill="#bfbab5"/>
+      <rect x="185" y="146" width="30" height="20" fill="#c8c4c0"/>
+      <!-- row 7 -->
+      <rect x="35" y="166" width="30" height="20" fill="#bfbab5"/>
+      <rect x="65" y="166" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="95" y="166" width="30" height="20" fill="#5a544f"/>
+      <rect x="125" y="166" width="30" height="20" fill="#e6e2de"/>
+      <rect x="155" y="166" width="30" height="20" fill="#3a3530"/>
+      <rect x="185" y="166" width="30" height="20" fill="#8a8480"/>
+      <!-- row 8 -->
+      <rect x="35" y="186" width="30" height="20" fill="#e6e2de"/>
+      <rect x="65" y="186" width="30" height="20" fill="#3a3530"/>
+      <rect x="95" y="186" width="30" height="20" fill="#bfbab5"/>
+      <rect x="125" y="186" width="30" height="20" fill="#5a544f"/>
+      <rect x="155" y="186" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="185" y="186" width="30" height="20" fill="#8a8480"/>
+    </g>
+  </g>
+
+  <!-- RIGHT: sorted (clustered upper-left) -->
+  <g transform="translate(400,60)">
+    <text x="130" y="0" text-anchor="middle" class="ti">B. Sorted by row + column maximum</text>
+    <text x="130" y="14" text-anchor="middle" class="sm">cluster of high adoption emerges</text>
+    <!-- column labels reordered -->
+    <g class="sm">
+      <text x="50" y="40" text-anchor="middle">S3</text>
+      <text x="80" y="40" text-anchor="middle">S5</text>
+      <text x="110" y="40" text-anchor="middle">S1</text>
+      <text x="140" y="40" text-anchor="middle">S4</text>
+      <text x="170" y="40" text-anchor="middle">S2</text>
+      <text x="200" y="40" text-anchor="middle">S6</text>
+    </g>
+    <g class="sm">
+      <text x="20" y="56" text-anchor="end">Cascadia</text>
+      <text x="20" y="76" text-anchor="end">Deccan</text>
+      <text x="20" y="96" text-anchor="end">Andes</text>
+      <text x="20" y="116" text-anchor="end">Hokkaido</text>
+      <text x="20" y="136" text-anchor="end">Frisia</text>
+      <text x="20" y="156" text-anchor="end">Ebro</text>
+      <text x="20" y="176" text-anchor="end">Baltics</text>
+      <text x="20" y="196" text-anchor="end">Galicia</text>
+    </g>
+    <!-- sorted: darkest cells in upper-left -->
+    <g stroke="#fdfcfb" stroke-width="1">
+      <!-- row 1 (Cascadia) -->
+      <rect x="35" y="46" width="30" height="20" fill="#3a3530"/>
+      <rect x="65" y="46" width="30" height="20" fill="#3a3530"/>
+      <rect x="95" y="46" width="30" height="20" fill="#5a544f"/>
+      <rect x="125" y="46" width="30" height="20" fill="#8a8480"/>
+      <rect x="155" y="46" width="30" height="20" fill="#bfbab5"/>
+      <rect x="185" y="46" width="30" height="20" fill="#c8c4c0"/>
+      <!-- row 2 -->
+      <rect x="35" y="66" width="30" height="20" fill="#3a3530"/>
+      <rect x="65" y="66" width="30" height="20" fill="#5a544f"/>
+      <rect x="95" y="66" width="30" height="20" fill="#5a544f"/>
+      <rect x="125" y="66" width="30" height="20" fill="#8a8480"/>
+      <rect x="155" y="66" width="30" height="20" fill="#bfbab5"/>
+      <rect x="185" y="66" width="30" height="20" fill="#c8c4c0"/>
+      <!-- row 3 -->
+      <rect x="35" y="86" width="30" height="20" fill="#5a544f"/>
+      <rect x="65" y="86" width="30" height="20" fill="#5a544f"/>
+      <rect x="95" y="86" width="30" height="20" fill="#8a8480"/>
+      <rect x="125" y="86" width="30" height="20" fill="#8a8480"/>
+      <rect x="155" y="86" width="30" height="20" fill="#bfbab5"/>
+      <rect x="185" y="86" width="30" height="20" fill="#c8c4c0"/>
+      <!-- row 4 -->
+      <rect x="35" y="106" width="30" height="20" fill="#5a544f"/>
+      <rect x="65" y="106" width="30" height="20" fill="#8a8480"/>
+      <rect x="95" y="106" width="30" height="20" fill="#8a8480"/>
+      <rect x="125" y="106" width="30" height="20" fill="#bfbab5"/>
+      <rect x="155" y="106" width="30" height="20" fill="#bfbab5"/>
+      <rect x="185" y="106" width="30" height="20" fill="#c8c4c0"/>
+      <!-- row 5 -->
+      <rect x="35" y="126" width="30" height="20" fill="#8a8480"/>
+      <rect x="65" y="126" width="30" height="20" fill="#8a8480"/>
+      <rect x="95" y="126" width="30" height="20" fill="#bfbab5"/>
+      <rect x="125" y="126" width="30" height="20" fill="#bfbab5"/>
+      <rect x="155" y="126" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="185" y="126" width="30" height="20" fill="#e6e2de"/>
+      <!-- row 6 -->
+      <rect x="35" y="146" width="30" height="20" fill="#8a8480"/>
+      <rect x="65" y="146" width="30" height="20" fill="#bfbab5"/>
+      <rect x="95" y="146" width="30" height="20" fill="#bfbab5"/>
+      <rect x="125" y="146" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="155" y="146" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="185" y="146" width="30" height="20" fill="#e6e2de"/>
+      <!-- row 7 -->
+      <rect x="35" y="166" width="30" height="20" fill="#bfbab5"/>
+      <rect x="65" y="166" width="30" height="20" fill="#bfbab5"/>
+      <rect x="95" y="166" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="125" y="166" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="155" y="166" width="30" height="20" fill="#e6e2de"/>
+      <rect x="185" y="166" width="30" height="20" fill="#e6e2de"/>
+      <!-- row 8 -->
+      <rect x="35" y="186" width="30" height="20" fill="#bfbab5"/>
+      <rect x="65" y="186" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="95" y="186" width="30" height="20" fill="#c8c4c0"/>
+      <rect x="125" y="186" width="30" height="20" fill="#e6e2de"/>
+      <rect x="155" y="186" width="30" height="20" fill="#e6e2de"/>
+      <rect x="185" y="186" width="30" height="20" fill="#e6e2de"/>
+    </g>
+    <!-- callout box around upper-left cluster -->
+    <rect x="33" y="44" width="64" height="44" fill="none" stroke="#C8860E" stroke-width="2"/>
+    <text x="100" y="64" class="badge" fill="#C8860E">high-adoption</text>
+    <text x="100" y="76" class="badge" fill="#C8860E">cluster</text>
+  </g>
+
+  <!-- shared color scale -->
+  <g transform="translate(220,260)">
+    <text x="0" y="0" class="lb">adoption rate (color luminance)</text>
+    <rect x="0" y="8" width="30" height="12" fill="#e6e2de" stroke="#c8c4c0"/>
+    <rect x="30" y="8" width="30" height="12" fill="#c8c4c0" stroke="#c8c4c0"/>
+    <rect x="60" y="8" width="30" height="12" fill="#bfbab5" stroke="#c8c4c0"/>
+    <rect x="90" y="8" width="30" height="12" fill="#8a8480" stroke="#c8c4c0"/>
+    <rect x="120" y="8" width="30" height="12" fill="#5a544f" stroke="#c8c4c0"/>
+    <rect x="150" y="8" width="30" height="12" fill="#3a3530" stroke="#c8c4c0"/>
+    <text x="0" y="34" class="sm">low</text>
+    <text x="180" y="34" text-anchor="end" class="sm">high</text>
+    <text x="90" y="56" text-anchor="middle" class="sm">sequential scale — luminance, not hue</text>
+  </g>
+
+  <!-- caption -->
+  <text x="350" y="350" text-anchor="middle" class="cap">Color luminance carries the magnitude (sequential, not categorical). Sort order does the rest.</text>
+  <text x="350" y="366" text-anchor="middle" class="cap">Alphabetical is the default; it is almost never the right choice.</text>
+</svg>

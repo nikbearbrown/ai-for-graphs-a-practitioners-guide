@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 16.4 — Before and after redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .panel-label { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-secondary); }
+  .panel-title { font-family: 'EB Garamond', Georgia, serif; font-size: 22px; margin-top: 4px; line-height: 1.2; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 16px; margin-top: 4px; }
+  .chart { width: 100%; height: 320px; }
+  .flaw-title { font-family: 'Inter', sans-serif; font-style: italic; font-size: 11px; fill: var(--color-secondary); }
+  .axis-spine { stroke: var(--color-ink); }
+  .tick text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .gridline-heavy { stroke: var(--color-secondary); stroke-width: 0.5; opacity: 0.7; }
+  .gridline-light { stroke: var(--color-border); stroke-width: 0.5; opacity: 0.7; }
+  .cat-label-bad { font-family: 'Inter', sans-serif; font-style: italic; font-size: 9px; fill: var(--color-secondary); }
+  .cat-label-good { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .data-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-ink); }
+  .verdict { margin-top: 16px; padding: 10px 14px; font-size: 13px; font-weight: 700; text-align: center; }
+  .verdict.fail { background: color-mix(in srgb, var(--color-secondary) 12%, transparent); color: var(--color-secondary); border-left: 3px solid var(--color-secondary); }
+  .verdict.pass { background: color-mix(in srgb, var(--color-ochre) 14%, transparent); color: var(--color-ink); border-left: 3px solid var(--color-ochre); }
+  .checklist { margin-top: 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; font-size: 11px; }
+  .check-cat { display: flex; flex-direction: column; align-items: center; padding: 6px; border: 1px solid var(--color-border); }
+  .check-cat .name { color: var(--color-secondary); font-family: 'Inter', sans-serif; font-weight: 600; }
+  .check-cat .marks { font-family: 'JetBrains Mono', monospace; color: var(--color-ink); margin-top: 2px; letter-spacing: 0.1em; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 16.4 — Before and after</h1>
+<p class="subtitle">Same data. Different encoding decisions. Every change in the redesign traces to a specific principle.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-label">Before</div>
+    <div class="panel-title">Q4 Performance Highlights</div>
+    <div class="panel-sub">3D bars · rainbow gradients · truncated baseline · heavy gridlines · 8pt italic rotated labels.</div>
+    <div id="chartBefore" class="chart" role="img" aria-labelledby="bef-t bef-d"></div>
+    <div class="verdict fail">8 pass / 14 fail</div>
+  </div>
+  <div class="panel">
+    <div class="panel-label">After</div>
+    <div class="panel-title">Food Security funding leads Q4 by a wide margin</div>
+    <div class="panel-sub">Compared with Q3 2024 target — five regions, $K. Sorted descending. Zero baseline. Direct labels.</div>
+    <div id="chartAfter" class="chart" role="img" aria-labelledby="aft-t aft-d"></div>
+    <div class="verdict pass">22 pass / 0 fail</div>
+    <div class="checklist" aria-label="22-item checklist by category">
+      <div class="check-cat"><span class="name">Text</span><span class="marks">✓✓✓✓✓</span></div>
+      <div class="check-cat"><span class="name">Arrange</span><span class="marks">✓✓✓✓</span></div>
+      <div class="check-cat"><span class="name">Color</span><span class="marks">✓✓✓✓✓</span></div>
+      <div class="check-cat"><span class="name">Lines</span><span class="marks">✓✓✓✓</span></div>
+      <div class="check-cat"><span class="name">Overall</span><span class="marks">✓✓✓✓</span></div>
+    </div>
+  </div>
+</div>
+<p class="caption">The redesign passes all twenty-two checklist items because every design decision traces to a specific principle.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const barData = [
+  { region: 'North',   value: 480 },
+  { region: 'South',   value: 470 },
+  { region: 'East',    value: 450 },
+  { region: 'West',    value: 440 },
+  { region: 'Central', value: 430 }
+];
+
+const rainbowFront = ['#a83a2a', '#b8742a', '#b8a02a', '#3a8a3a', '#2a5aa8'];
+const rainbowSide  = ['#7a1f1a', '#7a4a1a', '#7a6a1a', '#1f5a2a', '#1a3a6a'];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawBefore() {
+  const selector = '#chartBefore';
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth = container.clientWidth || 480;
+  const totalHeight = container.clientHeight || 320;
+  const margin = { top: 28, right: 24, bottom: 56, left: 48 };
+  const chartWidth = totalWidth - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'bef-t bef-d');
+  svg.append('title').attr('id', 'bef-t').text('Flawed before chart');
+  svg.append('desc').attr('id', 'bef-d').text('3D bar chart with rainbow gradients, truncated baseline, heavy gridlines, and tiny italic labels.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleBand = d3.scaleBand().domain(barData.map(d => d.region)).range([0, chartWidth]).padding(0.32);
+  const yScaleLinear = d3.scaleLinear().domain([400, 500]).range([chartHeight, 0]);
+
+  // heavy gridlines at every 10
+  const ticks = d3.range(400, 501, 10);
+  gChart.selectAll('.gridline-heavy')
+    .data(ticks).join('line')
+      .attr('class', 'gridline-heavy')
+      .attr('x1', 0).attr('x2', chartWidth)
+      .attr('y1', d => yScaleLinear(d)).attr('y2', d => yScaleLinear(d));
+
+  gChart.append('g').attr('class', 'tick')
+    .call(d3.axisLeft(yScaleLinear).ticks(5))
+    .call(g => g.select('.domain').attr('class', 'axis-spine'));
+
+  const bw = xScaleBand.bandwidth();
+  barData.forEach((d, i) => {
+    const x = xScaleBand(d.region);
+    const y = yScaleLinear(d.value);
+    const w = bw;
+    const h = chartHeight - y;
+    const depth = Math.min(8, w * 0.16);
+    gChart.append('rect').attr('x', x).attr('y', y).attr('width', w).attr('height', h).attr('fill', rainbowFront[i])
+      .attr('tabindex', 0)
+      .attr('aria-label', `${d.region}: ${d.value}`)
+      .on('mouseover', (e) => showTip(e, `<strong>${d.region}</strong>: ${d.value}`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+    gChart.append('polygon')
+      .attr('points', `${x + w},${y} ${x + w + depth},${y - depth} ${x + w + depth},${y + h - depth} ${x + w},${y + h}`)
+      .attr('fill', rainbowSide[i]).attr('opacity', 0.85);
+    gChart.append('polygon')
+      .attr('points', `${x},${y} ${x + depth},${y - depth} ${x + w + depth},${y - depth} ${x + w},${y}`)
+      .attr('fill', rainbowSide[i]).attr('opacity', 0.5);
+  });
+
+  gChart.selectAll('.cat-label-bad')
+    .data(barData).join('text')
+      .attr('class', 'cat-label-bad')
+      .attr('x', d => xScaleBand(d.region) + bw / 2)
+      .attr('y', chartHeight + 12)
+      .attr('text-anchor', 'end')
+      .attr('transform', d => `rotate(-45, ${xScaleBand(d.region) + bw / 2}, ${chartHeight + 12})`)
+      .text(d => d.region);
+}
+
+function drawAfter() {
+  const selector = '#chartAfter';
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth = container.clientWidth || 480;
+  const totalHeight = container.clientHeight || 320;
+  const margin = { top: 16, right: 48, bottom: 32, left: 80 };
+  const chartWidth = totalWidth - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'aft-t aft-d');
+  svg.append('title').attr('id', 'aft-t').text('Redesigned horizontal bar chart');
+  svg.append('desc').attr('id', 'aft-d').text('Horizontal bars sorted descending, zero baseline, single muted hue, light gridlines, direct value labels.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const sorted = [...barData].sort((a, b) => b.value - a.value);
+  const xScaleLinear = d3.scaleLinear().domain([0, 500]).range([0, chartWidth]);
+  const yScaleBand = d3.scaleBand().domain(sorted.map(d => d.region)).range([0, chartHeight]).padding(0.25);
+
+  // light gridlines
+  const ticks = xScaleLinear.ticks(5);
+  gChart.selectAll('.gridline-light')
+    .data(ticks).join('line')
+      .attr('class', 'gridline-light')
+      .attr('x1', d => xScaleLinear(d)).attr('x2', d => xScaleLinear(d))
+      .attr('y1', 0).attr('y2', chartHeight);
+
+  gChart.append('g').attr('class', 'tick').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleLinear).ticks(5))
+    .call(g => g.select('.domain').attr('class', 'axis-spine'));
+
+  gChart.append('g').attr('class', 'tick')
+    .call(d3.axisLeft(yScaleBand).tickSize(0))
+    .call(g => g.select('.domain').remove())
+    .selectAll('text').attr('class', 'cat-label-good');
+
+  gChart.selectAll('.bar-after')
+    .data(sorted).join('rect')
+      .attr('class', 'bar-after')
+      .attr('x', 0)
+      .attr('y', d => yScaleBand(d.region))
+      .attr('width', d => xScaleLinear(d.value))
+      .attr('height', yScaleBand.bandwidth())
+      .attr('fill', 'var(--color-secondary)')
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.region}: ${d.value}`)
+      .on('mouseover', (e, d) => showTip(e, `<strong>${d.region}</strong>: $${d.value}K`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  gChart.selectAll('.data-label')
+    .data(sorted).join('text')
+      .attr('class', 'data-label')
+      .attr('x', d => xScaleLinear(d.value) + 6)
+      .attr('y', d => yScaleBand(d.region) + yScaleBand.bandwidth() / 2 + 4)
+      .text(d => d.value);
+}
+
+function draw() {
+  drawBefore();
+  drawAfter();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartBefore'));
+ro.observe(document.getElementById('chartAfter'));
+</script>
+</body>
+</html>

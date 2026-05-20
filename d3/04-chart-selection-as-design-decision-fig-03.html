@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 4.3 — Three failure modes, three redesigns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #rows { width: 100%; }
+  .row { display: grid; grid-template-columns: 220px 1fr 60px 1fr; gap: 12px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--color-border); }
+  .row:last-of-type { border-bottom: none; }
+  @media (max-width: 720px) {
+    .row { grid-template-columns: 1fr; }
+    .row .arrow-cell { transform: rotate(90deg); height: 32px; }
+  }
+  .row-label { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; fill: var(--color-ink); }
+  .mode-name { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--color-ink); letter-spacing: 0.4px; }
+  .mode-desc { font-family: 'EB Garamond', Georgia, serif; font-size: 13px; color: var(--color-secondary); margin-top: 4px; }
+  .mode-msg-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--color-secondary); margin-top: 8px; }
+  .mode-msg { font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-size: 13px; color: var(--color-ink); }
+  .col-head { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--color-secondary); letter-spacing: 0.5px; margin-bottom: 8px; }
+  .panel-svg { width: 100%; height: 180px; display: block; }
+  .panel-caption { font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-size: 11px; color: var(--color-secondary); margin-top: 4px; text-align: center; }
+  .arrow-svg { width: 100%; height: 32px; }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 65ch; font-style: italic; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 4.3 — Three failure modes, three redesigns</h1>
+<p class="subtitle">Familiarity bias, aesthetic-first selection, software-default selection. Each row shows the chart the failure mode produces, then the chart the message demanded all along.</p>
+<div id="rows" role="img" aria-labelledby="r-t r-d"></div>
+<p class="caption">Each redesign follows from writing the key message first; the chart type is then a consequence, not a default.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const rows = [
+  {
+    mode: 'FAMILIARITY BIAS',
+    desc: '"parts of a whole, so pie" — the designer skipped step 1.',
+    msg: '"which got the most?"',
+    msgNote: 'a ranking task',
+    before: 'pie',
+    beforeCaption: '8-slice pie · angle as channel',
+    after: 'sortedBar',
+    afterCaption: 'sorted bar · length as channel'
+  },
+  {
+    mode: 'AESTHETIC-FIRST',
+    desc: '"a 3D donut looks impressive on the slide."',
+    msg: '"how do the four parts make up the whole?"',
+    msgNote: 'a composition claim',
+    before: 'donut3d',
+    beforeCaption: '3D exploded donut · perspective distorts proportion',
+    after: 'stackedBar',
+    afterCaption: 'flat stacked bar · shared baseline restores proportion'
+  },
+  {
+    mode: 'SOFTWARE-DEFAULT',
+    desc: '"the chart wizard picked a rainbow line series."',
+    msg: '"how has each of five series changed over time?"',
+    msgNote: 'a change-over-time claim',
+    before: 'spaghetti',
+    beforeCaption: '5 lines, same panel · the reader cannot trace any one series',
+    after: 'smallMultiples',
+    afterCaption: 'small multiples · one panel per series, shared scales'
+  }
+];
+
+function drawPie(svg, w, h) {
+  const cx = w / 2, cy = h / 2;
+  const r = Math.min(w, h) / 2 - 12;
+  const pcts = [28, 19, 14, 11, 9, 8, 6, 5];
+  const palette = ['#121212', '#404040', '#787878', '#ADADAD'];
+  const pie = d3.pie().sort(null).value(d => d);
+  const arc = d3.arc().innerRadius(0).outerRadius(r);
+  const g = svg.append('g').attr('transform', `translate(${cx}, ${cy})`);
+  g.selectAll('path').data(pie(pcts)).join('path')
+    .attr('d', arc).attr('fill', (d, i) => palette[i % palette.length])
+    .attr('stroke', 'var(--color-white)').attr('stroke-width', 0.75);
+}
+
+function drawSortedBar(svg, w, h) {
+  const margin = { top: 8, right: 16, bottom: 8, left: 8 };
+  const cw = w - margin.left - margin.right;
+  const ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const vals = [28, 19, 14, 11, 9, 8, 6, 5];
+  const x = d3.scaleLinear().domain([0, 28]).range([0, cw]);
+  const y = d3.scaleBand().domain(d3.range(vals.length)).range([0, ch]).padding(0.2);
+  g.append('line').attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', ch)
+    .attr('stroke', 'var(--color-secondary)').attr('stroke-width', 0.75);
+  g.selectAll('rect').data(vals).join('rect')
+    .attr('x', 0).attr('y', (d, i) => y(i)).attr('width', d => x(d)).attr('height', y.bandwidth())
+    .attr('fill', (d, i) => i === 0 ? 'var(--color-red)' : 'var(--color-ink)');
+}
+
+function drawDonut3d(svg, w, h) {
+  const cx = w / 2, cy = h / 2 + 8;
+  const rx = Math.min(w * 0.4, 80);
+  const ry = rx * 0.38;
+  const g = svg.append('g').attr('transform', `translate(${cx}, ${cy})`);
+
+  // shadow ellipse beneath for depth
+  g.append('ellipse').attr('cx', 0).attr('cy', 14).attr('rx', rx).attr('ry', ry)
+    .attr('fill', '#ADADAD').attr('opacity', 0.5);
+
+  // four exploded slice paths approximated as offset wedges on a tilted ellipse
+  // proportions 40/30/18/12 → cumulative angle proportions
+  const slices = [
+    { start: 0,    end: 144, fill: '#121212', dx:  6, dy: -3 },
+    { start: 144,  end: 252, fill: '#404040', dx:  4, dy:  5 },
+    { start: 252,  end: 316.8, fill: '#787878', dx: -4, dy:  4 },
+    { start: 316.8, end: 360, fill: '#ADADAD', dx: -5, dy: -3 }
+  ];
+
+  function pt(angleDeg) {
+    const a = (angleDeg - 90) * Math.PI / 180; // start from top
+    return [rx * Math.cos(a), ry * Math.sin(a)];
+  }
+
+  slices.forEach(s => {
+    const sg = g.append('g').attr('transform', `translate(${s.dx}, ${s.dy})`);
+    // approximate wedge with multi-step arc
+    const steps = 24;
+    let path = 'M 0 0';
+    for (let i = 0; i <= steps; i++) {
+      const t = s.start + (s.end - s.start) * (i / steps);
+      const [px, py] = pt(t);
+      path += ` L ${px.toFixed(2)} ${py.toFixed(2)}`;
+    }
+    path += ' Z';
+    sg.append('path').attr('d', path).attr('fill', s.fill);
+  });
+
+  // inner hole — donut effect
+  g.append('ellipse').attr('cx', 0).attr('cy', 0)
+    .attr('rx', rx * 0.4).attr('ry', ry * 0.4)
+    .attr('fill', 'var(--color-white)')
+    .attr('stroke', 'var(--color-border)').attr('stroke-width', 0.5);
+
+  // floating labels
+  g.append('text').attr('x', rx + 4).attr('y', -ry + 2).attr('class', 'tick')
+    .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 9)
+    .attr('fill', 'var(--color-secondary)').text('40%');
+  g.append('text').attr('x', rx).attr('y', ry + 4)
+    .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 9)
+    .attr('fill', 'var(--color-secondary)').text('30%');
+  g.append('text').attr('x', -rx - 26).attr('y', ry)
+    .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 9)
+    .attr('fill', 'var(--color-secondary)').text('18%');
+  g.append('text').attr('x', -rx - 26).attr('y', -ry + 4)
+    .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 9)
+    .attr('fill', 'var(--color-secondary)').text('12%');
+}
+
+function drawStackedBar(svg, w, h) {
+  const margin = { top: 40, right: 16, bottom: 28, left: 16 };
+  const cw = w - margin.left - margin.right;
+  const barH = 36;
+  const g = svg.append('g').attr('transform', `translate(${margin.left}, ${(h - barH) / 2})`);
+  const props = [40, 30, 18, 12];
+  const palette = ['#121212', '#404040', '#787878', '#ADADAD'];
+  let acc = 0;
+  props.forEach((p, i) => {
+    const x = (acc / 100) * cw;
+    const w0 = (p / 100) * cw;
+    g.append('rect').attr('x', x).attr('y', 0).attr('width', w0).attr('height', barH)
+      .attr('fill', palette[i]);
+    g.append('text').attr('x', x + w0 / 2).attr('y', barH / 2 + 4)
+      .attr('text-anchor', 'middle')
+      .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 11).attr('font-weight', 700)
+      .attr('fill', i < 2 ? 'var(--color-white)' : 'var(--color-ink)')
+      .text(`${p}%`);
+    acc += p;
+  });
+  g.append('text').attr('x', 0).attr('y', barH + 16)
+    .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 10)
+    .attr('fill', 'var(--color-secondary)').text('0%');
+  g.append('text').attr('x', cw).attr('y', barH + 16).attr('text-anchor', 'end')
+    .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 10)
+    .attr('fill', 'var(--color-secondary)').text('100%');
+}
+
+function drawSpaghetti(svg, w, h) {
+  const margin = { top: 12, right: 12, bottom: 12, left: 16 };
+  const cw = w - margin.left - margin.right;
+  const ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+  g.append('rect').attr('x', 0).attr('y', 0).attr('width', cw).attr('height', ch)
+    .attr('fill', 'none').attr('stroke', 'var(--color-border)').attr('stroke-width', 0.5);
+
+  const seriesColors = ['#121212', '#404040', '#787878', '#ADADAD', '#C8C4C0'];
+  const x = d3.scaleLinear().domain([0, 5]).range([8, cw - 8]);
+  const y = d3.scaleLinear().domain([0, 1]).range([ch - 8, 8]);
+  const line = d3.line().x((d, i) => x(i)).y(d => y(d));
+
+  const data = [
+    [0.2, 0.85, 0.3, 0.9, 0.35, 0.95],
+    [0.7, 0.25, 0.8, 0.2, 0.85, 0.3],
+    [0.4, 0.9, 0.15, 0.75, 0.25, 0.8],
+    [0.85, 0.3, 0.95, 0.25, 0.9, 0.15],
+    [0.3, 0.75, 0.45, 0.85, 0.2, 0.7]
+  ];
+
+  data.forEach((d, i) => {
+    g.append('path').attr('d', line(d)).attr('fill', 'none')
+      .attr('stroke', seriesColors[i]).attr('stroke-width', 1.5);
+  });
+}
+
+function drawSmallMultiples(svg, w, h) {
+  const margin = { top: 8, right: 4, bottom: 16, left: 4 };
+  const cw = w - margin.left - margin.right;
+  const ch = h - margin.top - margin.bottom;
+  const n = 5;
+  const gap = 4;
+  const panelW = (cw - gap * (n - 1)) / n;
+  const panelH = ch - 14;
+  const root = svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+
+  const trends = [
+    { data: [0.85, 0.7, 0.55, 0.4, 0.25, 0.1], label: 'A' },
+    { data: [0.1, 0.25, 0.4, 0.55, 0.7, 0.85], label: 'B' },
+    { data: [0.65, 0.5, 0.55, 0.35, 0.4, 0.2], label: 'C' },
+    { data: [0.4, 0.45, 0.3, 0.45, 0.25, 0.2], label: 'D' },
+    { data: [0.55, 0.45, 0.6, 0.4, 0.5, 0.3], label: 'E' }
+  ];
+
+  const x = d3.scaleLinear().domain([0, 5]).range([4, panelW - 4]);
+  const y = d3.scaleLinear().domain([0, 1]).range([panelH - 4, 4]);
+  const line = d3.line().x((d, i) => x(i)).y(d => y(d));
+
+  trends.forEach((t, i) => {
+    const g = root.append('g').attr('transform', `translate(${i * (panelW + gap)}, 0)`);
+    g.append('rect').attr('width', panelW).attr('height', panelH)
+      .attr('fill', 'none').attr('stroke', 'var(--color-border)').attr('stroke-width', 0.5);
+    g.append('path').attr('d', line(t.data)).attr('fill', 'none')
+      .attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.25);
+    g.append('text').attr('x', panelW / 2).attr('y', panelH + 12).attr('text-anchor', 'middle')
+      .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 10)
+      .attr('fill', 'var(--color-secondary)').text(t.label);
+  });
+}
+
+const drawers = {
+  pie: drawPie,
+  sortedBar: drawSortedBar,
+  donut3d: drawDonut3d,
+  stackedBar: drawStackedBar,
+  spaghetti: drawSpaghetti,
+  smallMultiples: drawSmallMultiples
+};
+
+function draw() {
+  const root = d3.select('#rows');
+  root.selectAll('*').remove();
+
+  rows.forEach((r, i) => {
+    const rowDiv = root.append('div').attr('class', 'row').attr('role', 'group')
+      .attr('aria-label', `${r.mode} before-after redesign`);
+
+    const labelCell = rowDiv.append('div');
+    labelCell.append('div').attr('class', 'mode-name').text(r.mode);
+    labelCell.append('div').attr('class', 'mode-desc').text(r.desc);
+    labelCell.append('div').attr('class', 'mode-msg-label').text('Message:');
+    labelCell.append('div').attr('class', 'mode-msg').text(r.msg);
+    labelCell.append('div').attr('class', 'mode-desc').style('font-style', 'italic').text(r.msgNote);
+
+    const beforeCell = rowDiv.append('div');
+    beforeCell.append('div').attr('class', 'col-head').text(i === 0 ? 'BEFORE' : '');
+    const beforeSvg = beforeCell.append('svg').attr('class', 'panel-svg').attr('viewBox', '0 0 220 180').attr('preserveAspectRatio', 'xMidYMid meet');
+    drawers[r.before](beforeSvg, 220, 180);
+    beforeCell.append('div').attr('class', 'panel-caption').text(r.beforeCaption);
+
+    const arrowCell = rowDiv.append('div').attr('class', 'arrow-cell');
+    const arrowSvg = arrowCell.append('svg').attr('class', 'arrow-svg').attr('viewBox', '0 0 60 32');
+    arrowSvg.append('defs').append('marker').attr('id', `ar-${i}`)
+      .attr('markerWidth', 10).attr('markerHeight', 8).attr('refX', 9).attr('refY', 4).attr('orient', 'auto')
+      .append('polygon').attr('points', '0 0, 10 4, 0 8').attr('fill', 'var(--color-secondary)');
+    arrowSvg.append('line').attr('x1', 4).attr('x2', 50).attr('y1', 16).attr('y2', 16)
+      .attr('stroke', 'var(--color-secondary)').attr('stroke-width', 1.25)
+      .attr('marker-end', `url(#ar-${i})`);
+
+    const afterCell = rowDiv.append('div');
+    afterCell.append('div').attr('class', 'col-head').text(i === 0 ? 'AFTER' : '');
+    const afterSvg = afterCell.append('svg').attr('class', 'panel-svg').attr('viewBox', '0 0 280 180').attr('preserveAspectRatio', 'xMidYMid meet');
+    drawers[r.after](afterSvg, 280, 180);
+    afterCell.append('div').attr('class', 'panel-caption').text(r.afterCaption);
+  });
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('rows'));
+</script>
+</body>
+</html>

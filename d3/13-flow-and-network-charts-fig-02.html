@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 13.2 — Sankey proportionality audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 240px; }
+  .audit { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--color-ink); margin-top: 16px; }
+  .audit .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--color-border); }
+  .verdict { display: inline-block; padding: 4px 10px; margin-top: 12px; border: 1px solid var(--color-ink); font-weight: 700; font-size: 12px; }
+  .verdict.bad { color: var(--color-red); border-color: var(--color-red); }
+  .check { color: var(--color-ink); }
+  .cross { color: var(--color-red); }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 13.2 — Sankey proportionality audit</h1>
+<p class="subtitle">Three flows of 400, 200, 80 units. Correct widths versus the most common failure pattern. The audit reads ratios.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Correct widths</div>
+    <div class="panel-sub">40, 20, 8 px — proportional ink honored</div>
+    <div id="chartGood" class="chart" role="img" aria-label="Three flows drawn with widths proportional to their values"></div>
+    <div class="audit" id="auditGood"></div>
+    <div class="verdict">verdict: honest</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Common failure</div>
+    <div class="panel-sub">30, 20, 12 px — ratio collapses toward 1:1</div>
+    <div id="chartBad" class="chart" role="img" aria-label="Three flows drawn with widths that compress the ratio toward 1 to 1"></div>
+    <div class="audit" id="auditBad"></div>
+    <div class="verdict bad">verdict: distorts</div>
+  </div>
+</div>
+<p class="caption">Audit method: measure widths of the largest and smallest band. Compute the width ratio. Compare to the data ratio. They must match.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const flowsData = [
+  { id: 'A', value: 400, goodPx: 40, badPx: 30 },
+  { id: 'B', value: 200, goodPx: 20, badPx: 20 },
+  { id: 'C', value: 80,  goodPx: 8,  badPx: 12 }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawFlows(selector, widthKey) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth = container.clientWidth || 360;
+  const totalHeight = container.clientHeight || 240;
+  const margin = { top: 30, right: 80, bottom: 20, left: 60 };
+  const innerWidth = totalWidth - margin.left - margin.right;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const totalWidthPx = flowsData.reduce((acc, d) => acc + d[widthKey], 0);
+  const gap = 6;
+
+  // Source stacked
+  let yLeft = 0;
+  const leftPositions = flowsData.map(d => {
+    const y = yLeft;
+    yLeft += d[widthKey] + gap;
+    return { ...d, leftY: y, width: d[widthKey] };
+  });
+
+  // Target stacked (separated)
+  let yRight = 0;
+  const positions = leftPositions.map(d => {
+    const r = { ...d, rightY: yRight };
+    yRight += d.width + gap;
+    return r;
+  });
+
+  // Source node bar
+  const sourceX = 0;
+  const targetX = innerWidth - 12;
+  const totalLeftHeight = yLeft - gap;
+  g.append('rect').attr('x', sourceX).attr('y', 0).attr('width', 12).attr('height', totalLeftHeight).attr('fill', 'var(--color-ink)');
+  g.append('text').attr('x', sourceX - 4).attr('y', totalLeftHeight / 2).attr('dy', '0.35em').attr('text-anchor', 'end')
+    .style('font-family', "'JetBrains Mono', monospace").style('font-size', '11px').style('fill', 'var(--color-secondary)').text('Source');
+
+  // Target nodes
+  positions.forEach(p => {
+    g.append('rect').attr('x', targetX).attr('y', p.rightY).attr('width', 12).attr('height', p.width).attr('fill', 'var(--color-ink)');
+    g.append('text').attr('x', targetX + 16).attr('y', p.rightY + p.width / 2).attr('dy', '0.35em')
+      .style('font-family', "'JetBrains Mono', monospace").style('font-size', '11px').style('fill', 'var(--color-secondary)')
+      .text(`${p.id} — ${p.value}`);
+  });
+
+  // Bands
+  positions.forEach((p, i) => {
+    const x0 = sourceX + 12;
+    const x1 = targetX;
+    const y0a = p.leftY;
+    const y0b = y0a + p.width;
+    const y1a = p.rightY;
+    const y1b = y1a + p.width;
+    const midX = (x0 + x1) / 2;
+    const path = `M ${x0} ${y0a} C ${midX} ${y0a}, ${midX} ${y1a}, ${x1} ${y1a} L ${x1} ${y1b} C ${midX} ${y1b}, ${midX} ${y0b}, ${x0} ${y0b} Z`;
+    const fill = i === 0 ? 'var(--color-ink)' : i === 1 ? '#787878' : '#ADADAD';
+    g.append('path').attr('d', path).attr('fill', fill).attr('fill-opacity', 0.55)
+      .attr('tabindex', 0)
+      .attr('aria-label', `Flow ${p.id}: value ${p.value}, width ${p.width} px`)
+      .on('mouseover', (event) => showTip(event, `<strong>Flow ${p.id}</strong><br/>value ${p.value} · width ${p.width} px`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+    // width annotation
+    g.append('text').attr('x', midX).attr('y', y0a - 4).attr('text-anchor', 'middle')
+      .style('font-family', "'JetBrains Mono', monospace").style('font-size', '10px').style('fill', 'var(--color-secondary)')
+      .text(`${p.width} px`);
+  });
+}
+
+function renderAudit(selector, widthKey, badSwitch) {
+  const target = d3.select(selector);
+  target.html('');
+  const ab = flowsData[0][widthKey] + ' : ' + flowsData[1][widthKey];
+  const abRatio = (flowsData[0][widthKey] / flowsData[1][widthKey]).toFixed(2);
+  const acRatio = (flowsData[0][widthKey] / flowsData[2][widthKey]).toFixed(2);
+  const dataAB = (400 / 200).toFixed(2);
+  const dataAC = (400 / 80).toFixed(2);
+  const okAB = Math.abs(abRatio - dataAB) < 0.05;
+  const okAC = Math.abs(acRatio - dataAC) < 0.05;
+  const rows = [
+    { label: 'A:B width', value: `${abRatio} : 1`, data: `${dataAB} : 1`, ok: okAB },
+    { label: 'A:C width', value: `${acRatio} : 1`, data: `${dataAC} : 1`, ok: okAC }
+  ];
+  rows.forEach(r => {
+    const div = target.append('div').attr('class', 'row');
+    div.append('span').text(r.label);
+    div.append('span').html(`${r.value} vs data ${r.data} <span class="${r.ok ? 'check' : 'cross'}">${r.ok ? '✓' : '✗'}</span>`);
+  });
+}
+
+function draw() {
+  drawFlows('#chartGood', 'goodPx');
+  drawFlows('#chartBad', 'badPx');
+  renderAudit('#auditGood', 'goodPx', false);
+  renderAudit('#auditBad', 'badPx', true);
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartGood'));
+ro.observe(document.getElementById('chartBad'));
+</script>
+</body>
+</html>

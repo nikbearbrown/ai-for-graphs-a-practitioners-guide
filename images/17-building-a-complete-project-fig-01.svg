@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t17-01 d17-01">
+  <title id="t17-01">The five-phase pipeline from raw data to published artifact</title>
+  <desc id="d17-01">A horizontal flow diagram with five labeled phase boxes (Audit, Schema, Generate, Verify, Handoff) feeding into a sixth element labeled Published Artifact. Each box names the phase deliverable and the chapters it draws on.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .eyebrow { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar17a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <!-- header: MBTA model strap -->
+  <text x="350" y="30" text-anchor="middle" class="ti">The MBTA model — start with the question, iterate on working code, publish with provenance</text>
+  <text x="350" y="46" text-anchor="middle" class="eyebrow">Each phase is the output of chapters you have already read</text>
+
+  <!-- 5 phase boxes laid out horizontally; box w=112, h=132, gap=12 -->
+  <!-- x positions: 24, 148, 272, 396, 520; arrows in 12px gaps -->
+
+  <!-- Phase A -->
+  <g transform="translate(24,76)">
+    <rect width="112" height="132" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1"/>
+    <rect x="0" y="0" width="112" height="20" fill="#2a1a0e"/>
+    <text x="56" y="14" text-anchor="middle" class="ti" fill="#fdfcfb">Phase A · Audit</text>
+    <text x="56" y="42" text-anchor="middle" class="lb">Three framed</text>
+    <text x="56" y="56" text-anchor="middle" class="lb">questions</text>
+    <text x="56" y="72" text-anchor="middle" class="lb">+ data audit</text>
+    <line x1="14" y1="86" x2="98" y2="86" stroke="#c8c4c0"/>
+    <text x="56" y="102" text-anchor="middle" class="sm">draws from</text>
+    <text x="56" y="116" text-anchor="middle" class="sm">Chapters 3 &amp; 4</text>
+  </g>
+  <path d="M 138 142 L 146 142" fill="none" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar17a)"/>
+
+  <!-- Phase B -->
+  <g transform="translate(148,76)">
+    <rect width="112" height="132" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1"/>
+    <rect x="0" y="0" width="112" height="20" fill="#2a1a0e"/>
+    <text x="56" y="14" text-anchor="middle" class="ti" fill="#fdfcfb">Phase B · Schema</text>
+    <text x="56" y="42" text-anchor="middle" class="lb">CLAUDE.md</text>
+    <text x="56" y="56" text-anchor="middle" class="lb">DESIGN.md</text>
+    <text x="56" y="72" text-anchor="middle" class="lb">PROJECT.md</text>
+    <line x1="14" y1="86" x2="98" y2="86" stroke="#c8c4c0"/>
+    <text x="56" y="102" text-anchor="middle" class="sm">draws from</text>
+    <text x="56" y="116" text-anchor="middle" class="sm">Chapter 00</text>
+  </g>
+  <path d="M 262 142 L 270 142" fill="none" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar17a)"/>
+
+  <!-- Phase C -->
+  <g transform="translate(272,76)">
+    <rect width="112" height="132" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1"/>
+    <rect x="0" y="0" width="112" height="20" fill="#2a1a0e"/>
+    <text x="56" y="14" text-anchor="middle" class="ti" fill="#fdfcfb">Phase C · Generate</text>
+    <text x="56" y="42" text-anchor="middle" class="lb">Three charts</text>
+    <text x="56" y="56" text-anchor="middle" class="lb">from four-move</text>
+    <text x="56" y="72" text-anchor="middle" class="lb">prompts</text>
+    <line x1="14" y1="86" x2="98" y2="86" stroke="#c8c4c0"/>
+    <text x="56" y="102" text-anchor="middle" class="sm">draws from</text>
+    <text x="56" y="116" text-anchor="middle" class="sm">Chapters 5–14</text>
+  </g>
+  <path d="M 386 142 L 394 142" fill="none" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar17a)"/>
+
+  <!-- Phase D -->
+  <g transform="translate(396,76)">
+    <rect width="112" height="132" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1"/>
+    <rect x="0" y="0" width="112" height="20" fill="#2a1a0e"/>
+    <text x="56" y="14" text-anchor="middle" class="ti" fill="#fdfcfb">Phase D · Verify</text>
+    <text x="56" y="42" text-anchor="middle" class="lb">22-point</text>
+    <text x="56" y="56" text-anchor="middle" class="lb">Evergreen/Emery</text>
+    <text x="56" y="72" text-anchor="middle" class="lb">audit + log</text>
+    <line x1="14" y1="86" x2="98" y2="86" stroke="#c8c4c0"/>
+    <text x="56" y="102" text-anchor="middle" class="sm">draws from</text>
+    <text x="56" y="116" text-anchor="middle" class="sm">Chapter 15</text>
+  </g>
+  <path d="M 510 142 L 518 142" fill="none" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar17a)"/>
+
+  <!-- Phase E -->
+  <g transform="translate(520,76)">
+    <rect width="112" height="132" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1"/>
+    <rect x="0" y="0" width="112" height="20" fill="#2a1a0e"/>
+    <text x="56" y="14" text-anchor="middle" class="ti" fill="#fdfcfb">Phase E · Handoff</text>
+    <text x="56" y="42" text-anchor="middle" class="lb">Source citation,</text>
+    <text x="56" y="56" text-anchor="middle" class="lb">methodology,</text>
+    <text x="56" y="72" text-anchor="middle" class="lb">README, ARIA</text>
+    <line x1="14" y1="86" x2="98" y2="86" stroke="#c8c4c0"/>
+    <text x="56" y="102" text-anchor="middle" class="sm">draws from</text>
+    <text x="56" y="116" text-anchor="middle" class="sm">whole book</text>
+  </g>
+
+  <!-- terminal artifact -->
+  <path d="M 576 214 L 576 248" fill="none" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar17a)"/>
+  <g transform="translate(484,254)">
+    <rect width="184" height="60" fill="#f5f2ee" stroke="#2a1a0e" stroke-width="1"/>
+    <text x="92" y="22" text-anchor="middle" class="ti">Published artifact</text>
+    <text x="92" y="40" text-anchor="middle" class="sm">three charts · PROJECT.md ·</text>
+    <text x="92" y="52" text-anchor="middle" class="sm">README · audit log</text>
+  </g>
+
+  <!-- iteration loopback (Cairo purpose test) -->
+  <path d="M 452 280 C 280 280, 200 280, 100 260 L 80 240" fill="none" stroke="#8a8480" stroke-width="0.75" stroke-dasharray="3 3" marker-end="url(#ar17a)"/>
+  <text x="270" y="298" text-anchor="middle" class="sm">if Cairo's purpose test fails → return to the question</text>
+
+  <!-- caption -->
+  <text x="350" y="402" text-anchor="middle" class="cap">A project is not the sum of its charts. It is the sequence of phases that makes the charts trustable.</text>
+</svg>

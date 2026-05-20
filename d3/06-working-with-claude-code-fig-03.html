@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 5.3 — The MBTA iteration loop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #chart { width: 100%; height: 520px; }
+  .node-rect { fill: var(--color-white); stroke: var(--color-secondary); stroke-width: 1.25; transition: stroke 200ms cubic-bezier(0.2,0.8,0.2,1), stroke-width 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .node-rect.exit { stroke: var(--color-red); stroke-width: 2; }
+  .node-rect:hover { stroke: var(--color-red); stroke-width: 2; cursor: pointer; }
+  .node-title { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; fill: var(--color-ink); pointer-events: none; }
+  .node-sub   { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); pointer-events: none; }
+  .edge { fill: none; stroke: var(--color-ink); stroke-width: 1.25; }
+  .edge.feedback { stroke-dasharray: 5 3; }
+  .edge-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .quote { font-family: 'EB Garamond', Georgia, serif; font-size: 16px; font-style: italic; fill: var(--color-ink); }
+  .quote-src { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; font-style: italic; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 280px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 5.3 — The MBTA iteration loop</h1>
+<p class="subtitle">Iterate on the artifact, not the specification. One concern per pass. Structural before stylistic.</p>
+<div id="chart" role="img" aria-labelledby="chart-title chart-desc"></div>
+<p class="caption">The loop typically resolves in one to three iterations. The exit condition is a passing audit.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const nodes = [
+  { id: 1, x: 0.50, y: 0.18, title: '1. Four-move prompt',   sub: 'show · say · constrain · verify',  note: 'The starting move. Show what you have, say what you want, constrain every channel, and ask for verification.' },
+  { id: 2, x: 0.82, y: 0.45, title: '2. Working chart',      sub: '≈ 12 seconds',                     note: 'Not the publishable chart — the artifact you can audit. Opens in a browser and shows the data.' },
+  { id: 3, x: 0.50, y: 0.72, title: '3. Audit',              sub: 'Evergreen/Emery · ≈ 90 seconds',   note: 'Five categories: text, arrangement, color, lines, overall. Each item passes or fails.' },
+  { id: 4, x: 0.18, y: 0.45, title: '4. Targeted follow-up', sub: 'one concern · names the rule',     note: 'Short. Specific. Names the failure, names the rule it violates, says what to change. Goes back to the working chart, not the prompt.' },
+  { id: 5, x: 0.82, y: 0.82, title: '5. Publishable chart',  sub: 'audit passes',                     note: 'The exit condition. Reached when every checklist item passes.', exit: true }
+];
+
+const edges = [
+  { from: 1, to: 2 },
+  { from: 2, to: 3 },
+  { from: 3, to: 4 },
+  { from: 4, to: 2, feedback: true, label: 'small targeted change' },
+  { from: 3, to: 5, label: 'audit passes' }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.title}</strong><br>${d.note}`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  d3.select('#chart').selectAll('*').remove();
+  const container = document.getElementById('chart');
+  const totalWidth  = container.clientWidth  || 800;
+  const totalHeight = container.clientHeight || 520;
+
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'chart-title chart-desc');
+  svg.append('title').attr('id', 'chart-title').text('MBTA iteration loop');
+  svg.append('desc').attr('id', 'chart-desc').text('Four-node loop: four-move prompt to working chart to audit to targeted follow-up and back to working chart. A fifth node exits the loop when the audit passes.');
+
+  // arrowhead defs
+  const defs = svg.append('defs');
+  defs.append('marker')
+    .attr('id', 'arrow').attr('markerWidth', 9).attr('markerHeight', 7)
+    .attr('refX', 8).attr('refY', 3.5).attr('orient', 'auto')
+    .append('polygon').attr('points', '0 0, 9 3.5, 0 7').attr('fill', 'var(--color-ink)');
+
+  // compute pixel positions
+  const nodeW = 200, nodeH = 60;
+  const placed = nodes.map(n => ({ ...n, px: n.x * totalWidth, py: n.y * totalHeight }));
+
+  // edges
+  edges.forEach(e => {
+    const a = placed.find(n => n.id === e.from);
+    const b = placed.find(n => n.id === e.to);
+    // gentle curve via midpoint pulled toward center
+    const cx = totalWidth / 2;
+    const cy = totalHeight * 0.5;
+    const mx = (a.px + b.px) / 2 + (cx - (a.px + b.px) / 2) * 0.15;
+    const my = (a.py + b.py) / 2 + (cy - (a.py + b.py) / 2) * 0.15;
+    // shorten endpoints toward node edge
+    const dx = b.px - a.px, dy = b.py - a.py;
+    const dist = Math.hypot(dx, dy);
+    const ux = dx / dist, uy = dy / dist;
+    const startX = a.px + ux * (nodeW / 2 + 4);
+    const startY = a.py + uy * (nodeH / 2 + 4);
+    const endX   = b.px - ux * (nodeW / 2 + 8);
+    const endY   = b.py - uy * (nodeH / 2 + 8);
+    svg.append('path')
+      .attr('class', 'edge' + (e.feedback ? ' feedback' : ''))
+      .attr('d', `M ${startX} ${startY} Q ${mx} ${my} ${endX} ${endY}`)
+      .attr('marker-end', 'url(#arrow)');
+    if (e.label) {
+      svg.append('text')
+        .attr('class', 'edge-label')
+        .attr('x', mx).attr('y', my - 6)
+        .attr('text-anchor', 'middle')
+        .text(e.label);
+    }
+  });
+
+  // nodes
+  placed.forEach(n => {
+    const g = svg.append('g').attr('tabindex', 0).attr('aria-label', `${n.title}. ${n.note}`);
+    g.append('rect')
+      .attr('class', 'node-rect' + (n.exit ? ' exit' : ''))
+      .attr('x', n.px - nodeW / 2).attr('y', n.py - nodeH / 2)
+      .attr('width', nodeW).attr('height', nodeH);
+    g.append('text')
+      .attr('class', 'node-title')
+      .attr('x', n.px).attr('y', n.py - 4)
+      .attr('text-anchor', 'middle')
+      .text(n.title);
+    g.append('text')
+      .attr('class', 'node-sub')
+      .attr('x', n.px).attr('y', n.py + 14)
+      .attr('text-anchor', 'middle')
+      .text(n.sub);
+    g
+      .on('mouseover', (event) => showTip(event, n))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip)
+      .on('focus', (event) => showTip(event, n))
+      .on('blur', hideTip)
+      .on('keydown', (event, d) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          showTip(event, n);
+        }
+      });
+  });
+
+  // MBTA quote
+  svg.append('text')
+    .attr('class', 'quote')
+    .attr('x', totalWidth / 2).attr('y', totalHeight - 28)
+    .attr('text-anchor', 'middle')
+    .text('"Nothing beat iterating on working code."');
+  svg.append('text')
+    .attr('class', 'quote-src')
+    .attr('x', totalWidth / 2).attr('y', totalHeight - 10)
+    .attr('text-anchor', 'middle')
+    .text('— Barry & Card, 2014');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

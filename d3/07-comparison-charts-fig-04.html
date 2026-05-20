@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 7.4 — Bar orientation by label length</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 320px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .bar { fill: var(--color-ink); }
+  .bar.primary { fill: var(--color-red); }
+  .rule { margin-top: 16px; padding: 12px 16px; border-left: 3px solid var(--color-ochre); background: var(--color-white); }
+  .rule strong { font-weight: 700; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 7.4 — Bar orientation by label length</h1>
+<p class="subtitle">Vertical columns work when labels are short. Horizontal bars are required when labels are long. Choice is structural, not stylistic.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Vertical columns — short labels (~6 chars)</div>
+    <div class="panel-sub">Rotation tolerated; Gestalt continuity preserved</div>
+    <div id="chartVert" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Horizontal bars — long labels (~22 chars)</div>
+    <div class="panel-sub">Label reads left-to-right next to its bar</div>
+    <div id="chartHoriz" class="chart"></div>
+  </div>
+</div>
+<div class="rule">
+  <strong>Decision rule.</strong> If the longest category label exceeds 10–12 characters, default to horizontal bars. If category count exceeds about 15, switch to horizontal with top-N or a treemap.
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const shortData = [
+  { label: 'Boston', value: 88 },
+  { label: 'Austin', value: 76 },
+  { label: 'Denver', value: 64 },
+  { label: 'Tucson', value: 52 },
+  { label: 'Tampa',  value: 41 },
+  { label: 'Reno',   value: 29 }
+];
+const longData = shortData.map(d => ({
+  label: ({ Boston: 'Boston Metropolitan Area', Austin: 'Greater Austin Region',
+           Denver: 'Denver-Aurora Metro', Tucson: 'Tucson-South Arizona',
+           Tampa: 'Tampa Bay Region', Reno: 'Reno-Sparks Area' })[d.label],
+  value: d.value
+}));
+
+function setup(selector, title, desc) {
+  d3.select(selector).selectAll('*').remove();
+  const c = document.querySelector(selector);
+  const w = c.clientWidth || 400, h = c.clientHeight || 320;
+  const svg = d3.select(selector).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${selector.slice(1)}-t ${selector.slice(1)}-d`);
+  svg.append('title').attr('id', `${selector.slice(1)}-t`).text(title);
+  svg.append('desc').attr('id', `${selector.slice(1)}-d`).text(desc);
+  return { svg, w, h };
+}
+
+function drawVert() {
+  const { svg, w, h } = setup('#chartVert',
+    'Vertical column chart with short city labels',
+    'Six cities along the x-axis, scores on the y-axis with a zero baseline; labels rotate 30 degrees.');
+  const margin = { top: 16, right: 16, bottom: 64, left: 40 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleBand().domain(shortData.map(d => d.label)).range([0, cw]).padding(0.18);
+  const y = d3.scaleLinear().domain([0, 100]).range([ch, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x))
+    .selectAll('text').attr('transform', 'rotate(-30)').style('text-anchor', 'end');
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5));
+  g.selectAll('.bar').data(shortData).join('rect')
+    .attr('class', (d, i) => i === 0 ? 'bar primary' : 'bar')
+    .attr('x', d => x(d.label)).attr('y', d => y(d.value))
+    .attr('width', x.bandwidth()).attr('height', d => ch - y(d.value));
+}
+
+function drawHoriz() {
+  const { svg, w, h } = setup('#chartHoriz',
+    'Horizontal bar chart with long region labels',
+    'Six regions along the y-axis with long labels reading naturally; values on the x-axis from zero.');
+  const margin = { top: 16, right: 16, bottom: 32, left: 168 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const y = d3.scaleBand().domain(longData.map(d => d.label)).range([0, ch]).padding(0.18);
+  const x = d3.scaleLinear().domain([0, 100]).range([0, cw]);
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y));
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x).ticks(5));
+  g.selectAll('.bar').data(longData).join('rect')
+    .attr('class', (d, i) => i === 0 ? 'bar primary' : 'bar')
+    .attr('x', 0).attr('y', d => y(d.label))
+    .attr('width', d => x(d.value)).attr('height', y.bandwidth());
+}
+
+function drawAll() { drawVert(); drawHoriz(); }
+drawAll();
+const ro = new ResizeObserver(drawAll);
+['#chartVert', '#chartHoriz'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

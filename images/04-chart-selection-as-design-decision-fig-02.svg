@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t402 d402">
+  <title id="t402">Cairo's four-step chart-selection framework</title>
+  <desc id="d402">Left-to-right flow diagram with four boxes — Key Message, Data Structure, Functional Category, Specific Form — connected by arrows. A second row beneath each box shows the path the humanitarian funding case takes through the framework, ending in a sorted horizontal bar chart.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .num { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #8a8480; }
+      .step{ font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; letter-spacing: 0.4px; }
+      .dec { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .row { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #8a8480; letter-spacing: 0.3px; }
+      .ex  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #2a1a0e; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar402" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Four steps. Each one constrains the next. Skip step 1 and the others have nothing to do.</text>
+
+  <!-- ROW 1: the four step boxes. x positions: 22..162, 184..324, 346..486, 508..648. Box w=140 h=110 -->
+  <!-- box 1 -->
+  <g>
+    <rect x="22" y="74" width="140" height="110" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="32" y="92" class="num">01</text>
+    <text x="32" y="112" class="step">KEY MESSAGE</text>
+    <text x="32" y="132" class="dec">One sentence.</text>
+    <text x="32" y="146" class="dec">What does the</text>
+    <text x="32" y="160" class="dec">reader need to</text>
+    <text x="32" y="174" class="dec">understand in five</text>
+    <text x="92" y="188" text-anchor="middle" class="dec" style="font-style:italic;">seconds?</text>
+  </g>
+  <!-- arrow -->
+  <line x1="166" y1="129" x2="182" y2="129" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar402)"/>
+
+  <!-- box 2 -->
+  <g>
+    <rect x="184" y="74" width="140" height="110" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="194" y="92" class="num">02</text>
+    <text x="194" y="112" class="step">DATA STRUCTURE</text>
+    <text x="194" y="132" class="dec">How many variables?</text>
+    <text x="194" y="146" class="dec">Which types?</text>
+    <text x="194" y="160" class="dec">Temporal, geographic,</text>
+    <text x="194" y="174" class="dec">or hierarchical</text>
+    <text x="254" y="188" text-anchor="middle" class="dec" style="font-style:italic;">dimensions?</text>
+  </g>
+  <!-- arrow -->
+  <line x1="328" y1="129" x2="344" y2="129" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar402)"/>
+
+  <!-- box 3 -->
+  <g>
+    <rect x="346" y="74" width="140" height="110" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="356" y="92" class="num">03</text>
+    <text x="356" y="112" class="step">FUNCTIONAL CATEGORY</text>
+    <text x="356" y="132" class="dec">One of eight</text>
+    <text x="356" y="146" class="dec">(comparison, time,</text>
+    <text x="356" y="160" class="dec">distribution, ...).</text>
+    <text x="356" y="174" class="dec">FT Visual Vocabulary</text>
+    <text x="416" y="188" text-anchor="middle" class="dec" style="font-style:italic;">is the lookup.</text>
+  </g>
+  <!-- arrow -->
+  <line x1="490" y1="129" x2="506" y2="129" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar402)"/>
+
+  <!-- box 4 -->
+  <g>
+    <rect x="508" y="74" width="140" height="110" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="518" y="92" class="num">04</text>
+    <text x="518" y="112" class="step">SPECIFIC FORM</text>
+    <text x="518" y="132" class="dec">Within the category,</text>
+    <text x="518" y="146" class="dec">which chart? Choose</text>
+    <text x="518" y="160" class="dec">on perceptual</text>
+    <text x="518" y="174" class="dec">grounds —</text>
+    <text x="578" y="188" text-anchor="middle" class="dec" style="font-style:italic;">a named candidate.</text>
+  </g>
+
+  <!-- divider between steps row and worked-example row -->
+  <line x1="22" y1="220" x2="648" y2="220" stroke="#c8c4c0" stroke-dasharray="2 3"/>
+  <text x="22" y="238" class="row">WORKED EXAMPLE · the 14-sector humanitarian funding case</text>
+
+  <!-- ROW 2: worked example. Boxes h=110 starting y=254 -->
+  <!-- box 1' -->
+  <g>
+    <rect x="22" y="254" width="140" height="110" fill="#fdfcfb" stroke="#8a8480"/>
+    <text x="92" y="276" text-anchor="middle" class="ex">"Food security</text>
+    <text x="92" y="290" text-anchor="middle" class="ex">received more than</text>
+    <text x="92" y="304" text-anchor="middle" class="ex">twice the funding of</text>
+    <text x="92" y="318" text-anchor="middle" class="ex">the next-largest</text>
+    <text x="92" y="332" text-anchor="middle" class="ex">category."</text>
+    <text x="92" y="354" text-anchor="middle" class="cap">a ranking claim</text>
+  </g>
+  <line x1="166" y1="309" x2="182" y2="309" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar402)"/>
+
+  <!-- box 2' -->
+  <g>
+    <rect x="184" y="254" width="140" height="110" fill="#fdfcfb" stroke="#8a8480"/>
+    <text x="254" y="276" text-anchor="middle" class="ex">14 categories,</text>
+    <text x="254" y="290" text-anchor="middle" class="ex">one quantitative</text>
+    <text x="254" y="304" text-anchor="middle" class="ex">variable per row,</text>
+    <text x="254" y="318" text-anchor="middle" class="ex">summing to 100%.</text>
+    <text x="254" y="332" text-anchor="middle" class="ex">No time, no geography.</text>
+    <text x="254" y="354" text-anchor="middle" class="cap">tabular, one-dimensional</text>
+  </g>
+  <line x1="328" y1="309" x2="344" y2="309" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar402)"/>
+
+  <!-- box 3' -->
+  <g>
+    <rect x="346" y="254" width="140" height="110" fill="#fdfcfb" stroke="#8a8480"/>
+    <text x="416" y="282" text-anchor="middle" class="ex">COMPARISON</text>
+    <text x="416" y="304" text-anchor="middle" class="ex">(not part-to-whole —</text>
+    <text x="416" y="318" text-anchor="middle" class="ex">the message dominates</text>
+    <text x="416" y="332" text-anchor="middle" class="ex">the data's structure)</text>
+    <text x="416" y="354" text-anchor="middle" class="cap">the question, not the table</text>
+  </g>
+  <line x1="490" y1="309" x2="506" y2="309" stroke="#2a1a0e" stroke-width="1.25" marker-end="url(#ar402)"/>
+
+  <!-- box 4': mini chart inside -->
+  <g>
+    <rect x="508" y="254" width="140" height="110" fill="#fdfcfb" stroke="#8a8480"/>
+    <text x="578" y="276" text-anchor="middle" class="ex">sorted horizontal</text>
+    <text x="578" y="290" text-anchor="middle" class="ex">bar chart</text>
+    <!-- mini bars -->
+    <g>
+      <rect x="528" y="298" width="100" height="6" fill="#2a1a0e"/>
+      <rect x="528" y="307" width="66"  height="6" fill="#4a4540"/>
+      <rect x="528" y="316" width="58"  height="6" fill="#4a4540"/>
+      <rect x="528" y="325" width="50"  height="6" fill="#4a4540"/>
+      <rect x="528" y="334" width="40"  height="6" fill="#8a8480"/>
+      <rect x="528" y="343" width="30"  height="6" fill="#8a8480"/>
+      <line x1="528" y1="298" x2="528" y2="351" stroke="#4a4540" stroke-width="0.5"/>
+    </g>
+    <text x="578" y="364" text-anchor="middle" class="cap" style="font-size:9px;">length, common baseline, sorted</text>
+  </g>
+
+  <!-- bottom caption -->
+  <text x="350" y="402" text-anchor="middle" class="cap">If the message changes — "how has funding changed over time?" — every downstream box changes with it.</text>
+</svg>

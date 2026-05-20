@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t05 d05">
+  <title id="t05">The chart-building workflow — audit, prompt, build, verify</title>
+  <desc id="d05">Four-stage horizontal workflow: audit in Claude chat, then a four-move prompt to Claude Code, then Claude Code generating the HTML, then the three-layer verification stack. Beneath each stage, a one-line note on the failure that appears if the stage is skipped.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .head { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .step { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; fill: #4a4540; font-style: italic; }
+      .fail { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; }
+    </style>
+    <marker id="ar5" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">The pattern is not overhead. It is the work.</text>
+
+  <!-- Boxes: 4 boxes, each 144 wide, gap 20, total = 4*144 + 3*20 = 636; start x = (700-636)/2 = 32 -->
+  <!-- Step 1: AUDIT -->
+  <g transform="translate(32,76)">
+    <rect x="0" y="0" width="144" height="100" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="72" y="16" text-anchor="middle" class="step">step 1 · in Claude chat</text>
+    <text x="72" y="40" text-anchor="middle" class="head">Audit</text>
+    <text x="72" y="60" text-anchor="middle" class="sm">channel decomposition,</text>
+    <text x="72" y="74" text-anchor="middle" class="sm">type identification,</text>
+    <text x="72" y="88" text-anchor="middle" class="sm">redundancy check</text>
+  </g>
+
+  <!-- arrow -->
+  <path d="M 180 126 L 196 126" fill="none" stroke="#2a1a0e" marker-end="url(#ar5)"/>
+
+  <!-- Step 2: PROMPT -->
+  <g transform="translate(196,76)">
+    <rect x="0" y="0" width="144" height="100" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="72" y="16" text-anchor="middle" class="step">step 2 · four-move structure</text>
+    <text x="72" y="40" text-anchor="middle" class="head">Prompt</text>
+    <text x="72" y="60" text-anchor="middle" class="sm">show · say · constrain</text>
+    <text x="72" y="74" text-anchor="middle" class="sm">· verify</text>
+    <text x="72" y="88" text-anchor="middle" class="sm">submit to Claude Code</text>
+  </g>
+
+  <path d="M 344 126 L 360 126" fill="none" stroke="#2a1a0e" marker-end="url(#ar5)"/>
+
+  <!-- Step 3: BUILD -->
+  <g transform="translate(360,76)">
+    <rect x="0" y="0" width="144" height="100" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="72" y="16" text-anchor="middle" class="step">step 3 · Claude Code</text>
+    <text x="72" y="40" text-anchor="middle" class="head">Build</text>
+    <text x="72" y="60" text-anchor="middle" class="sm">generates HTML,</text>
+    <text x="72" y="74" text-anchor="middle" class="sm">comments which line</text>
+    <text x="72" y="88" text-anchor="middle" class="sm">implements which channel</text>
+  </g>
+
+  <path d="M 508 126 L 524 126" fill="none" stroke="#2a1a0e" marker-end="url(#ar5)"/>
+
+  <!-- Step 4: VERIFY -->
+  <g transform="translate(524,76)">
+    <rect x="0" y="0" width="144" height="100" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="72" y="16" text-anchor="middle" class="step">step 4 · the three-layer stack</text>
+    <text x="72" y="40" text-anchor="middle" class="head">Verify</text>
+    <text x="72" y="60" text-anchor="middle" class="sm">format → facts → test</text>
+    <text x="72" y="74" text-anchor="middle" class="sm">in order, ~2 minutes,</text>
+    <text x="72" y="88" text-anchor="middle" class="sm">no skipping</text>
+  </g>
+
+  <!-- BELOW: failure-if-skipped row -->
+  <g transform="translate(32,210)">
+    <text x="72" y="0" text-anchor="middle" class="lb">if skipped:</text>
+    <rect x="0" y="14" width="144" height="60" fill="#fdfcfb" stroke="#8a8480"/>
+    <text x="72" y="32" text-anchor="middle" class="fail">model picks the chart</text>
+    <text x="72" y="48" text-anchor="middle" class="fail">type and the channels</text>
+    <text x="72" y="64" text-anchor="middle" class="fail">on guesses</text>
+  </g>
+
+  <g transform="translate(228,210)">
+    <text x="72" y="0" text-anchor="middle" class="lb">if skipped:</text>
+    <rect x="0" y="14" width="144" height="60" fill="#fdfcfb" stroke="#8a8480"/>
+    <text x="72" y="32" text-anchor="middle" class="fail">vague request → vague</text>
+    <text x="72" y="48" text-anchor="middle" class="fail">output, no specification</text>
+    <text x="72" y="64" text-anchor="middle" class="fail">to verify against</text>
+  </g>
+
+  <g transform="translate(392,210)">
+    <text x="72" y="0" text-anchor="middle" class="lb">if skipped:</text>
+    <rect x="0" y="14" width="144" height="60" fill="#fdfcfb" stroke="#8a8480"/>
+    <text x="72" y="32" text-anchor="middle" class="fail">you are reading code</text>
+    <text x="72" y="48" text-anchor="middle" class="fail">without an</text>
+    <text x="72" y="64" text-anchor="middle" class="fail">implementation</text>
+  </g>
+
+  <g transform="translate(556,210)">
+    <text x="72" y="0" text-anchor="middle" class="lb">if skipped:</text>
+    <rect x="0" y="14" width="144" height="60" fill="#fdfcfb" stroke="#8a8480"/>
+    <text x="72" y="32" text-anchor="middle" class="fail">you publish on hope.</text>
+    <text x="72" y="48" text-anchor="middle" class="fail">reader sees what the</text>
+    <text x="72" y="64" text-anchor="middle" class="fail">terminal hid</text>
+  </g>
+
+  <!-- bottom band: example -->
+  <g transform="translate(32,320)">
+    <rect x="0" y="0" width="636" height="56" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="16" y="20" class="ti">Worked example: the cognitive-domain scatterplot failure</text>
+    <text x="16" y="36" class="lb">→ no audit → "size for score, hue for domain" never specified → Layer 1 passes, Layer 2 has no spec to check, Layer 3 confirms unreadable</text>
+    <text x="16" y="50" class="sm">All three layers needed. None of them blames the model — the workflow was incomplete.</text>
+  </g>
+
+  <text x="350" y="402" text-anchor="middle" class="cap">Without the audit, Claude Code produces charts on guesses. Without verification, you publish charts on hope.</text>
+</svg>

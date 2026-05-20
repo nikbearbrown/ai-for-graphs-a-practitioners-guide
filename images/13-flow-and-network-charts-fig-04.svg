@@ -1,0 +1,213 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t1304 d1304">
+  <title id="t1304">Four hairball mitigations for the same dense network</title>
+  <desc id="d1304">Four panels showing the same 200-node high-density network rendered as a hairball, a top-30 degree filter, an eight-cluster aggregation, and an adjacency matrix.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9.5px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .frame { fill: none; stroke: #c8c4c0; stroke-width: 0.75; }
+    </style>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">Same 200-node dense network, four mitigations. Each reveals something, gives up something else.</text>
+
+  <!-- PANEL 1: HAIRBALL -->
+  <g transform="translate(30,60)">
+    <text x="0" y="0" class="ti">1. Unmitigated force-directed</text>
+    <text x="0" y="14" class="sm">no structure visible — tangle of crossings</text>
+    <rect class="frame" x="0" y="24" width="280" height="170"/>
+    <!-- many random edges -->
+    <g stroke="#4a4540" stroke-width="0.4" stroke-opacity="0.55" fill="none">
+      <line x1="40" y1="60"  x2="220" y2="180"/>
+      <line x1="60" y1="170" x2="240" y2="40"/>
+      <line x1="80" y1="40"  x2="200" y2="170"/>
+      <line x1="100" y1="180" x2="260" y2="60"/>
+      <line x1="50" y1="120" x2="270" y2="120"/>
+      <line x1="120" y1="40" x2="120" y2="190"/>
+      <line x1="30" y1="100" x2="270" y2="80"/>
+      <line x1="40" y1="170" x2="260" y2="50"/>
+      <line x1="60" y1="50"  x2="250" y2="180"/>
+      <line x1="200" y1="40" x2="40"  y2="180"/>
+      <line x1="160" y1="60" x2="100" y2="180"/>
+      <line x1="220" y1="170" x2="80" y2="60"/>
+      <line x1="180" y1="40" x2="180" y2="190"/>
+      <line x1="30" y1="60"  x2="270" y2="180"/>
+      <line x1="240" y1="120" x2="40" y2="120"/>
+      <line x1="50" y1="80"  x2="250" y2="160"/>
+      <line x1="60" y1="100" x2="240" y2="100"/>
+      <line x1="80" y1="180" x2="260" y2="40"/>
+      <line x1="120" y1="180" x2="240" y2="50"/>
+      <line x1="160" y1="180" x2="40"  y2="50"/>
+      <line x1="200" y1="180" x2="80"  y2="50"/>
+      <line x1="250" y1="180" x2="120" y2="50"/>
+      <line x1="40" y1="140" x2="260" y2="60"/>
+      <line x1="40" y1="60"  x2="260" y2="140"/>
+      <line x1="100" y1="60" x2="220" y2="180"/>
+    </g>
+    <!-- nodes -->
+    <g fill="#2a1a0e">
+      <circle cx="40"  cy="60"  r="2.2"/>
+      <circle cx="220" cy="180" r="2.2"/>
+      <circle cx="60"  cy="170" r="2.2"/>
+      <circle cx="240" cy="40"  r="2.2"/>
+      <circle cx="80"  cy="40"  r="2.2"/>
+      <circle cx="200" cy="170" r="2.2"/>
+      <circle cx="100" cy="180" r="2.2"/>
+      <circle cx="260" cy="60"  r="2.2"/>
+      <circle cx="50"  cy="120" r="2.2"/>
+      <circle cx="270" cy="120" r="2.2"/>
+      <circle cx="120" cy="40"  r="2.2"/>
+      <circle cx="120" cy="190" r="2.2"/>
+      <circle cx="30"  cy="100" r="2.2"/>
+      <circle cx="270" cy="80"  r="2.2"/>
+      <circle cx="160" cy="60"  r="2.2"/>
+      <circle cx="180" cy="40"  r="2.2"/>
+      <circle cx="180" cy="190" r="2.2"/>
+      <circle cx="240" cy="120" r="2.2"/>
+      <circle cx="40"  cy="140" r="2.2"/>
+      <circle cx="260" cy="140" r="2.2"/>
+    </g>
+    <text x="0" y="212" class="sm">reveals: a network exists. nothing else.</text>
+    <text x="0" y="226" class="sm">gives up: every structural question.</text>
+  </g>
+
+  <!-- PANEL 2: FILTER TOP-30 -->
+  <g transform="translate(360,60)">
+    <text x="0" y="0" class="ti">2. Filter — top 30 by degree</text>
+    <text x="0" y="14" class="sm">sparse; structure becomes visible</text>
+    <rect class="frame" x="0" y="24" width="280" height="170"/>
+    <!-- a sparse set of nodes and few edges -->
+    <g stroke="#4a4540" stroke-width="0.7" stroke-opacity="0.7" fill="none">
+      <line x1="80" y1="80"  x2="140" y2="110"/>
+      <line x1="140" y1="110" x2="200" y2="80"/>
+      <line x1="140" y1="110" x2="140" y2="170"/>
+      <line x1="80" y1="80"  x2="60"  y2="150"/>
+      <line x1="200" y1="80" x2="240" y2="150"/>
+      <line x1="60" y1="150" x2="140" y2="170"/>
+      <line x1="240" y1="150" x2="140" y2="170"/>
+      <line x1="140" y1="110" x2="100" y2="60"/>
+      <line x1="140" y1="110" x2="220" y2="50"/>
+    </g>
+    <g fill="#2a1a0e">
+      <circle cx="80"  cy="80"  r="4"/>
+      <circle cx="140" cy="110" r="6"/>
+      <circle cx="200" cy="80"  r="4"/>
+      <circle cx="60"  cy="150" r="3"/>
+      <circle cx="240" cy="150" r="3"/>
+      <circle cx="140" cy="170" r="4"/>
+      <circle cx="100" cy="60"  r="2.5"/>
+      <circle cx="220" cy="50"  r="2.5"/>
+    </g>
+    <text x="0" y="212" class="sm">reveals: a hub and spokes around it.</text>
+    <text x="0" y="226" class="sm">gives up: nodes and edges below threshold.</text>
+  </g>
+
+  <!-- PANEL 3: CLUSTER -->
+  <g transform="translate(30,260)">
+    <text x="0" y="0" class="ti">3. Cluster — eight super-nodes</text>
+    <text x="0" y="14" class="sm">community structure visible; nodes hidden</text>
+    <rect class="frame" x="0" y="24" width="280" height="160"/>
+    <!-- 8 large circles arranged loosely -->
+    <g stroke="#4a4540" stroke-width="0.8" stroke-opacity="0.65" fill="none">
+      <line x1="80" y1="80" x2="160" y2="80"/>
+      <line x1="160" y1="80" x2="220" y2="100"/>
+      <line x1="80" y1="80" x2="100" y2="150"/>
+      <line x1="100" y1="150" x2="180" y2="160"/>
+      <line x1="180" y1="160" x2="220" y2="100"/>
+      <line x1="160" y1="80" x2="180" y2="160"/>
+      <line x1="60" y1="120" x2="100" y2="150"/>
+      <line x1="220" y1="100" x2="240" y2="160"/>
+    </g>
+    <g fill="#2a1a0e">
+      <circle cx="80"  cy="80"  r="14"/>
+      <circle cx="160" cy="80"  r="18"/>
+      <circle cx="220" cy="100" r="12"/>
+      <circle cx="100" cy="150" r="16"/>
+      <circle cx="180" cy="160" r="14"/>
+      <circle cx="60"  cy="120" r="8"/>
+      <circle cx="240" cy="160" r="9"/>
+      <circle cx="200" cy="60"  r="7"/>
+    </g>
+    <text x="0" y="202" class="sm">reveals: community structure at top level.</text>
+    <text x="0" y="216" class="sm">gives up: every individual node identity.</text>
+  </g>
+
+  <!-- PANEL 4: ADJACENCY MATRIX -->
+  <g transform="translate(360,260)">
+    <text x="0" y="0" class="ti">4. Adjacency matrix — sorted by degree</text>
+    <text x="0" y="14" class="sm">every connection visible; spatial layout gone</text>
+    <rect class="frame" x="0" y="24" width="280" height="160"/>
+    <!-- 12x12 grid of cells, shaded for connections, blocky in top-left -->
+    <g transform="translate(20,40)">
+      <!-- grid background -->
+      <g>
+        <!-- 12 cols x 12 rows of size 16x10 -->
+      </g>
+      <!-- generate cells: dense in top-left -->
+      <g fill="#2a1a0e">
+        <!-- row 0 -->
+        <rect x="0"   y="0" width="16" height="10"/>
+        <rect x="20"  y="0" width="16" height="10"/>
+        <rect x="40"  y="0" width="16" height="10"/>
+        <rect x="60"  y="0" width="16" height="10"/>
+        <rect x="80"  y="0" width="16" height="10"/>
+        <rect x="100" y="0" width="16" height="10" fill="#8a8480"/>
+        <rect x="180" y="0" width="16" height="10" fill="#c8c4c0"/>
+        <!-- row 1 -->
+        <rect x="0"   y="14" width="16" height="10"/>
+        <rect x="20"  y="14" width="16" height="10"/>
+        <rect x="40"  y="14" width="16" height="10"/>
+        <rect x="60"  y="14" width="16" height="10"/>
+        <rect x="80"  y="14" width="16" height="10" fill="#8a8480"/>
+        <rect x="120" y="14" width="16" height="10" fill="#c8c4c0"/>
+        <!-- row 2 -->
+        <rect x="0"  y="28" width="16" height="10"/>
+        <rect x="20" y="28" width="16" height="10"/>
+        <rect x="40" y="28" width="16" height="10"/>
+        <rect x="60" y="28" width="16" height="10" fill="#8a8480"/>
+        <rect x="140" y="28" width="16" height="10" fill="#c8c4c0"/>
+        <!-- row 3 -->
+        <rect x="0"  y="42" width="16" height="10"/>
+        <rect x="20" y="42" width="16" height="10"/>
+        <rect x="40" y="42" width="16" height="10" fill="#8a8480"/>
+        <rect x="160" y="42" width="16" height="10" fill="#c8c4c0"/>
+        <!-- row 4 -->
+        <rect x="0"  y="56" width="16" height="10" fill="#8a8480"/>
+        <rect x="20" y="56" width="16" height="10" fill="#8a8480"/>
+        <rect x="60" y="56" width="16" height="10" fill="#c8c4c0"/>
+        <!-- row 5 -->
+        <rect x="0" y="70" width="16" height="10" fill="#8a8480"/>
+        <rect x="100" y="70" width="16" height="10" fill="#c8c4c0"/>
+        <rect x="180" y="70" width="16" height="10" fill="#c8c4c0"/>
+        <!-- sparse outer rows -->
+        <rect x="40" y="84" width="16" height="10" fill="#c8c4c0"/>
+        <rect x="120" y="84" width="16" height="10" fill="#c8c4c0"/>
+        <rect x="60" y="98" width="16" height="10" fill="#c8c4c0"/>
+        <rect x="160" y="98" width="16" height="10" fill="#c8c4c0"/>
+        <rect x="20" y="112" width="16" height="10" fill="#c8c4c0"/>
+        <rect x="200" y="112" width="16" height="10" fill="#c8c4c0"/>
+      </g>
+      <!-- grid lines -->
+      <g stroke="#c8c4c0" stroke-width="0.4">
+        <line x1="0" y1="0"   x2="216" y2="0"/>
+        <line x1="0" y1="14"  x2="216" y2="14"/>
+        <line x1="0" y1="28"  x2="216" y2="28"/>
+        <line x1="0" y1="42"  x2="216" y2="42"/>
+        <line x1="0" y1="56"  x2="216" y2="56"/>
+        <line x1="0" y1="70"  x2="216" y2="70"/>
+        <line x1="0" y1="84"  x2="216" y2="84"/>
+        <line x1="0" y1="98"  x2="216" y2="98"/>
+        <line x1="0" y1="112" x2="216" y2="112"/>
+      </g>
+      <text x="-4" y="8"  text-anchor="end" class="sm">N1</text>
+      <text x="-4" y="64" text-anchor="end" class="sm">…</text>
+      <text x="-4" y="118" text-anchor="end" class="sm">N80</text>
+    </g>
+    <text x="0" y="202" class="sm">reveals: full connection set; degree blocks.</text>
+    <text x="0" y="216" class="sm">gives up: cluster proximity in 2D space.</text>
+  </g>
+
+  <text x="350" y="456" text-anchor="middle" class="cap">Each mitigation answers a different question. Choose the one whose loss you can afford.</text>
+</svg>

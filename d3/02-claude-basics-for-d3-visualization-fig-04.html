@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 2.4 — The three-layer verification stack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #stack { width: 100%; max-width: 760px; }
+  .chart { width: 100%; height: 380px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .layer { cursor: pointer; transition: opacity 120ms; }
+  .layer:hover { opacity: 0.92; }
+  .layer text.title { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; }
+  .layer text.body { font-family: 'Inter', sans-serif; font-size: 12px; }
+  .layer text.time { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 20px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 8px 12px; font-size: 12px; max-width: 280px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 2.4 — The three-layer verification stack</h1>
+<p class="subtitle">Three checks before you ship a chart. They run in order. Layer 1 takes ten seconds. Layer 3 takes ninety. The order is the discipline.</p>
+
+<div id="stack">
+  <div id="chartStack" class="chart" role="img" aria-labelledby="stack-t stack-d"></div>
+</div>
+<p class="caption">Two minutes. In order. Every time. Layer 1 catches what would have eaten ten minutes at Layer 3 — and Layer 3 catches what neither prompt nor code review could anticipate.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const layerData = [
+  {
+    id: 1, name: 'Format check', time: '~10 seconds', shade: 0.18,
+    look:  'file count, CDN URL, inline CSS, D3 version string',
+    catch: 'wrong format, wrong version, missing inline assets',
+    tip:   'You asked for one HTML file with D3 v7 from CDN. Did you get that? Open the source and read the script tag.'
+  },
+  {
+    id: 2, name: 'Fact check', time: '~30 seconds', shade: 0.55,
+    look:  'values, labels, channel mappings against the prompt',
+    catch: 'bar mistakes, swapped channels, wrong sort, hue-on-quantitative',
+    tip:   'Read the chart against the prompt. The mapping in Move 3 is the contract; verify Claude Code honoured it line by line.'
+  },
+  {
+    id: 3, name: 'Test the work', time: '~90 seconds', shade: 1.0,
+    look:  'browser render, resize, dark mode, color-blind sim, deploy size',
+    catch: 'layout breaks, contrast failures, illegible scale, runtime errors',
+    tip:   'Open it. Resize it. Switch to dark mode. Squint at it the size your reader actually sees.'
+  }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>Layer ${d.id} · ${d.name}</strong><br>${d.tip}`)
+    .style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  d3.select('#chartStack').selectAll('*').remove();
+  const container = document.getElementById('chartStack');
+  const totalWidth  = container.clientWidth  || 720;
+  const totalHeight = container.clientHeight || 380;
+  const margin = { top: 16, right: 96, bottom: 24, left: 16 };
+  const cw = totalWidth - margin.left - margin.right;
+  const ch = totalHeight - margin.top - margin.bottom;
+
+  const svg = d3.select('#chartStack').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'stack-t stack-d');
+  svg.append('title').attr('id', 'stack-t').text('Three-layer verification stack');
+  svg.append('desc').attr('id', 'stack-d').text('A vertical stack of three layers running format check, fact check, and test. Each layer lists what to look at and what it catches.');
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const rowHeight = (ch - 16) / 3;
+  const colorScale = d3.scaleLinear()
+    .domain([0, 1])
+    .range([d3.color('var') ? '#F1ECE6' : '#F1ECE6', '#121212']); // fallback; replaced below
+
+  // We need CSS variable resolution at runtime — fall back to interpolating with computed values:
+  const root = getComputedStyle(document.documentElement);
+  const inkVar = root.getPropertyValue('--color-ink').trim() || '#121212';
+  const lightShade = '#F1ECE6';
+  const colorAt = t => d3.interpolateRgb(lightShade, inkVar)(t);
+
+  const layers = g.selectAll('.layer').data(layerData, d => d.id).join('g')
+    .attr('class', 'layer')
+    .attr('transform', (d, i) => `translate(0, ${i * (rowHeight + 8)})`)
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `Layer ${d.id}: ${d.name}. ${d.time}. Looks at: ${d.look}. Catches: ${d.catch}.`)
+    .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  layers.append('rect')
+    .attr('width', cw).attr('height', rowHeight)
+    .attr('fill', d => colorAt(d.shade))
+    .attr('stroke', 'var(--color-ink)');
+
+  layers.each(function (d) {
+    const node = d3.select(this);
+    const textFill = d.shade > 0.5 ? 'var(--color-white)' : 'var(--color-ink)';
+    const subFill  = d.shade > 0.5 ? 'var(--color-white)' : 'var(--color-secondary)';
+
+    // big numeral
+    node.append('text').attr('class', 'title')
+      .attr('x', 28).attr('y', rowHeight / 2 + 12)
+      .attr('text-anchor', 'middle')
+      .attr('fill', textFill)
+      .style('font-size', '32px').style('font-weight', '700')
+      .text(d.id);
+
+    // name
+    node.append('text').attr('class', 'title')
+      .attr('x', 64).attr('y', 30)
+      .attr('fill', textFill)
+      .text(d.name);
+
+    // time
+    node.append('text').attr('class', 'time')
+      .attr('x', 64).attr('y', 50)
+      .attr('fill', subFill)
+      .text(d.time + (d.id === 3 ? ' · most likely to catch runtime failures' : ''));
+
+    // look at
+    node.append('text').attr('class', 'body')
+      .attr('x', 64).attr('y', 76)
+      .attr('fill', textFill)
+      .text('look at: ' + d.look);
+
+    // catches
+    node.append('text').attr('class', 'body')
+      .attr('x', 64).attr('y', 96)
+      .attr('fill', textFill)
+      .text('catches: ' + d.catch);
+  });
+
+  // side rail
+  const rail = svg.append('g').attr('transform', `translate(${totalWidth - 64},${margin.top})`);
+  rail.append('line')
+    .attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', ch)
+    .attr('stroke', 'var(--color-secondary)');
+  rail.append('text')
+    .attr('transform', `translate(20,${ch / 2}) rotate(90)`)
+    .attr('text-anchor', 'middle')
+    .attr('fill', 'var(--color-secondary)')
+    .style('font-family', 'Inter, sans-serif').style('font-size', '11px')
+    .text('catches earlier failures first · don’t skip ahead');
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartStack'));
+</script>
+</body>
+</html>

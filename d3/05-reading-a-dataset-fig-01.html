@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 5.1 — Analyst vs reader question</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #chart { width: 100%; min-height: 520px; }
+  .col-header { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; fill: var(--color-ink); }
+  .card { fill: var(--color-white); stroke: var(--color-border); stroke-width: 1; }
+  .card.active { stroke: var(--color-red); stroke-width: 2; }
+  .card-text { font-family: 'EB Garamond', Georgia, serif; font-size: 14px; fill: var(--color-ink); }
+  .diff-text { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-secondary); font-style: italic; }
+  .arrow { stroke: var(--color-secondary); stroke-width: 1.2; fill: none; }
+  .axis-rule { stroke: var(--color-border); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 5.1 — Analyst vs reader question</h1>
+<p class="subtitle">Three pairs from Barry and Card's MBTA project. Same dataset; different framing forces different charts. Hover any row to highlight the pair.</p>
+<div id="chart" role="img" aria-labelledby="ct51 cd51"></div>
+<p class="caption">The reader's column is where the chart must land. The analyst's column is where exploration starts — it is not the destination.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const pairData = [
+  {
+    id: 'load',
+    analyst: "What is the system's load distribution across stations and time-of-day?",
+    reader:  "When and where are the trains crowded or delayed?",
+    diff:    "exploratory  →  summative"
+  },
+  {
+    id: 'weather',
+    analyst: "How does ridership respond to weather variables across multiple winters?",
+    reader:  "How do snowstorms affect the system?",
+    diff:    "producer's interest  →  audience's need"
+  },
+  {
+    id: 'duration',
+    analyst: "What patterns exist in passenger-trip duration across the network?",
+    reader:  "How congested is my route?",
+    diff:    "open-ended  →  actionable"
+  }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top',  (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) {
+  tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px');
+}
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function wrapText(selection, width) {
+  selection.each(function() {
+    const textEl = d3.select(this);
+    const words = textEl.text().split(/\s+/).reverse();
+    const lineHeight = 17;
+    const x = +textEl.attr('x');
+    const y = +textEl.attr('y');
+    textEl.text(null);
+    let line = [];
+    let lineNumber = 0;
+    let tspan = textEl.append('tspan').attr('x', x).attr('y', y);
+    let word;
+    while ((word = words.pop())) {
+      line.push(word);
+      tspan.text(line.join(' '));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(' '));
+        line = [word];
+        lineNumber += 1;
+        tspan = textEl.append('tspan').attr('x', x).attr('y', y).attr('dy', `${lineNumber * lineHeight}px`).text(word);
+      }
+    }
+  });
+}
+
+function draw() {
+  const container = document.getElementById('chart');
+  d3.select('#chart').selectAll('*').remove();
+
+  const totalWidth = container.clientWidth || 800;
+  const margin = { top: 56, right: 24, bottom: 32, left: 24 };
+  const rowH = 110;
+  const headerH = 32;
+  const innerWidth = totalWidth - margin.left - margin.right;
+  const colGap = 16;
+  const sideColWidth = (innerWidth - 200 - colGap * 2) / 2;
+  const midColWidth = 200;
+  const totalHeight = margin.top + headerH + 16 + pairData.length * (rowH + 12) + margin.bottom;
+
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth)
+    .attr('height', totalHeight)
+    .attr('role', 'img')
+    .attr('aria-labelledby', 'ct51 cd51');
+
+  svg.append('title').attr('id', 'ct51').text("Analyst vs reader question — three MBTA contrasts");
+  svg.append('desc').attr('id', 'cd51').text("Three rows pair an analyst-framed question with the matching reader-framed version and label the difference.");
+
+  // Title bar
+  const gTitle = svg.append('g').attr('transform', `translate(${margin.left},${margin.top - 28})`);
+  gTitle.append('text')
+    .attr('class', 'col-header')
+    .attr('x', sideColWidth / 2)
+    .attr('text-anchor', 'middle')
+    .text("Analyst's question");
+  gTitle.append('text')
+    .attr('class', 'col-header')
+    .attr('x', sideColWidth + colGap + midColWidth / 2)
+    .attr('text-anchor', 'middle')
+    .text("What differs");
+  gTitle.append('text')
+    .attr('class', 'col-header')
+    .attr('x', sideColWidth + colGap + midColWidth + colGap + sideColWidth / 2)
+    .attr('text-anchor', 'middle')
+    .text("Reader's question");
+
+  // Rows
+  const gRows = svg.append('g').attr('transform', `translate(${margin.left},${margin.top + 8})`);
+
+  pairData.forEach((d, i) => {
+    const y = i * (rowH + 12);
+    const row = gRows.append('g').attr('class', 'row').attr('data-id', d.id);
+
+    // Left card
+    const leftCard = row.append('rect')
+      .attr('class', 'card')
+      .attr('x', 0).attr('y', y)
+      .attr('width', sideColWidth).attr('height', rowH);
+
+    row.append('text')
+      .attr('class', 'card-text')
+      .attr('x', 16)
+      .attr('y', y + 28)
+      .text(d.analyst)
+      .call(wrapText, sideColWidth - 32);
+
+    // Arrow + diff label
+    const midX = sideColWidth + colGap;
+    row.append('line')
+      .attr('class', 'arrow')
+      .attr('x1', midX)
+      .attr('x2', midX + midColWidth)
+      .attr('y1', y + rowH / 2)
+      .attr('y2', y + rowH / 2)
+      .attr('stroke-dasharray', '4 3')
+      .attr('marker-end', 'url(#arrow51)');
+
+    row.append('text')
+      .attr('class', 'diff-text')
+      .attr('x', midX + midColWidth / 2)
+      .attr('y', y + rowH / 2 - 8)
+      .attr('text-anchor', 'middle')
+      .text(d.diff);
+
+    // Right card
+    const rightX = midX + midColWidth + colGap;
+    const rightCard = row.append('rect')
+      .attr('class', 'card')
+      .attr('x', rightX).attr('y', y)
+      .attr('width', sideColWidth).attr('height', rowH);
+
+    row.append('text')
+      .attr('class', 'card-text')
+      .attr('x', rightX + 16)
+      .attr('y', y + 28)
+      .text(d.reader)
+      .call(wrapText, sideColWidth - 32);
+
+    // Hover handlers
+    row
+      .attr('tabindex', 0)
+      .attr('aria-label', `Pair ${i + 1}: analyst — ${d.analyst}; reader — ${d.reader}.`)
+      .on('mouseover', function(event) {
+        d3.select(this).selectAll('.card').classed('active', true);
+        showTip(event, `<strong>${d.diff}</strong>`);
+      })
+      .on('mousemove', moveTip)
+      .on('mouseout', function() {
+        d3.select(this).selectAll('.card').classed('active', false);
+        hideTip();
+      });
+  });
+
+  // Arrow marker
+  svg.append('defs').append('marker')
+    .attr('id', 'arrow51')
+    .attr('viewBox', '0 0 10 10')
+    .attr('refX', 8).attr('refY', 5)
+    .attr('markerWidth', 8).attr('markerHeight', 8)
+    .attr('orient', 'auto-start-reverse')
+    .append('path')
+      .attr('d', 'M 0 0 L 10 5 L 0 10 z')
+      .attr('fill', 'var(--color-secondary)');
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

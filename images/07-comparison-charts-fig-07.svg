@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t07 d07">
+  <title id="t07">The bar chart annotated — six design decisions, six perceptual principles</title>
+  <desc id="d07">An annotated rendering of the pantry's bar chart with callouts naming sort order, zero baseline, luminance redundancy, score annotations, grid lines, and label rotation.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .num { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #fdfcfb; }
+    </style>
+    <marker id="ar7" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+  <text x="32" y="32" class="ti">Six design decisions in one chart. Every element is doing work; nothing is decorative.</text>
+
+  <!-- chart area: 220–540 x, 80–340 y -->
+  <!-- gridlines (very light) -->
+  <g stroke="#c8c4c0" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.6">
+    <line x1="220" y1="80"  x2="540" y2="80"/>
+    <line x1="220" y1="132" x2="540" y2="132"/>
+    <line x1="220" y1="184" x2="540" y2="184"/>
+    <line x1="220" y1="236" x2="540" y2="236"/>
+    <line x1="220" y1="288" x2="540" y2="288"/>
+  </g>
+  <!-- axes -->
+  <line x1="220" y1="340" x2="540" y2="340" stroke="#8a8480"/>
+  <line x1="220" y1="80"  x2="220" y2="340" stroke="#8a8480"/>
+  <!-- y tick labels -->
+  <text x="214" y="343" text-anchor="end" class="sm">0</text>
+  <text x="214" y="291" text-anchor="end" class="sm">25</text>
+  <text x="214" y="239" text-anchor="end" class="sm">50</text>
+  <text x="214" y="187" text-anchor="end" class="sm">75</text>
+  <text x="214" y="83"  text-anchor="end" class="sm">100</text>
+  <!-- bars: 8 cognitive domains sorted descending, MR 96..Embodied 35.  -->
+  <!-- bar width 32, gap 8. x start 232. y bottom 340; height = val*2.6 -->
+  <g>
+    <rect x="232" y="90.4"  width="32" height="249.6" fill="#2a1a0e"/>
+    <rect x="272" y="100.8" width="32" height="239.2" fill="#3a2d20"/>
+    <rect x="312" y="126.8" width="32" height="213.2" fill="#4a4540"/>
+    <rect x="352" y="155.4" width="32" height="184.6" fill="#6a625c"/>
+    <rect x="392" y="173.6" width="32" height="166.4" fill="#8a8480"/>
+    <rect x="432" y="217.8" width="32" height="122.2" fill="#a8a4a0"/>
+    <rect x="472" y="230.8" width="32" height="109.2" fill="#b8b4b0"/>
+    <rect x="512" y="249.0" width="32" height="91.0"  fill="#c8c4c0"/>
+  </g>
+  <!-- value labels above bars -->
+  <g class="sm">
+    <text x="248" y="84"  text-anchor="middle">96</text>
+    <text x="288" y="94"  text-anchor="middle">92</text>
+    <text x="328" y="120" text-anchor="middle">82</text>
+    <text x="368" y="149" text-anchor="middle">71</text>
+    <text x="408" y="167" text-anchor="middle">64</text>
+    <text x="448" y="211" text-anchor="middle">47</text>
+    <text x="488" y="224" text-anchor="middle">42</text>
+    <text x="528" y="243" text-anchor="middle">35</text>
+  </g>
+  <!-- rotated labels -->
+  <g class="sm">
+    <text x="248" y="354" text-anchor="end" transform="rotate(-30 248 354)">Memory</text>
+    <text x="288" y="354" text-anchor="end" transform="rotate(-30 288 354)">Pattern</text>
+    <text x="328" y="354" text-anchor="end" transform="rotate(-30 328 354)">Logic</text>
+    <text x="368" y="354" text-anchor="end" transform="rotate(-30 368 354)">Quant</text>
+    <text x="408" y="354" text-anchor="end" transform="rotate(-30 408 354)">Language</text>
+    <text x="448" y="354" text-anchor="end" transform="rotate(-30 448 354)">Moral</text>
+    <text x="488" y="354" text-anchor="end" transform="rotate(-30 488 354)">Empathy</text>
+    <text x="528" y="354" text-anchor="end" transform="rotate(-30 528 354)">Embodied</text>
+  </g>
+
+  <!-- callouts numbered 1..6 -->
+  <!-- 1. Sort order descending: arrow above bars sweeping left -->
+  <circle cx="60" cy="90" r="11" fill="#2a1a0e"/><text x="60" y="94" text-anchor="middle" class="num">1</text>
+  <text x="78" y="86" class="lb">Sort order: descending</text>
+  <text x="78" y="100" class="sm">Munzner effectiveness — order from primary attribute.</text>
+  <path d="M 130 88 L 230 88" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar7)"/>
+
+  <!-- 2. Zero baseline -->
+  <circle cx="60" cy="138" r="11" fill="#2a1a0e"/><text x="60" y="142" text-anchor="middle" class="num">2</text>
+  <text x="78" y="134" class="lb">Zero baseline</text>
+  <text x="78" y="148" class="sm">Stevens' power law — area perception calibrates to zero.</text>
+  <path d="M 130 144 L 218 340" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar7)"/>
+
+  <!-- 3. Luminance redundancy -->
+  <circle cx="60" cy="190" r="11" fill="#2a1a0e"/><text x="60" y="194" text-anchor="middle" class="num">3</text>
+  <text x="78" y="186" class="lb">Color luminance: redundant</text>
+  <text x="78" y="200" class="sm">Few's clarity-over-minimization — supports the message.</text>
+  <path d="M 130 196 L 528 280" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar7)"/>
+
+  <!-- 4. Score annotations -->
+  <circle cx="60" cy="240" r="11" fill="#2a1a0e"/><text x="60" y="244" text-anchor="middle" class="num">4</text>
+  <text x="78" y="236" class="lb">Score annotations</text>
+  <text x="78" y="250" class="sm">Rank is visual; precision is textual. Both serve the reader.</text>
+  <path d="M 130 244 L 248 86" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar7)"/>
+
+  <!-- 5. Grid lines low opacity -->
+  <circle cx="60" cy="290" r="11" fill="#2a1a0e"/><text x="60" y="294" text-anchor="middle" class="num">5</text>
+  <text x="78" y="286" class="lb">Gridlines at low opacity</text>
+  <text x="78" y="300" class="sm">Few-resolved — present for precise reading, invisible while scanning.</text>
+  <path d="M 130 298 L 380 132" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar7)"/>
+
+  <!-- 6. Label rotation -->
+  <circle cx="60" cy="340" r="11" fill="#2a1a0e"/><text x="60" y="344" text-anchor="middle" class="num">6</text>
+  <text x="78" y="336" class="lb">Label rotation (−30°)</text>
+  <text x="78" y="350" class="sm">Gestalt continuity — readable rotated; short labels tolerate it.</text>
+  <path d="M 130 350 L 408 366" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar7)"/>
+
+  <!-- caption -->
+  <text x="350" y="450" text-anchor="middle" class="cap">Every element is doing work. Nothing is decorative.</text>
+</svg>

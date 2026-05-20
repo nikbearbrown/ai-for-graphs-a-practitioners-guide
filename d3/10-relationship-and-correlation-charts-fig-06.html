@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 10.6 — Parallel coordinates: axis-order dependence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 320px; }
+  .axis-line { stroke: var(--color-secondary); stroke-width: 1; }
+  .axis-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); text-anchor: middle; }
+  .line { fill: none; stroke-width: 0.8; transition: opacity 120ms cubic-bezier(0.2,0.8,0.2,1); }
+  .line:hover { stroke-width: 2; opacity: 1 !important; }
+  .legend { display: flex; gap: 16px; font-size: 12px; margin-bottom: 12px; color: var(--color-secondary); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { display: inline-block; width: 12px; height: 12px; }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 10.6 — Parallel coordinates: axis order decides what you see</h1>
+<p class="subtitle">200 observations, six quantitative variables. The same data; two axis orders.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Alphabetical order: A · B · C · D · E · F</div>
+    <div class="panel-sub">Polylines tangle; no clear structure.</div>
+    <div id="chartTangle" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Reordered: A · C · E · F · D · B</div>
+    <div class="panel-sub">Highest-r pairs adjacent — two clusters emerge.</div>
+    <div id="chartClusters" class="chart"></div>
+  </div>
+</div>
+<p class="caption">6! = 720 possible orderings. Each makes different pairwise relationships visible. Munzner's axis-order-dependence problem.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Generate 200 observations from two latent clusters
+let seed = 91;
+function rand() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+function gauss() {
+  const u = Math.max(rand(), 1e-9), v = rand();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+const observations = [];
+for (let i = 0; i < 200; i++) {
+  const cluster = i < 100 ? 0 : 1;
+  // cluster 0 has high A, C, E and low D, B; cluster 1 reversed
+  const base = cluster === 0 ? 0.75 : 0.25;
+  const obs = {
+    cluster,
+    A: base + gauss() * 0.08,
+    C: base + gauss() * 0.08,
+    E: base + gauss() * 0.08,
+    F: (1 - base) * 0.3 + base * 0.7 + gauss() * 0.1,
+    D: (1 - base) + gauss() * 0.08,
+    B: (1 - base) + gauss() * 0.08
+  };
+  observations.push(obs);
+}
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`obs · cluster ${d.cluster + 1}<br/>A=${d.A.toFixed(2)} B=${d.B.toFixed(2)} C=${d.C.toFixed(2)}<br/>D=${d.D.toFixed(2)} E=${d.E.toFixed(2)} F=${d.F.toFixed(2)}`)
+    .style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawParallel(selector, axisOrder, colorByCluster) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 400;
+  const totalHeight = container.clientHeight || 320;
+  const margin = { top: 24, right: 32, bottom: 40, left: 32 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight).attr('role', 'img');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScalePoint = d3.scalePoint().domain(axisOrder).range([0, chartWidth]).padding(0.1);
+  const yScales = {};
+  axisOrder.forEach(v => {
+    yScales[v] = d3.scaleLinear().domain([0, 1]).range([chartHeight, 0]);
+  });
+
+  axisOrder.forEach(v => {
+    g.append('line').attr('class', 'axis-line')
+      .attr('x1', xScalePoint(v)).attr('x2', xScalePoint(v))
+      .attr('y1', 0).attr('y2', chartHeight);
+    g.append('text').attr('class', 'axis-label')
+      .attr('x', xScalePoint(v)).attr('y', chartHeight + 22).text(v);
+  });
+
+  const lineGen = d3.line()
+    .x(d => xScalePoint(d.variable))
+    .y(d => yScales[d.variable](d.value));
+
+  g.selectAll('.line').data(observations).join('path')
+    .attr('class', 'line')
+    .attr('d', d => lineGen(axisOrder.map(v => ({ variable: v, value: d[v] }))))
+    .attr('stroke', d => colorByCluster ? (d.cluster === 0 ? 'var(--color-ink)' : 'var(--color-red)') : 'var(--color-ink)')
+    .attr('opacity', 0.35)
+    .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+}
+
+function drawAll() {
+  drawParallel('#chartTangle', ['A', 'B', 'C', 'D', 'E', 'F'], false);
+  drawParallel('#chartClusters', ['A', 'C', 'E', 'F', 'D', 'B'], true);
+}
+drawAll();
+const ro = new ResizeObserver(() => drawAll());
+ro.observe(document.getElementById('chartTangle'));
+ro.observe(document.getElementById('chartClusters'));
+</script>
+</body>
+</html>

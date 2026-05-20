@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t1302 d1302">
+  <title id="t1302">Sankey proportionality audit — correct widths versus failure widths</title>
+  <desc id="d1302">Three flows of values 400, 200, and 80 rendered correctly with widths 40, 20, and 8 pixels, and then with failure widths 30, 20, and 12. The width ratios are checked against the value ratios.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .ver { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; }
+      .nd { fill: #2a1a0e; }
+    </style>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">Three flows: 400, 200, 80 units. Width must scale with value, not order.</text>
+
+  <!-- PANEL A: CORRECT -->
+  <g transform="translate(40,60)">
+    <text x="0" y="0" class="ti">A. Correct (proportional ink honored)</text>
+    <text x="0" y="14" class="sm">band widths 40, 20, 8 px — ratio matches data</text>
+    <!-- left node -->
+    <rect class="nd" x="20" y="40" width="12" height="68"/>
+    <text x="16" y="56" text-anchor="end" class="sm">Source</text>
+    <!-- right nodes -->
+    <rect class="nd" x="240" y="40"  width="12" height="40"/>
+    <rect class="nd" x="240" y="100" width="12" height="20"/>
+    <rect class="nd" x="240" y="140" width="12" height="8"/>
+    <text x="256" y="56"  class="sm">A — 400</text>
+    <text x="256" y="112" class="sm">B — 200</text>
+    <text x="256" y="146" class="sm">C — 80</text>
+    <!-- flows -->
+    <path d="M 32 40 C 136 40, 136 40, 240 40 L 240 80 C 136 80, 136 80, 32 80 Z" fill="#4a4540" fill-opacity="0.6"/>
+    <path d="M 32 80 C 136 80, 136 100, 240 100 L 240 120 C 136 120, 136 100, 32 100 Z" fill="#8a8480" fill-opacity="0.6"/>
+    <path d="M 32 100 C 136 100, 136 140, 240 140 L 240 148 C 136 148, 136 108, 32 108 Z" fill="#c8c4c0" fill-opacity="0.75"/>
+    <!-- width annotations -->
+    <text x="92"  y="38" text-anchor="middle" class="sm">40 px</text>
+    <text x="92"  y="118" text-anchor="middle" class="sm">20 px</text>
+    <text x="92"  y="158" text-anchor="middle" class="sm">8 px</text>
+    <!-- ratio readout -->
+    <g transform="translate(0,200)">
+      <text x="0" y="0" class="lb">Width ratios match value ratios:</text>
+      <text x="0" y="18" class="sm">A : B  =  40 : 20  =  2 : 1   ✓   (data 400 : 200 = 2 : 1)</text>
+      <text x="0" y="32" class="sm">A : C  =  40 : 8   =  5 : 1   ✓   (data 400 : 80  = 5 : 1)</text>
+    </g>
+    <rect x="0" y="260" width="280" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="140" y="275" text-anchor="middle" class="ver">verdict: honest</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="360" y1="50" x2="360" y2="380" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- PANEL B: COMMON FAILURE -->
+  <g transform="translate(390,60)">
+    <text x="0" y="0" class="ti">B. Common failure (proportions wrong)</text>
+    <text x="0" y="14" class="sm">band widths 30, 20, 12 px — ratio collapses</text>
+    <rect class="nd" x="20" y="40" width="12" height="62"/>
+    <text x="16" y="56" text-anchor="end" class="sm">Source</text>
+    <rect class="nd" x="240" y="40"  width="12" height="30"/>
+    <rect class="nd" x="240" y="92"  width="12" height="20"/>
+    <rect class="nd" x="240" y="124" width="12" height="12"/>
+    <text x="256" y="56"  class="sm">A — 400</text>
+    <text x="256" y="104" class="sm">B — 200</text>
+    <text x="256" y="134" class="sm">C — 80</text>
+    <path d="M 32 40 C 136 40, 136 40, 240 40 L 240 70 C 136 70, 136 70, 32 70 Z" fill="#4a4540" fill-opacity="0.6"/>
+    <path d="M 32 70 C 136 70, 136 92, 240 92 L 240 112 C 136 112, 136 90, 32 90 Z" fill="#8a8480" fill-opacity="0.6"/>
+    <path d="M 32 90 C 136 90, 136 124, 240 124 L 240 136 C 136 136, 136 102, 32 102 Z" fill="#c8c4c0" fill-opacity="0.75"/>
+    <text x="92" y="38"  text-anchor="middle" class="sm">30 px</text>
+    <text x="92" y="106" text-anchor="middle" class="sm">20 px</text>
+    <text x="92" y="146" text-anchor="middle" class="sm">12 px</text>
+    <g transform="translate(0,200)">
+      <text x="0" y="0" class="lb">Width ratios disagree with value ratios:</text>
+      <text x="0" y="18" class="sm">A : B  =  30 : 20  =  1.5 : 1   ✗   (data says 2 : 1)</text>
+      <text x="0" y="32" class="sm">A : C  =  30 : 12  =  2.5 : 1   ✗   (data says 5 : 1)</text>
+    </g>
+    <rect x="0" y="260" width="280" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="140" y="275" text-anchor="middle" class="ver">verdict: distorts</text>
+  </g>
+
+  <text x="350" y="432" text-anchor="middle" class="cap">Audit step one: measure the two widest bands. Confirm the ratio of widths matches the ratio of values.</text>
+</svg>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 11.3 — Nightingale polar area chart with the r² distortion named</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: start; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .chart { width: 100%; height: 520px; }
+  .wedge { stroke: var(--color-white); stroke-width: 1px; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .wedge.disease  { fill: #2a1a0e; }
+  .wedge.wounds   { fill: #8a8480; }
+  .wedge.other    { fill: #c8c4c0; }
+  .month-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); pointer-events: none; }
+  .legend-title { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; fill: var(--color-ink); }
+  .legend-text  { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .note-box { background: var(--color-white); border-left: 3px solid var(--color-ochre); padding: 12px 16px; }
+  .note-title { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .note-text  { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; font-family: 'Inter', sans-serif; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 11.3 — Nightingale polar area chart, with the distortion named</h1>
+<p class="subtitle">A simplified 1854–55 mortality dataset rendered as Nightingale rendered it — and labeled for what it does.</p>
+<div id="wrap">
+  <div class="panel">
+    <div id="chart" class="chart" role="img"></div>
+  </div>
+  <div>
+    <div class="note-box" style="margin-bottom:16px;">
+      <div class="note-title">Wedge area encodes value</div>
+      <div class="note-text">Area scales as the square of the radial length. A wedge twice as long appears roughly four times larger in area. The eye reads area; the data is the radial length.</div>
+    </div>
+    <div class="note-box">
+      <div class="note-title">Defensible in advocacy</div>
+      <div class="note-text">Nightingale's chart argued for sanitary reform. The visual force served the argument. In an analytical context, the same distortion is a failure unless disclosed.</div>
+    </div>
+  </div>
+</div>
+<p class="caption">A polar area chart is a known distortion. The conditions that make the choice defensible are specific — Cairo's rhetorical-vs-analytical frame names them.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+const monthData = [
+  { month: 'Apr', disease: 28, wounds: 14, other:  8 },
+  { month: 'May', disease: 35, wounds: 18, other: 10 },
+  { month: 'Jun', disease: 40, wounds: 20, other: 11 },
+  { month: 'Jul', disease: 50, wounds: 22, other: 13 },
+  { month: 'Aug', disease: 65, wounds: 28, other: 15 },
+  { month: 'Sep', disease: 75, wounds: 38, other: 18 },
+  { month: 'Oct', disease: 80, wounds: 40, other: 20 },
+  { month: 'Nov', disease: 95, wounds: 32, other: 18 },
+  { month: 'Dec', disease:105, wounds: 28, other: 16 },
+  { month: 'Jan', disease:110, wounds: 24, other: 14 },
+  { month: 'Feb', disease: 90, wounds: 22, other: 12 },
+  { month: 'Mar', disease: 70, wounds: 18, other: 10 }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  const container = document.getElementById('chart');
+  d3.select('#chart').selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 520;
+  const totalHeight = container.clientHeight || 520;
+  const centerX = totalWidth / 2;
+  const centerY = totalHeight / 2;
+  const maxValue = d3.max(monthData, d => d.disease);
+  const maxRadius = Math.min(totalWidth, totalHeight) / 2 - 48;
+  // Use scaleLinear: the original Nightingale chart encodes the value as the radial length;
+  // the *area* distortion is inherent to the polar form and is what the figure documents.
+  const rScale = d3.scaleLinear().domain([0, maxValue]).range([0, maxRadius]);
+
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img');
+  svg.append('title').text('Polar area chart of monthly mortality split by cause');
+  svg.append('desc').text('Twelve months of simulated Crimean War mortality split into three causes — preventable disease, wounds, and other — rendered as a Nightingale-style polar area chart.');
+
+  const gChart = svg.append('g').attr('transform', 'translate(' + centerX + ',' + centerY + ')');
+
+  const wedgeAngle = (Math.PI * 2) / 12;
+  function arcPath(r, k) {
+    const a1 = -Math.PI / 2 + k * wedgeAngle;
+    const a2 = a1 + wedgeAngle;
+    const arc = d3.arc().innerRadius(0).outerRadius(r).startAngle(a1 + Math.PI / 2).endAngle(a2 + Math.PI / 2);
+    return arc();
+  }
+
+  // Render disease first (largest), then wounds, then other so smaller sits on top
+  ['disease', 'wounds', 'other'].forEach((cause) => {
+    gChart.selectAll('.wedge-' + cause)
+      .data(monthData)
+      .join('path')
+        .attr('class', 'wedge ' + cause)
+        .attr('d', (d, k) => arcPath(rScale(d[cause]), k))
+        .attr('tabindex', 0)
+        .attr('aria-label', d => d.month + ' ' + cause + ': ' + d[cause])
+        .on('mouseover', (event, d) => showTip(event,
+          '<strong>' + d.month + '</strong><br/>Disease: ' + d.disease + '<br/>Wounds: ' + d.wounds + '<br/>Other: ' + d.other))
+        .on('mousemove', moveTip).on('mouseout', hideTip);
+  });
+
+  // Month labels around the outside
+  gChart.selectAll('.month-label')
+    .data(months)
+    .join('text')
+      .attr('class', 'month-label')
+      .attr('x', (d, k) => Math.cos(-Math.PI / 2 + (k + 0.5) * wedgeAngle) * (maxRadius + 24))
+      .attr('y', (d, k) => Math.sin(-Math.PI / 2 + (k + 0.5) * wedgeAngle) * (maxRadius + 24))
+      .attr('text-anchor', 'middle')
+      .attr('dy', '0.35em')
+      .text(d => d);
+
+  // Inline legend
+  const legendG = svg.append('g').attr('transform', 'translate(24,24)');
+  legendG.append('text').attr('class', 'legend-title').attr('x', 0).attr('y', 0).text('Cause of death');
+  const legendRows = [
+    { label: 'Preventable disease', fill: '#2a1a0e' },
+    { label: 'Wounds from battle',  fill: '#8a8480' },
+    { label: 'Other causes',        fill: '#c8c4c0' }
+  ];
+  legendRows.forEach((row, i) => {
+    legendG.append('rect').attr('x', 0).attr('y', 12 + i * 20).attr('width', 14).attr('height', 14).attr('fill', row.fill);
+    legendG.append('text').attr('class', 'legend-text').attr('x', 22).attr('y', 24 + i * 20).text(row.label);
+  });
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t17-05 d17-05">
+  <title id="t17-05">Phase E — the published artifact, not just the chart</title>
+  <desc id="d17-05">A publication-packaged chart shown inside a container. Above the chart sits a title and subtitle. Below the chart are three text rows for source citation, methodology note, and accessibility statement, then a small file-manifest panel naming the project's deliverable files.</desc>
+  <defs>
+    <style>
+      .ti     { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .title  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 16px; font-weight: bold; fill: #2a1a0e; }
+      .sub    { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #4a4540; }
+      .h2     { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+      .lb     { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; }
+      .sm     { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .mono   { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 10px; fill: #2a1a0e; }
+      .cap    { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .eyebrow{ font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+
+  <!-- outer publication container -->
+  <rect x="24" y="24" width="652" height="408" fill="#fdfcfb" stroke="#2a1a0e"/>
+  <text x="40" y="20" class="eyebrow">publication container</text>
+
+  <!-- TITLE + SUBTITLE -->
+  <text x="44" y="58" class="title">Where the world's refugees are going</text>
+  <text x="44" y="78" class="sub">Top destination countries by total resident refugees, 2024</text>
+
+  <!-- CHART area (horizontal bars) -->
+  <g transform="translate(44,96)">
+    <!-- axis -->
+    <line x1="100" y1="0"  x2="100" y2="180" stroke="#8a8480"/>
+    <line x1="100" y1="180" x2="600" y2="180" stroke="#8a8480"/>
+    <text x="100" y="194" text-anchor="middle" class="sm">0</text>
+    <text x="350" y="194" text-anchor="middle" class="sm">2M</text>
+    <text x="600" y="194" text-anchor="middle" class="sm">4M</text>
+
+    <!-- bars -->
+    <g>
+      <text x="94"  y="20"  text-anchor="end" class="lb">Turkey</text>
+      <rect x="100" y="8"   width="450" height="20" fill="#2a1a0e"/>
+      <text x="556" y="22" class="sm">3.6M</text>
+
+      <text x="94"  y="48"  text-anchor="end" class="lb">Iran</text>
+      <rect x="100" y="36"  width="425" height="20" fill="#4a4540"/>
+      <text x="531" y="50" class="sm">3.4M</text>
+
+      <text x="94"  y="76"  text-anchor="end" class="lb">Germany</text>
+      <rect x="100" y="64"  width="312" height="20" fill="#4a4540"/>
+      <text x="418" y="78" class="sm">2.5M</text>
+
+      <text x="94"  y="104" text-anchor="end" class="lb">Pakistan</text>
+      <rect x="100" y="92"  width="213" height="20" fill="#8a8480"/>
+      <text x="319" y="106" class="sm">1.7M</text>
+
+      <text x="94"  y="132" text-anchor="end" class="lb">Uganda</text>
+      <rect x="100" y="120" width="188" height="20" fill="#8a8480"/>
+      <text x="294" y="134" class="sm">1.5M</text>
+
+      <text x="94"  y="160" text-anchor="end" class="lb">Poland</text>
+      <rect x="100" y="148" width="125" height="20" fill="#c8c4c0"/>
+      <text x="231" y="162" class="sm">1.0M</text>
+    </g>
+  </g>
+
+  <!-- provenance row: source / methodology / accessibility -->
+  <g transform="translate(44,316)">
+    <line x1="0" y1="0" x2="612" y2="0" stroke="#c8c4c0"/>
+    <g transform="translate(0,12)">
+      <text x="0" y="0" class="h2">SOURCE</text>
+      <text x="0" y="14" class="sm">Data: UNHCR Refugee</text>
+      <text x="0" y="26" class="sm">Statistics, 2024.</text>
+      <text x="0" y="38" class="sm">unhcr.org/refugee-statistics</text>
+    </g>
+    <line x1="200" y1="6" x2="200" y2="58" stroke="#c8c4c0"/>
+    <g transform="translate(216,12)">
+      <text x="0" y="0" class="h2">METHODOLOGY</text>
+      <text x="0" y="14" class="sm">Point-in-time totals as of</text>
+      <text x="0" y="26" class="sm">31 December. UNHCR</text>
+      <text x="0" y="38" class="sm">estimates where national</text>
+      <text x="0" y="50" class="sm">data is unavailable.</text>
+    </g>
+    <line x1="412" y1="6" x2="412" y2="58" stroke="#c8c4c0"/>
+    <g transform="translate(428,12)">
+      <text x="0" y="0" class="h2">ACCESSIBILITY</text>
+      <text x="0" y="14" class="sm">Alt text and ARIA labels</text>
+      <text x="0" y="26" class="sm">provided. WCAG AA contrast</text>
+      <text x="0" y="38" class="sm">verified for all marks and</text>
+      <text x="0" y="50" class="sm">text against the canvas.</text>
+    </g>
+  </g>
+
+  <!-- file manifest -->
+  <g transform="translate(44,392)">
+    <rect width="612" height="34" fill="#f5f2ee" stroke="#c8c4c0"/>
+    <text x="10" y="14" class="h2">PROJECT MANIFEST</text>
+    <text x="10" y="28" class="mono">chart-01.html · chart-02.html · chart-03.html · CLAUDE.md · DESIGN.md · PROJECT.md · README.md</text>
+  </g>
+
+  <!-- caption outside container -->
+  <text x="350" y="456" text-anchor="middle" class="cap">A published chart is the SVG plus the provenance that lets the reader trust it and the README that lets future-you update it.</text>
+</svg>

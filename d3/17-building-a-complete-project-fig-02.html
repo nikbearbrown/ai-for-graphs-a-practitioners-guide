@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 17.2 — Phase A deliverables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: 1.1fr 1.1fr 1fr; gap: 16px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-ink); padding: 0; }
+  .panel-head { background: var(--color-ink); color: var(--color-white); padding: 6px 12px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; }
+  .panel-body { padding: 12px; }
+  .q-card { background: color-mix(in srgb, var(--color-border) 25%, var(--color-white)); border: 1px solid var(--color-border); padding: 10px; margin-bottom: 10px; transition: border-color 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .q-card:hover { border-color: var(--color-red); }
+  .q-card h3 { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .q-card p  { font-size: 12px; color: var(--color-ink); margin-bottom: 4px; }
+  .q-card .meta { color: var(--color-secondary); font-size: 11px; }
+  .audit-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--color-border); font-size: 12px; }
+  .audit-row:last-child { border-bottom: none; }
+  .audit-row code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--color-ink); }
+  .badge { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 10px; color: var(--color-white); padding: 2px 8px; }
+  .badge.cat { background: var(--color-secondary); }
+  .badge.tmp { background: var(--color-ink); opacity: 0.7; }
+  .badge.qnt { background: var(--color-ink); }
+  .gap-card { background: color-mix(in srgb, var(--color-ochre) 14%, var(--color-white)); border-left: 3px solid var(--color-ochre); padding: 10px; margin-bottom: 10px; font-size: 12px; }
+  .relationships { font-size: 12px; color: var(--color-ink); margin-top: 12px; }
+  .relationships strong { font-family: 'Inter', sans-serif; font-size: 11px; display: block; margin-bottom: 4px; }
+  .relationships li { list-style: none; padding: 2px 0; color: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; font-style: italic; max-width: 80ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  @media (max-width: 720px) { #wrap { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<h1>Figure 17.2 — Phase A deliverables</h1>
+<p class="subtitle">Three questions, a data audit, and the gaps — in writing — before anything is drawn.</p>
+<div id="wrap" role="img" aria-labelledby="t-phaseA d-phaseA">
+  <span id="t-phaseA" hidden>Phase A deliverables panel</span>
+  <span id="d-phaseA" hidden>Three panels: three reader-focused questions, a column-type audit of the UNHCR dataset, and the identified gap.</span>
+  <div class="panel">
+    <div class="panel-head">1 · Three questions</div>
+    <div class="panel-body" id="questionsCol"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head">2 · Data audit</div>
+    <div class="panel-body" id="auditCol"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head">3 · Gaps identified</div>
+    <div class="panel-body" id="gapsCol"></div>
+  </div>
+</div>
+<p class="caption">The audit follows the questions. Not the other way around. Naming the gap honestly is part of the deliverable, not a failure to declare.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const questions = [
+  { id: 'Q1', title: 'Q1 — Origins',
+    body: 'Which countries produce the most refugees across 2020–2024?',
+    audience: 'Audience: public-policy desk',
+    decision: 'Decision: where to focus aid' },
+  { id: 'Q2', title: 'Q2 — Destinations',
+    body: 'Which countries receive the most refugees?',
+    audience: 'Audience: public-policy desk',
+    decision: 'Decision: where to fund host states' },
+  { id: 'Q3', title: 'Q3 — Composition',
+    body: 'What share of forced displacement is internal versus international?',
+    audience: 'Audience: public-policy desk',
+    decision: 'Decision: cross-border vs IDP focus' }
+];
+
+const auditRows = [
+  { col: 'country_of_origin',  type: 'categorical', cls: 'cat' },
+  { col: 'country_of_asylum',  type: 'categorical', cls: 'cat' },
+  { col: 'year',               type: 'temporal',    cls: 'tmp' },
+  { col: 'type',               type: 'categorical', cls: 'cat' },
+  { col: 'count',              type: 'quantitative',cls: 'qnt' }
+];
+
+const relationships = [
+  'comparison (Q1, Q2)',
+  'change over time (Q1)',
+  'part-to-whole (Q3)',
+  'spatial — not supported here'
+];
+
+const gaps = [
+  { title: 'Flow map (requested by Q1 + Q2)',
+    body: 'Origin–destination pairs exist in the dataset; country coordinates do not. A flow map requires a country-coordinates join.' }
+];
+
+const honestMove = 'Scope the project to the three questions the data directly supports. Document the gap in PROJECT.md — do not paper over it with a half-built map.';
+
+// Render questions column
+const qCol = d3.select('#questionsCol');
+qCol.selectAll('.q-card').data(questions).join('div').attr('class', 'q-card')
+  .html(d => `<h3>${d.title}</h3><p>${d.body}</p><div class="meta">${d.audience}</div><div class="meta">${d.decision}</div>`);
+
+// Render audit column
+const aCol = d3.select('#auditCol');
+aCol.selectAll('.audit-row').data(auditRows).join('div').attr('class', 'audit-row')
+  .html(d => `<code>${d.col}</code><span class="badge ${d.cls}">${d.type}</span>`);
+
+aCol.append('div').attr('class', 'relationships')
+  .html(`<strong>Relationships supported</strong>` +
+    relationships.map(r => `<li>— ${r}</li>`).join(''));
+
+// Render gaps column
+const gCol = d3.select('#gapsCol');
+gCol.selectAll('.gap-card').data(gaps).join('div').attr('class', 'gap-card')
+  .html(d => `<strong>${d.title}</strong><br><br>${d.body}`);
+
+gCol.append('div').style('font-size', '12px').style('color', 'var(--color-ink)').style('margin-top', '12px')
+  .html(`<strong style="font-family:'Inter',sans-serif;font-size:11px;display:block;margin-bottom:4px">Honest move</strong>${honestMove}`);
+</script>
+</body>
+</html>

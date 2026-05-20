@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 12.3 — Rectangles vs circles, alignment advantage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 360px; }
+  .axis-line { stroke: var(--color-ink); stroke-width: 1; }
+  .label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .annot { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .annot.ochre { fill: var(--color-ochre); font-weight: 600; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 12.3 — Rectangles vs circles, alignment advantage</h1>
+<p class="subtitle">Both pairs encode true area ratio 2:1. The shared baseline on the left supplies an anchor; the circles on the right have none.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Rectangles — shared baseline</div>
+    <div class="panel-sub">Eye anchors top edges against each other.</div>
+    <div id="chartRect" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Circles — no alignment</div>
+    <div class="panel-sub">Eye estimates radius then squares it.</div>
+    <div id="chartCirc" class="chart"></div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawRect() {
+  const sel = '#chartRect';
+  const el = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = el.clientWidth || 400, h = el.clientHeight || 360;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', 'rt rd');
+  svg.append('title').attr('id', 'rt').text('Two rectangles encoding areas 100 and 200');
+  svg.append('desc').attr('id', 'rd').text('Both rectangles share a common baseline so the eye can compare top edges directly.');
+
+  const bw = 80;
+  const baselineY = h - 60;
+  const maxH = h - 140;
+  const heights = [maxH * 0.5, maxH]; // 100, 200 sq units (constant width 80 → heights encode area)
+  const xs = [w * 0.30 - bw / 2, w * 0.65 - bw / 2];
+  const labels = ['100 sq', '200 sq'];
+  const fills = ['#787878', 'var(--color-ink)'];
+
+  svg.append('line').attr('class', 'axis-line').attr('x1', 24).attr('x2', w - 24).attr('y1', baselineY).attr('y2', baselineY);
+
+  svg.selectAll('rect.shape')
+    .data(heights.map((hv, i) => ({ x: xs[i], y: baselineY - hv, w: bw, h: hv, label: labels[i], fill: fills[i] })))
+    .join('rect')
+      .attr('class', 'shape')
+      .attr('x', d => d.x).attr('y', d => d.y).attr('width', d => d.w).attr('height', d => d.h)
+      .attr('fill', d => d.fill).attr('tabindex', 0).attr('aria-label', d => d.label)
+      .on('mouseover', (event, d) => showTip(event, `<strong>${d.label}</strong>`)).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // alignment indicator between top edges
+  svg.append('line').attr('x1', xs[0] + bw).attr('y1', baselineY - heights[0])
+    .attr('x2', xs[1]).attr('y2', baselineY - heights[0])
+    .attr('stroke', 'var(--color-ochre)').attr('stroke-dasharray', '3 3').attr('stroke-width', 1);
+
+  svg.append('text').attr('class', 'annot ochre')
+    .attr('x', (xs[0] + bw + xs[1]) / 2).attr('y', baselineY - heights[0] - 8)
+    .attr('text-anchor', 'middle').text('shared edge → anchor');
+
+  // baseline labels
+  svg.selectAll('text.lbl')
+    .data(heights.map((hv, i) => ({ x: xs[i] + bw / 2, label: labels[i] })))
+    .join('text')
+      .attr('class', 'label')
+      .attr('x', d => d.x).attr('y', baselineY + 18).attr('text-anchor', 'middle').text(d => d.label);
+
+  svg.append('text').attr('class', 'annot').attr('x', 24).attr('y', h - 24)
+    .text('True 2.0× → perceived ≈ 1.6–1.7× (Stevens area exponent ≈ 0.7).');
+}
+
+function drawCirc() {
+  const sel = '#chartCirc';
+  const el = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = el.clientWidth || 400, h = el.clientHeight || 360;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', 'ct cd');
+  svg.append('title').attr('id', 'ct').text('Two circles encoding areas 100 and 200');
+  svg.append('desc').attr('id', 'cd').text('No shared edge; the eye must estimate radius and square it to recover area.');
+
+  // d3.scaleSqrt for radius
+  const rScale = d3.scaleSqrt().domain([0, 200]).range([0, 70]);
+  const cy = h / 2 - 10;
+  const xs = [w * 0.30, w * 0.65];
+  const vals = [100, 200];
+  const fills = ['#787878', 'var(--color-ink)'];
+
+  svg.selectAll('circle.shape')
+    .data(vals.map((v, i) => ({ x: xs[i], y: cy, r: rScale(v), v, fill: fills[i] })))
+    .join('circle')
+      .attr('class', 'shape')
+      .attr('cx', d => d.x).attr('cy', d => d.y).attr('r', d => d.r)
+      .attr('fill', d => d.fill).attr('tabindex', 0).attr('aria-label', d => `${d.v} sq units`)
+      .on('mouseover', (event, d) => showTip(event, `<strong>${d.v} sq</strong> · r=${d.r.toFixed(1)}px`)).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  svg.selectAll('text.lbl')
+    .data(vals.map((v, i) => ({ x: xs[i], v })))
+    .join('text')
+      .attr('class', 'label').attr('x', d => d.x).attr('y', cy + 90).attr('text-anchor', 'middle').text(d => `${d.v} sq`);
+
+  // annotation: no anchor
+  svg.append('text').attr('class', 'annot ochre').attr('x', (xs[0] + xs[1]) / 2).attr('y', cy - 80)
+    .attr('text-anchor', 'middle').text('no shared edge to anchor');
+
+  svg.append('text').attr('class', 'annot').attr('x', 24).attr('y', h - 24)
+    .text('True 2.0× → perceived ≈ 1.5–1.6×, plus radius-to-area estimation error.');
+}
+
+function draw() {
+  drawRect();
+  drawCirc();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartRect'));
+ro.observe(document.getElementById('chartCirc'));
+</script>
+</body>
+</html>

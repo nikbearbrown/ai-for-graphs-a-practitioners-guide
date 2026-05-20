@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 12.5 — Slice-and-dice vs squarified</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 380px; }
+  .leaf { stroke: var(--color-white); stroke-width: 1.2; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .leaf-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-white); pointer-events: none; }
+  .footnote { color: var(--color-secondary); font-size: 12px; margin-top: 8px; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 12.5 — Slice-and-dice vs squarified</h1>
+<p class="subtitle">Same twelve-node dataset; two layout algorithms. Squarified minimizes the worst aspect ratio and keeps area perception honest.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Slice-and-dice (treemapSlice)</div>
+    <div class="panel-sub">Elongated rectangles read larger than they are.</div>
+    <div id="chartSlice" class="chart"></div>
+    <div class="footnote">Worst aspect ratio ≈ 6:1. Stevens dominant-dimension bias inflates the long axis.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Squarified (treemapSquarify)</div>
+    <div class="panel-sub">Aspect ratios within ≈ 2:1.</div>
+    <div id="chartSquare" class="chart"></div>
+    <div class="footnote">Worst aspect ratio ≈ 1.8:1. Area reads close to the true ratio.</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const data = {
+  name: 'root',
+  children: [
+    { name: 'A', children: [{ name: 'A1', value: 14 }, { name: 'A2', value: 10 }, { name: 'A3', value: 6 }] },
+    { name: 'B', children: [{ name: 'B1', value: 12 }, { name: 'B2', value: 10 }] },
+    { name: 'C', children: [{ name: 'C1', value: 8  }, { name: 'C2', value: 6  }, { name: 'C3', value: 4 }] },
+    { name: 'D', children: [{ name: 'D1', value: 9  }, { name: 'D2', value: 7  }] },
+    { name: 'E', children: [{ name: 'E1', value: 8  }, { name: 'E2', value: 6  }] }
+  ]
+};
+const fills = { 'A': 'var(--color-ink)', 'B': '#404040', 'C': '#787878', 'D': '#9a9a9a', 'E': '#ADADAD' };
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function aspect(d) {
+  const w = d.x1 - d.x0, h = d.y1 - d.y0;
+  return (Math.max(w, h) / Math.max(1, Math.min(w, h))).toFixed(2);
+}
+
+function drawTreemap(sel, tile, titleText, descText) {
+  const el = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = el.clientWidth || 480, h = el.clientHeight || 380;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${sel.slice(1)}-t ${sel.slice(1)}-d`);
+  svg.append('title').attr('id', `${sel.slice(1)}-t`).text(titleText);
+  svg.append('desc').attr('id', `${sel.slice(1)}-d`).text(descText);
+
+  const root = d3.hierarchy(data).sum(d => d.value || 0).sort((a, b) => b.value - a.value);
+  d3.treemap().tile(tile).size([w, h]).paddingInner(1)(root);
+
+  const leaves = root.leaves();
+  svg.selectAll('rect')
+    .data(leaves).join('rect')
+      .attr('class', 'leaf')
+      .attr('x', d => d.x0).attr('y', d => d.y0)
+      .attr('width', d => d.x1 - d.x0).attr('height', d => d.y1 - d.y0)
+      .attr('fill', d => fills[d.parent.data.name])
+      .attr('tabindex', 0).attr('aria-label', d => `${d.data.name}: ${d.value}, aspect ${aspect(d)}`)
+      .on('mouseover', (event, d) => showTip(event, `<strong>${d.data.name}</strong> · ${d.value} · aspect ${aspect(d)}`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  svg.selectAll('text.leaf-label')
+    .data(leaves.filter(d => (d.x1 - d.x0) > 36 && (d.y1 - d.y0) > 18))
+    .join('text')
+      .attr('class', 'leaf-label')
+      .attr('x', d => d.x0 + 6).attr('y', d => d.y0 + 16)
+      .text(d => `${d.data.name} ${d.value}`);
+}
+
+function draw() {
+  drawTreemap('#chartSlice',  d3.treemapSlice,
+    'Slice-and-dice treemap',
+    'Twelve-node dataset rendered with horizontal slicing only.');
+  drawTreemap('#chartSquare', d3.treemapSquarify,
+    'Squarified treemap',
+    'Same twelve-node dataset rendered with the squarified algorithm.');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartSlice'));
+ro.observe(document.getElementById('chartSquare'));
+</script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t401 d401">
+  <title id="t401">Pie chart vs sorted bar chart, 14-sector humanitarian funding</title>
+  <desc id="d401">Two panels showing the same 14-sector emergency response funding allocation. Left: a cramped 14-slice pie with a legend, in which middle slices are indistinguishable. Right: a sorted horizontal bar chart in which the ranking is unambiguous.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .ph  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; }
+      .lg  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px;  fill: #2a1a0e; }
+      .ax  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px;  fill: #8a8480; }
+      .vl  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .ann { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar401" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4a4540"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Same data, two channels. Length lets the reader rank; angle does not.</text>
+
+  <!-- ===================== LEFT PANEL: PIE ===================== -->
+  <text x="175" y="56" text-anchor="middle" class="ph">14-slice pie with legend</text>
+  <text x="175" y="72" text-anchor="middle" class="cap">"which three got the most?" — unreadable in under 30 seconds</text>
+
+  <!-- Pie centered at (135, 220), radius 95. 14 slices summing to 100. -->
+  <!-- 1: food security 21% — 0 to 75.6° -->
+  <path d="M 135 220 L 135 125 A 95 95 0 0 1 227.02 196.37 Z" fill="#4a4540"/>
+  <!-- 2: water 14% — 75.6 to 126° -->
+  <path d="M 135 220 L 227.02 196.37 A 95 95 0 0 1 211.86 275.84 Z" fill="#8a8480"/>
+  <!-- 3: shelter 12% — 126 to 169.2° -->
+  <path d="M 135 220 L 211.86 275.84 A 95 95 0 0 1 152.80 313.32 Z" fill="#c8c4c0"/>
+  <!-- 4: health 11% — 169.2 to 208.8° -->
+  <path d="M 135 220 L 152.80 313.32 A 95 95 0 0 1 89.22 303.24 Z" fill="#4a4540"/>
+  <!-- 5: protection 9% — 208.8 to 241.2° -->
+  <path d="M 135 220 L 89.22 303.24 A 95 95 0 0 1 51.75 265.77 Z" fill="#8a8480"/>
+  <!-- 6: education 8% — 241.2 to 270° -->
+  <path d="M 135 220 L 51.75 265.77 A 95 95 0 0 1 40 220 Z" fill="#c8c4c0"/>
+  <!-- 7: livelihoods 7% — 270 to 295.2° -->
+  <path d="M 135 220 L 40 220 A 95 95 0 0 1 49.05 179.55 Z" fill="#4a4540"/>
+  <!-- 8: logistics 5% — 295.2 to 313.2° -->
+  <path d="M 135 220 L 49.05 179.55 A 95 95 0 0 1 65.74 154.97 Z" fill="#8a8480"/>
+  <!-- 9: coordination 4% — 313.2 to 327.6° -->
+  <path d="M 135 220 L 65.74 154.97 A 95 95 0 0 1 84.10 139.79 Z" fill="#c8c4c0"/>
+  <!-- 10: security 3% — 327.6 to 338.4° -->
+  <path d="M 135 220 L 84.10 139.79 A 95 95 0 0 1 100.03 131.67 Z" fill="#4a4540"/>
+  <!-- 11: communications 2% — 338.4 to 345.6° -->
+  <path d="M 135 220 L 100.03 131.67 A 95 95 0 0 1 111.37 127.97 Z" fill="#8a8480"/>
+  <!-- 12: transport 2% — 345.6 to 352.8° -->
+  <path d="M 135 220 L 111.37 127.97 A 95 95 0 0 1 123.10 125.75 Z" fill="#c8c4c0"/>
+  <!-- 13: monitoring 1% — 352.8 to 356.4° -->
+  <path d="M 135 220 L 123.10 125.75 A 95 95 0 0 1 129.03 125.19 Z" fill="#4a4540"/>
+  <!-- 14: other 1% — 356.4 to 360° -->
+  <path d="M 135 220 L 129.03 125.19 A 95 95 0 0 1 135 125 Z" fill="#8a8480"/>
+
+  <!-- pie outline -->
+  <circle cx="135" cy="220" r="95" fill="none" stroke="#fdfcfb" stroke-width="0.75"/>
+
+  <!-- annotation arrow toward sliver cluster -->
+  <line x1="265" y1="148" x2="138" y2="127" stroke="#4a4540" stroke-width="0.75" marker-end="url(#ar401)"/>
+  <text x="268" y="145" class="ann">five slivers,</text>
+  <text x="268" y="157" class="ann">indistinguishable</text>
+
+  <!-- legend below pie, two columns -->
+  <g transform="translate(28, 340)">
+    <rect x="0"   y="0"  width="9" height="9" fill="#4a4540"/><text x="14" y="9" class="lg">food security</text>
+    <rect x="0"   y="14" width="9" height="9" fill="#8a8480"/><text x="14" y="23" class="lg">water and sanitation</text>
+    <rect x="0"   y="28" width="9" height="9" fill="#c8c4c0"/><text x="14" y="37" class="lg">shelter</text>
+    <rect x="0"   y="42" width="9" height="9" fill="#4a4540"/><text x="14" y="51" class="lg">health</text>
+    <rect x="0"   y="56" width="9" height="9" fill="#8a8480"/><text x="14" y="65" class="lg">protection</text>
+    <rect x="0"   y="70" width="9" height="9" fill="#c8c4c0"/><text x="14" y="79" class="lg">education</text>
+    <rect x="0"   y="84" width="9" height="9" fill="#4a4540"/><text x="14" y="93" class="lg">livelihoods</text>
+    <rect x="155" y="0"  width="9" height="9" fill="#8a8480"/><text x="169" y="9"  class="lg">logistics</text>
+    <rect x="155" y="14" width="9" height="9" fill="#c8c4c0"/><text x="169" y="23" class="lg">coordination</text>
+    <rect x="155" y="28" width="9" height="9" fill="#4a4540"/><text x="169" y="37" class="lg">security</text>
+    <rect x="155" y="42" width="9" height="9" fill="#8a8480"/><text x="169" y="51" class="lg">communications</text>
+    <rect x="155" y="56" width="9" height="9" fill="#c8c4c0"/><text x="169" y="65" class="lg">transport</text>
+    <rect x="155" y="70" width="9" height="9" fill="#4a4540"/><text x="169" y="79" class="lg">monitoring</text>
+    <rect x="155" y="84" width="9" height="9" fill="#8a8480"/><text x="169" y="93" class="lg">other</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="350" y1="50" x2="350" y2="448" stroke="#c8c4c0" stroke-width="0.5"/>
+
+  <!-- ===================== RIGHT PANEL: SORTED BAR ===================== -->
+  <text x="525" y="56" text-anchor="middle" class="ph">Sorted horizontal bar chart</text>
+  <text x="525" y="72" text-anchor="middle" class="cap">"which three got the most?" — answered in three seconds</text>
+
+  <!-- Bars: max value 21%. Plot area x=400..680 (width 280 → 1% = 13.33px).
+       y starts at 92, bar height 20, gap 4. -->
+
+  <!-- baseline -->
+  <line x1="400" y1="88" x2="400" y2="432" stroke="#4a4540" stroke-width="0.75"/>
+
+  <!-- x-axis ticks at 0,5,10,15,20% -->
+  <g class="ax">
+    <line x1="400" y1="432" x2="680" y2="432" stroke="#8a8480" stroke-width="0.5"/>
+    <line x1="400" y1="432" x2="400" y2="436" stroke="#8a8480"/><text x="400" y="446" text-anchor="middle">0</text>
+    <line x1="466.7" y1="432" x2="466.7" y2="436" stroke="#8a8480"/><text x="466.7" y="446" text-anchor="middle">5</text>
+    <line x1="533.3" y1="432" x2="533.3" y2="436" stroke="#8a8480"/><text x="533.3" y="446" text-anchor="middle">10</text>
+    <line x1="600"   y1="432" x2="600"   y2="436" stroke="#8a8480"/><text x="600"   y="446" text-anchor="middle">15</text>
+    <line x1="666.7" y1="432" x2="666.7" y2="436" stroke="#8a8480"/><text x="666.7" y="446" text-anchor="middle">20</text>
+    <text x="540" y="460" text-anchor="middle" class="cap">share of total funding (%)</text>
+  </g>
+
+  <!-- bars -->
+  <g>
+    <rect x="400" y="92"  width="280"   height="20" fill="#2a1a0e"/>
+    <text x="395" y="106" text-anchor="end" class="lb">food security</text>
+    <text x="685" y="106" class="vl">21</text>
+
+    <rect x="400" y="116" width="186.7" height="20" fill="#4a4540"/>
+    <text x="395" y="130" text-anchor="end" class="lb">water and sanitation</text>
+    <text x="591.7" y="130" class="vl">14</text>
+
+    <rect x="400" y="140" width="160"   height="20" fill="#4a4540"/>
+    <text x="395" y="154" text-anchor="end" class="lb">shelter</text>
+    <text x="565" y="154" class="vl">12</text>
+
+    <rect x="400" y="164" width="146.7" height="20" fill="#4a4540"/>
+    <text x="395" y="178" text-anchor="end" class="lb">health</text>
+    <text x="551.7" y="178" class="vl">11</text>
+
+    <rect x="400" y="188" width="120"   height="20" fill="#4a4540"/>
+    <text x="395" y="202" text-anchor="end" class="lb">protection</text>
+    <text x="525" y="202" class="vl">9</text>
+
+    <rect x="400" y="212" width="106.7" height="20" fill="#4a4540"/>
+    <text x="395" y="226" text-anchor="end" class="lb">education</text>
+    <text x="511.7" y="226" class="vl">8</text>
+
+    <rect x="400" y="236" width="93.3"  height="20" fill="#4a4540"/>
+    <text x="395" y="250" text-anchor="end" class="lb">livelihoods</text>
+    <text x="498.3" y="250" class="vl">7</text>
+
+    <rect x="400" y="260" width="66.7"  height="20" fill="#8a8480"/>
+    <text x="395" y="274" text-anchor="end" class="lb">logistics</text>
+    <text x="471.7" y="274" class="vl">5</text>
+
+    <rect x="400" y="284" width="53.3"  height="20" fill="#8a8480"/>
+    <text x="395" y="298" text-anchor="end" class="lb">coordination</text>
+    <text x="458.3" y="298" class="vl">4</text>
+
+    <rect x="400" y="308" width="40"    height="20" fill="#8a8480"/>
+    <text x="395" y="322" text-anchor="end" class="lb">security</text>
+    <text x="445" y="322" class="vl">3</text>
+
+    <rect x="400" y="332" width="26.7"  height="20" fill="#8a8480"/>
+    <text x="395" y="346" text-anchor="end" class="lb">communications</text>
+    <text x="431.7" y="346" class="vl">2</text>
+
+    <rect x="400" y="356" width="26.7"  height="20" fill="#8a8480"/>
+    <text x="395" y="370" text-anchor="end" class="lb">transport</text>
+    <text x="431.7" y="370" class="vl">2</text>
+
+    <rect x="400" y="380" width="13.3"  height="20" fill="#8a8480"/>
+    <text x="395" y="394" text-anchor="end" class="lb">monitoring</text>
+    <text x="418.3" y="394" class="vl">1</text>
+
+    <rect x="400" y="404" width="13.3"  height="20" fill="#8a8480"/>
+    <text x="395" y="418" text-anchor="end" class="lb">other</text>
+    <text x="418.3" y="418" class="vl">1</text>
+  </g>
+
+  <text x="350" y="478" text-anchor="middle" class="cap">Source: Allocation of Emergency Response Funds, FY2021 (illustrative).</text>
+</svg>

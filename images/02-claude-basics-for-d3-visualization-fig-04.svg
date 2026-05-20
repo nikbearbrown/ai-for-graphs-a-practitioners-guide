@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t04 d04">
+  <title id="t04">The three-layer verification stack — format, facts, test</title>
+  <desc id="d04">A vertical stack of three layers. Layer 1 (format) on top in the lightest shade, Layer 2 (facts) in the middle, Layer 3 (test) on the bottom in the darkest shade. Each layer lists what you check, what it catches, and an approximate time.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .num { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 28px; font-weight: bold; }
+      .head { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 14px; font-weight: bold; fill: #2a1a0e; }
+      .headInv { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 14px; font-weight: bold; fill: #fdfcfb; }
+      .bodyInv { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #fdfcfb; }
+    </style>
+    <marker id="ar4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Two minutes. In order. Every time.</text>
+
+  <!-- Layer 1 — lightest -->
+  <g transform="translate(48,58)">
+    <rect x="0" y="0" width="540" height="108" fill="#f5f2ee" stroke="#8a8480"/>
+    <text x="32" y="46" class="num" fill="#8a8480">1</text>
+    <text x="72" y="26" class="head">Format check</text>
+    <text x="72" y="44" class="sm">~10 seconds</text>
+    <text x="72" y="66" class="lb">look at: file count, CDN URL, inline CSS, D3 version string</text>
+    <text x="72" y="84" class="lb">catches: wrong format, wrong version, missing inline assets</text>
+    <text x="72" y="100" class="sm">"You asked for one HTML file with D3 v7 from CDN. Did you get that?"</text>
+  </g>
+
+  <!-- arrow down -->
+  <path d="M 318 178 L 318 192" fill="none" stroke="#2a1a0e" marker-end="url(#ar4)"/>
+
+  <!-- Layer 2 — mid -->
+  <g transform="translate(48,196)">
+    <rect x="0" y="0" width="540" height="108" fill="#8a8480" stroke="#4a4540"/>
+    <text x="32" y="46" class="num" fill="#fdfcfb">2</text>
+    <text x="72" y="26" class="headInv">Fact check</text>
+    <text x="72" y="44" class="bodyInv">~30 seconds</text>
+    <text x="72" y="66" class="bodyInv">look at: values, labels, channel mappings against the prompt</text>
+    <text x="72" y="84" class="bodyInv">catches: bar mistakes, swapped channels, wrong sort, hue-on-quantitative</text>
+    <text x="72" y="100" class="bodyInv">"Does the chart match what Move 3 specified?"</text>
+  </g>
+
+  <path d="M 318 316 L 318 330" fill="none" stroke="#2a1a0e" marker-end="url(#ar4)"/>
+
+  <!-- Layer 3 — darkest -->
+  <g transform="translate(48,334)">
+    <rect x="0" y="0" width="540" height="108" fill="#2a1a0e" stroke="#2a1a0e"/>
+    <text x="32" y="46" class="num" fill="#fdfcfb">3</text>
+    <text x="72" y="26" class="headInv">Test the work</text>
+    <text x="72" y="44" class="bodyInv">~90 seconds · most likely to catch runtime failures</text>
+    <text x="72" y="66" class="bodyInv">look at: browser render, resize, dark mode, color-blind sim, deploy size</text>
+    <text x="72" y="84" class="bodyInv">catches: layout breaks, contrast failures, illegible scale, runtime errors</text>
+    <text x="72" y="100" class="bodyInv">"Open it. Resize it. Squint at it. Read the chart your reader will read."</text>
+  </g>
+
+  <!-- side rail: catches-earlier-first -->
+  <g transform="translate(608,58)">
+    <line x1="0" y1="0" x2="0" y2="384" stroke="#c8c4c0"/>
+    <path d="M 0 0 L 0 384" fill="none" stroke="#4a4540" stroke-width="1" marker-end="url(#ar4)"/>
+    <text x="14" y="100" class="sm" transform="rotate(90 14 100)">catches earlier failures first;</text>
+    <text x="14" y="240" class="sm" transform="rotate(90 14 240)">don't skip ahead</text>
+  </g>
+
+  <text x="350" y="464" text-anchor="middle" class="cap">The order is the discipline. Layer 1 in ten seconds catches what would have eaten ten minutes at Layer 3.</text>
+</svg>

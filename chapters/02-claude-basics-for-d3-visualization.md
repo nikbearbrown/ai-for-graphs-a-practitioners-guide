@@ -18,7 +18,8 @@ You write a different prompt:
 
 Claude Code returns a working bar chart, sorted, annotated, on a zero baseline, with redundant luminance, in 60 lines of D3. You read the ranking in a quarter-second. You send it to your colleague at 2:18.
 
-<!-- → [INFOGRAPHIC: side-by-side comparison of the two prompts — left column is the vague prompt with annotations flagging each decision Claude Code had to make on its own (chart type, marks, channels, sort order, baseline); right column is the specific prompt with the same decision points labeled as author-controlled. Caption: "Every decision the vague prompt omits is a decision the model makes for you."] -->
+![Two-column comparison of the same dataset prompted two ways. The left column shows the vague prompt with five decisions — chart type, mark, channel for score, channel for domain, sort order and baseline — flagged as model-decided. The right column shows the specific prompt with the same five decisions flagged as author-controlled.](../images/02-claude-basics-for-d3-visualization-fig-01.png)
+*Figure 2.1 — Vague vs specific prompt. Every decision the vague prompt omits is a decision the model makes for you.*
 
 The difference between those two prompts is not length, and it is not politeness. It is **specificity**. The first prompt told Claude Code to make a chart. The second told Claude Code *which* chart, *which* marks, *which* channels, *which* constraints. The model did not decide these things. You did.
 
@@ -74,7 +75,8 @@ Together:  ~100–150 instructions, within budget.
 Merged:    ~200+ instructions, budget exceeded, later rules degraded.
 ```
 
-<!-- → [INFOGRAPHIC: horizontal budget bar — total bar represents 150–200 instructions; first segment (~50) labeled "Claude Code system prompt (not yours)"; second segment (~100) labeled "CLAUDE.md — coding constitution"; third segment shown in a separate bar representing DESIGN.md loading on demand. A second version of the bar shows the merged-file scenario where the bar overflows, with the overflow zone hatched and labeled "rules degraded silently here." Caption: "The instruction budget is real. The degradation is silent."] -->
+![Two horizontal stacked bars representing a 150–200 instruction budget. The top bar shows the split-file scenario — system prompt around 50, CLAUDE.md around 100, with DESIGN.md as a separate on-demand bar — fitting within budget. The bottom bar shows the merged-file scenario whose later segment crosses the reliable-tracking ceiling, with the overflow zone hatched.](../images/02-claude-basics-for-d3-visualization-fig-02.png)
+*Figure 2.2 — The instruction budget. Two files within budget; one merged file silently exceeding it.*
 
 Two files with clear separation of concerns keep both within budget. That is the reason for the split. It is not a style preference.
 
@@ -117,7 +119,8 @@ Request reasoning. Ask Claude Code to restate what it understood before writing 
 
 The four moves take perhaps 90 seconds longer to write than a vague prompt. They reliably produce charts that are correct on the first attempt. The 90 seconds is not overhead. It is the work.
 
-<!-- → [INFOGRAPHIC: four-panel vertical flow diagram — one panel per move, each labeled with the move name (Show / Say / Constrain / Verify), a one-line description of what it contributes, and a short example line pulled from the cognitive domain prompt. Arrows connecting panels downward. A "what Claude decides without this move" callout on the right side of each panel showing what gets left to the model if the move is skipped. Caption: "Move 3 is the move most people skip. It is also the one that determines whether the output is right on the first attempt."] -->
+![Four numbered panels arranged vertically, one per move — Show, Say, Constrain, Verify — connected by arrows. Each panel pairs the move name and an example pulled from the cognitive-domain prompt with a callout on the right naming what Claude decides if the move is skipped. Move 3 is rendered with a heavier border.](../images/02-claude-basics-for-d3-visualization-fig-03.png)
+*Figure 2.3 — The four-move prompt. Move 3 is the move most people skip — and the one that decides whether the output is right on the first attempt.*
 
 ### Three notes specific to D3
 
@@ -200,7 +203,8 @@ Every chart Claude Code produces gets three checks before you ship it.
 
 Do all three layers. Do them in order. For a static chart, the full stack takes two minutes. It prevents you from publishing the chart that looked fine in the terminal and broke at the size your reader actually saw it.
 
-<!-- → [INFOGRAPHIC: three-layer vertical stack diagram — Layer 1 at top (lightest shade), Layer 2 middle, Layer 3 at bottom (darkest shade, labeled "most likely to catch runtime failures"). Each layer shows: the check name, what you look at, what it catches, and approximate time. An arrow on the right side reads "catches earlier failures first; don't skip ahead." Caption: "Two minutes. In order. Every time."] -->
+![A vertical stack of three layers. Layer 1 — format check — sits at the top in the lightest shade, Layer 2 — fact check — in the middle, Layer 3 — test the work — at the bottom in the darkest shade and labeled as most likely to catch runtime failures. Each layer shows the check name, what you look at, what it catches, and an approximate time. A side rail reads catches earlier failures first; don't skip ahead.](../images/02-claude-basics-for-d3-visualization-fig-04.png)
+*Figure 2.4 — The three-layer verification stack. Two minutes. In order. Every time.*
 
 The opening example from this chapter is the failure mode in miniature. The scatterplot with circle-size encoding would have passed Layer 1 — you asked for a chart and got a chart. Layer 2 would have caught it if the prompt had specified the channels — the mapping (size for score, hue for domain) would not have matched what a correct prompt specified. Layer 3 would have confirmed it — opening the chart in a browser and trying to read the ranking makes the failure obvious in two seconds.
 
@@ -243,7 +247,8 @@ four-move structure.
 
 This pattern — audit, prompt, build, verify — repeats in every exercise in the book. It is not optional. It is the discipline that makes the model reliably useful for chart work. Without the audit, Claude Code produces charts on guesses. Without the verification, you publish charts on hope.
 
-<!-- → [INFOGRAPHIC: horizontal workflow diagram — four boxes connected by arrows: Audit (channel decomposition in Claude chat) → Prompt (four-move structure, submitted to Claude Code) → Build (Claude Code generates HTML) → Verify (three-layer stack). Below each box, a one-line note on what failure looks like if you skip that step. Caption: "The pattern is not overhead. It is the work."] -->
+![A horizontal four-stage workflow connected by arrows: Audit in Claude chat, Prompt using the four-move structure, Build in Claude Code, Verify with the three-layer stack. Below each stage, a callout names the failure mode if the stage is skipped. A bottom band captures the worked example of the cognitive-domain scatterplot failure walking through all four stages.](../images/02-claude-basics-for-d3-visualization-fig-05.png)
+*Figure 2.5 — Audit, prompt, build, verify. Without the audit, Claude Code produces charts on guesses. Without verification, you publish on hope.*
 
 ---
 
@@ -429,6 +434,58 @@ Save the document as DESIGN.md.
 ---
 
 *Tags: Claude-Code, prompting, four-move-structure, verification, multi-LLM-comparison, D3, API-hallucination, channel-mismatch, chart-type-mismatch, CLAUDE.md, DESIGN.md, instruction-budget, specification-skill*
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 2.1 — Vague vs specific prompt
+
+Build a two-column comparison panel in D3 v7. Each column represents a single Claude Code prompt for the cognitive-domain dataset. Render a header block (column title plus a one-line who-decides caption), a quoted prompt block (EB Garamond, italic), and a list of five decision rows: chart type, mark, channel for score, channel for domain, sort order & baseline. Channels are categorical: the left column labels each row "model picks: …" using a softer secondary border; the right column labels each row "author: …" using a heavier ink border. Bind the rows with d3.select().selectAll().data().join() so the rows are real D3-managed elements, not static HTML. Add hover tooltips that explain the channel-theory consequence of leaving each decision to the model. Close each column with a verdict chip: left = "chart, not information", right = "information, on first attempt". Standalone HTML, inline CSS and JS, D3 v7 from the pinned CDN, accessible markup, responsive grid that collapses to a single column on narrow viewports.
+
+> Reference implementation: `d3/02-claude-basics-for-d3-visualization-fig-01.html`
+
+---
+
+### Figure 2.2 — The instruction budget
+
+Build a two-row horizontal stacked-bar figure rendering the instruction budget as an actual data visualization, not an icon. The x-scale is a d3.scaleLinear from 0 to 230 (the visual ceiling — slightly past the 200-instruction reliable-tracking ceiling). Row 1 ("Two files, separated") contains three segments bound via .data().join(): Claude Code system prompt (~50), CLAUDE.md coding constitution (~100), and a separately-rendered DESIGN.md on-demand bar (~50). Row 2 ("One merged file") contains the system prompt (~50) followed by a single merged-file segment (~230) that crosses the ceiling. Draw the ceiling as a dashed red vertical at x=200 in both rows; render a striped overflow zone in row 2 between x=200 and the merged segment's end. Each segment gets an in-bar label and a hover tooltip naming what kind of rules live there. Verdict chips: row 1 "within budget", row 2 "budget exceeded" with red border. Standalone HTML, inline CSS and JS, D3 v7 from the pinned CDN, ResizeObserver on each row, accessible markup, dark-mode-aware.
+
+> Reference implementation: `d3/02-claude-basics-for-d3-visualization-fig-02.html`
+
+---
+
+### Figure 2.3 — The four-move prompt
+
+Build a vertical four-panel flow diagram showing the four-move prompt structure — Show, Say, Constrain, Verify. Use a three-column CSS grid: a numbered-badge rail with a connecting line on the left, the move card in the middle, and an if-skipped callout on the right. Render the moves from a single data array bound through D3 so the four rows are generated, not hand-written. Each card carries a move name, a one-line definition, and an EB Garamond italic example pulled from the cognitive-domain prompt. Move 3 ("Constrain it") gets a heavier ink border and is labeled "(the move most people skip)" inline with its name. The if-skipped callouts list three concrete decisions the model takes over when the move is omitted. Hovering or keyboard-focusing any move highlights it with an ochre border. Standalone HTML, inline CSS and JS, D3 v7 from the pinned CDN, accessible (role="button", tabindex, aria-label per move), responsive (rail collapses on narrow viewports), prefers-reduced-motion respected.
+
+> Reference implementation: `d3/02-claude-basics-for-d3-visualization-fig-03.html`
+
+---
+
+### Figure 2.4 — The three-layer verification stack
+
+Build a vertical three-layer stack diagram of the verification process — format, facts, test. Render as an SVG of three stacked rectangles bound via d3.selectAll().data().join(). Use d3.interpolateRgb between a warm near-white and var(--color-ink) to compute the fill for each layer from a `shade` property (Layer 1 = 0.18, Layer 2 = 0.55, Layer 3 = 1.0). Inside each rectangle render a large numeral, the layer name, the time estimate, a "look at:" line, and a "catches:" line; switch text fill to white when shade exceeds 0.5. Layer 3 carries an extra subtitle "most likely to catch runtime failures". On the right, draw a vertical rail with rotated text reading "catches earlier failures first · don't skip ahead". Add an accessible hover tooltip per layer that quotes the practical instruction (e.g., "Open it. Resize it. Squint at it."). Standalone HTML, inline CSS and JS, D3 v7 from the pinned CDN, ResizeObserver-driven redraw, dark-mode-aware.
+
+> Reference implementation: `d3/02-claude-basics-for-d3-visualization-fig-04.html`
+
+---
+
+### Figure 2.5 — Audit, prompt, build, verify
+
+Build a horizontal four-stage workflow figure with two synchronized rows. The top row is the workflow itself — Audit, Prompt, Build, Verify — rendered as four cards generated from a single data array via d3.selectAll().data().join(). Each card carries a "where" line (e.g., "step 1 · in Claude chat"), the stage name, and a one-line description. The bottom row is a parallel four-card "if skipped" rail naming the failure mode at each stage. Hovering or focusing any workflow card highlights both the card and its matching skip card with an ochre border (use a cross-row class toggle bound through D3). Below the two rows, render a worked-example block describing the cognitive-domain scatterplot failure walking through all four stages. The grid collapses from four columns to two on narrow viewports. Standalone HTML, inline CSS and JS, D3 v7 from the pinned CDN, accessible (role="button", aria-label per card), prefers-reduced-motion respected.
+
+> Reference implementation: `d3/02-claude-basics-for-d3-visualization-fig-05.html`
 
 ---
 

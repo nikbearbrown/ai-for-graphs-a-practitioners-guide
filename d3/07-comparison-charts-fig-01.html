@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 7.1 — Honest vs truncated baseline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 360px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .bar { fill: var(--color-secondary); transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .bar.primary { fill: var(--color-red); }
+  .annotation { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .annotation.alert { fill: var(--color-ochre); font-weight: 600; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 7.1 — Honest vs truncated baseline</h1>
+<p class="subtitle">Same data, two y-axis choices. The truncated baseline breaks the proportional-ink encoding.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Honest (y-axis 0–100)</div>
+    <div class="panel-sub">True ratio Memory:Embodied ≈ 2.7×</div>
+    <div id="chartHonest" class="chart" role="img" aria-labelledby="t-honest d-honest"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Truncated (y-axis 20–100)</div>
+    <div class="panel-sub">Visual ratio Memory:Embodied ≈ 5×</div>
+    <div id="chartTrunc" class="chart" role="img" aria-labelledby="t-trunc d-trunc"></div>
+  </div>
+</div>
+<p class="caption">Same eight cognitive-domain scores. The left panel encodes magnitude honestly; the right panel implies a five-fold gap where the data shows only 2.7-fold.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const barData = [
+  { label: 'Memory',   value: 96 },
+  { label: 'Pattern',  value: 92 },
+  { label: 'Logic',    value: 82 },
+  { label: 'Quant',    value: 71 },
+  { label: 'Language', value: 64 },
+  { label: 'Moral',    value: 47 },
+  { label: 'Empathy',  value: 42 },
+  { label: 'Embodied', value: 35 }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.label}</strong>: ${d.value}`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawBars(selector, yMin, yMax, titleText, descText) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 400;
+  const totalHeight = container.clientHeight || 360;
+  const margin = { top: 24, right: 16, bottom: 64, left: 48 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', `${selector.slice(1)}-t ${selector.slice(1)}-d`);
+  svg.append('title').attr('id', `${selector.slice(1)}-t`).text(titleText);
+  svg.append('desc').attr('id', `${selector.slice(1)}-d`).text(descText);
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleBand = d3.scaleBand().domain(barData.map(d => d.label)).range([0, chartWidth]).padding(0.18);
+  const yScaleLinear = d3.scaleLinear().domain([yMin, yMax]).range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleBand))
+    .selectAll('text').attr('transform', 'rotate(-35)').style('text-anchor', 'end');
+  gChart.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(5));
+
+  gChart.selectAll('.bar')
+    .data(barData)
+    .join('rect')
+      .attr('class', (d, i) => i === 0 ? 'bar primary' : 'bar')
+      .attr('x', d => xScaleBand(d.label))
+      .attr('y', d => yScaleLinear(d.value))
+      .attr('width', xScaleBand.bandwidth())
+      .attr('height', d => chartHeight - yScaleLinear(d.value))
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.label}: ${d.value}`)
+      .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+}
+
+function draw() {
+  drawBars('#chartHonest', 0, 100,
+    'Honest baseline bar chart',
+    'Eight cognitive-domain scores plotted with a zero-baseline y-axis, preserving proportional ink.');
+  drawBars('#chartTrunc', 20, 100,
+    'Truncated baseline bar chart',
+    'Same scores plotted with the y-axis starting at 20, exaggerating differences between bars.');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartHonest'));
+ro.observe(document.getElementById('chartTrunc'));
+</script>
+</body>
+</html>

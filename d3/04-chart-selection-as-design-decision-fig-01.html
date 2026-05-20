@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 4.1 — Pie chart vs sorted bar chart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 720px) { #panels { grid-template-columns: 1fr; } }
+  .panel { border: 1px solid var(--color-border); padding: 16px; background: var(--color-white); }
+  .panel h2 { font-family: 'EB Garamond', Georgia, serif; font-weight: 500; font-size: 18px; margin-bottom: 4px; }
+  .panel p.sub { color: var(--color-secondary); font-style: italic; font-size: 12px; margin-bottom: 12px; }
+  .slice { stroke: var(--color-white); stroke-width: 0.75; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .slice:hover, .slice:focus { opacity: 1 !important; outline: none; }
+  .pie-active .slice { opacity: 0.35; }
+  .bar-rect { transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .bar-active .bar-rect { opacity: 0.35; }
+  .bar-rect:hover, .bar-rect:focus { opacity: 1 !important; outline: none; }
+  .legend-swatch { stroke: var(--color-border); }
+  .legend-text { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); }
+  .axis-line { stroke: var(--color-secondary); }
+  .axis-tick { stroke: var(--color-secondary); }
+  .tick-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis-title { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .cat-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); }
+  .val-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-ink); }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 65ch; font-style: italic; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 280px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 4.1 — Pie chart vs sorted bar chart</h1>
+<p class="subtitle">Same 14-sector emergency-response funding dataset, rendered with two different encoding channels. Try answering "which three got the most?" in each panel.</p>
+<div id="panels">
+  <div class="panel">
+    <h2>14-slice pie with legend</h2>
+    <p class="sub">Angle as the magnitude channel.</p>
+    <div id="pie"></div>
+  </div>
+  <div class="panel">
+    <h2>Sorted horizontal bar chart</h2>
+    <p class="sub">Length from a common baseline.</p>
+    <div id="bars"></div>
+  </div>
+</div>
+<p class="caption">Source: Allocation of Emergency Response Funds, FY2021 (illustrative). Cleveland &amp; McGill rank length above angle for quantitative comparison; this is what the difference looks like at fourteen categories.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const sectors = [
+  { name: 'food security',         pct: 21 },
+  { name: 'water and sanitation',  pct: 14 },
+  { name: 'shelter',               pct: 12 },
+  { name: 'health',                pct: 11 },
+  { name: 'protection',            pct:  9 },
+  { name: 'education',             pct:  8 },
+  { name: 'livelihoods',           pct:  7 },
+  { name: 'logistics',             pct:  5 },
+  { name: 'coordination',          pct:  4 },
+  { name: 'security',              pct:  3 },
+  { name: 'communications',        pct:  2 },
+  { name: 'transport',             pct:  2 },
+  { name: 'monitoring',            pct:  1 },
+  { name: 'other',                 pct:  1 }
+];
+
+const palette = ['#121212', '#404040', '#787878', '#ADADAD'];
+function shadeFor(i) { return palette[i % palette.length]; }
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.name}</strong>: ${d.pct}%`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawPie() {
+  const host = document.getElementById('pie');
+  d3.select(host).selectAll('*').remove();
+  const width = host.clientWidth || 360;
+  const height = 420;
+  const radius = Math.min(width, height - 160) / 2 - 8;
+
+  const svg = d3.select('#pie').append('svg')
+    .attr('width', width).attr('height', height)
+    .attr('role', 'img').attr('aria-labelledby', 'pie-t pie-d');
+  svg.append('title').attr('id', 'pie-t').text('14-slice pie of emergency response funding');
+  svg.append('desc').attr('id', 'pie-d').text('Pie chart with fourteen slices ranging from 21 percent down to 1 percent. The smaller slices are indistinguishable from one another by angle alone.');
+
+  const gPie = svg.append('g')
+    .attr('transform', `translate(${width / 2}, ${radius + 16})`)
+    .on('mouseenter', function () { d3.select(this).classed('pie-active', true); })
+    .on('mouseleave', function () { d3.select(this).classed('pie-active', false); });
+
+  const pie = d3.pie().sort(null).value(d => d.pct);
+  const arc = d3.arc().innerRadius(0).outerRadius(radius);
+
+  gPie.selectAll('.slice')
+    .data(pie(sectors))
+    .join('path')
+      .attr('class', 'slice')
+      .attr('d', arc)
+      .attr('fill', (d, i) => shadeFor(i))
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.data.name}: ${d.data.pct} percent`)
+      .on('mouseover', (event, d) => showTip(event, d.data))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip)
+      .on('focus', (event, d) => showTip(event, d.data))
+      .on('blur', hideTip);
+
+  // Legend below pie
+  const legendTop = radius * 2 + 40;
+  const cols = 2;
+  const colWidth = width / cols;
+  const legend = svg.append('g').attr('transform', `translate(8, ${legendTop})`);
+  legend.selectAll('.legend-entry').data(sectors).join('g')
+    .attr('class', 'legend-entry')
+    .attr('transform', (d, i) => {
+      const col = Math.floor(i / 7);
+      const row = i % 7;
+      return `translate(${col * colWidth}, ${row * 16})`;
+    })
+    .call(g => {
+      g.append('rect').attr('class', 'legend-swatch')
+        .attr('width', 10).attr('height', 10).attr('y', -8)
+        .attr('fill', (d, i) => shadeFor(i));
+      g.append('text').attr('class', 'legend-text')
+        .attr('x', 14).attr('y', 0).text(d => `${d.name} (${d.pct}%)`);
+    });
+}
+
+function drawBars() {
+  const host = document.getElementById('bars');
+  d3.select(host).selectAll('*').remove();
+  const width = host.clientWidth || 360;
+  const margin = { top: 8, right: 36, bottom: 48, left: 140 };
+  const chartWidth = width - margin.left - margin.right;
+  const rowH = 22;
+  const chartHeight = sectors.length * rowH;
+  const height = chartHeight + margin.top + margin.bottom;
+
+  const svg = d3.select('#bars').append('svg')
+    .attr('width', width).attr('height', height)
+    .attr('role', 'img').attr('aria-labelledby', 'bar-t bar-d');
+  svg.append('title').attr('id', 'bar-t').text('Sorted horizontal bar chart of emergency response funding');
+  svg.append('desc').attr('id', 'bar-d').text('Bar chart with fourteen categories sorted by funding share descending. Food security at 21 percent is more than twice the next largest bar.');
+
+  const gChart = svg.append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`)
+    .on('mouseenter', function () { d3.select(this).classed('bar-active', true); })
+    .on('mouseleave', function () { d3.select(this).classed('bar-active', false); });
+
+  const xScaleLinear = d3.scaleLinear().domain([0, 21]).range([0, chartWidth]);
+  const yScaleBand = d3.scaleBand().domain(sectors.map(d => d.name)).range([0, chartHeight]).padding(0.18);
+
+  // baseline
+  gChart.append('line').attr('class', 'axis-line')
+    .attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', chartHeight);
+
+  // x-axis at bottom
+  const ticks = [0, 5, 10, 15, 20];
+  const gx = gChart.append('g').attr('aria-hidden', 'true').attr('transform', `translate(0, ${chartHeight})`);
+  gx.append('line').attr('class', 'axis-line').attr('x1', 0).attr('x2', chartWidth).attr('y1', 0).attr('y2', 0);
+  ticks.forEach(t => {
+    gx.append('line').attr('class', 'axis-tick')
+      .attr('x1', xScaleLinear(t)).attr('x2', xScaleLinear(t))
+      .attr('y1', 0).attr('y2', 4);
+    gx.append('text').attr('class', 'tick-label')
+      .attr('x', xScaleLinear(t)).attr('y', 16).attr('text-anchor', 'middle').text(t);
+  });
+  gx.append('text').attr('class', 'axis-title')
+    .attr('x', chartWidth / 2).attr('y', 36).attr('text-anchor', 'middle').text('share of total funding (%)');
+
+  // bars
+  gChart.selectAll('.bar-rect')
+    .data(sectors)
+    .join('rect')
+      .attr('class', 'bar-rect')
+      .attr('x', 0)
+      .attr('y', d => yScaleBand(d.name))
+      .attr('width', d => xScaleLinear(d.pct))
+      .attr('height', yScaleBand.bandwidth())
+      .attr('fill', (d, i) => i === 0 ? 'var(--color-red)' : 'var(--color-ink)')
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.name}: ${d.pct} percent`)
+      .on('mouseover', (event, d) => showTip(event, d))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip)
+      .on('focus', (event, d) => showTip(event, d))
+      .on('blur', hideTip);
+
+  // category labels (left)
+  gChart.selectAll('.cat-label-text')
+    .data(sectors)
+    .join('text')
+      .attr('class', 'cat-label')
+      .attr('x', -8)
+      .attr('y', d => yScaleBand(d.name) + yScaleBand.bandwidth() / 2 + 4)
+      .attr('text-anchor', 'end')
+      .text(d => d.name);
+
+  // value labels (right of bar)
+  gChart.selectAll('.val-label-text')
+    .data(sectors)
+    .join('text')
+      .attr('class', 'val-label')
+      .attr('x', d => xScaleLinear(d.pct) + 6)
+      .attr('y', d => yScaleBand(d.name) + yScaleBand.bandwidth() / 2 + 4)
+      .text(d => d.pct);
+}
+
+function draw() {
+  drawPie();
+  drawBars();
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('panels'));
+</script>
+</body>
+</html>

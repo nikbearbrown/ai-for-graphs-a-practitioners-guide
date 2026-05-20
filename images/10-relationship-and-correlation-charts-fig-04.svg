@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t10-04 d10-04">
+  <title id="t10-04">Bubble encoding — radius vs area</title>
+  <desc id="d10-04">Two pairs of bubbles compare a value of 100 against a value of 200. Radius-linear encoding quadruples the area; area-linear encoding (d3.scaleSqrt) doubles it and leaves only Stevens' compression.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .badge { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+      .verdict-bad { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #C8102E; }
+      .verdict-ok { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+    </style>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+  <text x="350" y="28" text-anchor="middle" class="ti">A value of 100 versus a value of 200. Two ways to draw it.</text>
+
+  <!-- LEFT PANEL — radius linear (WRONG) -->
+  <g transform="translate(20,60)">
+    <text x="160" y="0" text-anchor="middle" class="ti">Radius-linear encoding</text>
+    <text x="160" y="16" text-anchor="middle" class="sm">d3.scaleLinear on the radius</text>
+    <rect x="0" y="28" width="320" height="280" fill="none" stroke="#c8c4c0"/>
+    <!-- small bubble: r=20 -->
+    <circle cx="90" cy="200" r="20" fill="#4a4540" fill-opacity="0.7"/>
+    <text x="90" y="240" text-anchor="middle" class="sm">value = 100</text>
+    <text x="90" y="253" text-anchor="middle" class="sm">radius = 20</text>
+    <!-- large bubble: r=40 -->
+    <circle cx="230" cy="180" r="40" fill="#4a4540" fill-opacity="0.7"/>
+    <text x="230" y="240" text-anchor="middle" class="sm">value = 200</text>
+    <text x="230" y="253" text-anchor="middle" class="sm">radius = 40</text>
+    <!-- numbers block -->
+    <g transform="translate(20,272)">
+      <text x="0" y="0" class="lb">Data ratio: <tspan class="badge">2×</tspan></text>
+      <text x="0" y="14" class="lb">Area ratio (rendered): <tspan class="verdict-bad">4×</tspan></text>
+      <text x="0" y="28" class="lb">Perceived (Stevens 0.7): <tspan class="verdict-bad">≈ 2.6×</tspan></text>
+    </g>
+    <text x="240" y="304" text-anchor="end" class="verdict-bad">None of three match.</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="350" y1="20" x2="350" y2="380" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT PANEL — area linear (RIGHT) -->
+  <g transform="translate(360,60)">
+    <text x="160" y="0" text-anchor="middle" class="ti">Area-linear encoding</text>
+    <text x="160" y="16" text-anchor="middle" class="sm">d3.scaleSqrt on the radius</text>
+    <rect x="0" y="28" width="320" height="280" fill="none" stroke="#c8c4c0"/>
+    <!-- small bubble: r=20, area = π·400 = 1257 -->
+    <circle cx="90" cy="200" r="20" fill="#4a4540" fill-opacity="0.7"/>
+    <text x="90" y="240" text-anchor="middle" class="sm">value = 100</text>
+    <text x="90" y="253" text-anchor="middle" class="sm">radius ≈ 20</text>
+    <!-- large bubble: r = 20·√2 ≈ 28.28 -->
+    <circle cx="230" cy="190" r="28.28" fill="#4a4540" fill-opacity="0.7"/>
+    <text x="230" y="240" text-anchor="middle" class="sm">value = 200</text>
+    <text x="230" y="253" text-anchor="middle" class="sm">radius ≈ 28.3</text>
+    <!-- numbers block -->
+    <g transform="translate(20,272)">
+      <text x="0" y="0" class="lb">Data ratio: <tspan class="badge">2×</tspan></text>
+      <text x="0" y="14" class="lb">Area ratio (rendered): <tspan class="verdict-ok">2×</tspan></text>
+      <text x="0" y="28" class="lb">Perceived (Stevens 0.7): <tspan class="verdict-ok">≈ 1.6×</tspan></text>
+    </g>
+    <text x="240" y="304" text-anchor="end" class="verdict-ok">Two of three match.</text>
+  </g>
+
+  <!-- caption -->
+  <text x="350" y="404" text-anchor="middle" class="cap">Stevens' law cannot be designed away — but the radius encoding compounds it with an avoidable squared distortion.</text>
+  <text x="350" y="420" text-anchor="middle" class="cap">Area encoding via d3.scaleSqrt leaves only the perception cost the eye imposes anyway.</text>
+  <text x="350" y="442" text-anchor="middle" class="cap">For Claude Code: name d3.scaleSqrt explicitly for the radius scale, not d3.scaleLinear.</text>
+</svg>

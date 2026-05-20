@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 10.4 — Bubble encoding: radius vs area</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .panel.bad { border-color: var(--color-red); }
+  .chart { width: 100%; height: 280px; }
+  .verdict { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .verdict .bad { color: var(--color-red); font-weight: 700; }
+  .verdict .ok { color: var(--color-ink); font-weight: 700; }
+  .bub-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); text-anchor: middle; }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 65ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 10.4 — Bubble encoding: radius vs area</h1>
+<p class="subtitle">A value of 100 versus a value of 200. Two ways to scale the bubble.</p>
+<div id="wrap">
+  <div class="panel bad">
+    <div class="panel-title">Radius-linear (d3.scaleLinear)</div>
+    <div class="panel-sub">Common error. Area scales as value squared.</div>
+    <div id="chartRadius" class="chart"></div>
+    <div class="verdict">
+      Data ratio: <strong>2×</strong><br/>
+      Area ratio rendered: <span class="bad">4×</span><br/>
+      Perceived (Stevens 0.7): <span class="bad">≈ 2.6×</span>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Area-linear (d3.scaleSqrt)</div>
+    <div class="panel-sub">Correct. Bubble area is proportional to the value.</div>
+    <div id="chartArea" class="chart"></div>
+    <div class="verdict">
+      Data ratio: <strong>2×</strong><br/>
+      Area ratio rendered: <span class="ok">2×</span><br/>
+      Perceived (Stevens 0.7): <span class="ok">≈ 1.6×</span>
+    </div>
+  </div>
+</div>
+<p class="caption">Stevens' compression is a fact of human perception; radius encoding compounds it with an avoidable squared distortion. For Claude Code: name d3.scaleSqrt explicitly.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const bubbleData = [
+  { label: '100', value: 100 },
+  { label: '200', value: 200 }
+];
+
+function drawBubbles(selector, scaleType) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 320;
+  const totalHeight = container.clientHeight || 280;
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight).attr('role', 'img');
+
+  // Bubble radius scale — this is the load-bearing line of the figure
+  let rScale;
+  if (scaleType === 'sqrt') {
+    rScale = d3.scaleSqrt().domain([0, 200]).range([0, 60]);
+  } else {
+    // intentionally wrong for the contrast panel
+    rScale = d3.scaleLinear().domain([0, 200]).range([0, 60]);
+  }
+
+  const cy = totalHeight / 2;
+  const positions = [totalWidth * 0.30, totalWidth * 0.70];
+
+  bubbleData.forEach((d, i) => {
+    svg.append('circle')
+      .attr('cx', positions[i]).attr('cy', cy)
+      .attr('r', rScale(d.value))
+      .attr('fill', 'var(--color-secondary)')
+      .attr('fill-opacity', 0.7)
+      .attr('tabindex', 0)
+      .attr('aria-label', `value ${d.value}, radius ${rScale(d.value).toFixed(1)} pixels`);
+    svg.append('text').attr('class', 'bub-label')
+      .attr('x', positions[i]).attr('y', cy + rScale(d.value) + 20)
+      .text(`value = ${d.value}`);
+    svg.append('text').attr('class', 'bub-label')
+      .attr('x', positions[i]).attr('y', cy + rScale(d.value) + 34)
+      .text(`r = ${rScale(d.value).toFixed(1)} px`);
+  });
+}
+
+function drawAll() {
+  drawBubbles('#chartRadius', 'linear');
+  drawBubbles('#chartArea', 'sqrt');
+}
+drawAll();
+const ro = new ResizeObserver(() => drawAll());
+ro.observe(document.getElementById('chartRadius'));
+ro.observe(document.getElementById('chartArea'));
+</script>
+</body>
+</html>

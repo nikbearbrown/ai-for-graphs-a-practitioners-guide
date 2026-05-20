@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 3.4 — Nightingale's rose, radius-linear vs area-corrected</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 380px; }
+  .month { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 75ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 3.4 — Nightingale's rose, radius-linear vs area-corrected</h1>
+<p class="subtitle">Florence Nightingale's 1858 polar-area chart of British military mortality, rendered twice. The published form scales radius with the data and amplifies winter wedges; the area-corrected form scales radius with √value and preserves area proportionality.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Radius ∝ value (published form)</div>
+    <div class="panel-sub">winter wedges visually dominate — area grows as the square of radius</div>
+    <div id="chartLinear" class="chart" role="img" aria-labelledby="t-lin d-lin"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Radius ∝ √value (area-honest)</div>
+    <div class="panel-sub">each wedge's area is proportional to the data value</div>
+    <div id="chartSqrt" class="chart" role="img" aria-labelledby="t-sq d-sq"></div>
+  </div>
+</div>
+<p class="caption">Nightingale knew the form amplified mortality. She used the amplification anyway, and Parliament funded sanitary reform. The lesson is not that polar area charts are bad — it is that distortion is a tool, and an honest designer knows when to use it.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// Illustrative monthly preventable-disease death rates per 1000.
+const MONTHS = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+const DEATHS = [9, 24, 38, 50, 60, 68, 80, 110, 192, 220, 156, 80];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function colorFor(value) {
+  // Sequential warm-gray ramp based on value.
+  const t = Math.min(1, value / 220);
+  return d3.interpolateLab('#c8c4c0', 'var(--color-ink)')(t);
+}
+
+function drawRose(sel, radiusFn, titleText, descText) {
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = container.clientWidth || 360, h = container.clientHeight || 380;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${sel.slice(1)}-t ${sel.slice(1)}-d`);
+  svg.append('title').attr('id', `${sel.slice(1)}-t`).text(titleText);
+  svg.append('desc').attr('id', `${sel.slice(1)}-d`).text(descText);
+  const cx = w / 2, cy = h / 2;
+  const maxOuter = Math.min(w, h) / 2 - 40;
+  const maxValue = d3.max(DEATHS);
+
+  const g = svg.append('g').attr('transform', `translate(${cx},${cy})`);
+
+  const arc = d3.arc()
+    .innerRadius(0)
+    .outerRadius((d, i) => radiusFn(DEATHS[i], maxValue, maxOuter))
+    .startAngle((d, i) => (i * Math.PI * 2) / 12)
+    .endAngle((d, i) => ((i + 1) * Math.PI * 2) / 12);
+
+  g.selectAll('path').data(MONTHS).join('path')
+    .attr('d', (d, i) => arc(d, i))
+    .attr('fill', (d, i) => colorFor(DEATHS[i]))
+    .attr('stroke', 'var(--color-white)').attr('stroke-width', 0.5)
+    .attr('tabindex', 0).attr('aria-label', (d, i) => `${d}: ${DEATHS[i]} per 1000`)
+    .on('mouseover', (event, d) => {
+      const i = MONTHS.indexOf(d);
+      showTip(event, `<strong>${d}</strong><br>${DEATHS[i]} deaths / 1000`);
+    })
+    .on('mouseout', hideTip);
+
+  // Month labels
+  g.selectAll('text.month').data(MONTHS).join('text')
+    .attr('class', 'month')
+    .attr('x', (d, i) => (maxOuter + 16) * Math.sin(((i + 0.5) * Math.PI * 2) / 12))
+    .attr('y', (d, i) => -(maxOuter + 16) * Math.cos(((i + 0.5) * Math.PI * 2) / 12))
+    .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
+    .text(d => d);
+
+  // center dot
+  g.append('circle').attr('r', 2).attr('fill', 'var(--color-ink)');
+}
+
+function draw() {
+  drawRose('#chartLinear',
+    (v, vMax, rMax) => (v / vMax) * rMax,
+    'Nightingale rose with radius proportional to value',
+    'Twelve polar-area wedges around a clock face, radius equal to value scaled to fit; winter wedges visually dominate because area grows quadratically with radius.');
+  drawRose('#chartSqrt',
+    (v, vMax, rMax) => Math.sqrt(v / vMax) * rMax,
+    'Nightingale rose with radius proportional to square root of value',
+    'Twelve polar-area wedges around a clock face, radius equal to the square root of value scaled to fit; each wedge area is now proportional to the data value.');
+}
+draw();
+const ro = new ResizeObserver(draw);
+['#chartLinear', '#chartSqrt'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 16.2 — Four sources, one synthesis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #chart { width: 100%; height: 540px; max-width: 960px; }
+  .quad { fill: var(--color-white); stroke: var(--color-ink); stroke-width: 1; cursor: pointer; transition: fill 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .quad.active, .quad:hover { fill: color-mix(in srgb, var(--color-ochre) 12%, var(--color-white)); }
+  .quad-title { font-family: 'EB Garamond', Georgia, serif; font-size: 22px; fill: var(--color-ink); }
+  .quad-role { font-family: 'Inter', sans-serif; font-style: italic; font-size: 12px; fill: var(--color-secondary); }
+  .quad-item { font-family: 'Inter', sans-serif; font-size: 13px; fill: var(--color-ink); }
+  .quad-note { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-secondary); }
+  .center-box { fill: color-mix(in srgb, var(--color-ochre) 10%, var(--color-white)); stroke: var(--color-ink); stroke-width: 1.5; }
+  .center-title { font-family: 'EB Garamond', Georgia, serif; font-size: 18px; fill: var(--color-ink); }
+  .center-sub { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; fill: var(--color-ink); }
+  .center-note { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .flow { stroke: var(--color-secondary); stroke-width: 1.2; fill: none; }
+  .flow.highlight { stroke: var(--color-red); stroke-width: 2; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 16.2 — Four sources, one synthesis</h1>
+<p class="subtitle">Tufte names the heuristics. Few resolves them into a working criterion. Cairo frames the responsibility. Gestalt provides the mechanism.</p>
+<div id="chart" role="img" aria-labelledby="syn-t syn-d"></div>
+<p class="caption">Each source contributes a different kind of knowledge. The Evergreen/Emery 22-point checklist operationalizes all four into a single audit instrument.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const sources = [
+  { id: 'tufte',  pos: 'tl', name: 'Tufte',   role: 'the heuristics',          items: ['Data-ink ratio', 'Proportional ink'],                    note: 'Heuristics, not laws. They name the chartjunk problem.' },
+  { id: 'few',    pos: 'tr', name: 'Few',     role: 'the working criterion',   items: ['"Does this support the message?"'],                      note: 'Functional redundancy stays; decoration goes.' },
+  { id: 'cairo',  pos: 'bl', name: 'Cairo',   role: 'the ethical frame',       items: ['Responsibility to the reader', '"Compared with what?"', 'Graphicacy'], note: 'Chart choice is morally significant.' },
+  { id: 'gestalt',pos: 'br', name: 'Gestalt', role: 'the perceptual mechanism',items: ['Proximity · similarity · enclosure', 'Continuity · figure–ground'],     note: 'Describes how the visual system processes images.' }
+];
+
+function draw() {
+  const selector = '#chart';
+  d3.select(selector).selectAll('*').remove();
+  const container = document.querySelector(selector);
+  const totalWidth = container.clientWidth || 960;
+  const totalHeight = container.clientHeight || 540;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('viewBox', `0 0 ${totalWidth} ${totalHeight}`)
+    .attr('role', 'img').attr('aria-labelledby', 'syn-t syn-d');
+  svg.append('title').attr('id', 'syn-t').text('Four sources of design knowledge feeding the Evergreen/Emery checklist');
+  svg.append('desc').attr('id', 'syn-d').text('Four-quadrant diagram with Tufte, Few, Cairo, and Gestalt feeding a central node labeled Evergreen/Emery 22-point checklist.');
+
+  const quadW = (totalWidth - 64) / 2 - 80;
+  const quadH = (totalHeight - 64) / 2 - 40;
+  const cx = totalWidth / 2;
+  const cy = totalHeight / 2;
+  const positions = {
+    tl: { x: 32,                       y: 32 },
+    tr: { x: totalWidth - 32 - quadW,  y: 32 },
+    bl: { x: 32,                       y: totalHeight - 32 - quadH },
+    br: { x: totalWidth - 32 - quadW,  y: totalHeight - 32 - quadH }
+  };
+
+  // arrows first (under quads visually only because we draw them first)
+  const gFlow = svg.append('g').attr('class', 'flows');
+
+  // center box
+  const cw = 200, ch = 120;
+  svg.append('rect').attr('class', 'center-box').attr('x', cx - cw / 2).attr('y', cy - ch / 2).attr('width', cw).attr('height', ch);
+  svg.append('text').attr('class', 'center-title').attr('x', cx).attr('y', cy - 20).attr('text-anchor', 'middle').text('Evergreen/Emery');
+  svg.append('text').attr('class', 'center-sub').attr('x', cx).attr('y', cy).attr('text-anchor', 'middle').text('22-point checklist');
+  svg.append('text').attr('class', 'center-note').attr('x', cx).attr('y', cy + 22).attr('text-anchor', 'middle').text('five categories,');
+  svg.append('text').attr('class', 'center-note').attr('x', cx).attr('y', cy + 36).attr('text-anchor', 'middle').text('one audit instrument');
+
+  sources.forEach(s => {
+    const p = positions[s.pos];
+    const g = svg.append('g').attr('class', 'quad-group').attr('data-id', s.id);
+    g.append('rect').attr('class', 'quad').attr('x', p.x).attr('y', p.y).attr('width', quadW).attr('height', quadH);
+    g.append('text').attr('class', 'quad-title').attr('x', p.x + 16).attr('y', p.y + 30).text(s.name);
+    g.append('text').attr('class', 'quad-role').attr('x', p.x + 16).attr('y', p.y + 48).text(s.role);
+    s.items.forEach((it, i) => {
+      g.append('text').attr('class', 'quad-item').attr('x', p.x + 16).attr('y', p.y + 74 + i * 20).text(`• ${it}`);
+    });
+    g.append('text').attr('class', 'quad-note').attr('x', p.x + 16).attr('y', p.y + quadH - 16).text(s.note);
+
+    // arrow from quad inner edge to center box
+    const qx = p.x + (s.pos.endsWith('l') ? quadW : 0);
+    const qy = p.y + quadH / 2;
+    const targetX = cx + (s.pos.endsWith('l') ? -cw / 2 : cw / 2);
+    const targetY = cy;
+    const flow = gFlow.append('path')
+      .attr('class', 'flow')
+      .attr('data-id', s.id)
+      .attr('d', `M ${qx},${qy} C ${(qx + targetX) / 2},${qy} ${(qx + targetX) / 2},${targetY} ${targetX},${targetY}`);
+
+    g.on('mouseover', () => {
+      g.select('.quad').classed('active', true);
+      flow.classed('highlight', true);
+    }).on('mouseout', () => {
+      g.select('.quad').classed('active', false);
+      flow.classed('highlight', false);
+    });
+  });
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

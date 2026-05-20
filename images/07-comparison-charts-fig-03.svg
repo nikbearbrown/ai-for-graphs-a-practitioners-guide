@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 440" role="img" aria-labelledby="t03 d03">
+  <title id="t03">Three responses to nearly identical values — 12.4, 12.8, 13.2 percent</title>
+  <desc id="d03">Three panels showing the same three values rendered as a truncated bar chart, a dot plot with zoomed axis, and a difference chart from baseline.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .ver { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; }
+      .bad { fill: #2a1a0e; }
+    </style>
+  </defs>
+  <rect width="700" height="440" fill="#fdfcfb"/>
+  <text x="350" y="32" text-anchor="middle" class="ti">Three values: 12.4%, 12.8%, 13.2%. One wrong response and two right ones.</text>
+
+  <!-- Panel A: Truncated bar (DISTORTS) -->
+  <g transform="translate(32,60)">
+    <text x="0" y="0" class="ti">A. Truncated bar chart</text>
+    <text x="0" y="14" class="sm">y-axis 12 to 14 — visual ratio inflated</text>
+    <!-- axis -->
+    <line x1="32" y1="40" x2="32" y2="240" stroke="#8a8480"/>
+    <line x1="32" y1="240" x2="180" y2="240" stroke="#8a8480"/>
+    <!-- ticks 12, 13, 14; range 40..240 -->
+    <text x="28" y="243" text-anchor="end" class="sm">12</text>
+    <text x="28" y="143" text-anchor="end" class="sm">13</text>
+    <text x="28" y="43" text-anchor="end" class="sm">14</text>
+    <line x1="30" y1="240" x2="32" y2="240" stroke="#4a4540"/>
+    <line x1="30" y1="140" x2="32" y2="140" stroke="#4a4540"/>
+    <line x1="30" y1="40" x2="32" y2="40" stroke="#4a4540"/>
+    <!-- bars: 12.4→y=200, 12.8→y=120, 13.2→y=40; height=240-y -->
+    <rect x="50"  y="200" width="32" height="40"  fill="#2a1a0e"/>
+    <rect x="92"  y="120" width="32" height="120" fill="#2a1a0e"/>
+    <rect x="134" y="40"  width="32" height="200" fill="#2a1a0e"/>
+    <text x="66"  y="258" text-anchor="middle" class="sm">Q1</text>
+    <text x="108" y="258" text-anchor="middle" class="sm">Q2</text>
+    <text x="150" y="258" text-anchor="middle" class="sm">Q3</text>
+    <text x="66"  y="195" text-anchor="middle" class="sm">12.4</text>
+    <text x="108" y="115" text-anchor="middle" class="sm">12.8</text>
+    <text x="150" y="35"  text-anchor="middle" class="sm">13.2</text>
+    <!-- verdict -->
+    <rect x="0" y="278" width="200" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="100" y="293" text-anchor="middle" class="ver bad">verdict: distorts</text>
+  </g>
+
+  <!-- Panel B: Dot plot with zoomed axis (HONEST) -->
+  <g transform="translate(252,60)">
+    <text x="0" y="0" class="ti">B. Dot plot, zoomed axis</text>
+    <text x="0" y="14" class="sm">channel is point position, not area from baseline</text>
+    <line x1="32" y1="40" x2="32" y2="240" stroke="#8a8480"/>
+    <line x1="32" y1="240" x2="180" y2="240" stroke="#8a8480"/>
+    <text x="28" y="243" text-anchor="end" class="sm">12</text>
+    <text x="28" y="143" text-anchor="end" class="sm">13</text>
+    <text x="28" y="43" text-anchor="end" class="sm">14</text>
+    <line x1="30" y1="240" x2="32" y2="240" stroke="#4a4540"/>
+    <line x1="30" y1="140" x2="32" y2="140" stroke="#4a4540"/>
+    <line x1="30" y1="40" x2="32" y2="40" stroke="#4a4540"/>
+    <!-- dots -->
+    <circle cx="66"  cy="200" r="5" fill="#2a1a0e"/>
+    <circle cx="108" cy="120" r="5" fill="#2a1a0e"/>
+    <circle cx="150" cy="40"  r="5" fill="#2a1a0e"/>
+    <!-- thin guideline to baseline omitted on purpose -->
+    <text x="66"  y="258" text-anchor="middle" class="sm">Q1</text>
+    <text x="108" y="258" text-anchor="middle" class="sm">Q2</text>
+    <text x="150" y="258" text-anchor="middle" class="sm">Q3</text>
+    <text x="66"  y="190" text-anchor="middle" class="sm">12.4</text>
+    <text x="108" y="110" text-anchor="middle" class="sm">12.8</text>
+    <text x="150" y="30"  text-anchor="middle" class="sm">13.2</text>
+    <rect x="0" y="278" width="200" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="100" y="293" text-anchor="middle" class="ver">verdict: honest</text>
+  </g>
+
+  <!-- Panel C: Difference chart from baseline (HONEST) -->
+  <g transform="translate(472,60)">
+    <text x="0" y="0" class="ti">C. Change from Q1 baseline</text>
+    <text x="0" y="14" class="sm">zero is meaningful — no change</text>
+    <line x1="32" y1="40" x2="32" y2="240" stroke="#8a8480"/>
+    <line x1="32" y1="140" x2="180" y2="140" stroke="#8a8480"/>
+    <!-- y range: 0..1 pp, ticks at 0, 0.5, 1.0; baseline at 140 -->
+    <text x="28" y="143" text-anchor="end" class="sm">0</text>
+    <text x="28" y="93" text-anchor="end" class="sm">0.5</text>
+    <text x="28" y="43" text-anchor="end" class="sm">1.0</text>
+    <line x1="30" y1="140" x2="32" y2="140" stroke="#4a4540"/>
+    <line x1="30" y1="90" x2="32" y2="90" stroke="#4a4540"/>
+    <line x1="30" y1="40" x2="32" y2="40" stroke="#4a4540"/>
+    <!-- Q1 diff=0 (no bar), Q2 diff=0.4 → height 40, Q3 diff=0.8 → height 80 -->
+    <rect x="50"  y="140" width="32" height="0" fill="#2a1a0e"/>
+    <rect x="92"  y="100" width="32" height="40" fill="#2a1a0e"/>
+    <rect x="134" y="60"  width="32" height="80" fill="#2a1a0e"/>
+    <text x="66"  y="258" text-anchor="middle" class="sm">Q1</text>
+    <text x="108" y="258" text-anchor="middle" class="sm">Q2</text>
+    <text x="150" y="258" text-anchor="middle" class="sm">Q3</text>
+    <text x="66"  y="135" text-anchor="middle" class="sm">+0.0</text>
+    <text x="108" y="95"  text-anchor="middle" class="sm">+0.4</text>
+    <text x="150" y="55"  text-anchor="middle" class="sm">+0.8</text>
+    <text x="186" y="143" class="sm">pp</text>
+    <rect x="0" y="278" width="200" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="100" y="293" text-anchor="middle" class="ver">verdict: honest</text>
+  </g>
+
+  <text x="350" y="412" text-anchor="middle" class="cap">Three values. One wrong response (truncated bars). Two right ones (dot plot, difference chart).</text>
+</svg>

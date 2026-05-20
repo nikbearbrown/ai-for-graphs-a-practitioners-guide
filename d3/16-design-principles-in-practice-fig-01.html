@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 16.1 — Seven visible failures in one chart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; align-items: start; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 420px; }
+  .flaw-title { font-family: 'Inter', sans-serif; font-style: italic; font-size: 12px; fill: var(--color-secondary); text-anchor: middle; }
+  .gridline { stroke: var(--color-secondary); stroke-width: 0.5; opacity: 0.65; }
+  .axis-spine { stroke: var(--color-ink); }
+  .tick text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .cat-label { font-family: 'Inter', sans-serif; font-style: italic; font-size: 9px; fill: var(--color-secondary); }
+  .callout-num { fill: var(--color-white); font-family: 'Inter', sans-serif; font-weight: 700; font-size: 11px; }
+  .callout-circle { fill: var(--color-ink); cursor: pointer; transition: fill 120ms cubic-bezier(0.2,0.8,0.2,1); }
+  .callout-circle.active { fill: var(--color-red); }
+  .failure-list { list-style: none; }
+  .failure-list li { padding: 8px 10px; border-bottom: 1px solid var(--color-border); display: flex; gap: 10px; align-items: flex-start; cursor: pointer; transition: background 120ms; }
+  .failure-list li:last-child { border-bottom: none; }
+  .failure-list li:hover, .failure-list li.active { background: color-mix(in srgb, var(--color-ochre) 14%, transparent); }
+  .badge { flex: 0 0 22px; height: 22px; border-radius: 50%; background: var(--color-ink); color: var(--color-white); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; }
+  .failure-list li.active .badge { background: var(--color-red); }
+  .failure-text { font-size: 13px; line-height: 1.4; }
+  .failure-principle { color: var(--color-secondary); font-size: 11px; display: block; margin-top: 2px; }
+  .score { margin-top: 16px; padding: 12px 14px; background: color-mix(in srgb, var(--color-ochre) 10%, transparent); border-left: 3px solid var(--color-ochre); font-size: 13px; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 16.1 — Seven visible failures</h1>
+<p class="subtitle">A flawed quarterly chart, annotated with the principle each callout violates.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">The flawed chart, as published</div>
+    <div class="panel-sub">3D bars · rainbow gradients · truncated baseline · heavy gridlines · 8pt italic rotated labels · occasion-named title.</div>
+    <div id="chartFlawed" class="chart" role="img" aria-labelledby="flaw-t flaw-d"></div>
+  </div>
+  <div class="panel" aria-label="Failure list">
+    <div class="panel-title">Click a number to highlight</div>
+    <div class="panel-sub">Each callout names the principle violated.</div>
+    <ul class="failure-list" id="failureList"></ul>
+    <div class="score"><strong>14 of 22 items fail.</strong> The chart is more failure than success.</div>
+  </div>
+</div>
+<p class="caption">Seven visible failures, each numbered. The redesign in Figure 16.4 addresses every one and passes all twenty-two checklist items.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const barData = [
+  { region: 'North',   value: 480 },
+  { region: 'South',   value: 470 },
+  { region: 'East',    value: 450 },
+  { region: 'West',    value: 440 },
+  { region: 'Central', value: 430 }
+];
+
+const rainbow = ['#a83a2a', '#b8742a', '#b8a02a', '#3a8a3a', '#2a5aa8'];
+const rainbowDark = ['#7a1f1a', '#7a4a1a', '#7a6a1a', '#1f5a2a', '#1a3a6a'];
+
+const failures = [
+  { id: 1, x: 60,  y: 360, text: 'y-axis starts at $400K, not zero', principle: 'Tufte: proportional ink' },
+  { id: 2, x: 200, y: 60,  text: '3D perspective on bar tops',       principle: 'Distorts the position channel' },
+  { id: 3, x: 360, y: 280, text: 'Five rainbow gradients encode nothing', principle: 'Bertin: false order' },
+  { id: 4, x: 460, y: 200, text: 'Heavy gridlines at every increment', principle: 'Tufte: data-ink ratio' },
+  { id: 5, x: 240, y: 410, text: '45° rotated labels in 8pt italic',  principle: 'Few: legibility' },
+  { id: 6, x: 240, y: 30,  text: 'Title names the occasion, not the finding', principle: 'Cairo: key message' },
+  { id: 7, x: 360, y: 30,  text: 'No comparison reference — "Q4" against what?', principle: 'Cairo: "compared with what?"' }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawFlawed() {
+  const selector = '#chartFlawed';
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth = container.clientWidth || 520;
+  const totalHeight = container.clientHeight || 420;
+  const margin = { top: 56, right: 64, bottom: 64, left: 56 };
+  const chartWidth = totalWidth - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'flaw-t flaw-d');
+  svg.append('title').attr('id', 'flaw-t').text('Flawed quarterly chart with seven failures');
+  svg.append('desc').attr('id', 'flaw-d').text('A 3D bar chart of Q4 sales by region with rainbow colors, truncated y-axis, heavy gridlines, rotated tiny italic labels, and an occasion-named title.');
+
+  svg.append('text')
+    .attr('x', margin.left + chartWidth / 2)
+    .attr('y', 28)
+    .attr('class', 'flaw-title')
+    .text('Q4 Performance Highlights');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleBand = d3.scaleBand().domain(barData.map(d => d.region)).range([0, chartWidth]).padding(0.32);
+  // truncated y scale on purpose — this is the flawed chart
+  const yScaleLinear = d3.scaleLinear().domain([400, 500]).range([chartHeight, 0]);
+
+  // heavy gridlines at every 10
+  const ticks = d3.range(400, 501, 10);
+  gChart.selectAll('.gridline')
+    .data(ticks)
+    .join('line')
+      .attr('class', 'gridline')
+      .attr('x1', 0).attr('x2', chartWidth)
+      .attr('y1', d => yScaleLinear(d)).attr('y2', d => yScaleLinear(d));
+
+  // axes
+  gChart.append('g').attr('class', 'tick')
+    .call(d3.axisLeft(yScaleLinear).ticks(5).tickFormat(d => d))
+    .call(g => g.select('.domain').attr('class', 'axis-spine'));
+
+  // bars with fake 3D — front + side trapezoid
+  const bw = xScaleBand.bandwidth();
+  barData.forEach((d, i) => {
+    const x = xScaleBand(d.region);
+    const y = yScaleLinear(d.value);
+    const w = bw;
+    const h = chartHeight - y;
+    const depth = Math.min(10, w * 0.18);
+    const front = gChart.append('rect')
+      .attr('x', x).attr('y', y).attr('width', w).attr('height', h)
+      .attr('fill', rainbow[i])
+      .attr('tabindex', 0)
+      .attr('aria-label', `${d.region}: ${d.value}`)
+      .on('mouseover', (e) => showTip(e, `<strong>${d.region}</strong>: ${d.value}`))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+    gChart.append('polygon')
+      .attr('points', `${x + w},${y} ${x + w + depth},${y - depth} ${x + w + depth},${y + h - depth} ${x + w},${y + h}`)
+      .attr('fill', rainbowDark[i])
+      .attr('opacity', 0.85);
+    gChart.append('polygon')
+      .attr('points', `${x},${y} ${x + depth},${y - depth} ${x + w + depth},${y - depth} ${x + w},${y}`)
+      .attr('fill', rainbowDark[i])
+      .attr('opacity', 0.5);
+  });
+
+  // rotated tiny italic labels
+  gChart.selectAll('.cat-label')
+    .data(barData)
+    .join('text')
+      .attr('class', 'cat-label')
+      .attr('x', d => xScaleBand(d.region) + bw / 2)
+      .attr('y', chartHeight + 16)
+      .attr('text-anchor', 'end')
+      .attr('transform', d => `rotate(-45, ${xScaleBand(d.region) + bw / 2}, ${chartHeight + 16})`)
+      .text(d => d.region);
+
+  // numbered callouts
+  const gCall = svg.append('g').attr('class', 'callouts');
+  failures.forEach(f => {
+    const g = gCall.append('g').attr('class', 'callout').attr('data-id', f.id);
+    g.append('circle').attr('cx', f.x).attr('cy', f.y).attr('r', 11).attr('class', 'callout-circle');
+    g.append('text').attr('x', f.x).attr('y', f.y + 4).attr('text-anchor', 'middle').attr('class', 'callout-num').text(f.id);
+    g.style('cursor', 'pointer').on('click', () => activate(f.id));
+  });
+}
+
+function buildList() {
+  const ul = d3.select('#failureList');
+  ul.selectAll('li').data(failures).join('li')
+    .attr('data-id', d => d.id)
+    .on('click', (e, d) => activate(d.id))
+    .html(d => `<span class="badge">${d.id}</span><span class="failure-text">${d.text}<span class="failure-principle">${d.principle}</span></span>`);
+}
+
+function activate(id) {
+  d3.selectAll('.failure-list li').classed('active', function () { return +this.dataset.id === id; });
+  d3.selectAll('.callout').each(function () {
+    const match = +this.dataset.id === id;
+    d3.select(this).select('.callout-circle').classed('active', match);
+  });
+}
+
+function draw() {
+  drawFlawed();
+  buildList();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartFlawed'));
+</script>
+</body>
+</html>

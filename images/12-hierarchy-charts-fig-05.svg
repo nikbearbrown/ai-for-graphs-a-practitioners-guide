@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t12-05 d12-05">
+  <title id="t12-05">Slice-and-dice vs squarified — Stevens' dominant-dimension bias</title>
+  <desc id="d12-05">Two treemaps built from the same twelve-node dataset. The left uses slice-and-dice and produces highly elongated rectangles whose long dimension exaggerates perceived area. The right uses the squarified algorithm and keeps aspect ratios near one to one.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lbw { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #fdfcfb; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .smw { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #fdfcfb; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar12-05" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">Same dataset, two layouts. Squarification minimizes the worst aspect ratio.</text>
+
+  <!-- LEFT: SLICE-AND-DICE — 12 nodes, vertical columns subdivided horizontally -->
+  <text x="32" y="58" class="ti">Slice-and-dice</text>
+  <text x="32" y="74" class="sm">tall thin rectangles read larger than they are</text>
+
+  <!-- Outer frame 300×280 at (32, 86). Values sum to 100. 5 columns by share. -->
+  <!-- Column widths proportional to first split A=30, B=22, C=18, D=16, E=14 → 90, 66, 54, 48, 42 -->
+  <!-- Inside each column, subdivisions horizontal -->
+  <!-- A (30): rows 14, 10, 6 → heights 130, 93, 57 (sum 280) -->
+  <rect x="32"  y="86"  width="90" height="280" fill="#2a1a0e"/>
+  <line x1="32" y1="216" x2="122" y2="216" stroke="#fdfcfb" stroke-width="1"/>
+  <line x1="32" y1="309" x2="122" y2="309" stroke="#fdfcfb" stroke-width="1"/>
+  <!-- B (22): two rows 12,10 -->
+  <rect x="122" y="86"  width="66" height="280" fill="#4a4540"/>
+  <line x1="122" y1="239" x2="188" y2="239" stroke="#fdfcfb" stroke-width="1"/>
+  <!-- C (18): three rows 8, 6, 4 -->
+  <rect x="188" y="86"  width="54" height="280" fill="#8a8480"/>
+  <line x1="188" y1="210" x2="242" y2="210" stroke="#fdfcfb" stroke-width="1"/>
+  <line x1="188" y1="303" x2="242" y2="303" stroke="#fdfcfb" stroke-width="1"/>
+  <!-- D (16): two rows 9, 7 -->
+  <rect x="242" y="86"  width="48" height="280" fill="#9a948e"/>
+  <line x1="242" y1="244" x2="290" y2="244" stroke="#fdfcfb" stroke-width="1"/>
+  <!-- E (14): two rows 8, 6 -->
+  <rect x="290" y="86"  width="42" height="280" fill="#c8c4c0"/>
+  <line x1="290" y1="246" x2="332" y2="246" stroke="#fdfcfb" stroke-width="0.8"/>
+
+  <!-- Highlight three elongated rectangles -->
+  <rect x="32"  y="86"  width="90" height="130" fill="none" stroke="#C8860E" stroke-width="1.6"/>
+  <rect x="122" y="86"  width="66" height="153" fill="none" stroke="#C8860E" stroke-width="1.6"/>
+  <rect x="188" y="216" width="54" height="87"  fill="none" stroke="#C8860E" stroke-width="1.6"/>
+
+  <text x="40" y="104" class="lbw">A 30</text>
+  <text x="130" y="104" class="lbw">B 22</text>
+  <text x="196" y="104" class="smw">C 18</text>
+  <text x="250" y="104" class="smw">D 16</text>
+  <text x="298" y="104" class="lb">E 14</text>
+
+  <text x="32" y="394" class="lb">worst aspect ≈ 6.4 : 1 (B-12)</text>
+  <text x="32" y="410" class="sm">Stevens dominant-dimension bias → reads larger</text>
+  <text x="32" y="426" class="sm">eye reads the longer side first</text>
+
+  <!-- DIVIDER -->
+  <line x1="350" y1="50" x2="350" y2="440" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT: SQUARIFIED — same 12 nodes -->
+  <text x="370" y="58" class="ti">Squarified</text>
+  <text x="370" y="74" class="sm">aspect ratios within ~2:1; area reads accurately</text>
+
+  <!-- Frame 300×280 at (370, 86). Squarified layout for sums grouped near-square. -->
+  <!-- Layout sketch: top row [A:30, B:22] horizontal; bottom row [C:18, D:16, E:14] horizontal. -->
+  <!-- Top row height = 280 * 52/100 = ~146; bottom = 134 -->
+  <!-- A width = 300 * 30/52 = 173, B = 127 -->
+  <rect x="370" y="86"  width="173" height="146" fill="#2a1a0e"/>
+  <rect x="543" y="86"  width="127" height="146" fill="#4a4540"/>
+  <!-- A's children 14,10,6 (sum 30). Squarified inside A 173×146 → split horizontally: 14 → w 81, rest 92.
+       In rest (92×146): 10 → h 91, 6 → 55 -->
+  <line x1="451" y1="86" x2="451" y2="232" stroke="#fdfcfb" stroke-width="1"/>
+  <line x1="451" y1="177" x2="543" y2="177" stroke="#fdfcfb" stroke-width="1"/>
+  <!-- B's children 12,10 → split vertically -->
+  <line x1="543" y1="166" x2="670" y2="166" stroke="#fdfcfb" stroke-width="1"/>
+
+  <!-- Bottom row: C 18, D 16, E 14 (sum 48). Widths: 300*18/48=112, 300*16/48=100, 88 -->
+  <rect x="370" y="232" width="112" height="134" fill="#8a8480"/>
+  <rect x="482" y="232" width="100" height="134" fill="#9a948e"/>
+  <rect x="582" y="232" width="88"  height="134" fill="#c8c4c0"/>
+  <!-- C children 8,6,4 inside 112×134 → horizontal cut (each gets full height-ish via near-square) -->
+  <line x1="370" y1="294" x2="482" y2="294" stroke="#fdfcfb" stroke-width="1"/>
+  <line x1="370" y1="338" x2="482" y2="338" stroke="#fdfcfb" stroke-width="1"/>
+  <!-- D children 9,7 -->
+  <line x1="482" y1="307" x2="582" y2="307" stroke="#fdfcfb" stroke-width="1"/>
+  <!-- E children 8,6 -->
+  <line x1="582" y1="305" x2="670" y2="305" stroke="#fdfcfb" stroke-width="0.8"/>
+
+  <!-- Highlight the three corresponding nodes (same data, now near-square) -->
+  <rect x="370" y="86"  width="81" height="146" fill="none" stroke="#C8860E" stroke-width="1.6"/>
+  <rect x="543" y="86"  width="127" height="80" fill="none" stroke="#C8860E" stroke-width="1.6"/>
+  <rect x="370" y="294" width="112" height="44" fill="none" stroke="#C8860E" stroke-width="1.6"/>
+
+  <text x="378" y="104" class="lbw">A 30</text>
+  <text x="551" y="104" class="lbw">B 22</text>
+  <text x="378" y="250" class="lbw">C 18</text>
+  <text x="490" y="250" class="lbw">D 16</text>
+  <text x="590" y="250" class="lb">E 14</text>
+
+  <text x="370" y="394" class="lb">worst aspect ≈ 1.8 : 1</text>
+  <text x="370" y="410" class="sm">no dominant-dimension distortion</text>
+  <text x="370" y="426" class="sm">area comparison closer to true ratio</text>
+</svg>

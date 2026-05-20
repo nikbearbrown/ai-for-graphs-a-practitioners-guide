@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t12-02 d12-02">
+  <title id="t12-02">Four hierarchy forms — reference grid</title>
+  <desc id="d12-02">Four panels arranged 2 by 2, one per hierarchy form: treemap, sunburst, circle packing, and tree diagram. Each panel names the form, the primary channel, and the use-when condition.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .nm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; letter-spacing: 0.05em; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .smi { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">Four hierarchy forms — what each one encodes</text>
+
+  <!-- PANEL A: TREEMAP -->
+  <g transform="translate(32,52)">
+    <rect x="0" y="0" width="300" height="190" fill="none" stroke="#c8c4c0" stroke-width="1"/>
+    <text x="14" y="22" class="nm">TREEMAP</text>
+    <!-- thumbnail: nested rectangles -->
+    <g transform="translate(14,36)">
+      <rect x="0"   y="0" width="160" height="120" fill="#2a1a0e"/>
+      <rect x="160" y="0" width="80"  height="70"  fill="#4a4540"/>
+      <rect x="160" y="70" width="80" height="50"  fill="#8a8480"/>
+      <rect x="0"   y="120" width="100" height="40" fill="#4a4540"/>
+      <rect x="100" y="120" width="60"  height="40" fill="#c8c4c0"/>
+      <rect x="160" y="120" width="80"  height="40" fill="#c8c4c0"/>
+      <!-- inner subdivisions -->
+      <line x1="0"   y1="60" x2="160" y2="60"   stroke="#fdfcfb" stroke-width="1.2"/>
+      <line x1="80"  y1="0"  x2="80"  y2="60"   stroke="#fdfcfb" stroke-width="1.2"/>
+    </g>
+    <text x="14" y="174" class="lb">channel — area</text>
+    <text x="14" y="186" class="smi">use when proportions are the question</text>
+  </g>
+
+  <!-- PANEL B: SUNBURST -->
+  <g transform="translate(368,52)">
+    <rect x="0" y="0" width="300" height="190" fill="none" stroke="#c8c4c0" stroke-width="1"/>
+    <text x="14" y="22" class="nm">SUNBURST</text>
+    <!-- thumbnail: concentric rings, center at (150,108) -->
+    <g transform="translate(150,108)">
+      <!-- outer ring r=70 -->
+      <path d="M -70 0 A 70 70 0 0 1 70 0 L 35 0 A 35 35 0 0 0 -35 0 Z" fill="#c8c4c0"/>
+      <path d="M 70 0 A 70 70 0 0 1 -70 0 L -35 0 A 35 35 0 0 0 35 0 Z" fill="#8a8480"/>
+      <!-- segment dividers on outer ring -->
+      <line x1="0" y1="-70" x2="0" y2="-35" stroke="#fdfcfb" stroke-width="1.2"/>
+      <line x1="0" y1="35" x2="0" y2="70" stroke="#fdfcfb" stroke-width="1.2"/>
+      <line x1="-49.5" y1="-49.5" x2="-24.7" y2="-24.7" stroke="#fdfcfb" stroke-width="1.2"/>
+      <line x1="49.5" y1="49.5" x2="24.7" y2="24.7" stroke="#fdfcfb" stroke-width="1.2"/>
+      <!-- inner ring r=35 -->
+      <path d="M -35 0 A 35 35 0 0 1 35 0 L 14 0 A 14 14 0 0 0 -14 0 Z" fill="#4a4540"/>
+      <path d="M 35 0 A 35 35 0 0 1 -35 0 L -14 0 A 14 14 0 0 0 14 0 Z" fill="#2a1a0e"/>
+      <line x1="0" y1="-35" x2="0" y2="-14" stroke="#fdfcfb" stroke-width="1.2"/>
+      <line x1="0" y1="14" x2="0" y2="35" stroke="#fdfcfb" stroke-width="1.2"/>
+      <!-- center -->
+      <circle r="14" fill="#2a1a0e"/>
+    </g>
+    <text x="14" y="174" class="lb">channel — ring position + angle</text>
+    <text x="14" y="186" class="smi">use when depth is the question</text>
+  </g>
+
+  <!-- PANEL C: CIRCLE PACKING -->
+  <g transform="translate(32,256)">
+    <rect x="0" y="0" width="300" height="190" fill="none" stroke="#c8c4c0" stroke-width="1"/>
+    <text x="14" y="22" class="nm">CIRCLE PACKING</text>
+    <!-- thumbnail: nested circles -->
+    <g transform="translate(150,108)">
+      <circle r="74" fill="none" stroke="#2a1a0e" stroke-width="1.4"/>
+      <circle cx="-26" cy="-12" r="36" fill="none" stroke="#4a4540" stroke-width="1.2"/>
+      <circle cx="-26" cy="-12" r="14" fill="#8a8480"/>
+      <circle cx="-36" cy="-22" r="6"  fill="#2a1a0e"/>
+      <circle cx="-14" cy="-2"  r="6"  fill="#2a1a0e"/>
+      <circle cx="30"  cy="-22" r="22" fill="none" stroke="#4a4540" stroke-width="1.2"/>
+      <circle cx="30"  cy="-22" r="10" fill="#8a8480"/>
+      <circle cx="22"  cy="36"  r="26" fill="#4a4540"/>
+      <circle cx="22"  cy="36"  r="10" fill="#c8c4c0"/>
+    </g>
+    <text x="14" y="174" class="lb">channel — area + nesting</text>
+    <text x="14" y="186" class="smi">use when depth is irregular</text>
+  </g>
+
+  <!-- PANEL D: TREE DIAGRAM -->
+  <g transform="translate(368,256)">
+    <rect x="0" y="0" width="300" height="190" fill="none" stroke="#c8c4c0" stroke-width="1"/>
+    <text x="14" y="22" class="nm">TREE DIAGRAM</text>
+    <!-- thumbnail: node-link top-to-bottom -->
+    <g transform="translate(150,46)">
+      <circle r="5" fill="#2a1a0e"/>
+      <!-- level 2 -->
+      <circle cx="-60" cy="38" r="4" fill="#4a4540"/>
+      <circle cx="0"   cy="38" r="4" fill="#4a4540"/>
+      <circle cx="60"  cy="38" r="4" fill="#4a4540"/>
+      <line x1="0" y1="5" x2="-60" y2="34" stroke="#8a8480" stroke-width="0.9"/>
+      <line x1="0" y1="5" x2="0"   y2="34" stroke="#8a8480" stroke-width="0.9"/>
+      <line x1="0" y1="5" x2="60"  y2="34" stroke="#8a8480" stroke-width="0.9"/>
+      <!-- level 3 under left -->
+      <circle cx="-78" cy="74" r="3" fill="#8a8480"/>
+      <circle cx="-42" cy="74" r="3" fill="#8a8480"/>
+      <line x1="-60" y1="42" x2="-78" y2="71" stroke="#8a8480" stroke-width="0.7"/>
+      <line x1="-60" y1="42" x2="-42" y2="71" stroke="#8a8480" stroke-width="0.7"/>
+      <!-- under middle -->
+      <circle cx="-12" cy="74" r="3" fill="#8a8480"/>
+      <circle cx="12"  cy="74" r="3" fill="#8a8480"/>
+      <line x1="0" y1="42" x2="-12" y2="71" stroke="#8a8480" stroke-width="0.7"/>
+      <line x1="0" y1="42" x2="12"  y2="71" stroke="#8a8480" stroke-width="0.7"/>
+      <!-- under right -->
+      <circle cx="42" cy="74" r="3" fill="#8a8480"/>
+      <circle cx="78" cy="74" r="3" fill="#8a8480"/>
+      <line x1="60" y1="42" x2="42" y2="71" stroke="#8a8480" stroke-width="0.7"/>
+      <line x1="60" y1="42" x2="78" y2="71" stroke="#8a8480" stroke-width="0.7"/>
+      <!-- leaves -->
+      <circle cx="-84" cy="104" r="2" fill="#c8c4c0"/>
+      <circle cx="-72" cy="104" r="2" fill="#c8c4c0"/>
+      <line x1="-78" y1="77" x2="-84" y2="102" stroke="#c8c4c0" stroke-width="0.7"/>
+      <line x1="-78" y1="77" x2="-72" y2="102" stroke="#c8c4c0" stroke-width="0.7"/>
+    </g>
+    <text x="14" y="174" class="lb">channel — edges, no area</text>
+    <text x="14" y="186" class="smi">use when topology is the question</text>
+  </g>
+
+  <!-- FOOTER CAPTION -->
+  <text x="350" y="468" text-anchor="middle" class="cap">Four forms. Four primary questions. The choice is not aesthetic — it is which property the reader needs to see most.</text>
+</svg>

@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t02 d02">
+  <title id="t02">Instruction budget — two files within budget vs one file overflowing</title>
+  <desc id="d02">Two horizontal stacked bars representing a 150–200 instruction budget. The top bar shows the split-file scenario fitting within budget; the bottom shows the merged-file scenario overflowing into a degraded zone.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .seg { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #fdfcfb; font-weight: bold; }
+    </style>
+    <marker id="ar2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#2a1a0e" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">The instruction budget is real. The degradation is silent.</text>
+
+  <!-- scale 0 → 200 instructions across 600px (60px = 20 instructions); axis at x=60..660 -->
+  <!-- scale ticks -->
+  <g class="sm">
+    <text x="60" y="78" text-anchor="middle">0</text>
+    <text x="210" y="78" text-anchor="middle">50</text>
+    <text x="360" y="78" text-anchor="middle">100</text>
+    <text x="510" y="78" text-anchor="middle">150</text>
+    <text x="660" y="78" text-anchor="middle">200</text>
+    <text x="585" y="92" text-anchor="middle">↑ budget ceiling ~150–200</text>
+  </g>
+
+  <!-- TOP BAR: split files (within budget) -->
+  <g transform="translate(0,110)">
+    <text x="32" y="0" class="ti">Two files, separated</text>
+    <text x="32" y="16" class="sm">CLAUDE.md every session · DESIGN.md loaded on demand</text>
+
+    <!-- system prompt 0..50 → 60..210 -->
+    <rect x="60" y="32" width="150" height="42" fill="#2a1a0e"/>
+    <text x="135" y="58" text-anchor="middle" class="seg">system prompt · ~50</text>
+    <text x="135" y="92" text-anchor="middle" class="sm">(not yours)</text>
+
+    <!-- CLAUDE.md 50..150 → 210..510 -->
+    <rect x="210" y="32" width="300" height="42" fill="#4a4540"/>
+    <text x="360" y="58" text-anchor="middle" class="seg">CLAUDE.md · coding constitution · ~100</text>
+
+    <!-- DESIGN.md shown separately, on demand -->
+    <rect x="60" y="98" width="150" height="22" fill="#fdfcfb" stroke="#8a8480"/>
+    <text x="135" y="113" text-anchor="middle" class="sm">DESIGN.md · ~50, on-demand</text>
+    <text x="220" y="113" class="sm">→ loads only when visual decisions in scope</text>
+
+    <!-- verdict -->
+    <rect x="540" y="32" width="120" height="42" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="600" y="58" text-anchor="middle" class="lb">within budget</text>
+  </g>
+
+  <!-- BOTTOM BAR: merged (overflow) -->
+  <g transform="translate(0,256)">
+    <text x="32" y="0" class="ti">One merged file</text>
+    <text x="32" y="16" class="sm">coding + design + voice in a single CLAUDE.md</text>
+
+    <!-- system prompt 60..210 -->
+    <rect x="60" y="32" width="150" height="42" fill="#2a1a0e"/>
+    <text x="135" y="58" text-anchor="middle" class="seg">system prompt · ~50</text>
+
+    <!-- merged file 50..200+ → 210..660, overflows past 660 -->
+    <rect x="210" y="32" width="450" height="42" fill="#4a4540"/>
+    <text x="380" y="58" text-anchor="middle" class="seg">merged file — coding + design + voice · ~200+</text>
+
+    <!-- overflow zone -->
+    <rect x="510" y="32" width="150" height="42" fill="url(#hatch)" opacity="0.55"/>
+    <path d="M 585 88 L 585 78" fill="none" stroke="#2a1a0e" marker-end="url(#ar2)"/>
+    <text x="585" y="102" text-anchor="middle" class="sm">rules here degrade silently</text>
+
+    <!-- verdict -->
+    <rect x="540" y="-8" width="120" height="22" fill="#f5f2ee" stroke="#2a1a0e"/>
+    <text x="600" y="7" text-anchor="middle" class="lb">budget exceeded</text>
+  </g>
+
+  <text x="350" y="404" text-anchor="middle" class="cap">A merged file does not error. It tracks the later rules less reliably, and the chart almost follows them.</text>
+</svg>

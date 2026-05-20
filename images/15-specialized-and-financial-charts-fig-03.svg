@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 440" role="img" aria-labelledby="t15-3 d15-3">
+  <title id="t15-3">Radar chart axis-order failure — same data, three orderings, three shapes</title>
+  <desc id="d15-3">Three radar charts of identical six-attribute data for one observation. Each panel uses a different axis order. The polygons look meaningfully different despite encoding the same numbers.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="440" fill="#fdfcfb"/>
+  <text x="350" y="28" text-anchor="middle" class="ti">Same six values for one observation. Three axis orders. Three different-looking shapes.</text>
+  <text x="350" y="46" text-anchor="middle" class="sm">Values held constant: Speed 70, Strength 90, Endurance 55, Agility 80, Technique 60, Recovery 40.</text>
+
+  <!-- PANEL A: original order -->
+  <!-- center (115, 220), radius 80 -->
+  <g transform="translate(0,0)">
+    <text x="115" y="80" text-anchor="middle" class="ti">A. Original order</text>
+    <text x="115" y="96" text-anchor="middle" class="sm">Speed → Strength → Endurance → Agility → Technique → Recovery</text>
+
+    <!-- grid rings -->
+    <circle cx="115" cy="220" r="80" fill="none" stroke="#c8c4c0" stroke-width="0.6"/>
+    <circle cx="115" cy="220" r="60" fill="none" stroke="#c8c4c0" stroke-width="0.5"/>
+    <circle cx="115" cy="220" r="40" fill="none" stroke="#c8c4c0" stroke-width="0.5"/>
+    <circle cx="115" cy="220" r="20" fill="none" stroke="#c8c4c0" stroke-width="0.5"/>
+
+    <!-- 6 axes at 60° increments starting from top (-90°) -->
+    <!-- angle_i = -90 + i*60.  Spokes: -->
+    <!-- i=0: top (0,-1)  → (115, 140) -->
+    <!-- i=1: (sqrt3/2, -1/2) → (115+69.28, 220-40) = (184.28, 180) -->
+    <!-- i=2: (sqrt3/2, 1/2) → (184.28, 260) -->
+    <!-- i=3: (0,1) → (115, 300) -->
+    <!-- i=4: (-sqrt3/2, 1/2) → (45.72, 260) -->
+    <!-- i=5: (-sqrt3/2, -1/2) → (45.72, 180) -->
+    <line x1="115" y1="220" x2="115" y2="140" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="184.28" y2="180" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="184.28" y2="260" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="115" y2="300" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="45.72" y2="260" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="45.72" y2="180" stroke="#c8c4c0" stroke-width="0.6"/>
+
+    <!-- polygon: Speed 70, Strength 90, Endurance 55, Agility 80, Technique 60, Recovery 40 -->
+    <!-- max 100 → r = (v/100)*80 -->
+    <!-- v=70: r=56; v=90: r=72; v=55: r=44; v=80: r=64; v=60: r=48; v=40: r=32 -->
+    <!-- i=0 Speed top: (115, 220-56) = (115, 164) -->
+    <!-- i=1 Strength: (115+72*0.866, 220-72*0.5) = (115+62.35, 184) = (177.35, 184) -->
+    <!-- i=2 Endurance: (115+44*0.866, 220+44*0.5) = (115+38.10, 242) = (153.10, 242) -->
+    <!-- i=3 Agility: (115, 220+64) = (115, 284) -->
+    <!-- i=4 Technique: (115-48*0.866, 220+48*0.5) = (115-41.57, 244) = (73.43, 244) -->
+    <!-- i=5 Recovery: (115-32*0.866, 220-32*0.5) = (115-27.71, 204) = (87.29, 204) -->
+    <polygon points="115,164 177.35,184 153.10,242 115,284 73.43,244 87.29,204"
+             fill="#2a1a0e" fill-opacity="0.18" stroke="#2a1a0e" stroke-width="1.4"/>
+
+    <!-- axis labels -->
+    <g class="sm" text-anchor="middle">
+      <text x="115" y="132">Speed</text>
+      <text x="195" y="180">Strength</text>
+      <text x="198" y="268">Endurance</text>
+      <text x="115" y="316">Agility</text>
+      <text x="36" y="268">Technique</text>
+      <text x="33" y="180">Recovery</text>
+    </g>
+  </g>
+
+  <!-- PANEL B: reordered -->
+  <g transform="translate(225,0)">
+    <text x="115" y="80" text-anchor="middle" class="ti">B. Reordered (shuffled)</text>
+    <text x="115" y="96" text-anchor="middle" class="sm">Strength → Recovery → Speed → Technique → Endurance → Agility</text>
+
+    <circle cx="115" cy="220" r="80" fill="none" stroke="#c8c4c0" stroke-width="0.6"/>
+    <circle cx="115" cy="220" r="60" fill="none" stroke="#c8c4c0" stroke-width="0.5"/>
+    <circle cx="115" cy="220" r="40" fill="none" stroke="#c8c4c0" stroke-width="0.5"/>
+    <circle cx="115" cy="220" r="20" fill="none" stroke="#c8c4c0" stroke-width="0.5"/>
+
+    <line x1="115" y1="220" x2="115" y2="140" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="184.28" y2="180" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="184.28" y2="260" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="115" y2="300" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="45.72" y2="260" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="45.72" y2="180" stroke="#c8c4c0" stroke-width="0.6"/>
+
+    <!-- new order: Strength 90 (top), Recovery 40, Speed 70, Technique 60, Endurance 55, Agility 80 -->
+    <!-- i=0 Strength 90: r=72 → (115, 148) -->
+    <!-- i=1 Recovery 40: r=32 → (115+32*0.866, 220-32*0.5) = (115+27.71, 204) = (142.71, 204) -->
+    <!-- i=2 Speed 70: r=56 → (115+56*0.866, 220+56*0.5) = (115+48.50, 248) = (163.50, 248) -->
+    <!-- i=3 Technique 60: r=48 → (115, 268) -->
+    <!-- i=4 Endurance 55: r=44 → (115-44*0.866, 220+44*0.5) = (115-38.10, 242) = (76.90, 242) -->
+    <!-- i=5 Agility 80: r=64 → (115-64*0.866, 220-64*0.5) = (115-55.42, 188) = (59.58, 188) -->
+    <polygon points="115,148 142.71,204 163.50,248 115,268 76.90,242 59.58,188"
+             fill="#2a1a0e" fill-opacity="0.18" stroke="#2a1a0e" stroke-width="1.4"/>
+
+    <g class="sm" text-anchor="middle">
+      <text x="115" y="132">Strength</text>
+      <text x="195" y="180">Recovery</text>
+      <text x="195" y="268">Speed</text>
+      <text x="115" y="316">Technique</text>
+      <text x="36" y="268">Endurance</text>
+      <text x="36" y="180">Agility</text>
+    </g>
+  </g>
+
+  <!-- PANEL C: another reorder -->
+  <g transform="translate(450,0)">
+    <text x="115" y="80" text-anchor="middle" class="ti">C. Reordered again</text>
+    <text x="115" y="96" text-anchor="middle" class="sm">Agility → Endurance → Recovery → Speed → Technique → Strength</text>
+
+    <circle cx="115" cy="220" r="80" fill="none" stroke="#c8c4c0" stroke-width="0.6"/>
+    <circle cx="115" cy="220" r="60" fill="none" stroke="#c8c4c0" stroke-width="0.5"/>
+    <circle cx="115" cy="220" r="40" fill="none" stroke="#c8c4c0" stroke-width="0.5"/>
+    <circle cx="115" cy="220" r="20" fill="none" stroke="#c8c4c0" stroke-width="0.5"/>
+
+    <line x1="115" y1="220" x2="115" y2="140" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="184.28" y2="180" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="184.28" y2="260" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="115" y2="300" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="45.72" y2="260" stroke="#c8c4c0" stroke-width="0.6"/>
+    <line x1="115" y1="220" x2="45.72" y2="180" stroke="#c8c4c0" stroke-width="0.6"/>
+
+    <!-- new order: Agility 80, Endurance 55, Recovery 40, Speed 70, Technique 60, Strength 90 -->
+    <!-- i=0 Agility 80: r=64 → (115, 156) -->
+    <!-- i=1 Endurance 55: r=44 → (115+38.10, 198) = (153.10, 198) -->
+    <!-- i=2 Recovery 40: r=32 → (115+27.71, 236) = (142.71, 236) -->
+    <!-- i=3 Speed 70: r=56 → (115, 276) -->
+    <!-- i=4 Technique 60: r=48 → (115-41.57, 244) = (73.43, 244) -->
+    <!-- i=5 Strength 90: r=72 → (115-62.35, 184) = (52.65, 184) -->
+    <polygon points="115,156 153.10,198 142.71,236 115,276 73.43,244 52.65,184"
+             fill="#2a1a0e" fill-opacity="0.18" stroke="#2a1a0e" stroke-width="1.4"/>
+
+    <g class="sm" text-anchor="middle">
+      <text x="115" y="132">Agility</text>
+      <text x="195" y="180">Endurance</text>
+      <text x="195" y="268">Recovery</text>
+      <text x="115" y="316">Speed</text>
+      <text x="36" y="268">Technique</text>
+      <text x="36" y="180">Strength</text>
+    </g>
+  </g>
+
+  <text x="350" y="358" text-anchor="middle" class="lb">The polygon "shape" you read is partly the axis order — a design decision, not the data.</text>
+  <text x="350" y="376" text-anchor="middle" class="sm">A bar chart of the same six values would look identical no matter how the categories are arranged.</text>
+  <text x="350" y="416" text-anchor="middle" class="cap">Same data. Three axis orders. Three different-looking performance profiles. The shape is not the data — it is the axis order.</text>
+</svg>

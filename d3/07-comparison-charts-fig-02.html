@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 7.2 — Perceptual channel accuracy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #chart { width: 100%; height: 460px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .bar { fill: var(--color-secondary); transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .bar.primary { fill: var(--color-red); }
+  .channel-label { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; fill: var(--color-ink); }
+  .channel-sub { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .value-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .callout { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ochre); font-weight: 600; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 7.2 — Perceptual channel accuracy</h1>
+<p class="subtitle">Cleveland and McGill (1984), replicated by Heer and Bostock (2010). Channels ranked from most to least accurate for quantitative comparison. The bar chart uses channel 1; truncating the baseline drops it out.</p>
+<div id="chart" role="img" aria-labelledby="ct cd"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const channelData = [
+  { rank: 1, name: 'Position along a common scale', examples: 'bar chart, dot plot, scatter', accuracy: 1.00, primary: true },
+  { rank: 2, name: 'Position along non-aligned scales', examples: 'small multiples, faceted plots', accuracy: 0.85, primary: false },
+  { rank: 3, name: 'Length (no shared baseline)',     examples: 'stacked bar segments above the first', accuracy: 0.71, primary: false },
+  { rank: 4, name: 'Angle & slope',                   examples: 'pie chart, line slope', accuracy: 0.58, primary: false },
+  { rank: 5, name: 'Area',                            examples: 'treemap, bubble chart', accuracy: 0.45, primary: false },
+  { rank: 6, name: 'Color luminance & hue',           examples: 'heatmap, choropleth', accuracy: 0.30, primary: false }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(e, d) { tooltip.html(`<strong>${d.name}</strong><br>Accuracy ≈ ${d.accuracy.toFixed(2)}`).style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px').transition().duration(150).style('opacity', 1); }
+function moveTip(e) { tooltip.style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  d3.select('#chart').selectAll('*').remove();
+  const c = document.getElementById('chart');
+  const totalWidth = c.clientWidth || 800;
+  const totalHeight = c.clientHeight || 460;
+  const margin = { top: 32, right: 80, bottom: 24, left: 280 };
+  const chartWidth = totalWidth - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top - margin.bottom;
+
+  const svg = d3.select('#chart').append('svg').attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'ct cd');
+  svg.append('title').attr('id', 'ct').text('Perceptual channel accuracy ranking');
+  svg.append('desc').attr('id', 'cd').text('Horizontal bar chart of six perceptual channels ordered by accuracy; channel 1 (position along a common scale) is the most accurate and is highlighted as the bar chart channel.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const yScaleBand = d3.scaleBand().domain(channelData.map(d => d.rank)).range([0, chartHeight]).padding(0.22);
+  const xScaleLinear = d3.scaleLinear().domain([0, 1]).range([0, chartWidth]);
+
+  gChart.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleLinear).ticks(5).tickFormat(d3.format('.1f')));
+
+  gChart.selectAll('.bar')
+    .data(channelData)
+    .join('rect')
+      .attr('class', d => d.primary ? 'bar primary' : 'bar')
+      .attr('x', 0)
+      .attr('y', d => yScaleBand(d.rank))
+      .attr('width', d => xScaleLinear(d.accuracy))
+      .attr('height', yScaleBand.bandwidth())
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.name}: accuracy ${d.accuracy.toFixed(2)}`)
+      .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // labels
+  gChart.selectAll('.channel-label')
+    .data(channelData)
+    .join('text')
+      .attr('class', 'channel-label')
+      .attr('x', -12)
+      .attr('y', d => yScaleBand(d.rank) + yScaleBand.bandwidth()/2 - 4)
+      .attr('text-anchor', 'end')
+      .text(d => `${d.rank}. ${d.name}`);
+  gChart.selectAll('.channel-sub')
+    .data(channelData)
+    .join('text')
+      .attr('class', 'channel-sub')
+      .attr('x', -12)
+      .attr('y', d => yScaleBand(d.rank) + yScaleBand.bandwidth()/2 + 10)
+      .attr('text-anchor', 'end')
+      .text(d => d.examples);
+
+  // value labels at end of bars
+  gChart.selectAll('.value-label')
+    .data(channelData)
+    .join('text')
+      .attr('class', 'value-label')
+      .attr('x', d => xScaleLinear(d.accuracy) + 8)
+      .attr('y', d => yScaleBand(d.rank) + yScaleBand.bandwidth()/2 + 4)
+      .text(d => d.accuracy.toFixed(2));
+
+  // callout
+  gChart.append('text').attr('class', 'callout')
+    .attr('x', xScaleLinear(0.55))
+    .attr('y', yScaleBand(1) - 6)
+    .text('← Truncating the baseline drops the bar chart out of this channel.');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

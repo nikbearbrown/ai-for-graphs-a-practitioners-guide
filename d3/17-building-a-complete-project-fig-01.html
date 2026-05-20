@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 17.1 — The five-phase pipeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #chart { width: 100%; height: 460px; }
+  .phase-box { fill: var(--color-white); stroke: var(--color-ink); stroke-width: 1; cursor: pointer; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .phase-head { fill: var(--color-ink); }
+  .phase-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px; fill: var(--color-white); }
+  .phase-line { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .phase-source { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .artifact-box { fill: var(--color-border); fill-opacity: 0.25; stroke: var(--color-ink); }
+  .artifact-title { font-family: 'EB Garamond', Georgia, serif; font-size: 16px; font-weight: 700; fill: var(--color-ink); }
+  .artifact-line { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-secondary); }
+  .arrow { fill: none; stroke: var(--color-ink); stroke-width: 1.5; }
+  .loop  { fill: none; stroke: var(--color-secondary); stroke-width: 0.75; stroke-dasharray: 3 3; }
+  .loop-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .strap { font-family: 'EB Garamond', Georgia, serif; font-size: 16px; font-weight: 700; fill: var(--color-ink); }
+  .strap-sub { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-secondary); font-style: italic; }
+  .phase-box:hover { opacity: 0.85; }
+  .phase-box.active { stroke: var(--color-red); stroke-width: 2; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 8px 12px; font-size: 12px; max-width: 240px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 17.1 — The five-phase pipeline</h1>
+<p class="subtitle">Audit, Schema, Generate, Verify, Handoff — each phase is the output of chapters you have already read.</p>
+<div id="chart" role="img" aria-labelledby="chart-title chart-desc"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const phaseData = [
+  { id: 'A', name: 'Phase A · Audit',    line1: 'Three framed questions',  line2: '+ data audit',          source: 'Ch. 3 & 4',
+    detail: 'Phase A produces documentation, not charts. Frame the questions; audit the data; name the gaps.' },
+  { id: 'B', name: 'Phase B · Schema',   line1: 'CLAUDE.md · DESIGN.md',    line2: 'PROJECT.md',            source: 'Ch. 00',
+    detail: 'Schema before chart. The split disciplines Claude Code’s finite instruction budget.' },
+  { id: 'C', name: 'Phase C · Generate', line1: 'Three charts from',        line2: 'four-move prompts',     source: 'Ch. 5–14',
+    detail: 'One chart at a time. Each chart prompt follows the four-move structure.' },
+  { id: 'D', name: 'Phase D · Verify',   line1: '22-point Evergreen/Emery', line2: 'audit + log',           source: 'Ch. 15',
+    detail: 'One failure at a time. Targeted follow-up. Structural before stylistic.' },
+  { id: 'E', name: 'Phase E · Handoff',  line1: 'Source, methodology,',     line2: 'README, ARIA',          source: 'whole book',
+    detail: 'A publishable chart is not a published chart. The handoff makes it trustable and reproducible.' }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+
+function draw() {
+  d3.select('#chart').selectAll('*').remove();
+  const container = document.getElementById('chart');
+  const W = container.clientWidth || 900;
+  const H = container.clientHeight || 460;
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', W).attr('height', H)
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('role', 'img')
+    .attr('aria-labelledby', 'chart-title chart-desc');
+  svg.append('title').attr('id', 'chart-title').text('The five-phase pipeline from raw data to published artifact');
+  svg.append('desc').attr('id', 'chart-desc')
+    .text('Five phase boxes — Audit, Schema, Generate, Verify, Handoff — connected by arrows into a sixth box labelled Published artifact. A dashed loop returns from the artifact to the start, labelled with Cairo’s purpose test.');
+
+  // arrow marker
+  const defs = svg.append('defs');
+  defs.append('marker')
+    .attr('id', 'arrow-fig1').attr('markerWidth', 8).attr('markerHeight', 6)
+    .attr('refX', 7).attr('refY', 3).attr('orient', 'auto')
+    .append('polygon').attr('points', '0 0, 8 3, 0 6')
+    .attr('fill', getComputedStyle(document.documentElement).getPropertyValue('--color-ink'));
+
+  // strap line
+  svg.append('text').attr('class', 'strap').attr('x', W / 2).attr('y', 24).attr('text-anchor', 'middle')
+    .text('The MBTA model — question, working code, provenance');
+  svg.append('text').attr('class', 'strap-sub').attr('x', W / 2).attr('y', 44).attr('text-anchor', 'middle')
+    .text('each phase is the output of chapters you have already read');
+
+  // boxes
+  const boxW = Math.min(140, (W - 64 - 4 * 16) / 5);
+  const boxH = 138;
+  const gap = (W - 64 - boxW * 5) / 4;
+  const boxY = 80;
+
+  const gPhases = svg.append('g').attr('class', 'g-phases');
+  phaseData.forEach((p, i) => {
+    const x = 32 + i * (boxW + gap);
+    const g = gPhases.append('g').attr('transform', `translate(${x},${boxY})`);
+    g.append('rect').attr('class', 'phase-box')
+      .attr('width', boxW).attr('height', boxH)
+      .attr('tabindex', 0)
+      .attr('aria-label', `${p.name}: ${p.line1} ${p.line2}; ${p.detail}`)
+      .on('mouseover', (event) => {
+        d3.select(event.currentTarget).classed('active', true);
+        tooltip.html(`<strong>${p.name}</strong><br/>${p.detail}`)
+          .style('left', (event.pageX + 12) + 'px')
+          .style('top', (event.pageY - 28) + 'px')
+          .transition().duration(150).style('opacity', 1);
+      })
+      .on('mousemove', (event) => {
+        tooltip.style('left', (event.pageX + 12) + 'px')
+          .style('top', (event.pageY - 28) + 'px');
+      })
+      .on('mouseout', (event) => {
+        d3.select(event.currentTarget).classed('active', false);
+        tooltip.transition().duration(100).style('opacity', 0);
+      });
+    g.append('rect').attr('class', 'phase-head')
+      .attr('width', boxW).attr('height', 22).attr('pointer-events', 'none');
+    g.append('text').attr('class', 'phase-title')
+      .attr('x', boxW / 2).attr('y', 15).attr('text-anchor', 'middle')
+      .attr('pointer-events', 'none').text(p.name);
+    g.append('text').attr('class', 'phase-line')
+      .attr('x', boxW / 2).attr('y', 50).attr('text-anchor', 'middle')
+      .attr('pointer-events', 'none').text(p.line1);
+    g.append('text').attr('class', 'phase-line')
+      .attr('x', boxW / 2).attr('y', 68).attr('text-anchor', 'middle')
+      .attr('pointer-events', 'none').text(p.line2);
+    g.append('line').attr('x1', 14).attr('y1', 88).attr('x2', boxW - 14).attr('y2', 88)
+      .attr('stroke', 'var(--color-border)').attr('pointer-events', 'none');
+    g.append('text').attr('class', 'phase-source')
+      .attr('x', boxW / 2).attr('y', 104).attr('text-anchor', 'middle')
+      .attr('pointer-events', 'none').text('draws from');
+    g.append('text').attr('class', 'phase-source')
+      .attr('x', boxW / 2).attr('y', 118).attr('text-anchor', 'middle')
+      .attr('pointer-events', 'none').text(p.source);
+
+    if (i < 4) {
+      svg.append('line').attr('class', 'arrow')
+        .attr('x1', x + boxW + 2).attr('y1', boxY + boxH / 2)
+        .attr('x2', x + boxW + gap - 2).attr('y2', boxY + boxH / 2)
+        .attr('marker-end', 'url(#arrow-fig1)');
+    }
+  });
+
+  // terminal artifact under Phase E
+  const lastX = 32 + 4 * (boxW + gap);
+  const artW = boxW + 40;
+  const artX = Math.min(W - 32 - artW, lastX + boxW / 2 - artW / 2);
+  const artY = boxY + boxH + 32;
+  svg.append('line').attr('class', 'arrow')
+    .attr('x1', lastX + boxW / 2).attr('y1', boxY + boxH + 2)
+    .attr('x2', lastX + boxW / 2).attr('y2', artY - 2)
+    .attr('marker-end', 'url(#arrow-fig1)');
+  const gArt = svg.append('g').attr('transform', `translate(${artX},${artY})`);
+  gArt.append('rect').attr('class', 'artifact-box').attr('width', artW).attr('height', 66);
+  gArt.append('text').attr('class', 'artifact-title')
+    .attr('x', artW / 2).attr('y', 26).attr('text-anchor', 'middle')
+    .text('Published artifact');
+  gArt.append('text').attr('class', 'artifact-line')
+    .attr('x', artW / 2).attr('y', 44).attr('text-anchor', 'middle')
+    .text('three charts · PROJECT.md');
+  gArt.append('text').attr('class', 'artifact-line')
+    .attr('x', artW / 2).attr('y', 58).attr('text-anchor', 'middle')
+    .text('README · audit log');
+
+  // Cairo loop
+  const startX = artX + 20;
+  const startY = artY + 33;
+  const endX = 32 + boxW / 2;
+  const endY = boxY + boxH + 12;
+  svg.append('path').attr('class', 'loop')
+    .attr('d', `M ${startX} ${startY + 30} C ${(startX + endX) / 2} ${startY + 90}, ${(startX + endX) / 2} ${startY + 90}, ${endX} ${endY}`)
+    .attr('marker-end', 'url(#arrow-fig1)');
+  svg.append('text').attr('class', 'loop-label')
+    .attr('x', (startX + endX) / 2).attr('y', startY + 80).attr('text-anchor', 'middle')
+    .text('if Cairo’s purpose test fails → return to the question');
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

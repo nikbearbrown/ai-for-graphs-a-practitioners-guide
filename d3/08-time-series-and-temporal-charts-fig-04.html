@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 8.4 — Compressed axis vs gap-marked axis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 300px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .line { fill: none; stroke: var(--color-ink); stroke-width: 1.6; }
+  .line-dashed { fill: none; stroke: var(--color-ink); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.6; }
+  .line-bad { stroke: var(--color-ochre); stroke-width: 2.6; }
+  .gap-region { fill: var(--color-border); opacity: 0.55; }
+  .dot { fill: var(--color-ink); }
+  .annot { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .verdict { padding: 6px 10px; font-size: 12px; font-weight: 600; text-align: center; border: 1px solid var(--color-border); margin-top: 12px; }
+  .verdict.bad { color: var(--color-red); border-color: var(--color-red); }
+  .verdict.good { color: var(--color-ink); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 80ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 8.4 — Compressed axis vs gap-marked axis</h1>
+<p class="subtitle">Twenty-four months of monthly data, with March 2021 missing. Left collapses the axis; right preserves the calendar position and breaks the line.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Compressed axis</div>
+    <div class="panel-sub">Feb 2021 placed adjacent to Apr 2021 — the slope is fabricated</div>
+    <div id="chartCompressed" class="chart"></div>
+    <div class="verdict bad">violates the don&apos;t-skip-intervals rule</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Gap-marked axis</div>
+    <div class="panel-sub">March 2021 kept at calendar position; line breaks; gap shaded</div>
+    <div id="chartGap" class="chart"></div>
+    <div class="verdict good">honors the don&apos;t-skip-intervals rule</div>
+  </div>
+</div>
+<p class="caption">The Gestalt principle of continuity rewards the eye for tracing a connected line. When the line crosses a fabricated gap, the eye reads a faster trend than the data supports.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+// 24 monthly values for Jan 2020..Dec 2021; index 14 = March 2021 missing
+const seq = [40, 42, 46, 50, 55, 58, 60, 64, 66, 68, 70, 72, 70, 70, null, 76, 78, 80, 84, 88, 90, 92, 95, 97];
+const allMonths = d3.utcMonth.range(new Date(Date.UTC(2020, 0, 1)), new Date(Date.UTC(2022, 0, 1)));
+const fullData = allMonths.map((dateObj, i) => ({ dateObj, value: seq[i] }));
+const presentData = fullData.filter(d => d.value !== null);
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip')
+  .style('position', 'absolute').style('pointer-events', 'none').style('opacity', 0)
+  .style('background', 'var(--color-ink)').style('color', 'var(--color-white)')
+  .style('padding', '6px 10px').style('font-size', '12px');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+const fmtMonth = d3.utcFormat('%b %Y');
+
+function drawCompressed() {
+  const sel = '#chartCompressed';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 420;
+  const totalHeight = container.clientHeight || 300;
+  const margin = { top: 16, right: 16, bottom: 48, left: 44 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(sel).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'cmp-t cmp-d');
+  svg.append('title').attr('id', 'cmp-t').text('Compressed axis time series with March 2021 omitted');
+  svg.append('desc').attr('id', 'cmp-d').text('Feb 2021 sits next to Apr 2021 on the axis, producing a steeper slope than the actual two-month change supports.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  // Compressed x — band by index over present points only
+  const xScalePoint = d3.scalePoint()
+    .domain(presentData.map((d, i) => i))
+    .range([0, chartWidth]);
+  const yScaleLinear = d3.scaleLinear().domain([0, 100]).range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScalePoint)
+      .tickValues([0, 7, 13, 14, 22])
+      .tickFormat(i => fmtMonth(presentData[i].dateObj)))
+    .selectAll('text').attr('transform', 'rotate(-35)').style('text-anchor', 'end');
+  gChart.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(yScaleLinear).ticks(5));
+
+  const lineGen = d3.line().x((d, i) => xScalePoint(i)).y(d => yScaleLinear(d.value)).curve(d3.curveLinear);
+  gChart.append('path').datum(presentData).attr('class', 'line').attr('d', lineGen);
+
+  // Highlight the fake-slope segment between index 13 (Feb21) and 14 (Apr21)
+  const fakeSeg = [presentData[13], presentData[14]];
+  gChart.append('path').datum(fakeSeg).attr('class', 'line line-bad').attr('d', lineGen);
+
+  // Annotation arrow
+  const x1 = xScalePoint(13);
+  const x2 = xScalePoint(14);
+  const y1 = yScaleLinear(presentData[13].value);
+  const y2 = yScaleLinear(presentData[14].value);
+  gChart.append('text').attr('class', 'annot')
+    .attr('x', (x1 + x2) / 2).attr('y', Math.min(y1, y2) - 14).attr('text-anchor', 'middle')
+    .text('fake slope (2-month gap drawn as 1)');
+
+  // dots for present points
+  gChart.selectAll('circle.pt').data(presentData).join('circle')
+    .attr('class', 'pt dot')
+    .attr('cx', (d, i) => xScalePoint(i))
+    .attr('cy', d => yScaleLinear(d.value))
+    .attr('r', 2.4)
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `${fmtMonth(d.dateObj)}: ${d.value}`)
+    .on('mouseover', (event, d) => showTip(event, `<strong>${fmtMonth(d.dateObj)}</strong>: ${d.value}`))
+    .on('mousemove', moveTip)
+    .on('mouseout', hideTip);
+}
+
+function drawGap() {
+  const sel = '#chartGap';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 420;
+  const totalHeight = container.clientHeight || 300;
+  const margin = { top: 16, right: 16, bottom: 48, left: 44 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(sel).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'gap-t gap-d');
+  svg.append('title').attr('id', 'gap-t').text('Gap-marked time series — March 2021 held at its calendar position');
+  svg.append('desc').attr('id', 'gap-d').text('A continuous monthly axis with the missing month shaded; the line breaks across the gap so slope reflects the true two-month change.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleUtc = d3.scaleUtc()
+    .domain([allMonths[0], allMonths[allMonths.length - 1]])
+    .range([0, chartWidth]);
+  const yScaleLinear = d3.scaleLinear().domain([0, 100]).range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleUtc)
+      .tickValues([allMonths[0], allMonths[7], allMonths[13], allMonths[14], allMonths[15], allMonths[23]])
+      .tickFormat(fmtMonth))
+    .selectAll('text').attr('transform', 'rotate(-35)').style('text-anchor', 'end');
+  gChart.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(yScaleLinear).ticks(5));
+
+  // gap region
+  const gapStart = xScaleUtc(allMonths[14]);
+  const gapWidth = xScaleUtc(allMonths[15]) - gapStart;
+  gChart.append('rect').attr('class', 'gap-region')
+    .attr('x', gapStart - gapWidth / 2).attr('y', 0)
+    .attr('width', gapWidth).attr('height', chartHeight);
+  gChart.append('text').attr('class', 'annot')
+    .attr('x', gapStart).attr('y', 18).attr('text-anchor', 'middle')
+    .text('data missing');
+
+  // line with d3 defined() so nulls break the path
+  const lineGen = d3.line()
+    .defined(d => d.value !== null)
+    .x(d => xScaleUtc(d.dateObj))
+    .y(d => yScaleLinear(d.value))
+    .curve(d3.curveLinear);
+  gChart.append('path').datum(fullData).attr('class', 'line').attr('d', lineGen);
+
+  // dashed bridge across the gap
+  const beforeGap = fullData[13];
+  const afterGap = fullData[15];
+  gChart.append('path')
+    .datum([beforeGap, afterGap])
+    .attr('class', 'line-dashed')
+    .attr('d', d3.line().x(d => xScaleUtc(d.dateObj)).y(d => yScaleLinear(d.value)));
+
+  // dots
+  gChart.selectAll('circle.pt')
+    .data(fullData.filter(d => d.value !== null))
+    .join('circle')
+      .attr('class', 'pt dot')
+      .attr('cx', d => xScaleUtc(d.dateObj))
+      .attr('cy', d => yScaleLinear(d.value))
+      .attr('r', 2.4)
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${fmtMonth(d.dateObj)}: ${d.value}`)
+      .on('mouseover', (event, d) => showTip(event, `<strong>${fmtMonth(d.dateObj)}</strong>: ${d.value}`))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
+}
+
+function draw() { drawCompressed(); drawGap(); }
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartCompressed'));
+ro.observe(document.getElementById('chartGap'));
+</script>
+</body>
+</html>

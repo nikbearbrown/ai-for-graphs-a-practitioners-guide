@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 4.6 — A short history of chart-type invention</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #timeline { width: 100%; height: 460px; }
+  .axis-line { stroke: var(--color-ink); stroke-width: 1.25; }
+  .tick-line { stroke: var(--color-secondary); }
+  .tick-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .leader { stroke: var(--color-secondary); stroke-dasharray: 3 2; }
+  .dot { fill: var(--color-ink); }
+  .dot.primary { fill: var(--color-red); }
+  .event:hover .dot, .event:focus .dot { fill: var(--color-red); }
+  .event-year { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; fill: var(--color-ink); }
+  .event-name { font-family: 'EB Garamond', Georgia, serif; font-size: 13px; fill: var(--color-ink); }
+  .event-who  { font-family: 'EB Garamond', Georgia, serif; font-size: 11px; font-style: italic; fill: var(--color-secondary); }
+  .event-problem { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 65ch; font-style: italic; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 280px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 4.6 — A short history of chart-type invention</h1>
+<p class="subtitle">Each entry pairs the inventor with the original communication problem. Knowing the problem clarifies when the chart works and when it does not.</p>
+<div id="timeline"></div>
+<p class="caption">Hover or focus an event for the original problem in full. Source: Friendly (2008), "A Brief History of Data Visualization."</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const events = [
+  { year: 1786, name: 'bar chart',   who: 'William Playfair',   problem: 'trade deficits by country',      side: 'top',    primary: true  },
+  { year: 1786, name: 'line chart',  who: 'William Playfair',   problem: 'trade values over time',         side: 'bottom', primary: true  },
+  { year: 1826, name: 'choropleth',  who: 'Charles Dupin',      problem: 'illiteracy rate per department', side: 'top',    primary: false },
+  { year: 1854, name: 'dot map',     who: 'John Snow',          problem: 'cholera deaths by address',      side: 'bottom', primary: false },
+  { year: 1858, name: 'polar area',  who: 'Florence Nightingale', problem: 'preventable deaths by month',  side: 'top',    primary: false },
+  { year: 1869, name: 'flow map',    who: 'Charles Minard',     problem: 'army depletion on the march',    side: 'bottom', primary: false },
+  { year: 1991, name: 'treemap',     who: 'Ben Shneiderman',    problem: 'disk usage in nested directories', side: 'top',  primary: false }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.name}</strong> · ${d.year}<br/>${d.who}<br/><em>${d.problem}</em>`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  d3.select('#timeline').selectAll('*').remove();
+  const container = document.getElementById('timeline');
+  const totalWidth = container.clientWidth || 900;
+  const totalHeight = container.clientHeight || 460;
+  const margin = { top: 32, right: 48, bottom: 48, left: 48 };
+  const chartWidth = totalWidth - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top - margin.bottom;
+
+  const svg = d3.select('#timeline').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'tl-t tl-d');
+  svg.append('title').attr('id', 'tl-t').text('Timeline of chart-type inventions, 1786 to 1991');
+  svg.append('desc').attr('id', 'tl-d').text('Seven inventions placed along a horizontal time axis, each labeled with year, inventor, and the original communication problem.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleLinear = d3.scaleLinear().domain([1780, 1995]).range([0, chartWidth]);
+  const axisY = chartHeight / 2;
+
+  // axis
+  gChart.append('line').attr('class', 'axis-line')
+    .attr('x1', 0).attr('y1', axisY).attr('x2', chartWidth).attr('y2', axisY);
+
+  // decade ticks
+  const decades = d3.range(1800, 2000, 20);
+  const gAxis = gChart.append('g').attr('aria-hidden', 'true');
+  decades.forEach(yr => {
+    gAxis.append('line').attr('class', 'tick-line')
+      .attr('x1', xScaleLinear(yr)).attr('y1', axisY)
+      .attr('x2', xScaleLinear(yr)).attr('y2', axisY + 6);
+    gAxis.append('text').attr('class', 'tick-label')
+      .attr('x', xScaleLinear(yr)).attr('y', axisY + 22).attr('text-anchor', 'middle')
+      .text(yr);
+  });
+
+  const leaderTop    = 60;
+  const leaderBottom = 60;
+
+  const gEvents = gChart.append('g');
+  const evt = gEvents.selectAll('.event').data(events)
+    .join('g')
+      .attr('class', 'event')
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.year}, ${d.name} by ${d.who}: ${d.problem}`)
+      .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  evt.append('circle')
+    .attr('class', d => 'dot' + (d.primary ? ' primary' : ''))
+    .attr('cx', d => xScaleLinear(d.year))
+    .attr('cy', axisY)
+    .attr('r', 4.5);
+
+  evt.append('line')
+    .attr('class', 'leader')
+    .attr('x1', d => xScaleLinear(d.year))
+    .attr('x2', d => xScaleLinear(d.year))
+    .attr('y1', d => d.side === 'top' ? axisY - 6 : axisY + 6)
+    .attr('y2', d => d.side === 'top' ? axisY - leaderTop : axisY + leaderBottom);
+
+  evt.append('text')
+    .attr('class', 'event-year')
+    .attr('x', d => xScaleLinear(d.year))
+    .attr('y', d => d.side === 'top' ? axisY - leaderTop - 36 : axisY + leaderBottom + 16)
+    .attr('text-anchor', 'middle')
+    .text(d => d.year);
+
+  evt.append('text')
+    .attr('class', 'event-name')
+    .attr('x', d => xScaleLinear(d.year))
+    .attr('y', d => d.side === 'top' ? axisY - leaderTop - 20 : axisY + leaderBottom + 32)
+    .attr('text-anchor', 'middle')
+    .text(d => d.name);
+
+  evt.append('text')
+    .attr('class', 'event-who')
+    .attr('x', d => xScaleLinear(d.year))
+    .attr('y', d => d.side === 'top' ? axisY - leaderTop - 6 : axisY + leaderBottom + 48)
+    .attr('text-anchor', 'middle')
+    .text(d => d.who);
+
+  evt.append('text')
+    .attr('class', 'event-problem')
+    .attr('x', d => xScaleLinear(d.year))
+    .attr('y', d => d.side === 'top' ? axisY - leaderTop + 8 : axisY + leaderBottom + 64)
+    .attr('text-anchor', 'middle')
+    .text(d => d.problem);
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('timeline'));
+</script>
+</body>
+</html>

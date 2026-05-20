@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t06 d06">
+  <title id="t06">Radial bars vs linear bars — same data, different channel</title>
+  <desc id="d06">Eight cognitive-domain scores rendered as a radial bar chart on the left and as a linear horizontal bar chart on the right.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar6" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+
+  <!-- LEFT: RADIAL -->
+  <g transform="translate(180,210)">
+    <text x="-148" y="-180" class="ti">Radial bars — length along a curve</text>
+    <text x="-148" y="-164" class="sm">channel ranking ≈ 0.71 (length without shared baseline)</text>
+    <!-- center circle -->
+    <circle cx="0" cy="0" r="22" fill="none" stroke="#c8c4c0"/>
+    <!-- 8 wedges. inner radius 22, outer radius proportional to value. -->
+    <!-- values: Memory 96, Pattern 92, Logic 82, Quant 71, Language 64, Moral 47, Empathy 42, Embodied 35 -->
+    <!-- max outer radius 130 -->
+    <!-- segment 45 degrees each; start at -90 (top) -->
+    <g stroke="#fdfcfb" stroke-width="1">
+      <!-- segment helper: each is annular sector, but we'll use thick arc lines as approximation -->
+      <!-- segment 0: -90 to -45 -->
+      <path d="M 0,-22 A 22 22 0 0 1 15.56,-15.56 L 91.92,-91.92 A 130 130 0 0 0 0,-130 Z"   fill="#2a1a0e"/>
+      <!-- segment 1: -45 to 0 -->
+      <path d="M 15.56,-15.56 A 22 22 0 0 1 22,0 L 124.45,0 A 124.45 124.45 0 0 0 88.00,-88.00 Z" fill="#4a4540"/>
+      <!-- I'll switch to simpler annular wedge shapes — let me re-do as <g> per slice with simple computed paths -->
+    </g>
+    <!-- Recompute slices clean using algorithmic paths -->
+    <g id="radial-slices">
+      <!-- Slice 0 (Memory, val 96): angles -90 to -45, outer r = 130 -->
+      <path d="M 15.5563,-15.5563 L 91.9239,-91.9239 A 130,130 0 0,1 130,0 L 22,0 A 22,22 0 0,0 15.5563,-15.5563 Z" fill="#2a1a0e"/>
+      <!-- Slice 1 (Pattern, val 92): -45 to 0, r=125 -->
+      <path d="M 22,0 L 125,0 A 125,125 0 0,1 88.3883,88.3883 L 15.5563,15.5563 A 22,22 0 0,0 22,0 Z" fill="#3a2d20"/>
+      <!-- Slice 2 (Logic, val 82): 0 to 45, r=115 -->
+      <path d="M 15.5563,15.5563 L 81.3173,81.3173 A 115,115 0 0,1 0,115 L 0,22 A 22,22 0 0,0 15.5563,15.5563 Z" fill="#4a4540"/>
+      <!-- Slice 3 (Quant, val 71): 45 to 90, r=104 -->
+      <path d="M 0,22 L 0,104 A 104,104 0 0,1 -73.5391,73.5391 L -15.5563,15.5563 A 22,22 0 0,0 0,22 Z" fill="#6a625c"/>
+      <!-- Slice 4 (Language, val 64): 90 to 135, r=97 -->
+      <path d="M -15.5563,15.5563 L -68.589,68.589 A 97,97 0 0,1 -97,0 L -22,0 A 22,22 0 0,0 -15.5563,15.5563 Z" fill="#8a8480"/>
+      <!-- Slice 5 (Moral, val 47): 135 to 180, r=80 -->
+      <path d="M -22,0 L -80,0 A 80,80 0 0,1 -56.5685,-56.5685 L -15.5563,-15.5563 A 22,22 0 0,0 -22,0 Z" fill="#a8a4a0"/>
+      <!-- Slice 6 (Empathy, val 42): 180 to 225, r=75 -->
+      <path d="M -15.5563,-15.5563 L -53.0330,-53.0330 A 75,75 0 0,1 0,-75 L 0,-22 A 22,22 0 0,0 -15.5563,-15.5563 Z" fill="#b8b4b0"/>
+      <!-- Slice 7 (Embodied, val 35): 225 to 270, r=68 -->
+      <path d="M 0,-22 L 0,-68 A 68,68 0 0,1 48.0833,-48.0833 L 15.5563,-15.5563 A 22,22 0 0,0 0,-22 Z" fill="#c8c4c0"/>
+    </g>
+    <!-- callout: outer arc sweeps more area than inner -->
+    <path d="M 110 -40 L 150 -100" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar6)"/>
+    <text x="156" y="-104" class="sm">outer arc</text>
+    <text x="156" y="-92" class="sm">sweeps more area</text>
+    <path d="M 60 30 L 160 60" fill="none" stroke="#2a1a0e" stroke-dasharray="3 2" marker-end="url(#ar6)"/>
+    <text x="156" y="74" class="sm">than inner arc</text>
+    <text x="156" y="86" class="sm">at equal radial length</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="360" y1="20" x2="360" y2="420" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT: LINEAR -->
+  <g transform="translate(380,40)">
+    <text x="0" y="0" class="ti">Linear bars — position along a common scale</text>
+    <text x="0" y="14" class="sm">channel ranking ≈ 1.00 (highest available accuracy)</text>
+    <!-- horizontal bars, 8 rows. y start 30, row height 30 -->
+    <line x1="110" y1="36" x2="110" y2="280" stroke="#8a8480"/>
+    <line x1="110" y1="280" x2="290" y2="280" stroke="#8a8480"/>
+    <text x="110" y="295" text-anchor="middle" class="sm">0</text>
+    <text x="200" y="295" text-anchor="middle" class="sm">50</text>
+    <text x="290" y="295" text-anchor="middle" class="sm">100</text>
+    <!-- bar length factor: 180px / 100 = 1.8 -->
+    <!-- row heights: y = 36..276 step 30, bar h 20 -->
+    <g>
+      <rect x="110" y="40"  width="172.8" height="20" fill="#2a1a0e"/>
+      <text x="100" y="55"  text-anchor="end" class="sm">Memory</text>
+      <text x="286" y="55"  text-anchor="end" class="sm" fill="#fdfcfb">96</text>
+      <rect x="110" y="70"  width="165.6" height="20" fill="#3a2d20"/>
+      <text x="100" y="85"  text-anchor="end" class="sm">Pattern</text>
+      <text x="278" y="85"  text-anchor="end" class="sm" fill="#fdfcfb">92</text>
+      <rect x="110" y="100" width="147.6" height="20" fill="#4a4540"/>
+      <text x="100" y="115" text-anchor="end" class="sm">Logic</text>
+      <text x="260" y="115" text-anchor="end" class="sm" fill="#fdfcfb">82</text>
+      <rect x="110" y="130" width="127.8" height="20" fill="#6a625c"/>
+      <text x="100" y="145" text-anchor="end" class="sm">Quant</text>
+      <text x="240" y="145" text-anchor="end" class="sm" fill="#fdfcfb">71</text>
+      <rect x="110" y="160" width="115.2" height="20" fill="#8a8480"/>
+      <text x="100" y="175" text-anchor="end" class="sm">Language</text>
+      <text x="228" y="175" text-anchor="end" class="sm" fill="#fdfcfb">64</text>
+      <rect x="110" y="190" width="84.6"  height="20" fill="#a8a4a0"/>
+      <text x="100" y="205" text-anchor="end" class="sm">Moral</text>
+      <text x="197" y="205" text-anchor="end" class="sm">47</text>
+      <rect x="110" y="220" width="75.6"  height="20" fill="#b8b4b0"/>
+      <text x="100" y="235" text-anchor="end" class="sm">Empathy</text>
+      <text x="188" y="235" text-anchor="end" class="sm">42</text>
+      <rect x="110" y="250" width="63.0"  height="20" fill="#c8c4c0"/>
+      <text x="100" y="265" text-anchor="end" class="sm">Embodied</text>
+      <text x="176" y="265" text-anchor="end" class="sm">35</text>
+    </g>
+  </g>
+
+  <text x="350" y="440" text-anchor="middle" class="cap">Outer arcs cover more visual angle than inner arcs. Two equal radial lengths are not visually equal areas.</text>
+</svg>

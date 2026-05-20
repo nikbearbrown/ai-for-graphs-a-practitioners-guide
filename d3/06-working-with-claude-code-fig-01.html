@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 5.1 — Vague vs four-move prompt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; font-style: italic; }
+  .chart { width: 100%; height: 360px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .bar { transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .bar.uniform { fill: var(--color-secondary); }
+  .bar.primary  { fill: var(--color-red); }
+  .bar.rank-2   { fill: var(--color-ink); }
+  .bar.rank-3   { fill: #787878; }
+  .bar.rank-4   { fill: #ADADAD; }
+  .bar.rank-5   { fill: var(--color-border); }
+  .value-label  { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-ink); }
+  .note { color: var(--color-secondary); font-size: 12px; margin-top: 12px; }
+  .note ul { padding-left: 18px; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 20px; max-width: 65ch; font-style: italic; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 5.1 — Vague vs four-move prompt</h1>
+<p class="subtitle">Same humanitarian-funding dataset. Nine words on the left, two hundred on the right.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Vague prompt (9 words)</div>
+    <div class="panel-sub">"Make a bar chart of humanitarian funding by sector."</div>
+    <div id="chartVague" class="chart" role="img" aria-label="Vertical column chart with truncated y-axis starting at 40 million dollars, uniform color bars, source-file order, no value labels."></div>
+    <div class="note">
+      <ul>
+        <li>y-axis starts at $40M, not zero</li>
+        <li>bars uniform — no rank reinforcement</li>
+        <li>source-file order, not sorted by value</li>
+        <li>long labels crowd horizontally</li>
+        <li>no value labels — reader counts ticks</li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Four-move prompt (≈ 200 words)</div>
+    <div class="panel-sub">Show → Say → Constrain → Verify</div>
+    <div id="chartFourMove" class="chart" role="img" aria-label="Horizontal bar chart sorted descending, zero baseline, sequential luminance encoding funding, with direct value labels at the right end of each bar."></div>
+    <div class="note">
+      <ul>
+        <li>zero baseline (proportional ink, ch. 5)</li>
+        <li>sorted descending (effectiveness)</li>
+        <li>luminance redundancy on funding</li>
+        <li>value labels at bar ends</li>
+        <li>horizontal orientation handles long labels</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<p class="caption">What 200 words buys: the upstream channel decomposition becomes the artifact's structure.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const barData = [
+  { sector: 'Food Security',        funding: 380.2 },
+  { sector: 'Shelter',              funding: 142.7 },
+  { sector: 'Water and Sanitation', funding:  98.4 },
+  { sector: 'Health',               funding:  87.3 },
+  { sector: 'Protection',           funding:  64.1 }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.sector}</strong>: $${d.funding.toFixed(1)}M`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawVague() {
+  const selector = '#chartVague';
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 400;
+  const totalHeight = container.clientHeight || 360;
+  const margin = { top: 16, right: 16, bottom: 72, left: 56 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'tVague dVague');
+  svg.append('title').attr('id', 'tVague').text('Vague-prompt vertical column chart');
+  svg.append('desc').attr('id', 'dVague').text('Vertical columns with truncated y-axis from $40M to $400M, uniform color, source-file order.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleBand = d3.scaleBand()
+    .domain(barData.map(d => d.sector))
+    .range([0, chartWidth])
+    .padding(0.18);
+
+  // Truncated axis — the failure being illustrated.
+  const yScaleLinear = d3.scaleLinear()
+    .domain([40, 400])
+    .range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis')
+    .attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleBand));
+
+  gChart.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(yScaleLinear).ticks(5).tickFormat(d => '$' + d + 'M'));
+
+  gChart.selectAll('.bar')
+    .data(barData)
+    .join('rect')
+      .attr('class', 'bar uniform')
+      .attr('x', d => xScaleBand(d.sector))
+      .attr('y', d => yScaleLinear(d.funding))
+      .attr('width', xScaleBand.bandwidth())
+      .attr('height', d => chartHeight - yScaleLinear(d.funding))
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.sector}: $${d.funding}M`)
+      .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+}
+
+function drawFourMove() {
+  const selector = '#chartFourMove';
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 400;
+  const totalHeight = container.clientHeight || 360;
+  const margin = { top: 16, right: 80, bottom: 40, left: 160 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'tFour dFour');
+  svg.append('title').attr('id', 'tFour').text('Four-move-prompt horizontal bar chart');
+  svg.append('desc').attr('id', 'dFour').text('Horizontal bars sorted descending with zero baseline, luminance redundancy, and direct value labels.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const sorted = [...barData].sort((a, b) => b.funding - a.funding);
+
+  const yScaleBand = d3.scaleBand()
+    .domain(sorted.map(d => d.sector))
+    .range([0, chartHeight])
+    .padding(0.22);
+
+  // Zero baseline — proportional ink.
+  const xScaleLinear = d3.scaleLinear()
+    .domain([0, 400])
+    .range([0, chartWidth]);
+
+  gChart.append('g').attr('class', 'axis')
+    .attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleLinear).tickValues([0, 100, 200, 300, 400]).tickFormat(d => '$' + d + 'M'));
+
+  gChart.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(yScaleBand));
+
+  gChart.selectAll('.bar')
+    .data(sorted)
+    .join('rect')
+      .attr('class', (d, i) => `bar ${i === 0 ? 'primary' : 'rank-' + (i + 1)}`)
+      .attr('x', 0)
+      .attr('y', d => yScaleBand(d.sector))
+      .attr('width', d => xScaleLinear(d.funding))
+      .attr('height', yScaleBand.bandwidth())
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.sector}: $${d.funding}M`)
+      .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  gChart.selectAll('.value-label')
+    .data(sorted)
+    .join('text')
+      .attr('class', 'value-label')
+      .attr('x', d => xScaleLinear(d.funding) + 6)
+      .attr('y', d => yScaleBand(d.sector) + yScaleBand.bandwidth() / 2 + 4)
+      .text(d => '$' + d.funding.toFixed(1) + 'M');
+}
+
+function draw() {
+  drawVague();
+  drawFourMove();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartVague'));
+ro.observe(document.getElementById('chartFourMove'));
+</script>
+</body>
+</html>

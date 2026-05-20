@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 480" role="img" aria-labelledby="t12-01 d12-01">
+  <title id="t12-01">Treemap vs tree diagram — same hierarchy, two questions</title>
+  <desc id="d12-01">A government-budget hierarchy with four departments, three to four programs each, and two to three line items each, rendered as a proportional treemap on the left and a structural tree diagram on the right.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .lbw{ font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #fdfcfb; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .smw{ font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #fdfcfb; }
+      .cap{ font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar12-01" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="480" fill="#fdfcfb"/>
+
+  <!-- TITLE -->
+  <text x="350" y="26" text-anchor="middle" class="ti">Same hierarchy, two questions — the chart cannot answer both</text>
+
+  <!-- LEFT: TREEMAP -->
+  <text x="32" y="56" class="ti">Treemap — proportions</text>
+  <text x="32" y="72" class="sm">area of each rectangle ∝ budget</text>
+
+  <!-- Outer treemap frame: 32,84 to 332,384 (300 wide, 300 tall = 90000 sq px) -->
+  <!-- Departments (totals): Health 38, Education 28, Defense 20, Transport 14  → sum 100 -->
+  <!-- Squarified-ish layout. Left column = Health (38) + Education (28) = 66; right column = Defense (20) + Transport (14) = 34. -->
+  <!-- Left col width = 198, right col width = 102. Heights: Health=300*38/66≈173, Education=300-173=127. Defense=300*20/34≈176, Transport=124. -->
+
+  <!-- HEALTH 38 (dark) — x 32-230, y 84-257 -->
+  <rect x="32" y="84" width="198" height="173" fill="#2a1a0e"/>
+  <!-- programs inside Health: Hospitals 20, Prevention 10, Research 8  (split horizontally) -->
+  <!-- widths: H 198*20/38≈104, P 198*10/38≈52, R 198-104-52=42 -->
+  <rect x="32"  y="84" width="104" height="173" fill="none" stroke="#fdfcfb" stroke-width="1.5"/>
+  <rect x="136" y="84" width="52"  height="173" fill="none" stroke="#fdfcfb" stroke-width="1.5"/>
+  <rect x="188" y="84" width="42"  height="173" fill="none" stroke="#fdfcfb" stroke-width="1.5"/>
+  <!-- line items inside Hospitals (20): Staff 12, Equipment 8 (vertical split) → h1 = 173*12/20=104, h2=69 -->
+  <line x1="32" y1="188" x2="136" y2="188" stroke="#fdfcfb" stroke-width="0.8"/>
+  <!-- line items inside Prevention (10): Programs 6, Outreach 4 -->
+  <line x1="136" y1="84" x2="188" y2="84" stroke="none"/>
+  <line x1="136" y1="188" x2="188" y2="188" stroke="#fdfcfb" stroke-width="0.8"/>
+  <!-- Research (8): Grants 5, Trials 3 -->
+  <line x1="188" y1="192" x2="230" y2="192" stroke="#fdfcfb" stroke-width="0.8"/>
+  <text x="40" y="100" class="lbw">Health  38</text>
+  <text x="40" y="118" class="smw">Hospitals 20</text>
+  <text x="40" y="244" class="smw">Equipment 8</text>
+  <text x="144" y="100" class="smw">Prev. 10</text>
+  <text x="192" y="100" class="smw">Res. 8</text>
+
+  <!-- EDUCATION 28 (mid) — x 32-230, y 257-384 (h=127) -->
+  <rect x="32" y="257" width="198" height="127" fill="#4a4540"/>
+  <!-- programs: K-12 16, Higher 8, Vocational 4 → widths: 113, 57, 28 -->
+  <rect x="32"  y="257" width="113" height="127" fill="none" stroke="#fdfcfb" stroke-width="1.5"/>
+  <rect x="145" y="257" width="57"  height="127" fill="none" stroke="#fdfcfb" stroke-width="1.5"/>
+  <rect x="202" y="257" width="28"  height="127" fill="none" stroke="#fdfcfb" stroke-width="1.5"/>
+  <text x="40" y="274" class="lbw">Education  28</text>
+  <text x="40" y="290" class="smw">K-12 16</text>
+  <text x="151" y="274" class="smw">Higher 8</text>
+  <text x="206" y="274" class="smw">Voc. 4</text>
+
+  <!-- DEFENSE 20 (light) — x 230-332, y 84-260 (h=176) -->
+  <rect x="230" y="84" width="102" height="176" fill="#8a8480"/>
+  <rect x="230" y="84" width="102" height="100" fill="none" stroke="#fdfcfb" stroke-width="1.5"/>
+  <rect x="230" y="184" width="102" height="76" fill="none" stroke="#fdfcfb" stroke-width="1.5"/>
+  <text x="238" y="100" class="lbw">Defense  20</text>
+  <text x="238" y="118" class="smw">Personnel 12</text>
+  <text x="238" y="200" class="smw">Equip. 8</text>
+
+  <!-- TRANSPORT 14 (lightest) — x 230-332, y 260-384 -->
+  <rect x="230" y="260" width="102" height="124" fill="#c8c4c0"/>
+  <rect x="230" y="260" width="102" height="71" fill="none" stroke="#fdfcfb" stroke-width="1.5"/>
+  <rect x="230" y="331" width="102" height="53" fill="none" stroke="#fdfcfb" stroke-width="1.5"/>
+  <text x="238" y="276" class="lb">Transport  14</text>
+  <text x="238" y="293" class="sm">Highways 8</text>
+  <text x="238" y="347" class="sm">Rail 6</text>
+
+  <!-- Treemap callout -->
+  <text x="32" y="406" class="sm">✓ Health is largest — instantly visible.</text>
+  <text x="32" y="420" class="sm">✗ Who reports to whom — invisible.</text>
+
+  <!-- DIVIDER -->
+  <line x1="350" y1="50" x2="350" y2="440" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT: TREE DIAGRAM -->
+  <text x="370" y="56" class="ti">Tree diagram — structure</text>
+  <text x="370" y="72" class="sm">node size constant; topology is the encoding</text>
+
+  <!-- Tree: Secretary (root) → 4 Dept dirs → programs → line items. Use Health branch detailed. -->
+  <!-- root -->
+  <circle cx="528" cy="100" r="6" fill="#2a1a0e"/>
+  <text x="540" y="103" class="lb">Secretary</text>
+
+  <!-- level 2: 4 dept directors -->
+  <circle cx="400" cy="160" r="5" fill="#4a4540"/>
+  <text x="396" y="153" text-anchor="end" class="sm">Health</text>
+  <circle cx="488" cy="160" r="5" fill="#4a4540"/>
+  <text x="484" y="153" text-anchor="end" class="sm">Educ.</text>
+  <circle cx="568" cy="160" r="5" fill="#4a4540"/>
+  <text x="576" y="153" class="sm">Defense</text>
+  <circle cx="650" cy="160" r="5" fill="#4a4540"/>
+  <text x="658" y="153" class="sm">Trans.</text>
+
+  <line x1="528" y1="106" x2="400" y2="154" stroke="#8a8480" stroke-width="0.8"/>
+  <line x1="528" y1="106" x2="488" y2="154" stroke="#8a8480" stroke-width="0.8"/>
+  <line x1="528" y1="106" x2="568" y2="154" stroke="#8a8480" stroke-width="0.8"/>
+  <line x1="528" y1="106" x2="650" y2="154" stroke="#8a8480" stroke-width="0.8"/>
+
+  <!-- level 3: Health programs (Hospitals / Prevention / Research). Show 3 under Health, plus single nodes under others. -->
+  <circle cx="372" cy="230" r="4" fill="#8a8480"/>
+  <circle cx="400" cy="230" r="4" fill="#8a8480"/>
+  <circle cx="428" cy="230" r="4" fill="#8a8480"/>
+  <text x="372" y="246" text-anchor="middle" class="sm">Hosp.</text>
+  <text x="400" y="246" text-anchor="middle" class="sm">Prev.</text>
+  <text x="428" y="246" text-anchor="middle" class="sm">Res.</text>
+  <line x1="400" y1="166" x2="372" y2="226" stroke="#8a8480" stroke-width="0.8"/>
+  <line x1="400" y1="166" x2="400" y2="226" stroke="#8a8480" stroke-width="0.8"/>
+  <line x1="400" y1="166" x2="428" y2="226" stroke="#8a8480" stroke-width="0.8"/>
+
+  <!-- programs under other depts: 3 under Educ, 2 under Defense, 2 under Trans -->
+  <circle cx="470" cy="230" r="4" fill="#8a8480"/>
+  <circle cx="488" cy="230" r="4" fill="#8a8480"/>
+  <circle cx="506" cy="230" r="4" fill="#8a8480"/>
+  <line x1="488" y1="166" x2="470" y2="226" stroke="#8a8480" stroke-width="0.8"/>
+  <line x1="488" y1="166" x2="488" y2="226" stroke="#8a8480" stroke-width="0.8"/>
+  <line x1="488" y1="166" x2="506" y2="226" stroke="#8a8480" stroke-width="0.8"/>
+
+  <circle cx="556" cy="230" r="4" fill="#8a8480"/>
+  <circle cx="580" cy="230" r="4" fill="#8a8480"/>
+  <line x1="568" y1="166" x2="556" y2="226" stroke="#8a8480" stroke-width="0.8"/>
+  <line x1="568" y1="166" x2="580" y2="226" stroke="#8a8480" stroke-width="0.8"/>
+
+  <circle cx="638" cy="230" r="4" fill="#8a8480"/>
+  <circle cx="662" cy="230" r="4" fill="#8a8480"/>
+  <line x1="650" y1="166" x2="638" y2="226" stroke="#8a8480" stroke-width="0.8"/>
+  <line x1="650" y1="166" x2="662" y2="226" stroke="#8a8480" stroke-width="0.8"/>
+
+  <!-- level 4: line items (only under Health branch shown to keep readable) -->
+  <circle cx="364" cy="306" r="3" fill="#c8c4c0"/>
+  <circle cx="380" cy="306" r="3" fill="#c8c4c0"/>
+  <line x1="372" y1="234" x2="364" y2="302" stroke="#c8c4c0" stroke-width="0.7"/>
+  <line x1="372" y1="234" x2="380" y2="302" stroke="#c8c4c0" stroke-width="0.7"/>
+
+  <circle cx="392" cy="306" r="3" fill="#c8c4c0"/>
+  <circle cx="408" cy="306" r="3" fill="#c8c4c0"/>
+  <line x1="400" y1="234" x2="392" y2="302" stroke="#c8c4c0" stroke-width="0.7"/>
+  <line x1="400" y1="234" x2="408" y2="302" stroke="#c8c4c0" stroke-width="0.7"/>
+
+  <circle cx="420" cy="306" r="3" fill="#c8c4c0"/>
+  <circle cx="436" cy="306" r="3" fill="#c8c4c0"/>
+  <line x1="428" y1="234" x2="420" y2="302" stroke="#c8c4c0" stroke-width="0.7"/>
+  <line x1="428" y1="234" x2="436" y2="302" stroke="#c8c4c0" stroke-width="0.7"/>
+
+  <!-- Annotation: pointing at one branch -->
+  <path d="M 660 320 L 660 200 L 660 168" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar12-01)"/>
+  <text x="668" y="332" class="lb">two reports — Trans.</text>
+
+  <text x="370" y="406" class="sm">✓ Reporting structure — instantly visible.</text>
+  <text x="370" y="420" class="sm">✗ Budget proportions — every node is equal.</text>
+
+  <!-- FOOTER CAPTION -->
+  <text x="350" y="464" text-anchor="middle" class="cap">Choose the question first. Proportions point one way; structure points the other. The form follows the answer.</text>
+</svg>

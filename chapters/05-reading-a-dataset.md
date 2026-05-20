@@ -67,7 +67,8 @@ The reconciliation is to start with the reader's question and work backward. Wha
 
 The MBTA project's three guiding questions make this concrete: "When and where are the trains crowded or delayed? How do snowstorms affect the system? How congested is my route?" These are reader-focused. Each is specific enough that a chart can be evaluated against whether it answers it. The analyst's version of these questions might have been "what is the system's load distribution" or "how does ridership respond to weather variables" — same data, different framing. Barry and Card's contribution was choosing the reader's framing, not the analyst's.
 
-<!-- → [INFOGRAPHIC: two-column contrast diagram — left column labeled "Analyst's question," right column labeled "Reader's question." Three paired examples, one per row, using the MBTA questions: analyst version on the left (e.g., "What is the system's load distribution?"), reader version on the right (e.g., "When and where are the trains crowded?"). A center column labels the difference in each pair: "exploratory vs. summative," "producer's interest vs. audience's need," "open-ended vs. actionable." Caption: "Same data. Different framing. Different chart."] -->
+![Two-column contrast diagram. Left column labeled "Analyst's question" lists three exploratory MBTA framings. Right column labeled "Reader's question" lists the matching summative versions. A center column names the difference for each pair.](../images/05-reading-a-dataset-fig-01.png)
+*Figure 5.1 — Analyst's question vs reader's question. Same data; different framing; different chart.*
 
 ---
 
@@ -159,7 +160,8 @@ When the dataset does not support the reader's question, there are three moves, 
 
 The move to avoid is the fourth one, which is not honest: producing a chart that *looks like* it answers the original question while actually answering a different one because the data only supported the different one. This is not ignorance. It is the failure to read the data before reaching for the code.
 
-<!-- → [INFOGRAPHIC: decision tree — starting node "Does the dataset support the reader's question?" branching to yes (proceed) and no; the no branch splits into three: "Can you get the missing data?" (yes → find better data), "Is there a related question worth answering?" (yes → reframe), "Must you proceed anyway?" (yes → acknowledge the gap). A fourth branch labeled "Substitute a different question without acknowledging it" leads off the diagram to a node labeled "This is the failure mode." Caption: "Three honest moves. One failure mode."] -->
+![Decision tree starting from the root question of whether the dataset supports the reader's question. The yes branch leads to "Proceed." The no branch splits into three honest sub-moves — find better data, reframe the question, acknowledge the gap — each gated by a follow-up question. A fourth dashed branch labels the failure mode: substitute a different question without saying so.](../images/05-reading-a-dataset-fig-02.png)
+*Figure 5.2 — Three honest moves. One failure mode.*
 
 ---
 
@@ -183,7 +185,8 @@ In all three cases, a single-variable choropleth fails the check.
 
 This chart honestly answers the question the data supports. The "compared with what?" is explicit. The chart's claims do not exceed its data. This is the chart the audit produces — and it is a different chart than the one you would have built by walking directly to Claude Code with the original brief.
 
-<!-- → [INFOGRAPHIC: five-step vertical audit flow for the food assistance example — one box per step, labeled Step 1 through Step 5. Each box shows: the step name, the input (what you look at), and the output (what it tells you). Arrows connecting downward. The final box (Step 5) shows the chart specification that emerges from the audit, with key message, data structure, functional category, and chart form all filled in. Caption: "The audit is not overhead. It is how the specification gets built."] -->
+![Vertical flow of five audit steps for the food-assistance example. Each of the first four boxes names the step, its input, and its output, with arrows pointing downward. The fifth box, set apart, holds the chart specification — key message, data structure, functional category, and chart form — derived from the four steps above.](../images/05-reading-a-dataset-fig-03.png)
+*Figure 5.3 — The audit is not overhead. It is how the specification gets built.*
 
 ---
 
@@ -333,6 +336,42 @@ to the chart-selection step and the Claude Code prompt.
 ---
 
 *Tags: reading-data, data-types, categorical, ordinal, quantitative, temporal, geographic, analyst-question, reader-question, Cairo, compared-with-what, FT-visual-vocabulary, MBTA-project, FiveThirtyEight-Nigeria, gap-audit, pre-chart-audit*
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 5.1 — Analyst vs reader question
+
+Build an interactive two-column contrast diagram comparing three MBTA-style question pairs. Layout: a header row with three labels ("Analyst's question", "What differs", "Reader's question") followed by three rows of paired cards. Pair 1 contrasts "What is the system's load distribution across stations and time-of-day?" with "When and where are the trains crowded or delayed?" labeled "exploratory → summative." Pair 2 contrasts "How does ridership respond to weather variables across multiple winters?" with "How do snowstorms affect the system?" labeled "producer's interest → audience's need." Pair 3 contrasts "What patterns exist in passenger-trip duration across the network?" with "How congested is my route?" labeled "open-ended → actionable." Cards use var(--color-white) fill, var(--color-border) stroke. Hover on a row highlights both cards in var(--color-red) and shows a tooltip with the differential label. Use ResizeObserver to redraw. Wrap text inside cards. Standalone HTML, D3 v7 from the pinned CDN, EB Garamond for card text, Inter for headers and labels, accessible (role, aria-labelledby, title, desc), responsive, prefers-reduced-motion honored.
+
+> Reference implementation: `d3/05-reading-a-dataset-fig-01.html`
+
+---
+
+### Figure 5.2 — Three honest moves decision tree
+
+Build a horizontal-then-vertical decision tree. Root node: "Does the dataset support the reader's question?" Right branch labeled "yes" leads to a "Proceed" node. Left dashed-red branch labeled "substitute silently (not honest)" leads to a dark "The failure mode" node with the sub-line "visual claim outruns data." Center "no" branch trunk goes down and splits into three gate boxes: "Can you get the missing data?", "Is there a related question worth answering?", "Must you proceed anyway?" — each followed by an outcome card ("Find better data", "Reframe the question", "Acknowledge the gap") with a one-line elaboration. Use var(--color-secondary) for ordinary edges and var(--color-red) dashed for the failure edge. Add SVG arrow markers in defs. Outcome cards have heavier borders. Hover on outcomes and failure shows a tooltip with the detail string. Wrap text inside boxes. Use ResizeObserver to redraw. Standalone HTML, D3 v7, EB Garamond for outcome titles, Inter for node text and gates, accessible, responsive, prefers-reduced-motion honored.
+
+> Reference implementation: `d3/05-reading-a-dataset-fig-02.html`
+
+---
+
+### Figure 5.3 — Five-step audit flow
+
+Build a vertical five-step audit flow for the food-assistance example. Each of the first four steps renders as a full-width card with a numbered circle badge on the left, a step title in EB Garamond, and two labeled lines: "input:" and "output:". Step 1 input: "the dataset columns"; output: "state (geographic), assistance $ (quantitative, ratio), population (quantitative, denominator)." Step 2 input: "analyst version vs reader versions"; output: "policymaker, peer NGO, general reader — three readers, three potential charts." Step 3 input: "the reader's primary question"; output: "per-capita rate is the comparison; absolute dollars without it would lie." Step 4 input: "the eight relationships"; output: "assistance per capita: yes. assistance per food-insecure household: no — annotate the gap." Vertical arrows connect each box downward. Step 5 is a taller "Chart specification" card with a red badge and four rows: key message, data structure, functional category, specific form. Hover on any step shows a tooltip with a sentence of additional detail. Wrap text. Use ResizeObserver to redraw. Standalone HTML, D3 v7, EB Garamond for step titles, Inter for everything else, accessible, responsive, prefers-reduced-motion honored.
+
+> Reference implementation: `d3/05-reading-a-dataset-fig-03.html`
 
 ---
 

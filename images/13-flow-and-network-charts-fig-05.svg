@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t1305 d1305">
+  <title id="t1305">Four design decisions in one Sankey diagram</title>
+  <desc id="d1305">An annotated Sankey of energy sources through transformations to end uses, with callouts naming proportional widths, node ordering, color follows source, and label placement.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .badge { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #fdfcfb; }
+      .nd { fill: #2a1a0e; }
+    </style>
+    <marker id="ar13e" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">Every decision is a channel specification. None is a default.</text>
+
+  <!-- Sankey chart area (left of callouts) -->
+  <g transform="translate(40,70)">
+    <!-- source nodes (left): Oil, Coal, Gas (Oil dark = source hue 1, Coal medium = hue 2, Gas light = hue 3) -->
+    <rect class="nd" x="0" y="40"  width="14" height="80"/>
+    <rect class="nd" x="0" y="130" width="14" height="50"/>
+    <rect class="nd" x="0" y="190" width="14" height="30"/>
+    <text x="-6" y="58"  text-anchor="end" class="sm">Oil</text>
+    <text x="-6" y="148" text-anchor="end" class="sm">Coal</text>
+    <text x="-6" y="208" text-anchor="end" class="sm">Gas</text>
+    <!-- mid nodes -->
+    <rect class="nd" x="160" y="40"  width="14" height="70"/>
+    <rect class="nd" x="160" y="120" width="14" height="100"/>
+    <text x="180" y="58"  class="sm">Transport</text>
+    <text x="180" y="138" class="sm">Electricity</text>
+    <!-- right nodes -->
+    <rect class="nd" x="320" y="40"  width="14" height="85"/>
+    <rect class="nd" x="320" y="135" width="14" height="85"/>
+    <text x="340" y="58"  class="sm">Industrial</text>
+    <text x="340" y="153" class="sm">Residential</text>
+
+    <!-- Flows source -> transform: oil hue dark, coal hue medium, gas hue light -->
+    <!-- Oil -> Transport (big) -->
+    <path d="M 14 40 C 87 40, 87 40, 160 40 L 160 100 C 87 100, 87 100, 14 100 Z" fill="#2a1a0e" fill-opacity="0.6"/>
+    <!-- Oil -> Electricity (small) -->
+    <path d="M 14 100 C 87 100, 87 120, 160 120 L 160 140 C 87 140, 87 120, 14 120 Z" fill="#2a1a0e" fill-opacity="0.45"/>
+    <!-- Coal -> Electricity (medium-large) -->
+    <path d="M 14 130 C 87 130, 87 140, 160 140 L 160 190 C 87 190, 87 180, 14 180 Z" fill="#4a4540" fill-opacity="0.6"/>
+    <!-- Gas -> Electricity (small) -->
+    <path d="M 14 190 C 87 190, 87 190, 160 190 L 160 220 C 87 220, 87 220, 14 220 Z" fill="#8a8480" fill-opacity="0.6"/>
+
+    <!-- Flows transform -> end use: hues carry forward -->
+    <!-- Transport -> Industrial (60, oil hue) -->
+    <path d="M 174 40 C 247 40, 247 40, 320 40 L 320 100 C 247 100, 247 100, 174 100 Z" fill="#2a1a0e" fill-opacity="0.55"/>
+    <!-- Transport -> Residential (10) -->
+    <path d="M 174 100 C 247 100, 247 135, 320 135 L 320 145 C 247 145, 247 110, 174 110 Z" fill="#2a1a0e" fill-opacity="0.35"/>
+    <!-- Electricity -> Industrial (25, coal/gas hue) -->
+    <path d="M 174 120 C 247 120, 247 100, 320 100 L 320 125 C 247 125, 247 145, 174 145 Z" fill="#4a4540" fill-opacity="0.55"/>
+    <!-- Electricity -> Residential (75, coal/gas hue) -->
+    <path d="M 174 145 C 247 145, 247 145, 320 145 L 320 220 C 247 220, 247 220, 174 220 Z" fill="#8a8480" fill-opacity="0.55"/>
+
+    <!-- value labels on the dominant flows -->
+    <text x="87" y="68" text-anchor="middle" class="sm">60</text>
+    <text x="87" y="160" text-anchor="middle" class="sm">50</text>
+    <text x="247" y="68" text-anchor="middle" class="sm">60</text>
+    <text x="247" y="183" text-anchor="middle" class="sm">75</text>
+
+    <!-- numbered badges next to the four touch points -->
+    <!-- (1) proportional widths -->
+    <circle cx="92" cy="35" r="9" fill="#2a1a0e"/>
+    <text x="92" y="38" text-anchor="middle" class="badge">1</text>
+    <!-- (2) node ordering -->
+    <circle cx="167" cy="232" r="9" fill="#2a1a0e"/>
+    <text x="167" y="235" text-anchor="middle" class="badge">2</text>
+    <!-- (3) color follows source -->
+    <circle cx="247" cy="35" r="9" fill="#2a1a0e"/>
+    <text x="247" y="38" text-anchor="middle" class="badge">3</text>
+    <!-- (4) labels on dominant flows -->
+    <circle cx="87" cy="195" r="9" fill="#2a1a0e"/>
+    <text x="87" y="198" text-anchor="middle" class="badge">4</text>
+  </g>
+
+  <!-- Right-side numbered legend -->
+  <g transform="translate(440,70)">
+    <g>
+      <circle cx="8" cy="8" r="9" fill="#2a1a0e"/>
+      <text x="8" y="11" text-anchor="middle" class="badge">1</text>
+      <text x="24" y="6"  class="lb">Proportional widths</text>
+      <text x="24" y="20" class="sm">Largest band ~2× the next; ratio</text>
+      <text x="24" y="32" class="sm">matches data ratio (Tufte).</text>
+    </g>
+    <g transform="translate(0,52)">
+      <circle cx="8" cy="8" r="9" fill="#2a1a0e"/>
+      <text x="8" y="11" text-anchor="middle" class="badge">2</text>
+      <text x="24" y="6"  class="lb">Node ordering</text>
+      <text x="24" y="20" class="sm">Within each column, nodes sorted</text>
+      <text x="24" y="32" class="sm">to minimize crossing bands.</text>
+    </g>
+    <g transform="translate(0,104)">
+      <circle cx="8" cy="8" r="9" fill="#2a1a0e"/>
+      <text x="8" y="11" text-anchor="middle" class="badge">3</text>
+      <text x="24" y="6"  class="lb">Color follows source</text>
+      <text x="24" y="20" class="sm">Each source hue cascades through</text>
+      <text x="24" y="32" class="sm">the flows it generates.</text>
+    </g>
+    <g transform="translate(0,156)">
+      <circle cx="8" cy="8" r="9" fill="#2a1a0e"/>
+      <text x="8" y="11" text-anchor="middle" class="badge">4</text>
+      <text x="24" y="6"  class="lb">Labels on dominant flows</text>
+      <text x="24" y="20" class="sm">Direct annotation on thick bands;</text>
+      <text x="24" y="32" class="sm">tooltip handles smaller flows.</text>
+    </g>
+  </g>
+
+  <text x="350" y="432" text-anchor="middle" class="cap">Specify the four decisions in the prompt and Claude Code implements them precisely. Leave them to defaults and you get a Sankey-shaped guess.</text>
+</svg>

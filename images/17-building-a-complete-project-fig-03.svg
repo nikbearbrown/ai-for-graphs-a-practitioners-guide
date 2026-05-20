@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t17-03 d17-03">
+  <title id="t17-03">The session-loading split — CLAUDE.md every session, DESIGN.md only for visual decisions</title>
+  <desc id="d17-03">Two columns showing which file to load in which session. The left column lists rules that apply to every session (CLAUDE.md). The right column lists visual rules that apply only when visual decisions are made (DESIGN.md). A dotted boundary names the instruction-budget reason.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .h2  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+      .lb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .eyebrow { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">The instruction budget is finite — load only what the session needs</text>
+  <text x="350" y="44" text-anchor="middle" class="eyebrow">≈ 60 lines reliably retained per file; combined loading risks silent constraint-dropping</text>
+
+  <!-- LEFT COLUMN: every session -->
+  <g transform="translate(32,68)">
+    <rect width="296" height="296" fill="#fdfcfb" stroke="#2a1a0e"/>
+    <rect width="296" height="24" fill="#2a1a0e"/>
+    <text x="148" y="17" text-anchor="middle" class="h2" fill="#fdfcfb">Every session → CLAUDE.md</text>
+
+    <text x="16" y="44" class="h2">Coding constitution</text>
+    <text x="16" y="58" class="sm">Rules that apply to every chart in the project,</text>
+    <text x="16" y="72" class="sm">regardless of what is being built.</text>
+
+    <g transform="translate(16,88)">
+      <text x="0" y="14" class="lb">·  D3 version (7.9.0, pinned CDN)</text>
+      <text x="0" y="34" class="lb">·  Zero baseline for bars and areas</text>
+      <text x="0" y="54" class="lb">·  d3.scaleSqrt for bubble radius</text>
+      <text x="0" y="74" class="lb">·  Equal-area projection for choropleths</text>
+      <text x="0" y="94" class="lb">·  Naming conventions (camelCase + suffix)</text>
+      <text x="0" y="114" class="lb">·  Accessibility defaults — ARIA, title, desc</text>
+      <text x="0" y="134" class="lb">·  Event signature (event, d)</text>
+      <text x="0" y="154" class="lb">·  Tooltip and resize patterns</text>
+    </g>
+
+    <text x="148" y="280" text-anchor="middle" class="sm">these are the rules Claude Code might violate</text>
+  </g>
+
+  <!-- divider with eyebrow -->
+  <g transform="translate(350,68)">
+    <line x1="0" y1="0" x2="0" y2="296" stroke="#c8c4c0" stroke-width="0.75" stroke-dasharray="3 3"/>
+    <text x="0" y="138" text-anchor="middle" class="eyebrow" transform="rotate(-90 0 138)">load on demand</text>
+  </g>
+
+  <!-- RIGHT COLUMN: visual-decision sessions -->
+  <g transform="translate(372,68)">
+    <rect width="296" height="296" fill="#fdfcfb" stroke="#2a1a0e"/>
+    <rect width="296" height="24" fill="#2a1a0e"/>
+    <text x="148" y="17" text-anchor="middle" class="h2" fill="#fdfcfb">Visual sessions → +DESIGN.md</text>
+
+    <text x="16" y="44" class="h2">Visual constitution</text>
+    <text x="16" y="58" class="sm">Rules that apply only when a visual decision</text>
+    <text x="16" y="72" class="sm">is being made — colour, type, spacing.</text>
+
+    <g transform="translate(16,88)">
+      <text x="0" y="14" class="lb">·  Six-variable colour palette (hex values)</text>
+      <text x="0" y="34" class="lb">·  Typography (EB Garamond / Inter / Mono)</text>
+      <text x="0" y="54" class="lb">·  Spacing scale (4–64 px)</text>
+      <text x="0" y="74" class="lb">·  Dark-mode inversion</text>
+      <text x="0" y="94" class="lb">·  Responsive breakpoints</text>
+      <text x="0" y="114" class="lb">·  Animation durations and easing</text>
+      <text x="0" y="134" class="lb">·  Border, radius, shadow tokens</text>
+      <text x="0" y="154" class="lb">·  State system (hover, focus, disabled)</text>
+    </g>
+
+    <text x="148" y="280" text-anchor="middle" class="sm">irrelevant — and wasted budget — on data-only sessions</text>
+  </g>
+
+  <!-- caption -->
+  <text x="350" y="396" text-anchor="middle" class="cap">If the session involves any visual choice, load both. If it is pure data or layout logic, load CLAUDE.md alone.</text>
+</svg>

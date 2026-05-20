@@ -1,0 +1,262 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 540" role="img" aria-labelledby="t403 d403">
+  <title id="t403">Three failure modes, three redesigns</title>
+  <desc id="d403">Three rows of before-and-after chart redesigns. Familiarity bias: pie chart redrawn as a sorted bar chart. Aesthetic-first: 3D exploded donut redrawn as a flat stacked bar. Software-default: tangled rainbow line chart redrawn as small multiples.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .rl  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; letter-spacing: 0.4px; }
+      .rd  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .lab { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #8a8480; letter-spacing: 0.5px; }
+      .ph  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-style: italic; fill: #2a1a0e; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .tk  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 9px; fill: #8a8480; }
+    </style>
+    <marker id="ar403" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#4a4540"/>
+    </marker>
+  </defs>
+  <rect width="700" height="540" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Three failure modes. Three redesigns. The corrective in each case is the same — write the message first.</text>
+
+  <!-- Column headers -->
+  <text x="150"  y="56" text-anchor="end"    class="lab">FAILURE MODE</text>
+  <text x="270"  y="56" text-anchor="middle" class="lab">BEFORE</text>
+  <text x="540"  y="56" text-anchor="middle" class="lab">AFTER</text>
+
+  <!-- ============= ROW 1: FAMILIARITY BIAS — pie → sorted bar ============= -->
+  <!-- Row band y: 76..200 -->
+  <g>
+    <text x="22"  y="98"  class="rl">FAMILIARITY BIAS</text>
+    <text x="22"  y="118" class="rd">"parts of a whole, so pie"</text>
+    <text x="22"  y="132" class="rd">— skipped step 1.</text>
+    <text x="22"  y="150" class="ph">Message:</text>
+    <text x="22"  y="164" class="rd">"which got the most?"</text>
+    <text x="22"  y="182" class="cap">a ranking task</text>
+  </g>
+
+  <!-- BEFORE: pie chart 8 slices (cramped). Center (270, 138), r=44 -->
+  <g>
+    <!-- 8 slices: 28, 19, 14, 11, 9, 8, 6, 5 — angles 100.8, 68.4, 50.4, 39.6, 32.4, 28.8, 21.6, 18 -->
+    <!-- compute cumulative angles deg: 0, 100.8, 169.2, 219.6, 259.2, 291.6, 320.4, 342.0, 360 -->
+    <!-- pos formula: x = 270 + 44*sin θ, y = 138 - 44*cos θ -->
+    <!-- θ=0 → (270, 94)
+         θ=100.8: sin=0.9823, cos=-0.1874 → (313.22, 146.25)
+         θ=169.2: sin=0.1874, cos=-0.9823 → (278.24, 181.22)
+         θ=219.6: sin=-0.6374, cos=-0.7705 → (241.95, 171.90)
+         θ=259.2: sin=-0.9823, cos=-0.1874 → (226.78, 146.25)
+         θ=291.6: sin=-0.9298, cos=0.3681 → (229.09, 121.80)
+         θ=320.4: sin=-0.6374, cos=0.7705 → (241.95, 104.10)
+         θ=342: sin=-0.3090, cos=0.9511 → (256.40, 96.15)
+         θ=360 → (270, 94) -->
+    <path d="M 270 138 L 270 94 A 44 44 0 0 1 313.22 146.25 Z" fill="#4a4540"/>
+    <path d="M 270 138 L 313.22 146.25 A 44 44 0 0 1 278.24 181.22 Z" fill="#8a8480"/>
+    <path d="M 270 138 L 278.24 181.22 A 44 44 0 0 1 241.95 171.90 Z" fill="#c8c4c0"/>
+    <path d="M 270 138 L 241.95 171.90 A 44 44 0 0 1 226.78 146.25 Z" fill="#4a4540"/>
+    <path d="M 270 138 L 226.78 146.25 A 44 44 0 0 1 229.09 121.80 Z" fill="#8a8480"/>
+    <path d="M 270 138 L 229.09 121.80 A 44 44 0 0 1 241.95 104.10 Z" fill="#c8c4c0"/>
+    <path d="M 270 138 L 241.95 104.10 A 44 44 0 0 1 256.40 96.15 Z" fill="#4a4540"/>
+    <path d="M 270 138 L 256.40 96.15 A 44 44 0 0 1 270 94 Z" fill="#8a8480"/>
+    <text x="270" y="200" text-anchor="middle" class="cap">8-slice pie · angle as channel</text>
+  </g>
+
+  <!-- arrow row 1 -->
+  <line x1="368" y1="138" x2="416" y2="138" stroke="#4a4540" stroke-width="1.25" marker-end="url(#ar403)"/>
+
+  <!-- AFTER: sorted horizontal bars. x=440..640 (200 wide). max=28 → 1 unit = 7.14px -->
+  <g>
+    <line x1="440" y1="92" x2="440" y2="188" stroke="#4a4540" stroke-width="0.75"/>
+    <rect x="440" y="96"  width="200"   height="11" fill="#2a1a0e"/>
+    <rect x="440" y="110" width="135.7" height="11" fill="#4a4540"/>
+    <rect x="440" y="124" width="100"   height="11" fill="#4a4540"/>
+    <rect x="440" y="138" width="78.6"  height="11" fill="#4a4540"/>
+    <rect x="440" y="152" width="64.3"  height="11" fill="#8a8480"/>
+    <rect x="440" y="166" width="57.1"  height="11" fill="#8a8480"/>
+    <rect x="440" y="180" width="42.9"  height="11" fill="#8a8480"/>
+    <text x="540" y="200" text-anchor="middle" class="cap">sorted bar · length as channel</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="22" y1="218" x2="678" y2="218" stroke="#c8c4c0" stroke-dasharray="2 3"/>
+
+  <!-- ============= ROW 2: AESTHETIC-FIRST — 3D donut → stacked bar ============= -->
+  <!-- Row band y: 234..358 -->
+  <g>
+    <text x="22"  y="256" class="rl">AESTHETIC-FIRST</text>
+    <text x="22"  y="276" class="rd">"a 3D donut looks</text>
+    <text x="22"  y="290" class="rd">impressive on the slide."</text>
+    <text x="22"  y="308" class="ph">Message:</text>
+    <text x="22"  y="322" class="rd">"how do the four parts</text>
+    <text x="22"  y="336" class="rd">make up the whole?"</text>
+    <text x="22"  y="354" class="cap">a composition claim</text>
+  </g>
+
+  <!-- BEFORE: 3D exploded donut (cautionary illustration).
+       Two ellipses (front + top), 4 separated wedges, tilted. -->
+  <g>
+    <!-- back shadow ellipse for 3D depth -->
+    <ellipse cx="270" cy="305" rx="56" ry="14" fill="#c8c4c0" opacity="0.6"/>
+    <!-- front face: tilted donut. We draw 4 wedge ellipse-clipped chunks.
+         Simpler: draw 4 paths that look like exploded slices from above. -->
+    <!-- centre (270, 298), rx=52 ry=20 (tilted) -->
+    <!-- slice 1: 40% top-right, offset (+6,-3) -->
+    <path d="M 276 295 L 322 290.5 A 52 20 0 0 0 290.6 281.95 Z" fill="#4a4540"/>
+    <path d="M 276 295 L 290.6 281.95 A 52 20 0 0 0 258.4 281.13 Z" fill="#8a8480" transform="translate(0,-3)"/>
+    <!-- redo with proper exploded look — easier with 4 simple offset arcs -->
+  </g>
+  <!-- Replace the above incomplete donut with a cleaner exploded-donut illustration -->
+  <g>
+    <!-- erase the above-area by drawing background -->
+    <rect x="200" y="232" width="160" height="130" fill="#fdfcfb"/>
+
+    <!-- 3D donut: outer tilted ring + 4 separated wedges with depth.
+         Center (270, 300). rx=52, ry=20. inner rx=22, ry=8.
+         Wedges spread out radially with small offset. -->
+    <!-- Draw four "top-face" wedges as filled ellipse-arcs. -->
+    <!-- For schematic, we use four arcs of the tilted ring, each offset away from center. -->
+
+    <!-- slice A (40%): top-right, fill #4a4540, offset +6,-2 -->
+    <g transform="translate(6,-2)">
+      <path d="M 270 300
+               m 0,-20
+               a 52 20 0 1 0 38,12
+               L 270 300 Z" fill="#4a4540"/>
+      <path d="M 270 280
+               a 52 20 0 0 1 38 32"
+            fill="none" stroke="#2a1a0e" stroke-width="0.5"/>
+    </g>
+    <!-- slice B (30%): bottom-right, fill #8a8480, offset +4,+4 -->
+    <g transform="translate(4,4)">
+      <path d="M 270 300
+               L 308 312
+               a 52 20 0 0 1 -38 8
+               Z" fill="#8a8480"/>
+    </g>
+    <!-- slice C (18%): bottom-left, fill #c8c4c0, offset -4,+3 -->
+    <g transform="translate(-4,3)">
+      <path d="M 270 300
+               L 270 320
+               a 52 20 0 0 1 -45 -14
+               Z" fill="#c8c4c0"/>
+    </g>
+    <!-- slice D (12%): top-left, fill #4a4540, offset -5,-3 -->
+    <g transform="translate(-5,-3)">
+      <path d="M 270 300
+               L 225 286
+               a 52 20 0 0 1 45 -6
+               Z" fill="#4a4540"/>
+    </g>
+
+    <!-- inner hole — donut effect -->
+    <ellipse cx="270" cy="300" rx="20" ry="7" fill="#fdfcfb" stroke="#c8c4c0" stroke-width="0.5"/>
+
+    <!-- 3D side walls — fake depth bands beneath wedges -->
+    <path d="M 308 314 a 52 20 0 0 1 -76 0 L 232 322 a 52 20 0 0 0 76 0 Z" fill="#8a8480" opacity="0.5"/>
+
+    <!-- decorative slice-percent labels floating -->
+    <text x="320" y="278" class="tk">40%</text>
+    <text x="328" y="320" class="tk">30%</text>
+    <text x="206" y="316" class="tk">18%</text>
+    <text x="222" y="270" class="tk">12%</text>
+
+    <text x="270" y="358" text-anchor="middle" class="cap">3D exploded donut · perspective distorts proportion</text>
+  </g>
+
+  <!-- arrow row 2 -->
+  <line x1="368" y1="298" x2="416" y2="298" stroke="#4a4540" stroke-width="1.25" marker-end="url(#ar403)"/>
+
+  <!-- AFTER: flat 100% stacked bar (horizontal) -->
+  <g>
+    <!-- One horizontal stacked bar from x=440 to 640, height 28, y=284..312 -->
+    <!-- proportions 40, 30, 18, 12 → widths 80, 60, 36, 24 (sum=200) -->
+    <rect x="440" y="284" width="80" height="28" fill="#2a1a0e"/>
+    <rect x="520" y="284" width="60" height="28" fill="#4a4540"/>
+    <rect x="580" y="284" width="36" height="28" fill="#8a8480"/>
+    <rect x="616" y="284" width="24" height="28" fill="#c8c4c0"/>
+    <text x="480" y="302" text-anchor="middle" class="tk" fill="#fdfcfb">40%</text>
+    <text x="550" y="302" text-anchor="middle" class="tk" fill="#fdfcfb">30%</text>
+    <text x="598" y="302" text-anchor="middle" class="tk">18%</text>
+    <text x="628" y="302" text-anchor="middle" class="tk">12%</text>
+    <!-- 0 and 100 ticks -->
+    <line x1="440" y1="316" x2="440" y2="320" stroke="#8a8480"/>
+    <line x1="640" y1="316" x2="640" y2="320" stroke="#8a8480"/>
+    <text x="440" y="330" text-anchor="middle" class="tk">0%</text>
+    <text x="640" y="330" text-anchor="middle" class="tk">100%</text>
+    <text x="540" y="354" text-anchor="middle" class="cap">flat stacked bar · shared baseline restores proportion</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="22" y1="374" x2="678" y2="374" stroke="#c8c4c0" stroke-dasharray="2 3"/>
+
+  <!-- ============= ROW 3: SOFTWARE-DEFAULT — rainbow lines → small multiples ============= -->
+  <!-- Row band y: 390..520 -->
+  <g>
+    <text x="22"  y="412" class="rl">SOFTWARE-DEFAULT</text>
+    <text x="22"  y="432" class="rd">"the chart wizard picked</text>
+    <text x="22"  y="446" class="rd">a rainbow line series."</text>
+    <text x="22"  y="464" class="ph">Message:</text>
+    <text x="22"  y="478" class="rd">"how has each of five</text>
+    <text x="22"  y="492" class="rd">series changed over time?"</text>
+    <text x="22"  y="510" class="cap">a change-over-time claim</text>
+  </g>
+
+  <!-- BEFORE: tangled 5-line spaghetti, "rainbow" via greys (since palette is warm grayscale) -->
+  <g>
+    <!-- panel rectangle -->
+    <rect x="200" y="394" width="160" height="92" fill="#fdfcfb" stroke="#c8c4c0" stroke-width="0.5"/>
+    <!-- y axis line -->
+    <line x1="208" y1="398" x2="208" y2="478" stroke="#8a8480" stroke-width="0.5"/>
+    <line x1="208" y1="478" x2="354" y2="478" stroke="#8a8480" stroke-width="0.5"/>
+    <!-- 5 tangled lines that crisscross -->
+    <path d="M 212 460 L 240 420 L 268 450 L 296 410 L 324 445 L 352 405" fill="none" stroke="#2a1a0e" stroke-width="1.25"/>
+    <path d="M 212 420 L 240 455 L 268 415 L 296 460 L 324 410 L 352 450" fill="none" stroke="#4a4540" stroke-width="1.25"/>
+    <path d="M 212 440 L 240 410 L 268 460 L 296 420 L 324 455 L 352 415" fill="none" stroke="#8a8480" stroke-width="1.25"/>
+    <path d="M 212 410 L 240 445 L 268 405 L 296 450 L 324 415 L 352 460" fill="none" stroke="#a8a8a4" stroke-width="1.25"/>
+    <path d="M 212 450 L 240 425 L 268 440 L 296 415 L 324 460 L 352 420" fill="none" stroke="#c8c4c0" stroke-width="1.25"/>
+    <text x="280" y="504" text-anchor="middle" class="cap">5 lines, same panel · the reader cannot trace any one series</text>
+  </g>
+
+  <!-- arrow row 3 -->
+  <line x1="368" y1="438" x2="416" y2="438" stroke="#4a4540" stroke-width="1.25" marker-end="url(#ar403)"/>
+
+  <!-- AFTER: small multiples 5 mini panels -->
+  <g>
+    <!-- 5 small panels in a row: x=440..640 width 200, gap 4. each panel width = (200 - 4*4)/5 = 36.8 -->
+    <!-- y from 394 to 478 (height 84) -->
+
+    <!-- panel 1 -->
+    <g>
+      <rect x="440" y="394" width="37" height="68" fill="#fdfcfb" stroke="#c8c4c0" stroke-width="0.5"/>
+      <path d="M 442 454 L 448 446 L 454 442 L 460 432 L 466 426 L 474 416" fill="none" stroke="#2a1a0e" stroke-width="1"/>
+      <text x="458.5" y="476" text-anchor="middle" class="tk">A</text>
+    </g>
+    <!-- panel 2 -->
+    <g>
+      <rect x="481" y="394" width="37" height="68" fill="#fdfcfb" stroke="#c8c4c0" stroke-width="0.5"/>
+      <path d="M 483 420 L 489 428 L 495 432 L 501 442 L 507 446 L 515 454" fill="none" stroke="#2a1a0e" stroke-width="1"/>
+      <text x="499.5" y="476" text-anchor="middle" class="tk">B</text>
+    </g>
+    <!-- panel 3 -->
+    <g>
+      <rect x="522" y="394" width="37" height="68" fill="#fdfcfb" stroke="#c8c4c0" stroke-width="0.5"/>
+      <path d="M 524 446 L 530 438 L 536 442 L 542 430 L 548 432 L 556 422" fill="none" stroke="#2a1a0e" stroke-width="1"/>
+      <text x="540.5" y="476" text-anchor="middle" class="tk">C</text>
+    </g>
+    <!-- panel 4 -->
+    <g>
+      <rect x="563" y="394" width="37" height="68" fill="#fdfcfb" stroke="#c8c4c0" stroke-width="0.5"/>
+      <path d="M 565 432 L 571 430 L 577 438 L 583 432 L 589 442 L 597 446" fill="none" stroke="#2a1a0e" stroke-width="1"/>
+      <text x="581.5" y="476" text-anchor="middle" class="tk">D</text>
+    </g>
+    <!-- panel 5 -->
+    <g>
+      <rect x="604" y="394" width="37" height="68" fill="#fdfcfb" stroke="#c8c4c0" stroke-width="0.5"/>
+      <path d="M 606 426 L 612 432 L 618 422 L 624 436 L 630 428 L 638 442" fill="none" stroke="#2a1a0e" stroke-width="1"/>
+      <text x="622.5" y="476" text-anchor="middle" class="tk">E</text>
+    </g>
+
+    <text x="540" y="504" text-anchor="middle" class="cap">small multiples · one panel per series, shared scales, separate space</text>
+  </g>
+
+  <text x="350" y="532" text-anchor="middle" class="cap">Each redesign follows from writing the key message first; the chart type is then a consequence, not a default.</text>
+</svg>

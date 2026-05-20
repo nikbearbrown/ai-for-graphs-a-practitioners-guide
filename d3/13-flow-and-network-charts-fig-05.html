@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 13.5 — Four design decisions in one Sankey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  #chart { width: 100%; height: 420px; }
+  .node rect { fill: var(--color-ink); }
+  .node text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .link { fill: none; transition: stroke-opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .badge { cursor: pointer; }
+  .badge circle { fill: var(--color-ink); }
+  .badge text { fill: var(--color-white); font-family: 'Inter', sans-serif; font-weight: 700; font-size: 11px; text-anchor: middle; }
+  .decision { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--color-border); cursor: pointer; align-items: flex-start; }
+  .decision:hover { background: rgba(200, 134, 14, 0.08); }
+  .decision.active { background: rgba(200, 134, 14, 0.18); }
+  .decision .num { flex: 0 0 28px; height: 28px; border-radius: 50%; background: var(--color-ink); color: var(--color-white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; font-family: 'Inter', sans-serif; }
+  .decision .text { flex: 1; }
+  .decision .title { font-weight: 700; font-size: 13px; }
+  .decision .desc { color: var(--color-secondary); font-size: 12px; margin-top: 2px; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  .highlight { stroke: var(--color-ochre); stroke-width: 2px; fill: none; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 13.5 — Four design decisions in one Sankey</h1>
+<p class="subtitle">Click a decision to highlight where it acts on the chart. None of these is decoration; each is a channel specification.</p>
+<div id="layout">
+  <div class="panel">
+    <div id="chart" role="img" aria-label="Annotated Sankey diagram of energy sources, transformations, and end uses"></div>
+  </div>
+  <div class="panel" id="decisions"></div>
+</div>
+<p class="caption">Specify the four decisions in the prompt and the model implements them precisely. Leave them to defaults and you get a Sankey-shaped guess.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-sankey/0.12.3/d3-sankey.min.js"></script>
+<script>
+const decisions = [
+  { id: 1, title: 'Proportional widths',  desc: "Largest band is roughly twice the next; ratio matches the data ratio (Tufte's proportional ink)." },
+  { id: 2, title: 'Node ordering',        desc: 'Within each column, nodes are sequenced to minimize crossing bands (d3.sankey default).' },
+  { id: 3, title: 'Color follows source', desc: 'Each source hue cascades through the flows it generates so the reader can trace a source.' },
+  { id: 4, title: 'Labels on dominant flows', desc: 'Direct annotation on thick bands; tooltip on smaller flows. Standard trade-off.' }
+];
+
+const sourceColors = { Oil: 'var(--color-red)', Coal: 'var(--color-ink)', Gas: '#787878' };
+
+const data = {
+  nodes: [
+    { name: 'Oil', source: 'Oil' },
+    { name: 'Coal', source: 'Coal' },
+    { name: 'Gas', source: 'Gas' },
+    { name: 'Transport' },
+    { name: 'Electricity' },
+    { name: 'Industrial' },
+    { name: 'Residential' }
+  ],
+  links: [
+    { source: 0, target: 3, value: 60, src: 'Oil' },
+    { source: 0, target: 4, value: 12, src: 'Oil' },
+    { source: 1, target: 4, value: 50, src: 'Coal' },
+    { source: 2, target: 4, value: 20, src: 'Gas' },
+    { source: 3, target: 5, value: 60, src: 'Oil' },
+    { source: 3, target: 6, value: 12, src: 'Oil' },
+    { source: 4, target: 5, value: 25, src: 'Coal' },
+    { source: 4, target: 6, value: 57, src: 'Coal' }
+  ]
+};
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px').transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+let activeDecision = 0;
+
+function renderDecisions() {
+  const root = d3.select('#decisions').html('');
+  decisions.forEach(d => {
+    const row = root.append('div').attr('class', 'decision').attr('data-id', d.id)
+      .on('click', () => { activeDecision = activeDecision === d.id ? 0 : d.id; draw(); });
+    row.append('div').attr('class', 'num').text(d.id);
+    const t = row.append('div').attr('class', 'text');
+    t.append('div').attr('class', 'title').text(d.title);
+    t.append('div').attr('class', 'desc').text(d.desc);
+    if (d.id === activeDecision) row.classed('active', true);
+  });
+}
+
+function draw() {
+  renderDecisions();
+  const sel = '#chart';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const W = container.clientWidth || 420, H = container.clientHeight || 420;
+  const svg = d3.select(sel).append('svg').attr('width', W).attr('height', H).attr('role', 'img');
+  svg.append('title').text('Sankey of energy sources, transformations, and end uses');
+
+  const margin = { top: 24, right: 90, bottom: 24, left: 60 };
+  const sankey = d3.sankey()
+    .nodeWidth(12).nodePadding(14)
+    .extent([[margin.left, margin.top], [W - margin.right, H - margin.bottom]]);
+
+  const graph = sankey({ nodes: data.nodes.map(n => ({ ...n })), links: data.links.map(l => ({ ...l })) });
+
+  // Map link.src back from index
+  graph.links.forEach((l, i) => { l.src = data.links[i].src; });
+
+  svg.append('g').selectAll('path').data(graph.links).join('path')
+    .attr('class', 'link')
+    .attr('d', d3.sankeyLinkHorizontal())
+    .attr('stroke', d => sourceColors[d.src])
+    .attr('stroke-width', d => Math.max(1, d.width))
+    .attr('stroke-opacity', d => {
+      if (activeDecision === 3) return d.src === 'Oil' ? 0.7 : 0.18;
+      return 0.45;
+    })
+    .on('mouseover', (event, d) => showTip(event, `<strong>${d.source.name} → ${d.target.name}</strong>: ${d.value}`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // Node group
+  const node = svg.append('g').selectAll('g').data(graph.nodes).join('g').attr('class', 'node');
+  node.append('rect')
+    .attr('x', d => d.x0).attr('y', d => d.y0)
+    .attr('width', d => d.x1 - d.x0).attr('height', d => d.y1 - d.y0)
+    .attr('fill', d => sourceColors[d.source] || 'var(--color-ink)');
+  node.append('text')
+    .attr('x', d => d.x0 < W / 2 ? d.x1 + 6 : d.x0 - 6)
+    .attr('y', d => (d.y0 + d.y1) / 2)
+    .attr('dy', '0.35em')
+    .attr('text-anchor', d => d.x0 < W / 2 ? 'start' : 'end')
+    .text(d => d.name);
+
+  // Value labels on dominant flows (top 2 by value)
+  const topFlows = [...graph.links].sort((a, b) => b.value - a.value).slice(0, 4);
+  svg.append('g').selectAll('text').data(topFlows).join('text')
+    .attr('x', d => (d.source.x1 + d.target.x0) / 2)
+    .attr('y', d => (d.y0 + d.y1) / 2)
+    .attr('dy', '0.35em')
+    .attr('text-anchor', 'middle')
+    .style('font-family', "'JetBrains Mono', monospace").style('font-size', '11px').style('fill', 'var(--color-white)')
+    .style('paint-order', 'stroke').style('stroke', 'var(--color-ink)').style('stroke-width', '3px')
+    .text(d => d.value);
+
+  // Highlight overlay for active decision
+  if (activeDecision === 1) {
+    // proportional widths — highlight the two widest bands
+    const widest = [...graph.links].sort((a, b) => b.width - a.width).slice(0, 2);
+    svg.append('g').selectAll('path').data(widest).join('path')
+      .attr('class', 'highlight').attr('stroke', 'var(--color-ochre)').attr('stroke-width', 2)
+      .attr('stroke-dasharray', '4 3').attr('fill', 'none')
+      .attr('d', d3.sankeyLinkHorizontal());
+  } else if (activeDecision === 2) {
+    // node ordering — frame the middle column
+    const mid = graph.nodes.filter(n => Math.abs(n.x0 - (margin.left + (W - margin.right - margin.left) / 2)) < 60);
+    const ys = d3.extent(mid.flatMap(n => [n.y0, n.y1]));
+    const xs = d3.extent(mid.flatMap(n => [n.x0, n.x1]));
+    svg.append('rect').attr('x', xs[0] - 6).attr('y', ys[0] - 6).attr('width', (xs[1] - xs[0]) + 12).attr('height', (ys[1] - ys[0]) + 12)
+      .attr('fill', 'none').attr('stroke', 'var(--color-ochre)').attr('stroke-width', 2).attr('stroke-dasharray', '4 3');
+  } else if (activeDecision === 4) {
+    // labels on dominant — highlight the value labels region
+    topFlows.forEach(d => {
+      svg.append('circle')
+        .attr('cx', (d.source.x1 + d.target.x0) / 2)
+        .attr('cy', (d.y0 + d.y1) / 2)
+        .attr('r', 12).attr('fill', 'none').attr('stroke', 'var(--color-ochre)').attr('stroke-width', 1.5).attr('stroke-dasharray', '3 3');
+    });
+  }
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

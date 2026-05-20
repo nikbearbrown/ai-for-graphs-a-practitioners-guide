@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t052 d052">
+  <title id="t052">Three honest moves when the data does not support the question</title>
+  <desc id="d052">Decision tree starting from the question of whether the dataset supports the reader's question. Yes branches to proceed; no branches into three honest sub-moves — find better data, reframe the question, acknowledge the gap. A fourth branch leads off to the failure mode.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .nd { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .br { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .fail { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; font-weight: bold; fill: #2a1a0e; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar52" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+
+  <!-- Title -->
+  <text x="350" y="30" text-anchor="middle" class="ti">Three honest moves. One failure mode.</text>
+
+  <!-- Root node -->
+  <rect x="220" y="50" width="260" height="56" fill="#f5f2ee" stroke="#2a1a0e" stroke-width="1.25"/>
+  <text x="350" y="73" text-anchor="middle" class="nd">Does the dataset support</text>
+  <text x="350" y="90" text-anchor="middle" class="nd">the reader's question?</text>
+
+  <!-- YES branch (right) -->
+  <line x1="480" y1="78" x2="572" y2="78" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar52)"/>
+  <text x="526" y="72" text-anchor="middle" class="br">yes</text>
+  <rect x="580" y="60" width="92" height="36" fill="#fdfcfb" stroke="#2a1a0e"/>
+  <text x="626" y="83" text-anchor="middle" class="nd">Proceed</text>
+
+  <!-- NO trunk going down -->
+  <line x1="350" y1="106" x2="350" y2="146" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar52)"/>
+  <text x="362" y="128" class="br">no</text>
+
+  <!-- Three honest branches -->
+  <line x1="350" y1="150" x2="120" y2="200" stroke="#2a1a0e" stroke-width="1"/>
+  <line x1="350" y1="150" x2="350" y2="200" stroke="#2a1a0e" stroke-width="1"/>
+  <line x1="350" y1="150" x2="580" y2="200" stroke="#2a1a0e" stroke-width="1"/>
+
+  <!-- Branch labels (question gates) -->
+  <rect x="32"  y="200" width="200" height="64" fill="#fdfcfb" stroke="#8a8480"/>
+  <text x="132" y="222" text-anchor="middle" class="nd">Can you get the</text>
+  <text x="132" y="238" text-anchor="middle" class="nd">missing data?</text>
+  <text x="132" y="256" text-anchor="middle" class="br">if yes ↓</text>
+
+  <rect x="250" y="200" width="200" height="64" fill="#fdfcfb" stroke="#8a8480"/>
+  <text x="350" y="222" text-anchor="middle" class="nd">Is there a related</text>
+  <text x="350" y="238" text-anchor="middle" class="nd">question worth answering?</text>
+  <text x="350" y="256" text-anchor="middle" class="br">if yes ↓</text>
+
+  <rect x="468" y="200" width="200" height="64" fill="#fdfcfb" stroke="#8a8480"/>
+  <text x="568" y="222" text-anchor="middle" class="nd">Must you proceed</text>
+  <text x="568" y="238" text-anchor="middle" class="nd">anyway?</text>
+  <text x="568" y="256" text-anchor="middle" class="br">if yes ↓</text>
+
+  <!-- Arrows to outcome boxes -->
+  <line x1="132" y1="264" x2="132" y2="296" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar52)"/>
+  <line x1="350" y1="264" x2="350" y2="296" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar52)"/>
+  <line x1="568" y1="264" x2="568" y2="296" stroke="#2a1a0e" stroke-width="1" marker-end="url(#ar52)"/>
+
+  <!-- Outcome boxes -->
+  <rect x="32"  y="300" width="200" height="56" fill="#f5f2ee" stroke="#2a1a0e"/>
+  <text x="132" y="322" text-anchor="middle" class="ti">Find better data</text>
+  <text x="132" y="340" text-anchor="middle" class="br">question stays intact</text>
+
+  <rect x="250" y="300" width="200" height="56" fill="#f5f2ee" stroke="#2a1a0e"/>
+  <text x="350" y="322" text-anchor="middle" class="ti">Reframe the question</text>
+  <text x="350" y="340" text-anchor="middle" class="br">to one the data answers</text>
+
+  <rect x="468" y="300" width="200" height="56" fill="#f5f2ee" stroke="#2a1a0e"/>
+  <text x="568" y="322" text-anchor="middle" class="ti">Acknowledge the gap</text>
+  <text x="568" y="340" text-anchor="middle" class="br">say what is and isn't shown</text>
+
+  <!-- Failure mode — branch out to the side -->
+  <line x1="220" y1="78" x2="100" y2="78" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar52)"/>
+  <text x="160" y="70" text-anchor="middle" class="br">substitute a different question</text>
+  <text x="160" y="86" text-anchor="middle" class="br">without saying so</text>
+  <rect x="20" y="100" width="160" height="44" fill="#2a1a0e" stroke="#2a1a0e"/>
+  <text x="100" y="120" text-anchor="middle" class="fail" style="fill:#fdfcfb">The failure mode</text>
+  <text x="100" y="136" text-anchor="middle" class="br" style="fill:#fdfcfb">visual claim outruns data</text>
+
+  <!-- Bottom rule -->
+  <line x1="32" y1="390" x2="668" y2="390" stroke="#c8c4c0" stroke-width="0.75"/>
+  <text x="350" y="412" text-anchor="middle" class="ti">Three honest moves above. One failure mode at the top-left.</text>
+  <text x="350" y="436" text-anchor="middle" class="cap">The fourth move — pretend the chart answers the original question — is not on the tree because it is not honest.</text>
+</svg>

@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" role="img" aria-labelledby="t10-06 d10-06">
+  <title id="t10-06">Parallel coordinates — axis order determines what is visible</title>
+  <desc id="d10-06">Two parallel-coordinates renderings of the same six-variable dataset. The first axis order shows a tangle; the second puts the most correlated pairs adjacent and resolves into two clean clusters.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .axislab { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-weight: bold; fill: #2a1a0e; }
+      .note { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #C8860E; font-weight: bold; }
+    </style>
+  </defs>
+  <rect width="700" height="460" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">Same six variables, 200 observations. Two axis orders.</text>
+
+  <!-- PANEL A: alphabetical order — tangled -->
+  <g transform="translate(20,60)">
+    <text x="0" y="0" class="ti">A. Alphabetical order: A · B · C · D · E · F</text>
+    <text x="0" y="14" class="sm">polylines tangle; no clear structure</text>
+    <!-- 6 vertical axes -->
+    <g stroke="#8a8480" stroke-width="1">
+      <line x1="20"  y1="40" x2="20"  y2="200"/>
+      <line x1="68"  y1="40" x2="68"  y2="200"/>
+      <line x1="116" y1="40" x2="116" y2="200"/>
+      <line x1="164" y1="40" x2="164" y2="200"/>
+      <line x1="212" y1="40" x2="212" y2="200"/>
+      <line x1="260" y1="40" x2="260" y2="200"/>
+    </g>
+    <!-- axis labels -->
+    <g class="axislab">
+      <text x="20"  y="218" text-anchor="middle">A</text>
+      <text x="68"  y="218" text-anchor="middle">B</text>
+      <text x="116" y="218" text-anchor="middle">C</text>
+      <text x="164" y="218" text-anchor="middle">D</text>
+      <text x="212" y="218" text-anchor="middle">E</text>
+      <text x="260" y="218" text-anchor="middle">F</text>
+    </g>
+    <!-- many tangled polylines mixing two groups -->
+    <g fill="none" stroke="#2a1a0e" stroke-width="0.6" stroke-opacity="0.35">
+      <polyline points="20,60 68,180 116,80 164,170 212,70 260,160"/>
+      <polyline points="20,70 68,170 116,90 164,160 212,80 260,150"/>
+      <polyline points="20,82 68,160 116,100 164,150 212,90 260,140"/>
+      <polyline points="20,90 68,150 116,110 164,140 212,100 260,130"/>
+      <polyline points="20,100 68,140 116,118 164,130 212,108 260,120"/>
+      <polyline points="20,180 68,68 116,170 164,78 212,160 260,80"/>
+      <polyline points="20,168 68,80 116,158 164,90 212,148 260,92"/>
+      <polyline points="20,158 68,92 116,146 164,100 212,138 260,102"/>
+      <polyline points="20,148 68,102 116,136 164,110 212,128 260,112"/>
+      <polyline points="20,138 68,112 116,128 164,118 212,120 260,118"/>
+      <polyline points="20,64 68,176 116,82 164,168 212,72 260,158"/>
+      <polyline points="20,78 68,166 116,96 164,156 212,86 260,146"/>
+      <polyline points="20,176 68,72 116,166 164,82 212,156 260,82"/>
+      <polyline points="20,164 68,84 116,154 164,94 212,144 260,96"/>
+      <polyline points="20,154 68,96 116,144 164,104 212,134 260,108"/>
+      <polyline points="20,144 68,106 116,134 164,114 212,126 260,114"/>
+    </g>
+  </g>
+
+  <!-- PANEL B: reordered axes — two clean bands -->
+  <g transform="translate(380,60)">
+    <text x="0" y="0" class="ti">B. Reordered: A · C · E · F · D · B</text>
+    <text x="0" y="14" class="sm">highest-r pairs adjacent → two clusters visible</text>
+    <g stroke="#8a8480" stroke-width="1">
+      <line x1="20"  y1="40" x2="20"  y2="200"/>
+      <line x1="68"  y1="40" x2="68"  y2="200"/>
+      <line x1="116" y1="40" x2="116" y2="200"/>
+      <line x1="164" y1="40" x2="164" y2="200"/>
+      <line x1="212" y1="40" x2="212" y2="200"/>
+      <line x1="260" y1="40" x2="260" y2="200"/>
+    </g>
+    <g class="axislab">
+      <text x="20"  y="218" text-anchor="middle">A</text>
+      <text x="68"  y="218" text-anchor="middle">C</text>
+      <text x="116" y="218" text-anchor="middle">E</text>
+      <text x="164" y="218" text-anchor="middle">F</text>
+      <text x="212" y="218" text-anchor="middle">D</text>
+      <text x="260" y="218" text-anchor="middle">B</text>
+    </g>
+    <!-- cluster 1: top band, slight downward drift -->
+    <g fill="none" stroke="#2a1a0e" stroke-width="0.7" stroke-opacity="0.4">
+      <polyline points="20,60 68,66 116,70 164,76 212,82 260,88"/>
+      <polyline points="20,64 68,70 116,74 164,80 212,86 260,92"/>
+      <polyline points="20,68 68,74 116,78 164,84 212,90 260,96"/>
+      <polyline points="20,72 68,78 116,82 164,88 212,94 260,100"/>
+      <polyline points="20,76 68,82 116,86 164,92 212,98 260,104"/>
+      <polyline points="20,80 68,86 116,90 164,96 212,102 260,108"/>
+      <polyline points="20,84 68,90 116,94 164,100 212,106 260,112"/>
+    </g>
+    <!-- cluster 2: bottom band, slight upward drift -->
+    <g fill="none" stroke="#C8102E" stroke-width="0.7" stroke-opacity="0.4">
+      <polyline points="20,180 68,174 116,170 164,164 212,158 260,152"/>
+      <polyline points="20,176 68,170 116,166 164,160 212,154 260,148"/>
+      <polyline points="20,172 68,166 116,162 164,156 212,150 260,144"/>
+      <polyline points="20,168 68,162 116,158 164,152 212,146 260,140"/>
+      <polyline points="20,164 68,158 116,154 164,148 212,142 260,136"/>
+      <polyline points="20,160 68,154 116,150 164,144 212,138 260,132"/>
+      <polyline points="20,156 68,150 116,146 164,140 212,134 260,128"/>
+    </g>
+    <!-- cluster annotations -->
+    <text x="280" y="84" class="note">cluster 1</text>
+    <text x="280" y="148" class="note">cluster 2</text>
+  </g>
+
+  <!-- middle annotation between panels -->
+  <g transform="translate(350,310)">
+    <text x="0" y="0" text-anchor="middle" class="lb">6! = 720 possible orderings.</text>
+    <text x="0" y="16" text-anchor="middle" class="sm">Each makes a different set of pairwise relationships visible — Munzner's axis-order-dependence problem.</text>
+    <text x="0" y="32" text-anchor="middle" class="sm">Static charts pick one. Interactive charts let the reader drag, brush, and re-explore.</text>
+  </g>
+
+  <!-- caption -->
+  <text x="350" y="402" text-anchor="middle" class="cap">Order is not a default. For static parallel coordinates, name the axis order in the prompt;</text>
+  <text x="350" y="418" text-anchor="middle" class="cap">place the highest-r pairs adjacent; add brushing if the chart can be interactive.</text>
+</svg>

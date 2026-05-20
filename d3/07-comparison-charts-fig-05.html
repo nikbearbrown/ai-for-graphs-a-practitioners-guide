@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 7.5 — Stacked vs multiset vs small multiples</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-q { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 320px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .legend { display: flex; gap: 16px; font-size: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { display: inline-block; width: 12px; height: 12px; }
+  .sm-title { font-size: 11px; fill: var(--color-secondary); }
+  .panel-foot { color: var(--color-secondary); font-size: 11px; margin-top: 8px; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 7.5 — Stacked vs multiset vs small multiples</h1>
+<p class="subtitle">Five countries, four humanitarian funding sectors. Same data; three forms; three questions answered well.</p>
+<div class="legend">
+  <span><span class="swatch" style="background:var(--color-red)"></span>Food</span>
+  <span><span class="swatch" style="background:var(--color-ink)"></span>Health</span>
+  <span><span class="swatch" style="background:#787878"></span>Shelter</span>
+  <span><span class="swatch" style="background:#ADADAD"></span>Protection</span>
+</div>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Stacked</div>
+    <div class="panel-q">Q: which country received the most total funding?</div>
+    <div id="chartStack" class="chart"></div>
+    <div class="panel-foot">Total uses position from zero. Segments above the first lose their baseline.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Multiset</div>
+    <div class="panel-q">Q: in which sectors did each country receive most?</div>
+    <div id="chartGrouped" class="chart"></div>
+    <div class="panel-foot">Each bar on its own baseline. Cross-country sector comparison is hard.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">C. Small multiples</div>
+    <div class="panel-q">Q: which sector was funded most across all countries?</div>
+    <div id="chartSmall" class="chart"></div>
+    <div class="panel-foot">Shared y-axis across panels. Aligned-scale comparison.</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const COUNTRIES = ['Yemen', 'Sudan', 'DRC', 'Somalia', 'Ethiopia'];
+const SECTORS = ['Food', 'Health', 'Shelter', 'Protection'];
+const COLORS = { Food: 'var(--color-red)', Health: 'var(--color-ink)', Shelter: '#787878', Protection: '#ADADAD' };
+const FUND = {
+  Yemen:    { Food: 180, Health: 140, Shelter: 90, Protection: 70 },
+  Sudan:    { Food: 160, Health: 100, Shelter: 70, Protection: 55 },
+  DRC:      { Food: 110, Health: 95,  Shelter: 80, Protection: 45 },
+  Somalia:  { Food: 95,  Health: 70,  Shelter: 50, Protection: 40 },
+  Ethiopia: { Food: 85,  Health: 65,  Shelter: 35, Protection: 30 }
+};
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(e, h) { tooltip.html(h).style('left', (e.pageX+12)+'px').style('top', (e.pageY-28)+'px').transition().duration(150).style('opacity', 1); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function setup(sel, title, desc) {
+  d3.select(sel).selectAll('*').remove();
+  const c = document.querySelector(sel);
+  const w = c.clientWidth || 300, h = c.clientHeight || 320;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${sel.slice(1)}-t ${sel.slice(1)}-d`);
+  svg.append('title').attr('id', `${sel.slice(1)}-t`).text(title);
+  svg.append('desc').attr('id', `${sel.slice(1)}-d`).text(desc);
+  return { svg, w, h };
+}
+
+function drawStacked() {
+  const { svg, w, h } = setup('#chartStack',
+    'Stacked bar chart of humanitarian funding by country',
+    'Five stacked columns, one per country, segmented by sector. Total bar height represents total funding.');
+  const margin = { top: 16, right: 16, bottom: 56, left: 44 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const stack = d3.stack().keys(SECTORS)(COUNTRIES.map(c => ({ country: c, ...FUND[c] })));
+  const x = d3.scaleBand().domain(COUNTRIES).range([0, cw]).padding(0.2);
+  const yMax = d3.max(stack[stack.length-1], d => d[1]);
+  const y = d3.scaleLinear().domain([0, yMax]).range([ch, 0]).nice();
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x))
+    .selectAll('text').attr('transform', 'rotate(-30)').style('text-anchor', 'end');
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5));
+  g.selectAll('.layer').data(stack).join('g').attr('class', 'layer').attr('fill', d => COLORS[d.key])
+    .selectAll('rect').data(d => d.map(v => ({ ...v, key: d.key }))).join('rect')
+      .attr('x', d => x(d.data.country)).attr('y', d => y(d[1]))
+      .attr('height', d => y(d[0]) - y(d[1])).attr('width', x.bandwidth())
+      .attr('tabindex', 0).attr('aria-label', d => `${d.data.country} ${d.key}: ${d.data[d.key]}`)
+      .on('mouseover', (e, d) => showTip(e, `<strong>${d.data.country} · ${d.key}</strong><br>$${d.data[d.key]}M`))
+      .on('mouseout', hideTip);
+}
+
+function drawGrouped() {
+  const { svg, w, h } = setup('#chartGrouped',
+    'Grouped multiset bar chart by country and sector',
+    'For each country a cluster of four bars, one per sector, on a shared zero baseline.');
+  const margin = { top: 16, right: 16, bottom: 56, left: 44 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x0 = d3.scaleBand().domain(COUNTRIES).range([0, cw]).padding(0.2);
+  const x1 = d3.scaleBand().domain(SECTORS).range([0, x0.bandwidth()]).padding(0.08);
+  const y = d3.scaleLinear().domain([0, 200]).range([ch, 0]).nice();
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x0))
+    .selectAll('text').attr('transform', 'rotate(-30)').style('text-anchor', 'end');
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5));
+  const groups = g.selectAll('.country-group').data(COUNTRIES).join('g')
+    .attr('class', 'country-group').attr('transform', c => `translate(${x0(c)},0)`);
+  groups.each(function(country) {
+    d3.select(this).selectAll('rect').data(SECTORS.map(s => ({ s, v: FUND[country][s] }))).join('rect')
+      .attr('x', d => x1(d.s)).attr('y', d => y(d.v))
+      .attr('width', x1.bandwidth()).attr('height', d => ch - y(d.v))
+      .attr('fill', d => COLORS[d.s]).attr('tabindex', 0)
+      .attr('aria-label', d => `${country} ${d.s}: ${d.v}`)
+      .on('mouseover', (e, d) => showTip(e, `<strong>${country} · ${d.s}</strong><br>$${d.v}M`))
+      .on('mouseout', hideTip);
+  });
+}
+
+function drawSmallMultiples() {
+  const { svg, w, h } = setup('#chartSmall',
+    'Small multiples — one panel per sector',
+    'Four panels arranged in a two-by-two grid, each showing five-country bars for one sector on a shared y-axis.');
+  const margin = { top: 8, right: 8, bottom: 8, left: 8 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const cols = 2, rows = 2;
+  const panelW = cw / cols, panelH = ch / rows;
+  const yMaxAll = 200;
+  SECTORS.forEach((sec, i) => {
+    const row = Math.floor(i / cols), col = i % cols;
+    const px = col * panelW, py = row * panelH;
+    const sub = g.append('g').attr('transform', `translate(${px},${py})`);
+    sub.append('text').attr('class', 'sm-title').attr('x', 4).attr('y', 10).text(sec);
+    const innerMargin = { t: 16, r: 4, b: 24, l: 24 };
+    const iw = panelW - innerMargin.l - innerMargin.r, ih = panelH - innerMargin.t - innerMargin.b;
+    const inner = sub.append('g').attr('transform', `translate(${innerMargin.l},${innerMargin.t})`);
+    const x = d3.scaleBand().domain(COUNTRIES).range([0, iw]).padding(0.18);
+    const y = d3.scaleLinear().domain([0, yMaxAll]).range([ih, 0]).nice();
+    inner.append('g').attr('class', 'axis').attr('transform', `translate(0,${ih})`)
+      .call(d3.axisBottom(x).tickFormat(d => d.slice(0, 3)));
+    inner.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(3));
+    inner.selectAll('rect').data(COUNTRIES.map(c => ({ c, v: FUND[c][sec] }))).join('rect')
+      .attr('x', d => x(d.c)).attr('y', d => y(d.v))
+      .attr('width', x.bandwidth()).attr('height', d => ih - y(d.v))
+      .attr('fill', COLORS[sec]).attr('tabindex', 0)
+      .attr('aria-label', d => `${sec} in ${d.c}: ${d.v}`)
+      .on('mouseover', (e, d) => showTip(e, `<strong>${sec} · ${d.c}</strong><br>$${d.v}M`))
+      .on('mouseout', hideTip);
+  });
+}
+
+function drawAll() { drawStacked(); drawGrouped(); drawSmallMultiples(); }
+drawAll();
+const ro = new ResizeObserver(drawAll);
+['#chartStack', '#chartGrouped', '#chartSmall'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

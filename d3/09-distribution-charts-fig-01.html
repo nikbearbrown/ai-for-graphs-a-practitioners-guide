@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 9.1 — Five zone box plots, the Inner Suburbs cluster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #chart { width: 100%; height: 480px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .box-body { fill: var(--color-white); stroke: var(--color-ink); stroke-width: 1; }
+  .box-body.primary { fill: color-mix(in srgb, var(--color-red) 12%, var(--color-white)); stroke: var(--color-red); }
+  .box-line { stroke: var(--color-ink); stroke-width: 1; }
+  .box-line.primary { stroke: var(--color-red); }
+  .box-median { stroke: var(--color-ink); stroke-width: 2; }
+  .box-median.primary { stroke: var(--color-red); stroke-width: 2; }
+  .outlier { fill: var(--color-ink); }
+  .outlier.primary { fill: var(--color-red); }
+  .annotation { fill: var(--color-ink); font-size: 12px; }
+  .annotation-line { stroke: var(--color-ochre); stroke-width: 1; fill: none; stroke-dasharray: 3 3; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 12px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 9.1 — Household income by residential zone</h1>
+<p class="subtitle">Five Tukey box plots. The Inner Suburbs cluster above the upper whisker is the chapter's central puzzle: visible in the chart, undecidable from the five-number summary.</p>
+<div id="chart" role="img" aria-labelledby="t-chart d-chart"></div>
+<p class="caption">Bimodal sub-population, or just a long upper tail? Two distributions with the same Q1, median, Q3, and whisker extent can yield identical box plots and entirely different shapes.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const ZONES = [
+  { zone: 'Urban Core',    min: 18, q1: 32, median: 46, q3: 62, whiskerHi: 92,  outliers: [108] },
+  { zone: 'Inner Suburbs', min: 28, q1: 48, median: 64, q3: 84, whiskerHi: 118, outliers: [150, 158, 168, 174, 182, 188], primary: true },
+  { zone: 'Outer Suburbs', min: 36, q1: 58, median: 72, q3: 90, whiskerHi: 122, outliers: [] },
+  { zone: 'Exurban',       min: 30, q1: 50, median: 62, q3: 78, whiskerHi: 108, outliers: [] },
+  { zone: 'Rural',         min: 16, q1: 26, median: 38, q3: 52, whiskerHi: 78,  outliers: [] }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.zone}</strong><br>Q1 ${d.q1} · median ${d.median} · Q3 ${d.q3}<br>whisker hi ${d.whiskerHi} · ${d.outliers.length} outlier${d.outliers.length === 1 ? '' : 's'}`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  d3.select('#chart').selectAll('*').remove();
+  const container = document.getElementById('chart');
+  const totalWidth  = container.clientWidth || 800;
+  const totalHeight = container.clientHeight || 480;
+  const margin = { top: 32, right: 200, bottom: 64, left: 72 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 't-chart d-chart');
+  svg.append('title').attr('id', 't-chart').text('Five box plots of household income by residential zone');
+  svg.append('desc').attr('id', 'd-chart').text('Five Tukey box plots arranged horizontally. The Inner Suburbs box has a cluster of outliers above the upper whisker.');
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleBand = d3.scaleBand().domain(ZONES.map(d => d.zone)).range([0, chartWidth]).padding(0.4);
+  const allValues = ZONES.flatMap(d => [d.min, d.whiskerHi, ...d.outliers]);
+  const yMax = Math.ceil((d3.max(allValues) + 20) / 20) * 20;
+  const yScaleLinear = d3.scaleLinear().domain([0, yMax]).range([chartHeight, 0]);
+
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`).call(d3.axisBottom(xScaleBand));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(6).tickFormat(d => `$${d}K`));
+
+  g.append('text')
+    .attr('transform', `translate(-52,${chartHeight / 2}) rotate(-90)`)
+    .style('text-anchor', 'middle').style('font-size', '12px').style('fill', 'var(--color-secondary)')
+    .text('household income ($000s)');
+
+  const boxWidth = Math.min(60, xScaleBand.bandwidth());
+
+  const gBoxes = g.append('g').attr('class', 'g-boxes');
+  ZONES.forEach(d => {
+    const xCenter = xScaleBand(d.zone) + xScaleBand.bandwidth() / 2;
+    const cls = d.primary ? ' primary' : '';
+    const grp = gBoxes.append('g')
+      .attr('tabindex', 0)
+      .attr('aria-label', `${d.zone}: median ${d.median}, IQR ${d.q1}–${d.q3}, ${d.outliers.length} outliers`)
+      .on('mouseover', (event) => showTip(event, d))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
+    // central whisker line
+    grp.append('line').attr('class', 'box-line' + cls)
+      .attr('x1', xCenter).attr('x2', xCenter)
+      .attr('y1', yScaleLinear(d.whiskerHi)).attr('y2', yScaleLinear(d.min));
+    // whisker caps
+    grp.append('line').attr('class', 'box-line' + cls)
+      .attr('x1', xCenter - boxWidth / 3).attr('x2', xCenter + boxWidth / 3)
+      .attr('y1', yScaleLinear(d.whiskerHi)).attr('y2', yScaleLinear(d.whiskerHi));
+    grp.append('line').attr('class', 'box-line' + cls)
+      .attr('x1', xCenter - boxWidth / 3).attr('x2', xCenter + boxWidth / 3)
+      .attr('y1', yScaleLinear(d.min)).attr('y2', yScaleLinear(d.min));
+    // box
+    grp.append('rect').attr('class', 'box-body' + cls)
+      .attr('x', xCenter - boxWidth / 2)
+      .attr('y', yScaleLinear(d.q3))
+      .attr('width', boxWidth)
+      .attr('height', yScaleLinear(d.q1) - yScaleLinear(d.q3));
+    // median
+    grp.append('line').attr('class', 'box-median' + cls)
+      .attr('x1', xCenter - boxWidth / 2).attr('x2', xCenter + boxWidth / 2)
+      .attr('y1', yScaleLinear(d.median)).attr('y2', yScaleLinear(d.median));
+    // outliers
+    d.outliers.forEach(v => {
+      grp.append('circle').attr('class', 'outlier' + cls)
+        .attr('cx', xCenter + (Math.random() - 0.5) * boxWidth * 0.3)
+        .attr('cy', yScaleLinear(v))
+        .attr('r', 3);
+    });
+  });
+
+  // annotation arrow pointing at Inner Suburbs cluster
+  const innerCenter = xScaleBand('Inner Suburbs') + xScaleBand.bandwidth() / 2;
+  const annoX = chartWidth + 30;
+  const annoY = yScaleLinear(165);
+  g.append('path')
+    .attr('class', 'annotation-line')
+    .attr('d', `M ${annoX} ${annoY} Q ${annoX - 30} ${annoY + 10}, ${innerCenter + 12} ${annoY + 4}`);
+  g.append('text').attr('class', 'annotation')
+    .attr('x', annoX + 4).attr('y', annoY - 6)
+    .text('outlier cluster')
+    .style('font-weight', '600').style('fill', 'var(--color-red)');
+  g.append('text').attr('class', 'annotation')
+    .attr('x', annoX + 4).attr('y', annoY + 10)
+    .text('above whisker');
+  g.append('text').attr('class', 'annotation')
+    .attr('x', annoX + 4).attr('y', annoY + 30)
+    .text('bimodal sub-population,').style('fill', 'var(--color-secondary)');
+  g.append('text').attr('class', 'annotation')
+    .attr('x', annoX + 4).attr('y', annoY + 44)
+    .text('or just a long tail?').style('fill', 'var(--color-secondary)');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

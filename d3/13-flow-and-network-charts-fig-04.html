@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 13.4 — Four hairball mitigations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 260px; }
+  .panel-foot { color: var(--color-secondary); font-size: 11px; margin-top: 8px; }
+  .node { fill: var(--color-ink); stroke: none; }
+  .edge { stroke: var(--color-ink); stroke-opacity: 0.35; fill: none; }
+  .cell { stroke: var(--color-border); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 13.4 — Four hairball mitigations</h1>
+<p class="subtitle">Same 200-node dense network. Filter, cluster, aggregate, or switch to a matrix. Each reveals one structural feature and hides another.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">1. Unmitigated force-directed</div>
+    <div class="panel-sub">No structure visible. The hairball.</div>
+    <div id="chartHair" class="chart" role="img" aria-label="Dense force-directed graph with no visible structure"></div>
+    <div class="panel-foot">Reveals: a network exists. Gives up: every structural question.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">2. Filter — top 30 by degree</div>
+    <div class="panel-sub">Sparse; structure becomes visible.</div>
+    <div id="chartFilter" class="chart" role="img" aria-label="Filtered force-directed graph showing 30 highest-degree nodes"></div>
+    <div class="panel-foot">Reveals: hub-and-spoke. Gives up: filtered nodes and edges.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">3. Cluster — eight super-nodes</div>
+    <div class="panel-sub">Community structure visible; nodes hidden.</div>
+    <div id="chartCluster" class="chart" role="img" aria-label="Eight-cluster aggregation of the original network"></div>
+    <div class="panel-foot">Reveals: community structure. Gives up: every individual node identity.</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">4. Adjacency matrix — sorted by degree</div>
+    <div class="panel-sub">Every connection visible; spatial layout gone.</div>
+    <div id="chartMatrix" class="chart" role="img" aria-label="Adjacency matrix with rows and columns ordered by node degree"></div>
+    <div class="panel-foot">Reveals: full connection set; degree blocks. Gives up: cluster proximity.</div>
+  </div>
+</div>
+<p class="caption">Pick the mitigation whose loss you can afford. The hairball is not a design failure — it is a structural failure of single-level visualization on dense data.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+// Deterministic pseudo-random for reproducible network
+function mulberry32(seed) {
+  return function () {
+    let t = (seed += 0x6D2B79F5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// Build a 60-node dense graph (smaller stand-in for 200 for performance)
+function buildGraph(n, avgDegree, seed) {
+  const rng = mulberry32(seed);
+  const nodes = d3.range(n).map(i => ({ id: i, cluster: Math.floor(i / (n / 8)) }));
+  const links = [];
+  const targetEdges = Math.floor(n * avgDegree / 2);
+  while (links.length < targetEdges) {
+    const a = Math.floor(rng() * n);
+    const b = Math.floor(rng() * n);
+    if (a === b) continue;
+    if (links.some(l => (l.source === a && l.target === b) || (l.source === b && l.target === a))) continue;
+    links.push({ source: a, target: b });
+  }
+  return { nodes, links };
+}
+
+const fullGraph = buildGraph(60, 8, 7);
+
+function drawForce(sel, nodes, links, opts = {}) {
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const W = container.clientWidth || 300, H = container.clientHeight || 260;
+  const svg = d3.select(sel).append('svg').attr('width', W).attr('height', H).attr('role', 'img');
+
+  const sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(opts.linkDistance || 30).strength(0.6))
+    .force('charge', d3.forceManyBody().strength(opts.charge || -40))
+    .force('center', d3.forceCenter(W / 2, H / 2))
+    .force('collide', d3.forceCollide().radius(opts.radius || 4))
+    .stop();
+  for (let i = 0; i < 200; i++) sim.tick();
+
+  svg.append('g').selectAll('line').data(links).join('line')
+    .attr('class', 'edge')
+    .attr('stroke-width', opts.edgeWidth || 0.5)
+    .attr('stroke-opacity', opts.edgeOpacity || 0.35)
+    .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+    .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+
+  svg.append('g').selectAll('circle').data(nodes).join('circle')
+    .attr('class', 'node')
+    .attr('r', d => d.r || opts.nodeRadius || 2.5)
+    .attr('cx', d => d.x).attr('cy', d => d.y)
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `Node ${d.id}${d.degree ? ', degree ' + d.degree : ''}`)
+    .on('mouseover', (event, d) => showTip(event, `<strong>Node ${d.id}</strong>${d.degree ? ' · degree ' + d.degree : ''}`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+}
+
+function drawHairball() {
+  const nodes = fullGraph.nodes.map(n => ({ ...n }));
+  const links = fullGraph.links.map(l => ({ ...l }));
+  drawForce('#chartHair', nodes, links, { linkDistance: 18, charge: -20, edgeOpacity: 0.45, nodeRadius: 2 });
+}
+
+function drawFilter() {
+  const degree = new Map();
+  fullGraph.nodes.forEach(n => degree.set(n.id, 0));
+  fullGraph.links.forEach(l => { degree.set(l.source, degree.get(l.source) + 1); degree.set(l.target, degree.get(l.target) + 1); });
+  const top = [...degree.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map(([id]) => id);
+  const topSet = new Set(top);
+  const nodes = fullGraph.nodes.filter(n => topSet.has(n.id)).map(n => ({ ...n, degree: degree.get(n.id) }));
+  const links = fullGraph.links.filter(l => topSet.has(l.source) && topSet.has(l.target)).map(l => ({ ...l }));
+  drawForce('#chartFilter', nodes, links, { linkDistance: 50, charge: -120, radius: 8, nodeRadius: 5, edgeOpacity: 0.6 });
+}
+
+function drawCluster() {
+  // 8 super-nodes; sizes proportional to cluster sizes; edges = inter-cluster pair counts
+  const clusters = d3.rollup(fullGraph.nodes, v => v.length, d => d.cluster);
+  const nodes = [...clusters.entries()].map(([id, count]) => ({ id, cluster: id, count, r: 6 + count * 0.6, degree: count }));
+  const linkCounts = new Map();
+  fullGraph.links.forEach(l => {
+    const a = fullGraph.nodes[l.source].cluster;
+    const b = fullGraph.nodes[l.target].cluster;
+    if (a === b) return;
+    const k = a < b ? `${a}-${b}` : `${b}-${a}`;
+    linkCounts.set(k, (linkCounts.get(k) || 0) + 1);
+  });
+  const links = [...linkCounts.entries()].map(([k, w]) => { const [s, t] = k.split('-').map(Number); return { source: s, target: t, weight: w }; });
+  drawForce('#chartCluster', nodes, links, { linkDistance: 60, charge: -200, radius: 18, nodeRadius: 12, edgeWidth: 1.2, edgeOpacity: 0.55 });
+}
+
+function drawMatrix() {
+  const sel = '#chartMatrix';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const W = container.clientWidth || 300, H = container.clientHeight || 260;
+  const svg = d3.select(sel).append('svg').attr('width', W).attr('height', H).attr('role', 'img');
+
+  const n = fullGraph.nodes.length;
+  const adj = Array.from({ length: n }, () => new Array(n).fill(0));
+  fullGraph.links.forEach(l => { adj[l.source][l.target] = 1; adj[l.target][l.source] = 1; });
+  const degree = adj.map(row => row.reduce((a, b) => a + b, 0));
+  const order = d3.range(n).sort((a, b) => degree[b] - degree[a]);
+  const margin = { top: 16, right: 16, bottom: 24, left: 24 };
+  const innerW = W - margin.left - margin.right;
+  const innerH = H - margin.top - margin.bottom;
+  const cell = Math.floor(Math.min(innerW, innerH) / n);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  // background grid
+  const cells = [];
+  order.forEach((row, i) => order.forEach((col, j) => { if (adj[row][col]) cells.push({ i, j, row, col }); }));
+  g.selectAll('rect').data(cells).join('rect')
+    .attr('class', 'cell').attr('x', d => d.j * cell).attr('y', d => d.i * cell)
+    .attr('width', cell).attr('height', cell).attr('fill', 'var(--color-ink)')
+    .on('mouseover', (event, d) => showTip(event, `<strong>${d.row} ↔ ${d.col}</strong>`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // axis ticks at corners
+  g.append('text').attr('x', 0).attr('y', -4).style('font-family', "'JetBrains Mono', monospace")
+    .style('font-size', '10px').style('fill', 'var(--color-secondary)').text('high degree');
+  g.append('text').attr('x', n * cell).attr('y', n * cell + 14).attr('text-anchor', 'end')
+    .style('font-family', "'JetBrains Mono', monospace").style('font-size', '10px').style('fill', 'var(--color-secondary)').text('low degree');
+}
+
+function draw() {
+  drawHairball();
+  drawFilter();
+  drawCluster();
+  drawMatrix();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+['#chartHair', '#chartFilter', '#chartCluster', '#chartMatrix'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

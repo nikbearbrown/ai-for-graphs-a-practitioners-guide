@@ -18,16 +18,8 @@ You write a different prompt:
 
 Claude Code returns a working bar chart, sorted, annotated, on a zero baseline, with redundant luminance, in 60 lines of D3. You read the ranking in a quarter-second. You send it to your colleague at 2:18.
 
-<!-- → [INFOGRAPHIC: side-by-side comparison of the two prompts — left column is the vague prompt with annotations flagging each decision Claude Code had to make on its own (chart type, marks, channels, sort order, baseline); right column is the specific prompt with the same decision points labeled as author-controlled. Caption: "Every decision the vague prompt omits is a decision the model makes for you."] -->
-
-*Figure 2.1*
-
-| | **Property** | **Value** |
-|---|---|---|
-| **Row 1** | _fill in_ | _fill in_ |
-| **Row 2** | _fill in_ | _fill in_ |
-
-: {.infographic-table}
+![Side-by-side comparison of two prompts. The vague prompt on the left lists the five decisions the model made on its own — chart type, marks, channels, sort order, baseline. The specific prompt on the right names the same five decisions as author-controlled. Connecting arrows pair each decision across the two columns.](../images/02-claude-basics-for-d3-visualization-updated-fig-01.png)
+*Figure 2.1 — Five decisions in every chart prompt. The vague prompt delegates them; the specific prompt names them.*
 
 
 The difference between those two prompts is not length, and it is not politeness. It is **specificity**. The first prompt told Claude Code to make a chart. The second told Claude Code *which* chart, *which* marks, *which* channels, *which* constraints. The model did not decide these things. You did.
@@ -56,14 +48,8 @@ The general rule is simple: if the task produces a file, use Claude Code. If the
 | Claude.ai (web) | No | No (per conversation) | Sketching prompts and explaining concepts | Drafting a four-move prompt before pasting it into Claude Code |
 | Claude in Chrome | Page DOM only | No | Inspecting an existing chart on the web | Asking "what's wrong with this chart?" while looking at it |
 | Claude API | Whatever you wire up | Whatever you persist | Programmatic pipelines — batch chart generation, build scripts | Generating 50 small multiples from a script |
-*Figure 2.2*
 
-| | **Property** | **Value** |
-|---|---|---|
-| **Row 1** | _fill in_ | _fill in_ |
-| **Row 2** | _fill in_ | _fill in_ |
-
-: {.infographic-table}
+*Table 2.1 — Where Claude lives. The product chooses itself once you know whether the work produces a file, a conversation, or a pipeline.*
 
 
 ---
@@ -93,4 +79,25 @@ DESIGN.md     → loads when visual decisions are in scope
 Together:  ~100–150 instructions, within budget.
 Merged:    ~200+ instructions, budget exceeded, later rules degraded.
 ```
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 2.1 — Vague vs specific prompt: five decisions
+
+Build a two-panel D3 v7 figure comparing a vague chart prompt against a specific one across five decision points. Data: five decision rows — (1) Chart type, (2) Marks, (3) Channels, (4) Sort order, (5) Baseline / annotation — each with a `vague` string and a `spec` string. Chart type: two parallel vertical lists rendered as SVG, one per panel; no scales required, but use `d3.scaleBand()` to space the five rows evenly on the y-axis of each panel. Channels: vertical position (band) encodes decision index; the row label and detail string sit side by side; the numbered badge is a filled circle marked with the row index. Sort: stable input order 1→5. Each row is keyboard-focusable (`tabindex="0"`) and has an `aria-label` describing the decision and the chosen value; hovering or focusing reveals a tooltip with the same content. Above each list, render a quoted prompt card (italic EB Garamond, monospace meta line counting words). Below each list, render a verdict block — dashed border for the vague panel, solid red border for the specific panel. Standalone HTML, D3 v7, inline CSS/JS, accessible markup, responsive via ResizeObserver.
+
+> Reference implementation: `d3/02-claude-basics-for-d3-visualization-updated-fig-01.html`
+
 

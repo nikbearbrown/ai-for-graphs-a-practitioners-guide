@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 9.3 — Three bin widths, one bimodal income</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 280px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .bin { fill: var(--color-secondary); }
+  .bin.primary { fill: var(--color-red); }
+  .verdict { display: inline-block; margin-top: 8px; padding: 2px 10px; border: 1px solid var(--color-ink); font-size: 11px; font-weight: 600; }
+  .verdict.bad { border-color: var(--color-red); color: var(--color-red); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 9.3 — Three bin widths. Two of them lie.</h1>
+<p class="subtitle">The same bimodal income dataset binned three ways. The bimodality that survives across widths is the structure that is real.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Too wide — $50K bins</div>
+    <div class="panel-sub">Two peaks merge into one broad shape.</div>
+    <div id="chartWide" class="chart"></div>
+    <span class="verdict bad">bimodality hidden</span>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Freedman–Diaconis</div>
+    <div class="panel-sub">Both peaks visible, gap legible.</div>
+    <div id="chartFD" class="chart"></div>
+    <span class="verdict">structure visible</span>
+  </div>
+  <div class="panel">
+    <div class="panel-title">C. Too narrow — $1K bins</div>
+    <div class="panel-sub">Sampling variation produces spurious wiggles.</div>
+    <div id="chartNarrow" class="chart"></div>
+    <span class="verdict bad">noise amplified</span>
+  </div>
+</div>
+<p class="caption">Apply the three-bin-width test before reading a histogram. Real structure survives. Spurious structure changes shape with each rebinning.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+function rand() { return Math.random(); }
+function rnorm(mu, sigma) {
+  let u = 0, v = 0;
+  while (u === 0) u = rand();
+  while (v === 0) v = rand();
+  return mu + sigma * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+const incomeData = [
+  ...d3.range(380).map(() => rnorm(40, 9)),
+  ...d3.range(380).map(() => rnorm(120, 14))
+].map(v => Math.max(0, Math.min(170, v)));
+
+function drawHist(selector, binWidth, primaryBin) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth || 260;
+  const totalHeight = container.clientHeight || 280;
+  const margin = { top: 16, right: 16, bottom: 48, left: 48 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-label', `Histogram with ${binWidth}K bins`);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleLinear = d3.scaleLinear().domain([0, 170]).range([0, chartWidth]);
+  const thresholds = d3.range(0, 170.5, binWidth);
+  const bins = d3.bin().domain([0, 170]).thresholds(thresholds)(incomeData);
+  const yMax = d3.max(bins, b => b.length);
+  const yScaleLinear = d3.scaleLinear().domain([0, yMax]).range([chartHeight, 0]);
+
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleLinear).ticks(4).tickFormat(d => `$${d}K`));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(4));
+
+  g.selectAll('.bin').data(bins).join('rect')
+    .attr('class', (d, i) => primaryBin === i ? 'bin primary' : 'bin')
+    .attr('x', d => xScaleLinear(d.x0) + 0.5)
+    .attr('y', d => yScaleLinear(d.length))
+    .attr('width', d => Math.max(0, xScaleLinear(d.x1) - xScaleLinear(d.x0) - 1))
+    .attr('height', d => chartHeight - yScaleLinear(d.length));
+}
+
+function draw() {
+  drawHist('#chartWide', 50);
+  drawHist('#chartFD', 12);
+  drawHist('#chartNarrow', 2);
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartFD'));
+</script>
+</body>
+</html>

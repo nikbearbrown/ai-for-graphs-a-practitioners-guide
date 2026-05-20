@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 3.2 — The four mark types</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 200px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 3.2 — The four mark types</h1>
+<p class="subtitle">Point, line, area, glyph — the geometric primitives every chart is built from. Each carries a different claim about the data.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Point marks</div>
+    <div class="panel-sub">scatterplot — one mark per observation, no continuity claim</div>
+    <div id="chartPoint" class="chart" role="img" aria-labelledby="t-pt d-pt"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Line marks</div>
+    <div class="panel-sub">line chart — connects points and implies values between them exist</div>
+    <div id="chartLine" class="chart" role="img" aria-labelledby="t-ln d-ln"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">C. Area marks</div>
+    <div class="panel-sub">area chart, bar chart, choropleth — filled regions encode magnitude</div>
+    <div id="chartArea" class="chart" role="img" aria-labelledby="t-ar d-ar"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">D. Glyph marks</div>
+    <div class="panel-sub">candlestick — composite mark, several attributes in one symbol</div>
+    <div id="chartGlyph" class="chart" role="img" aria-labelledby="t-gl d-gl"></div>
+  </div>
+</div>
+<p class="caption">Mark choice is already an argument. Points say "samples"; lines say "continuous"; areas say "magnitude"; glyphs say "this symbol encodes more than one number — learn it."</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const series = [
+  { x: 1, y: 14 }, { x: 2, y: 18 }, { x: 3, y: 16 }, { x: 4, y: 22 },
+  { x: 5, y: 20 }, { x: 6, y: 28 }, { x: 7, y: 26 }, { x: 8, y: 34 },
+  { x: 9, y: 32 }, { x: 10, y: 40 }, { x: 11, y: 38 }, { x: 12, y: 46 }
+];
+
+const candles = [
+  { d: 1, o: 30, c: 38, h: 42, l: 28 },
+  { d: 2, o: 38, c: 34, h: 40, l: 32 },
+  { d: 3, o: 34, c: 46, h: 50, l: 33 },
+  { d: 4, o: 46, c: 40, h: 48, l: 38 },
+  { d: 5, o: 40, c: 54, h: 58, l: 39 },
+  { d: 6, o: 54, c: 62, h: 65, l: 52 },
+  { d: 7, o: 62, c: 56, h: 64, l: 54 }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html).style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function setup(sel, title, desc) {
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = container.clientWidth || 320, h = container.clientHeight || 200;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${sel.slice(1)}-t ${sel.slice(1)}-d`);
+  svg.append('title').attr('id', `${sel.slice(1)}-t`).text(title);
+  svg.append('desc').attr('id', `${sel.slice(1)}-d`).text(desc);
+  return { svg, w, h };
+}
+
+function drawPoint() {
+  const { svg, w, h } = setup('#chartPoint', 'Point marks scatter', 'Twelve point marks plotted as a scatter.');
+  const margin = { top: 12, right: 12, bottom: 28, left: 32 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleLinear().domain([0, 13]).range([0, cw]);
+  const y = d3.scaleLinear().domain([0, 50]).range([ch, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x).ticks(6));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(4));
+  g.selectAll('circle').data(series).join('circle')
+    .attr('cx', d => x(d.x)).attr('cy', d => y(d.y)).attr('r', 4).attr('fill', 'var(--color-ink)')
+    .attr('tabindex', 0).attr('aria-label', d => `x ${d.x}, y ${d.y}`)
+    .on('mouseover', (event, d) => showTip(event, `<strong>(${d.x}, ${d.y})</strong>`))
+    .on('mouseout', hideTip);
+}
+
+function drawLine() {
+  const { svg, w, h } = setup('#chartLine', 'Line marks chart', 'Twelve points connected by a line, implying continuity.');
+  const margin = { top: 12, right: 12, bottom: 28, left: 32 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleLinear().domain([0, 13]).range([0, cw]);
+  const y = d3.scaleLinear().domain([0, 50]).range([ch, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x).ticks(6));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(4));
+  const lineGen = d3.line().x(d => x(d.x)).y(d => y(d.y));
+  g.append('path').datum(series).attr('d', lineGen).attr('fill', 'none').attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.5);
+  g.selectAll('circle').data(series).join('circle')
+    .attr('cx', d => x(d.x)).attr('cy', d => y(d.y)).attr('r', 2.5).attr('fill', 'var(--color-ink)');
+}
+
+function drawArea() {
+  const { svg, w, h } = setup('#chartArea', 'Area mark chart', 'Twelve points forming the upper boundary of a filled region.');
+  const margin = { top: 12, right: 12, bottom: 28, left: 32 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleLinear().domain([0, 13]).range([0, cw]);
+  const y = d3.scaleLinear().domain([0, 50]).range([ch, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x).ticks(6));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(4));
+  const areaGen = d3.area().x(d => x(d.x)).y0(ch).y1(d => y(d.y));
+  g.append('path').datum(series).attr('d', areaGen).attr('fill', '#8a8480').attr('opacity', 0.85);
+  const lineGen = d3.line().x(d => x(d.x)).y(d => y(d.y));
+  g.append('path').datum(series).attr('d', lineGen).attr('fill', 'none').attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.2);
+}
+
+function drawGlyph() {
+  const { svg, w, h } = setup('#chartGlyph', 'Glyph mark chart', 'Seven candlestick glyphs, each encoding open, close, high, and low.');
+  const margin = { top: 12, right: 12, bottom: 28, left: 32 };
+  const cw = w - margin.left - margin.right, ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const x = d3.scaleBand().domain(candles.map(c => c.d)).range([0, cw]).padding(0.3);
+  const y = d3.scaleLinear().domain([20, 70]).range([ch, 0]);
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`).call(d3.axisBottom(x));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(4));
+  const groups = g.selectAll('.candle').data(candles).join('g').attr('class', 'candle')
+    .attr('transform', d => `translate(${x(d.d) + x.bandwidth() / 2},0)`)
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `Day ${d.d} open ${d.o} close ${d.c} high ${d.h} low ${d.l}`)
+    .on('mouseover', (event, d) => showTip(event, `<strong>Day ${d.d}</strong><br>O ${d.o} · C ${d.c}<br>H ${d.h} · L ${d.l}`))
+    .on('mouseout', hideTip);
+  groups.append('line')
+    .attr('x1', 0).attr('x2', 0).attr('y1', d => y(d.h)).attr('y2', d => y(d.l))
+    .attr('stroke', 'var(--color-ink)').attr('stroke-width', 1);
+  groups.append('rect')
+    .attr('x', -6).attr('y', d => y(Math.max(d.o, d.c)))
+    .attr('width', 12).attr('height', d => Math.abs(y(d.o) - y(d.c)))
+    .attr('fill', d => d.c >= d.o ? 'var(--color-white)' : 'var(--color-ink)')
+    .attr('stroke', 'var(--color-ink)');
+}
+
+function drawAll() { drawPoint(); drawLine(); drawArea(); drawGlyph(); }
+drawAll();
+const ro = new ResizeObserver(drawAll);
+['#chartPoint', '#chartLine', '#chartArea', '#chartGlyph'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

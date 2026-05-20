@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 460" role="img" aria-labelledby="t14-05 d14-05">
+  <title id="t14-05">Mercator vs Equal Earth — projections distort differently</title>
+  <desc id="d14-05">Two world choropleths with identical data. Left: Mercator. Greenland appears roughly the size of Africa; Russia dominates the north. Right: Equal Earth. Africa's actual dominance is visible; Greenland is a small island.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .land { fill: #8a8480; stroke: #fdfcfb; stroke-width: 0.6; }
+    </style>
+    <marker id="ar14-05" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="760" height="460" fill="#fdfcfb"/>
+
+  <!-- LEFT: MERCATOR -->
+  <text x="32" y="28" class="ti">Mercator projection</text>
+  <text x="32" y="44" class="sm">conformal · area inflates at high latitudes</text>
+
+  <g transform="translate(32,60)">
+    <rect x="0" y="0" width="340" height="280" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <!-- Mercator: high-latitude inflation -->
+    <!-- Canada — large (inflated) -->
+    <path class="land" d="M 30 50 Q 80 30 150 35 Q 175 50 175 95 Q 130 110 70 105 Q 40 90 30 50 Z"/>
+    <!-- Greenland — inflated to look like Africa -->
+    <path class="land" d="M 180 30 Q 220 20 250 35 Q 260 70 240 95 Q 200 100 180 80 Q 170 55 180 30 Z"/>
+    <!-- Russia — extreme inflation -->
+    <path class="land" d="M 195 50 Q 260 30 320 45 Q 332 85 305 110 Q 250 115 200 100 Q 188 75 195 50 Z"/>
+    <!-- USA -->
+    <path class="land" d="M 45 110 Q 95 110 145 120 Q 145 145 120 155 Q 80 158 50 145 Q 38 130 45 110 Z"/>
+    <!-- Europe -->
+    <path class="land" d="M 175 105 Q 205 102 230 110 Q 232 130 215 138 Q 185 138 175 125 Z"/>
+    <!-- Africa — looks small relative to Greenland under Mercator -->
+    <path class="land" d="M 195 145 Q 222 140 245 155 Q 250 200 240 230 Q 220 245 205 230 Q 188 195 195 145 Z"/>
+    <!-- South America -->
+    <path class="land" d="M 100 175 Q 120 175 138 188 Q 142 230 125 255 Q 108 250 100 220 Q 95 195 100 175 Z"/>
+    <!-- Asia (south) -->
+    <path class="land" d="M 245 120 Q 290 120 320 135 Q 320 165 295 175 Q 260 175 245 160 Z"/>
+    <!-- India -->
+    <path class="land" d="M 268 165 Q 280 180 285 200 Q 275 215 265 198 Z"/>
+    <!-- Australia — south of equator, mildly enlarged -->
+    <path class="land" d="M 275 215 Q 310 212 325 225 Q 322 245 300 250 Q 280 245 275 230 Z"/>
+    <!-- Indonesia -->
+    <path class="land" d="M 285 185 Q 305 185 318 195 Q 310 205 290 202 Z"/>
+  </g>
+
+  <!-- Annotations Mercator -->
+  <path d="M 32 380 L 80 370 L 95 70" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-05)"/>
+  <text x="32" y="395" class="lb">Greenland looks ≈ Africa-sized</text>
+  <text x="32" y="410" class="sm">truth: Africa is 14× larger</text>
+  <path d="M 360 380 L 320 370 L 260 80" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-05)"/>
+  <text x="360" y="395" text-anchor="end" class="lb">Russia dominates the frame</text>
+  <text x="360" y="410" text-anchor="end" class="sm">choropleth distortion compounds</text>
+
+  <!-- divider -->
+  <line x1="384" y1="16" x2="384" y2="444" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT: EQUAL EARTH -->
+  <text x="404" y="28" class="ti">Equal Earth projection</text>
+  <text x="404" y="44" class="sm">equal-area · map area = real land area</text>
+
+  <g transform="translate(400,60)">
+    <rect x="0" y="0" width="340" height="280" fill="#fdfcfb" stroke="#c8c4c0"/>
+    <!-- Canada — true size -->
+    <path class="land" d="M 30 65 Q 80 50 145 55 Q 165 75 160 100 Q 120 115 70 110 Q 40 95 30 65 Z"/>
+    <!-- Greenland — small, true size -->
+    <path class="land" d="M 168 55 Q 188 50 200 58 Q 200 75 188 82 Q 175 80 168 70 Z"/>
+    <!-- Russia — large but proportional -->
+    <path class="land" d="M 195 70 Q 245 60 305 70 Q 310 95 285 108 Q 240 110 200 100 Q 188 88 195 70 Z"/>
+    <!-- USA -->
+    <path class="land" d="M 45 115 Q 90 115 140 125 Q 140 145 115 153 Q 78 154 50 145 Q 38 130 45 115 Z"/>
+    <!-- Europe -->
+    <path class="land" d="M 170 110 Q 200 108 222 118 Q 220 135 205 140 Q 178 140 170 128 Z"/>
+    <!-- Africa — DOMINANT, true size -->
+    <path class="land" d="M 180 145 Q 215 142 240 155 Q 248 200 232 240 Q 210 258 192 240 Q 170 200 180 145 Z"/>
+    <!-- South America -->
+    <path class="land" d="M 95 175 Q 118 173 135 190 Q 140 230 122 258 Q 105 250 96 220 Q 90 195 95 175 Z"/>
+    <!-- Asia (south) -->
+    <path class="land" d="M 240 125 Q 285 122 320 138 Q 320 168 290 180 Q 252 180 240 165 Z"/>
+    <!-- India -->
+    <path class="land" d="M 262 168 Q 278 188 282 210 Q 270 220 260 200 Z"/>
+    <!-- Australia — proportional -->
+    <path class="land" d="M 268 220 Q 305 215 322 230 Q 318 248 295 252 Q 272 245 268 230 Z"/>
+    <!-- Indonesia -->
+    <path class="land" d="M 280 188 Q 300 188 315 198 Q 308 210 288 205 Z"/>
+  </g>
+
+  <!-- Annotations Equal Earth -->
+  <path d="M 404 380 L 480 360 L 580 220" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-05)"/>
+  <text x="404" y="395" class="lb">Africa is visibly the larger landmass</text>
+  <text x="404" y="410" class="sm">14× Greenland · ratio preserved</text>
+  <path d="M 720 380 L 660 360 L 590 80" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-05)"/>
+  <text x="720" y="395" text-anchor="end" class="lb">Greenland · small island</text>
+  <text x="720" y="410" text-anchor="end" class="sm">true area honored</text>
+
+  <!-- caption -->
+  <text x="380" y="448" text-anchor="middle" class="cap">Choropleths inherit area distortion from the perceptual system. Equal-area projections at least don't add a second layer.</text>
+</svg>

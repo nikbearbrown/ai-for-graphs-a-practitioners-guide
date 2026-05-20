@@ -15,7 +15,8 @@ This is the core problem of geographic charts. Every spatial form carries a dist
 
 Fixing this is not a stylistic choice. It is a claim about what the chart is actually answering.
 
-<!-- → [FIGURE: Two US state choropleth maps side by side, same underlying health dataset. Left: "Total uninsured people by state" — Texas and California are very dark; Wyoming, Vermont, Rhode Island are pale. The visual story is population density. Right: "Uninsured rate (%) by state" — Texas remains dark; California is now notably lighter; Wyoming is darker than California; Rhode Island is near the national average. Caption: "Same states. Same underlying data. Different question. Left: where do uninsured people live? Right: in which states are residents most likely to be uninsured? The map shows what you drew; the reader sees what's big." Annotate 2–3 specific states that flip dramatically between the two maps.] -->
+![Two US state tile-grid choropleths side by side, same underlying uninsured health dataset. Left panel encodes total uninsured population — California and Texas are very dark, Wyoming and Vermont are pale. Right panel encodes uninsured rate — Texas stays dark, California lightens, Wyoming becomes darker than California, Rhode Island near average.](../images/14-spatial-and-geographic-charts-fig-01.png)
+*Figure 14.1 — Same states, same data, different question. The left map mostly shows where people live; the right map shows where residents are most likely to be uninsured.*
 
 ---
 
@@ -41,7 +42,8 @@ The diagnostic question: would the reader need to know the geographic positions 
 
 Four forms, each right for a specific combination of data type and question. The choice is not decoration.
 
-<!-- → [INFOGRAPHIC: Four-panel reference grid, one panel per geographic form. Each panel: form name (uppercase, JetBrains Mono), a thumbnail of the form's visual structure, the primary channel, and the "use when" condition. Panels: Choropleth (shaded polygons, "color luminance encodes rate," "rate data, comparable regions"), Dot density (dots within regions, "point count encodes magnitude," "absolute count, spatial pattern at sub-regional resolution"), Bubble map (circles at centroids, "circle area encodes absolute value," "absolute magnitude, severs area-size distortion"), Connection/flow map (lines between locations, "line width encodes flow magnitude," "origin-destination data"). This is the navigation reference.] -->
+![Four-panel reference grid of geographic forms. Each panel names the form in uppercase mono, shows a thumbnail, identifies the primary channel, and states the "use when" condition. Panels: Choropleth (shaded polygons, color luminance), Dot density (dots within regions, point count), Bubble map (circles at centroids, area via scaleSqrt), Connection/flow (lines between locations, line width).](../images/14-spatial-and-geographic-charts-fig-02.png)
+*Figure 14.2 — Four geographic forms. The data type and the reader's question choose the form.*
 
 ---
 
@@ -57,7 +59,8 @@ Charles Dupin understood this when he invented the choropleth in 1826. His map o
 
 Modern choropleths routinely violate both of Dupin's choices. US state choropleths have Wyoming (254,000 km²) alongside Rhode Island (4,000 km²) — a 63:1 area ratio. Country-level choropleths have Russia (17 million km²) alongside Luxembourg (2,600 km²) — a 6,500:1 ratio. The color luminance encoding is technically present, but the area-size distortion overwhelms it. The reader sees a picture mostly shaped by land mass.
 
-<!-- → [FIGURE: A world choropleth on Equal Earth projection where all countries have the same value encoded — a mid-range luminance. Every country is the same color. The only variable is geographic area. Caption: "Every country has the same value. The reader's eye still moves to Russia, Canada, and Australia — not because their values are different, but because their areas are. This is the area-size distortion: preattentive area processing precedes color reading regardless of what the color encodes." Annotate Greenland (appears large on Mercator) and Luxembourg (invisible on both projections).] -->
+![World choropleth on Equal Earth where every country is filled with the identical mid-range luminance. Russia, Canada, and Australia still draw the eye because their area is largest. Greenland is annotated as small under Equal Earth; Luxembourg is annotated as invisible.](../images/14-spatial-and-geographic-charts-fig-03.png)
+*Figure 14.3 — Every country has the same value. The eye still moves to the big ones. Area is preattentive; color is not.*
 
 ---
 
@@ -89,7 +92,8 @@ The cost: dot density maps require point-level data, which is often unavailable 
 
 For Claude Code work: dot density maps with truly random dot placement are reproducible if you seed the random number generator. Specify this in the prompt: "use a deterministic seeded random placement within each polygon so the chart is reproducible."
 
-<!-- → [FIGURE: Two panels of the same Soho neighborhood, same cholera dataset. Left: choropleth — each parish shaded by total deaths; the cluster is hidden within the parish boundaries; Saint James parish appears moderately affected. Right: Snow-style dot map — one dot per death at its street address; the cluster around the Broad Street pump is immediately visible as a dense concentration in a single block. Caption: "Same data, two resolutions. The choropleth aggregates to parishes — too coarse to reveal the cluster. The dot map plots every case at its address — the pump stands at the cluster's center. The form that can answer the question is determined by the resolution the question requires."] -->
+![Two panels of the same 1854 Soho cholera dataset. Left: a parish-level choropleth where the cluster is dissolved into a moderate parish total. Right: a Snow-style dot map where one dot per death reveals a dense cluster surrounding the Broad Street pump.](../images/14-spatial-and-geographic-charts-fig-04.png)
+*Figure 14.4 — Same data, two resolutions. The parish boundary hides what the street block reveals.*
 
 ---
 
@@ -109,7 +113,8 @@ For Claude Code work: Claude Code defaults to Mercator because Mercator is famil
 
 > "The projection is Mercator. Replace with `d3.geoEqualEarth()`. Mercator distorts country areas at high latitudes, which compounds the choropleth's area-size distortion. Regenerate."
 
-<!-- → [FIGURE: Two world maps showing the same choropleth data side by side. Left: Mercator — Greenland appears roughly the same size as Africa (annotated with actual ratio: "Africa is 14× larger"). Russia visually dominates the northern hemisphere. Right: Equal Earth — Africa's actual dominance is visible; Greenland is a small island; Russia is large but proportional to its actual area. Caption: "Mercator compounds the area-size distortion by adding another layer of area inaccuracy. Equal Earth preserves actual land areas so the choropleth's perceptual distortion is at least bounded by geographic reality."] -->
+![Two world choropleths with identical data and color encoding. Left: Mercator — Greenland appears roughly Africa-sized, Russia dominates the frame. Right: Equal Earth — Africa is visibly the larger landmass; Greenland is a small island; Russia is large but proportional.](../images/14-spatial-and-geographic-charts-fig-05.png)
+*Figure 14.5 — Mercator compounds the area-size distortion. Equal Earth bounds it to actual land area.*
 
 ---
 
@@ -127,7 +132,8 @@ Stevens' power law applies to bubble maps identically to bubble charts. Encode t
 
 > "The bubble radius is scaled linearly. This makes visual area scale as value squared, compounding Stevens' area perception distortion. Replace with `d3.scaleSqrt` for the radius scale. Regenerate."
 
-<!-- → [FIGURE: Two world maps side by side, same absolute refugee-count dataset. Left: choropleth (Equal Earth) — large countries like Turkey, Pakistan, and Uganda (which host many refugees) are moderately dark, but Russia, Canada, and Australia (few refugees, large areas) are visually prominent. The chart misleads because large land masses dominate. Right: bubble map (Equal Earth, d3.scaleSqrt radius encoding) — Turkey, Pakistan, and Uganda have large visible bubbles; Russia, Canada, and Australia have small or absent bubbles. The visual story matches the data. Caption: "Same data, two forms. Choropleth: large areas dominate regardless of refugee count. Bubble map: the bubble area is independent of the country's area. The form that severs the distortion is the honest one for absolute counts."] -->
+![Two world maps in Equal Earth with the same absolute refugee-count dataset. Left: choropleth where Russia, Canada, and Australia dominate the frame despite hosting few refugees. Right: bubble map sized by d3.scaleSqrt — Turkey, Iran, and Colombia show the largest bubbles; Russia, Canada, and Australia have only small bubbles.](../images/14-spatial-and-geographic-charts-fig-06.png)
+*Figure 14.6 — Same data, two forms. The bubble map severs the area-size distortion; the choropleth cannot.*
 
 ---
 
@@ -309,6 +315,68 @@ uses d3.scaleSqrt if applicable.
 - **Tufte, Edward R. (1983, 2nd ed. 2001).** *The Visual Display of Quantitative Information.* The Snow analysis is Tufte's canonical case for how visualization reveals causal structure.
 - **Cairo, Alberto. (2019).** *How Charts Lie: Getting Smarter About Visual Information.* Chapter 5 on map distortions and the ratio-vs-absolute rule.
 - **The book's pantry** — `bubble-map.html` for the proportional symbol map; the Visualizing Origin to Destination Flows reference for connection/flow maps.
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use. Note for
+this chapter: every prompt names its projection explicitly — `d3.geoEqualEarth()`
+for world maps, `d3.geoAlbersUsa()` for US-state maps. Never accept Mercator.
+
+---
+
+### Figure 14.1 — Total uninsured vs uninsured rate
+
+Build a two-panel D3 v7 figure rendering the same US-state health dataset under two encodings. Data: 32 states with two attributes each — uninsured population (thousands) and uninsured rate (% of residents). Use the chapter's narrative anchors: CA and TX are very dark on count; CA is mid-light on rate; WY is pale on count and darker than CA on rate; RI is invisible on count and near the national average on rate. Chart type: tile-grid US choropleth (8 cols × 4 rows of equal-sized state tiles) — this enforces comparable-area regions, isolating the encoding effect. Channels: x and y are schematic state position; color luminance is the encoded attribute. Use a sequential 5-bin quantile scale with the warm-grayscale ramp (#ECE8E3 → #C8C4C0 → #8A8480 → #4A4540 → #2A1A0E). State postal codes labeled in JetBrains Mono; flip label color to white in the darkest two bins. Each panel shows a legend strip beneath the grid. Tooltip on hover reveals state + value. Deliverable: a single standalone HTML file with inline CSS/JS, D3 7.9.0 from the pinned CDN, accessible markup (role="img", title, desc), ResizeObserver redraw, and prefers-reduced-motion handling.
+
+> Reference implementation: `d3/14-spatial-and-geographic-charts-fig-01.html`
+
+---
+
+### Figure 14.2 — Four geographic forms reference grid
+
+Build a 2×2 infographic of the four geographic chart forms. One card per form: CHOROPLETH, DOT DENSITY, BUBBLE MAP, CONNECTION · FLOW. Each card contains: form name (uppercase JetBrains Mono with letter-spacing), a one-line channel + mark description in secondary text, a thumbnail SVG demonstrating the form's visual structure, and a USE WHEN block with one short condition. Thumbnails: choropleth = 8×4 tile grid in the sequential luminance ramp; dot density = street-grid crosshair with a Gaussian dot cluster around the center plus an ochre marker ring; bubble map = schematic country outlines with bubbles sized by d3.scaleSqrt at centroids; connection map = the same schematic outlines with curved Quadratic-Bezier flows between nodes, line width proportional to flow magnitude. Cards on a 1px border in `var(--color-border)`. No interactivity required; this is a reference page. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/14-spatial-and-geographic-charts-fig-02.html`
+
+---
+
+### Figure 14.3 — Area-size distortion at a single value
+
+Build a single full-width world choropleth where every country is filled with the identical mid-range luminance (`#8A8480`). Use `d3.geoEqualEarth()` projection fitted to the container with `fitSize` on a `{ type: 'Sphere' }`. Load country polygons from `world-atlas@2/countries-110m.json` via TopoJSON; include an inline minimal-fallback FeatureCollection (Russia, Canada, USA, Greenland, Africa, Europe, China, India, Brazil, Australia, Luxembourg as boxes in lon/lat) and a small in-script TopoJSON-feature converter so the file renders offline. Compute centroids with `d3.geoCentroid` and place text annotations on Russia, Canada, and Australia ("dominant" in ink) and Greenland and Luxembourg ("small" / "invisible" in ochre). Single-swatch legend strip in the bottom corner stating "all countries: same value." Tooltip on hover names the country. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/14-spatial-and-geographic-charts-fig-03.html`
+
+---
+
+### Figure 14.4 — Choropleth vs dot map (Snow's Soho)
+
+Build a two-panel figure rendering Snow's 1854 cholera dataset at two resolutions. Panel A: parish-level choropleth — three schematic parish polygons (St James 34 deaths, St Anne / Soho 72 deaths, Westminster 28 deaths), shaded by a 5-bin quantile sequential scale on the warm-grayscale ramp. Parish labels flip to white on the darkest two bins. Panel B: dot-per-death map — a 5×5 street grid in `var(--color-border)` on a white background; the Broad Street pump at fixed coordinates; 60 cluster dots placed with seeded random Gaussian placement (Box–Muller using a linear-congruential RNG seeded at 20251104) around the pump; 25 sparse dots placed uniformly across the rest of the canvas with the same seeded RNG so dot positions are reproducible. Pump marked with an ochre ring and the label "Broad Street pump." Both panels use `viewBox` with `preserveAspectRatio` so the map shape stays stable on resize. Tooltip on parish hover names parish and death count. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
+
+> Reference implementation: `d3/14-spatial-and-geographic-charts-fig-04.html`
+
+---
+
+### Figure 14.5 — Mercator vs Equal Earth
+
+Build a two-panel world choropleth comparison rendering the same dataset under two projections. Left panel: `d3.geoMercator()`. Right panel: `d3.geoEqualEarth()`. Identical dataset, identical color encoding (5-bin quantize scale on the warm-grayscale ramp), identical per-country value function. Load country polygons from `world-atlas@2/countries-110m.json` via TopoJSON; include an inline minimal-fallback FeatureCollection plus the small TopoJSON-feature converter so the file renders offline. Each projection uses `fitSize` against a Sphere so both panels fill their containers without manual scale tuning. Tooltips name the country and value. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive. Do not substitute any other projection — these two are the whole point of the figure.
+
+> Reference implementation: `d3/14-spatial-and-geographic-charts-fig-05.html`
+
+---
+
+### Figure 14.6 — Refugee choropleth vs bubble map
+
+Build a two-panel figure rendering the same absolute refugee-count dataset under two encodings. Both panels use `d3.geoEqualEarth()`. Data: per-country refugees hosted in thousands — Turkey 3500, Iran 3400, Colombia 2500, Germany 2100, Pakistan 1700, Uganda 1500, Bangladesh 950, Sudan 1100, Ethiopia 880; near-zero for Russia, Canada, Australia, and most other large-area countries. Panel A: choropleth shaded by the absolute count using a 5-bin quantize sequential scale on the warm-grayscale ramp; legend strip beneath. Panel B: bubble map with neutral-fill country outlines and a circle at each country's `d3.geoPath().centroid()` sized by `d3.scaleSqrt().domain([0, 3500]).range([0, maxR])`. Bubbles use `var(--color-ink)` at 0.55 fill-opacity and an ink stroke. Legend shows three reference circles (500k, 1500k, 3500k) with the caption "radius = √(count) so visual area ∝ value." Tooltips on hover name the country and count. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive. Bubble radius must use `d3.scaleSqrt` — never `d3.scaleLinear`.
+
+> Reference implementation: `d3/14-spatial-and-geographic-charts-fig-06.html`
 
 ---
 

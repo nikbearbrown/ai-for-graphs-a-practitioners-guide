@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t1603 d1603">
+  <title id="t1603">Three color vocabularies — categorical, sequential, diverging</title>
+  <desc id="d1603">Three panels showing the three correct color encodings: categorical hues for unordered categories, single-hue luminance for quantitative scales, and two-hue diverging for centered data.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .role { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Three data types — three color vocabularies</text>
+  <text x="350" y="44" text-anchor="middle" class="sm">Using the wrong palette introduces false order or hides true structure.</text>
+
+  <!-- Panel A: categorical -->
+  <g transform="translate(32,68)">
+    <rect x="0" y="0" width="200" height="280" fill="#fdfcfb" stroke="#2a1a0e"/>
+    <text x="100" y="22" text-anchor="middle" class="ti">A. Categorical</text>
+    <text x="100" y="38" text-anchor="middle" class="role">unordered categories</text>
+
+    <!-- 5 swatches in a row, similar luminance, distinct hue (warm grayscale approximation) -->
+    <rect x="20"  y="60" width="32" height="60" fill="#2a1a0e"/>
+    <rect x="56"  y="60" width="32" height="60" fill="#7a4a1a"/>
+    <rect x="92"  y="60" width="32" height="60" fill="#5a5a3a"/>
+    <rect x="128" y="60" width="32" height="60" fill="#8a6a5a"/>
+    <rect x="164" y="60" width="32" height="60" fill="#4a3a2a"/>
+
+    <text x="36"  y="138" text-anchor="middle" class="sm">Apparel</text>
+    <text x="72"  y="138" text-anchor="middle" class="sm">Home</text>
+    <text x="108" y="138" text-anchor="middle" class="sm">Sports</text>
+    <text x="144" y="138" text-anchor="middle" class="sm">Beauty</text>
+    <text x="180" y="138" text-anchor="middle" class="sm">Tech</text>
+
+    <line x1="20" y1="160" x2="180" y2="160" stroke="#c8c4c0"/>
+
+    <text x="100" y="184" text-anchor="middle" class="lb">five product lines, no order</text>
+    <text x="100" y="202" text-anchor="middle" class="sm">Distinct hues, matched luminance.</text>
+    <text x="100" y="216" text-anchor="middle" class="sm">No category reads as more important</text>
+    <text x="100" y="230" text-anchor="middle" class="sm">by virtue of being darker.</text>
+    <text x="100" y="252" text-anchor="middle" class="sm">≤ 7 hues. Color-blind safe.</text>
+    <text x="100" y="266" text-anchor="middle" class="role">ColorBrewer qualitative</text>
+  </g>
+
+  <!-- Panel B: sequential -->
+  <g transform="translate(252,68)">
+    <rect x="0" y="0" width="200" height="280" fill="#fdfcfb" stroke="#2a1a0e"/>
+    <text x="100" y="22" text-anchor="middle" class="ti">B. Sequential</text>
+    <text x="100" y="38" text-anchor="middle" class="role">ordered or quantitative</text>
+
+    <!-- gradient ramp built from discrete swatches: light → dark single hue -->
+    <rect x="20"  y="60" width="32" height="60" fill="#efe7dc"/>
+    <rect x="56"  y="60" width="32" height="60" fill="#c8b69a"/>
+    <rect x="92"  y="60" width="32" height="60" fill="#9a8060"/>
+    <rect x="128" y="60" width="32" height="60" fill="#6a5030"/>
+    <rect x="164" y="60" width="32" height="60" fill="#2a1a0e"/>
+
+    <text x="20"  y="138" class="sm">low</text>
+    <text x="180" y="138" text-anchor="end" class="sm">high</text>
+
+    <line x1="20" y1="160" x2="180" y2="160" stroke="#c8c4c0"/>
+
+    <text x="100" y="184" text-anchor="middle" class="lb">income by county</text>
+    <text x="100" y="202" text-anchor="middle" class="sm">Single hue, varying luminance.</text>
+    <text x="100" y="216" text-anchor="middle" class="sm">Pale = low, dark = high.</text>
+    <text x="100" y="230" text-anchor="middle" class="sm">Reversing this convention costs</text>
+    <text x="100" y="244" text-anchor="middle" class="sm">the reader without warning.</text>
+    <text x="100" y="266" text-anchor="middle" class="role">viridis · magma · grays</text>
+  </g>
+
+  <!-- Panel C: diverging -->
+  <g transform="translate(472,68)">
+    <rect x="0" y="0" width="200" height="280" fill="#fdfcfb" stroke="#2a1a0e"/>
+    <text x="100" y="22" text-anchor="middle" class="ti">C. Diverging</text>
+    <text x="100" y="38" text-anchor="middle" class="role">centered on a midpoint</text>
+
+    <!-- two-hue diverging with neutral midpoint -->
+    <rect x="20"  y="60" width="32" height="60" fill="#2a3a6a"/>
+    <rect x="56"  y="60" width="32" height="60" fill="#8a9ac8"/>
+    <rect x="92"  y="60" width="32" height="60" fill="#efe7dc"/>
+    <rect x="128" y="60" width="32" height="60" fill="#c8866a"/>
+    <rect x="164" y="60" width="32" height="60" fill="#7a1f1a"/>
+
+    <text x="20"  y="138" class="sm">−</text>
+    <text x="108" y="138" text-anchor="middle" class="sm">0</text>
+    <text x="180" y="138" text-anchor="end" class="sm">+</text>
+
+    <line x1="20" y1="160" x2="180" y2="160" stroke="#c8c4c0"/>
+
+    <text x="100" y="184" text-anchor="middle" class="lb">budget variance from target</text>
+    <text x="100" y="202" text-anchor="middle" class="sm">Two hues meeting at a meaningful</text>
+    <text x="100" y="216" text-anchor="middle" class="sm">zero. Darker as values diverge.</text>
+    <text x="100" y="230" text-anchor="middle" class="sm">If no real midpoint exists,</text>
+    <text x="100" y="244" text-anchor="middle" class="sm">use sequential instead.</text>
+    <text x="100" y="266" text-anchor="middle" class="role">RdBu · BrBG · PRGn</text>
+  </g>
+
+  <text x="350" y="396" text-anchor="middle" class="cap">Match the palette to the data type. Wrong palette = wrong claim about the data's structure.</text>
+</svg>

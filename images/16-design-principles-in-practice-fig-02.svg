@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t1602 d1602">
+  <title id="t1602">Four-quadrant synthesis — Tufte, Few, Cairo, Gestalt feeding the Evergreen/Emery checklist</title>
+  <desc id="d1602">Four quadrants each naming one source and its specific contribution; arrows converge on a central node labeled "Evergreen/Emery 22-point checklist."</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .role { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar1602" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4a4540"/>
+    </marker>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="28" text-anchor="middle" class="ti">Four sources, one synthesis</text>
+  <text x="350" y="44" text-anchor="middle" class="sm">Each contributes a different kind of knowledge — heuristic, criterion, ethics, mechanism.</text>
+
+  <!-- Top-left: Tufte -->
+  <rect x="36" y="64" width="240" height="120" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1"/>
+  <text x="48" y="84" class="ti">Tufte</text>
+  <text x="48" y="100" class="role">the heuristics</text>
+  <text x="48" y="120" class="lb">• Data-ink ratio</text>
+  <text x="48" y="138" class="lb">• Proportional ink</text>
+  <text x="48" y="158" class="sm">Heuristics, not laws. They name</text>
+  <text x="48" y="172" class="sm">the chartjunk problem.</text>
+
+  <!-- Top-right: Few -->
+  <rect x="424" y="64" width="240" height="120" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1"/>
+  <text x="436" y="84" class="ti">Few</text>
+  <text x="436" y="100" class="role">the working criterion</text>
+  <text x="436" y="120" class="lb">"Does this support the message?"</text>
+  <text x="436" y="140" class="sm">Resolves Tufte's strict reading.</text>
+  <text x="436" y="156" class="sm">Functional redundancy stays;</text>
+  <text x="436" y="170" class="sm">decoration goes.</text>
+
+  <!-- Bottom-left: Cairo -->
+  <rect x="36" y="236" width="240" height="120" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1"/>
+  <text x="48" y="256" class="ti">Cairo</text>
+  <text x="48" y="272" class="role">the ethical frame</text>
+  <text x="48" y="292" class="lb">• Responsibility to the reader</text>
+  <text x="48" y="310" class="lb">• "Compared with what?"</text>
+  <text x="48" y="328" class="lb">• Graphicacy as audience constraint</text>
+  <text x="48" y="346" class="sm">Chart choice is morally significant.</text>
+
+  <!-- Bottom-right: Gestalt -->
+  <rect x="424" y="236" width="240" height="120" fill="#fdfcfb" stroke="#2a1a0e" stroke-width="1"/>
+  <text x="436" y="256" class="ti">Gestalt</text>
+  <text x="436" y="272" class="role">the perceptual mechanism</text>
+  <text x="436" y="292" class="lb">Proximity · similarity · enclosure</text>
+  <text x="436" y="310" class="lb">Continuity · figure–ground</text>
+  <text x="436" y="330" class="sm">Describes how the visual system</text>
+  <text x="436" y="344" class="sm">processes images — not rules.</text>
+
+  <!-- Center node -->
+  <rect x="290" y="170" width="120" height="80" fill="#f5f2ee" stroke="#2a1a0e" stroke-width="1.5"/>
+  <text x="350" y="196" text-anchor="middle" class="ti">Evergreen/Emery</text>
+  <text x="350" y="214" text-anchor="middle" class="lb">22-point checklist</text>
+  <text x="350" y="232" text-anchor="middle" class="sm">five categories, one</text>
+  <text x="350" y="244" text-anchor="middle" class="sm">audit instrument</text>
+
+  <!-- Arrows from each quadrant to the center -->
+  <line x1="276" y1="124" x2="294" y2="186" stroke="#4a4540" stroke-width="1" marker-end="url(#ar1602)"/>
+  <line x1="424" y1="124" x2="406" y2="186" stroke="#4a4540" stroke-width="1" marker-end="url(#ar1602)"/>
+  <line x1="276" y1="296" x2="294" y2="234" stroke="#4a4540" stroke-width="1" marker-end="url(#ar1602)"/>
+  <line x1="424" y1="296" x2="406" y2="234" stroke="#4a4540" stroke-width="1" marker-end="url(#ar1602)"/>
+
+  <text x="350" y="396" text-anchor="middle" class="cap">Each source contributes a different kind of knowledge. The checklist operationalizes all four.</text>
+</svg>

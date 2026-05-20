@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 16.3 — Three color vocabularies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .panel { background: var(--color-white); border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .panel-role { font-family: 'Inter', sans-serif; font-style: italic; font-size: 12px; color: var(--color-secondary); margin-bottom: 12px; }
+  .chart { width: 100%; height: 200px; }
+  .scale-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .use-case { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--color-ink); margin-top: 16px; font-weight: 600; }
+  .description { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--color-secondary); margin-top: 4px; line-height: 1.5; }
+  .palette-note { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--color-ochre); margin-top: 8px; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .swatch { stroke: var(--color-ink); stroke-width: 0.5; transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .swatch:hover { opacity: 0.7; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 16.3 — Three color vocabularies</h1>
+<p class="subtitle">Three data types, three palette families. Using the wrong one introduces false order or hides true structure.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Categorical</div>
+    <div class="panel-role">unordered categories</div>
+    <div id="chartCat" class="chart" role="img" aria-labelledby="cat-t cat-d"></div>
+    <div class="use-case">Five product lines, no inherent order</div>
+    <div class="description">Distinct hues, matched luminance. No category reads as more important by virtue of being darker or brighter. Limit to seven.</div>
+    <div class="palette-note">ColorBrewer qualitative · color-blind safe</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Sequential</div>
+    <div class="panel-role">ordered or quantitative</div>
+    <div id="chartSeq" class="chart" role="img" aria-labelledby="seq-t seq-d"></div>
+    <div class="use-case">Income by county</div>
+    <div class="description">Single hue, varying luminance. Pale = low, dark = high. Reversing the convention costs the reader without warning.</div>
+    <div class="palette-note">viridis · magma · grays</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">C. Diverging</div>
+    <div class="panel-role">centered on a midpoint</div>
+    <div id="chartDiv" class="chart" role="img" aria-labelledby="div-t div-d"></div>
+    <div class="use-case">Budget variance from target</div>
+    <div class="description">Two hues meeting at a meaningful zero, darker as values diverge. If no real midpoint exists, use sequential instead.</div>
+    <div class="palette-note">RdBu · BrBG · PRGn</div>
+  </div>
+</div>
+<p class="caption">Match the palette to the data type. Wrong palette = wrong claim about the data's structure.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+const categories = [
+  { label: 'Apparel', color: '#2a1a0e' },
+  { label: 'Home',    color: '#7a4a1a' },
+  { label: 'Sports',  color: '#5a5a3a' },
+  { label: 'Beauty',  color: '#8a6a5a' },
+  { label: 'Tech',    color: '#4a3a2a' }
+];
+
+const sequential = ['#efe7dc', '#d6c4a4', '#b89d70', '#8a6a40', '#5a4220', '#2a1a0e'];
+const diverging  = ['#2a3a6a', '#5a6aa8', '#8a9ac8', '#c8c8c8', '#c8866a', '#a8543a', '#7a1f1a'];
+
+function drawSwatches(selector, items, getLabel, titleText, descText) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth = container.clientWidth || 260;
+  const totalHeight = container.clientHeight || 200;
+  const margin = { top: 16, right: 8, bottom: 36, left: 8 };
+  const chartWidth = totalWidth - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', `${selector.slice(1)}-t ${selector.slice(1)}-d`);
+  svg.append('title').attr('id', `${selector.slice(1)}-t`).text(titleText);
+  svg.append('desc').attr('id', `${selector.slice(1)}-d`).text(descText);
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const n = items.length;
+  const swW = chartWidth / n;
+
+  gChart.selectAll('.swatch')
+    .data(items)
+    .join('rect')
+      .attr('class', 'swatch')
+      .attr('x', (d, i) => i * swW)
+      .attr('y', 0)
+      .attr('width', swW - 2)
+      .attr('height', chartHeight - 24)
+      .attr('fill', d => typeof d === 'string' ? d : d.color)
+      .attr('tabindex', 0)
+      .attr('aria-label', (d, i) => getLabel(d, i))
+      .on('mouseover', (e, d) => showTip(e, getLabel(d)))
+      .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  gChart.selectAll('.scale-label')
+    .data(items)
+    .join('text')
+      .attr('class', 'scale-label')
+      .attr('x', (d, i) => i * swW + (swW - 2) / 2)
+      .attr('y', chartHeight - 6)
+      .attr('text-anchor', 'middle')
+      .text((d, i) => typeof d === 'string' ? '' : d.label);
+}
+
+function drawSequentialAxis() {
+  const selector = '#chartSeq';
+  drawSwatches(selector, sequential, (d, i) => `Step ${i + 1}`,
+    'Sequential luminance scale',
+    'Single-hue luminance ramp from pale (low) to dark (high) — appropriate for quantitative or ordered attributes.');
+  const svg = d3.select(selector).select('svg');
+  const g = svg.select('g');
+  const totalWidth = document.querySelector(selector).clientWidth || 260;
+  const chartWidth = totalWidth - 16;
+  g.append('text').attr('class', 'scale-label').attr('x', 0).attr('y', (document.querySelector(selector).clientHeight || 200) - 36).text('low');
+  g.append('text').attr('class', 'scale-label').attr('x', chartWidth).attr('y', (document.querySelector(selector).clientHeight || 200) - 36).attr('text-anchor', 'end').text('high');
+}
+
+function drawDivergingAxis() {
+  const selector = '#chartDiv';
+  drawSwatches(selector, diverging, (d, i) => `Bin ${i - 3}`,
+    'Diverging two-hue scale',
+    'Two hues meeting at a neutral midpoint — appropriate for centered data like deviations from zero or a target.');
+  const svg = d3.select(selector).select('svg');
+  const g = svg.select('g');
+  const totalWidth = document.querySelector(selector).clientWidth || 260;
+  const chartWidth = totalWidth - 16;
+  g.append('text').attr('class', 'scale-label').attr('x', 0).attr('y', (document.querySelector(selector).clientHeight || 200) - 36).text('−');
+  g.append('text').attr('class', 'scale-label').attr('x', chartWidth / 2).attr('y', (document.querySelector(selector).clientHeight || 200) - 36).attr('text-anchor', 'middle').text('0');
+  g.append('text').attr('class', 'scale-label').attr('x', chartWidth).attr('y', (document.querySelector(selector).clientHeight || 200) - 36).attr('text-anchor', 'end').text('+');
+}
+
+function draw() {
+  drawSwatches('#chartCat', categories, d => d.label,
+    'Categorical color palette',
+    'Five distinct hues with matched luminance for five unordered product categories.');
+  drawSequentialAxis();
+  drawDivergingAxis();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartCat'));
+ro.observe(document.getElementById('chartSeq'));
+ro.observe(document.getElementById('chartDiv'));
+</script>
+</body>
+</html>

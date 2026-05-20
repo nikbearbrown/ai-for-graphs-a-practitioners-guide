@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 2.5 — Audit, prompt, build, verify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 70ch; }
+  #flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .step { background: var(--color-white); border: 1px solid var(--color-ink); padding: 14px 14px 16px; cursor: pointer; transition: border-color 120ms, background 120ms; }
+  .step:hover { background: color-mix(in srgb, var(--color-ochre) 6%, var(--color-white)); }
+  .step.active { border-color: var(--color-ochre); border-width: 2px; padding: 13px 13px 15px; }
+  .step .where { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--color-secondary); text-transform: lowercase; }
+  .step .name { font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 700; margin: 2px 0 8px; }
+  .step .what { font-size: 12px; color: var(--color-ink); }
+  #skips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px; }
+  .skip { background: var(--color-white); border: 1px solid var(--color-border); padding: 12px 14px; }
+  .skip .head { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; color: var(--color-red); text-transform: uppercase; letter-spacing: 0.05em; }
+  .skip .body { font-size: 12px; color: var(--color-secondary); margin-top: 6px; }
+  #example { margin-top: 24px; padding: 16px 18px; border: 1px solid var(--color-ink); }
+  #example h2 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 20px; margin-bottom: 4px; }
+  #example p { color: var(--color-secondary); font-size: 13px; margin-bottom: 4px; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 20px; max-width: 65ch; }
+  .arrow { display: none; }
+  @media (max-width: 720px) {
+    #flow, #skips { grid-template-columns: 1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 2.5 — Audit, prompt, build, verify</h1>
+<p class="subtitle">The pattern is not overhead. It is the work. Without the audit, Claude Code produces charts on guesses. Without the verification, you publish charts on hope.</p>
+
+<div id="flow"   role="img" aria-labelledby="flow-t flow-d">
+  <span id="flow-t" hidden>Four-stage workflow</span>
+  <span id="flow-d" hidden>Audit, prompt, build, verify — shown left to right with the failure mode at each stage when skipped.</span>
+</div>
+<div id="skips" aria-hidden="false"></div>
+
+<div id="example">
+  <h2>Worked example: the cognitive-domain scatterplot failure</h2>
+  <p>No audit → "size for score, hue for domain" never specified → Layer 1 passes, Layer 2 has no spec to check, Layer 3 confirms unreadable.</p>
+  <p>All three layers needed. None of them blames the model — the workflow was incomplete.</p>
+</div>
+
+<p class="caption">The pattern repeats in every exercise in this book. It is not optional. It is the discipline that makes the model reliably useful for chart work.</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const stepData = [
+  { id: 1, where: 'step 1 · in Claude chat',          name: 'Audit',  what: 'channel decomposition, type identification, redundancy check', skip: 'model picks the chart type and the channels on guesses' },
+  { id: 2, where: 'step 2 · four-move structure',     name: 'Prompt', what: 'show · say · constrain · verify · submit to Claude Code',     skip: 'vague request → vague output, no specification to verify against' },
+  { id: 3, where: 'step 3 · Claude Code',             name: 'Build',  what: 'generates HTML, comments which line implements which channel', skip: 'you are reading code without an implementation' },
+  { id: 4, where: 'step 4 · the three-layer stack',   name: 'Verify', what: 'format → facts → test, in order, ~2 minutes, no skipping',     skip: 'you publish on hope. reader sees what the terminal hid' }
+];
+
+function draw() {
+  const flow  = d3.select('#flow');
+  const skips = d3.select('#skips');
+  flow.selectAll('.step').remove();
+  flow.selectAll('.arrow').remove();
+  skips.selectAll('.skip').remove();
+
+  const stepSel = flow.selectAll('.step')
+    .data(stepData, d => d.id)
+    .join('div')
+      .attr('class', 'step')
+      .attr('tabindex', 0)
+      .attr('role', 'button')
+      .attr('aria-label', d => `${d.name} · ${d.what}`)
+      .on('mouseenter', function () { highlight(d3.select(this).datum().id); })
+      .on('focus',      function () { highlight(d3.select(this).datum().id); });
+  stepSel.append('div').attr('class', 'where').text(d => d.where);
+  stepSel.append('div').attr('class', 'name').text(d => d.name);
+  stepSel.append('div').attr('class', 'what').text(d => d.what);
+
+  const skipSel = skips.selectAll('.skip')
+    .data(stepData, d => d.id)
+    .join('div')
+      .attr('class', 'skip')
+      .attr('data-step', d => d.id);
+  skipSel.append('div').attr('class', 'head').text('if skipped');
+  skipSel.append('div').attr('class', 'body').text(d => d.skip);
+}
+
+function highlight(id) {
+  d3.selectAll('.step').classed('active', function () { return d3.select(this).datum().id === id; });
+  d3.selectAll('.skip').style('border-color', function () {
+    return +d3.select(this).attr('data-step') === id
+      ? 'var(--color-ochre)'
+      : 'var(--color-border)';
+  });
+}
+
+draw();
+highlight(1);
+const ro = new ResizeObserver(() => { draw(); highlight(1); });
+ro.observe(document.getElementById('flow'));
+</script>
+</body>
+</html>

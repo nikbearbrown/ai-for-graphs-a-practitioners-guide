@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 5.2 — The four-move prompt, annotated</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  #chart { width: 100%; height: 600px; }
+  .move-bracket { stroke: var(--color-secondary); fill: none; stroke-width: 1.25; }
+  .move-bracket.active { stroke: var(--color-red); stroke-width: 2; }
+  .move-label { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; fill: var(--color-ink); cursor: pointer; }
+  .move-sub { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); cursor: pointer; }
+  .code-frame { fill: #F0EBE3; stroke: var(--color-border); }
+  @media (prefers-color-scheme: dark) { .code-frame { fill: #1A1A1A; } }
+  .code { font-family: 'JetBrains Mono', monospace; font-size: 12px; fill: var(--color-ink); }
+  .code-dim { font-family: 'JetBrains Mono', monospace; font-size: 12px; fill: var(--color-secondary); }
+  .anno-text { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-secondary); font-style: italic; }
+  .anno-line { stroke: var(--color-ochre); stroke-width: 1; stroke-dasharray: 3 2; fill: none; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; font-style: italic; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 280px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 5.2 — The four-move prompt, annotated</h1>
+<p class="subtitle">Hover or focus any move bracket to see what it does and why it appears in this position.</p>
+<div id="chart" role="img" aria-labelledby="chart-title chart-desc"></div>
+<p class="caption">Move 3 is always the longest. Move 4 is always last. The structure is not a style — it is the protocol every chart in this book uses.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const moves = [
+  {
+    id: 1,
+    label: 'Move 1 — Show what you have',
+    note: 'Data sample goes here: rows, columns, types, and three to five example rows. If the data is in a file Claude Code can read, name the path.',
+    yStart: 60, yEnd: 140,
+    code: [
+      { dim: true,  text: 'Show what I have:' },
+      { dim: false, text: '5 rows. Columns: sector (string, 8-17 chars),' },
+      { dim: false, text: 'funding_usd_millions (number).' },
+      { dim: false, text: 'Sample: Food Security 380.2 / Shelter 142.7 / ...' }
+    ]
+  },
+  {
+    id: 2,
+    label: 'Move 2 — Say what you want',
+    note: 'Chart type named explicitly, not categorically. "Horizontal bar chart," not "comparison chart." Plus the output format and the D3 version.',
+    yStart: 160, yEnd: 220,
+    code: [
+      { dim: true,  text: 'Say what I want:' },
+      { dim: false, text: 'Horizontal bar chart in D3 v7.' },
+      { dim: false, text: 'Single HTML file, inline D3 via CDN. Responsive.' }
+    ]
+  },
+  {
+    id: 3,
+    label: 'Move 3 — Constrain it',
+    note: 'Every channel-to-attribute mapping is a bullet. Every design constraint from the channel decomposition. This is the longest move — the work goes here.',
+    yStart: 240, yEnd: 400,
+    code: [
+      { dim: true,  text: 'Constrain it:' },
+      { dim: false, text: '- Marks: rectangles, one per sector.' },
+      { dim: false, text: '- y-position: sector, sorted by funding desc.' },
+      { dim: false, text: '- x-position from zero: funding. Zero non-negotiable.' },
+      { dim: false, text: '- Color luminance redundantly encoding funding.' },
+      { dim: false, text: '- x-axis ticks at $0, $100M, $200M, $300M, $400M.' },
+      { dim: false, text: '- Value labels at the right end of each bar.' },
+      { dim: false, text: '- Margins: top 60, right 80, bottom 40, left 160.' },
+      { dim: false, text: '- Dark mode via prefers-color-scheme.' }
+    ]
+  },
+  {
+    id: 4,
+    label: 'Move 4 — Verify',
+    note: 'Always the last move. Restatement catches misinterpretation before code is written; line-level comments make the channel mapping auditable; the unspecified-decisions list shows where defaults were applied.',
+    yStart: 420, yEnd: 520,
+    code: [
+      { dim: true,  text: 'Verify:' },
+      { dim: false, text: 'Restate the channel decomposition first.' },
+      { dim: false, text: 'Then write D3 v7 with comments showing which' },
+      { dim: false, text: 'line implements which channel.' },
+      { dim: false, text: 'List any unspecified decisions.' }
+    ]
+  }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.label}</strong><br>${d.note}`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  d3.select('#chart').selectAll('*').remove();
+  const container = document.getElementById('chart');
+  const totalWidth  = container.clientWidth  || 800;
+  const totalHeight = container.clientHeight || 600;
+
+  const svg = d3.select('#chart').append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'chart-title chart-desc');
+  svg.append('title').attr('id', 'chart-title').text('The four-move prompt, annotated');
+  svg.append('desc').attr('id', 'chart-desc').text('A code block of the opening-case prompt with four left-margin brackets labeling Move 1 through Move 4 and right-margin annotations explaining each.');
+
+  // layout: brackets at x=210-220, code at x=240, annotation column at x=620
+  const codeX = 240;
+  const codeWidth = Math.max(360, totalWidth - codeX - 200);
+
+  // code frame
+  svg.append('rect')
+    .attr('class', 'code-frame')
+    .attr('x', codeX - 12).attr('y', 50)
+    .attr('width', codeWidth).attr('height', 490);
+
+  moves.forEach(m => {
+    // bracket
+    const bracket = svg.append('g').attr('aria-label', m.label).attr('tabindex', 0);
+    bracket.append('path')
+      .attr('class', 'move-bracket')
+      .attr('d', `M ${codeX - 18} ${m.yStart} L ${codeX - 24} ${m.yStart} L ${codeX - 24} ${m.yEnd} L ${codeX - 18} ${m.yEnd}`);
+    bracket.append('text')
+      .attr('class', 'move-label')
+      .attr('x', codeX - 32).attr('y', m.yStart + 14)
+      .attr('text-anchor', 'end')
+      .text(`Move ${m.id}`);
+    bracket.append('text')
+      .attr('class', 'move-sub')
+      .attr('x', codeX - 32).attr('y', m.yStart + 30)
+      .attr('text-anchor', 'end')
+      .text(m.label.split(' — ')[1]);
+
+    bracket
+      .on('mouseover', (event) => {
+        bracket.select('.move-bracket').classed('active', true);
+        showTip(event, m);
+      })
+      .on('mousemove', moveTip)
+      .on('mouseout', () => {
+        bracket.select('.move-bracket').classed('active', false);
+        hideTip();
+      })
+      .on('focus', (event) => {
+        bracket.select('.move-bracket').classed('active', true);
+        showTip(event, m);
+      })
+      .on('blur', () => {
+        bracket.select('.move-bracket').classed('active', false);
+        hideTip();
+      })
+      .on('keydown', (event, d) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          showTip(event, m);
+        }
+      });
+
+    // code lines
+    m.code.forEach((line, i) => {
+      svg.append('text')
+        .attr('class', line.dim ? 'code-dim' : 'code')
+        .attr('x', codeX).attr('y', m.yStart + 14 + i * 16)
+        .text(line.text);
+    });
+
+    // right-side annotation arrow + text
+    const annoX = codeX + codeWidth - 12 + 36;
+    const targetY = m.yStart + 20;
+    svg.append('path')
+      .attr('class', 'anno-line')
+      .attr('d', `M ${codeX + codeWidth - 16} ${targetY} L ${annoX} ${targetY}`);
+    svg.append('text')
+      .attr('class', 'anno-text')
+      .attr('x', annoX + 4).attr('y', targetY + 4)
+      .text({
+        1: 'data sample goes here',
+        2: 'chart type named explicitly',
+        3: 'every channel mapping is a bullet',
+        4: 'verification is always last'
+      }[m.id]);
+  });
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

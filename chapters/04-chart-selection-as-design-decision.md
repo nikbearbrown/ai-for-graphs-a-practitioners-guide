@@ -54,7 +54,8 @@ Before you can choose the right chart, you need to know what territory you are c
 
 Eight categories. Sixty-plus chart types distributed across them. The categories are the navigation tool. They take the chart-type space from "any of 60+" to "any of 5–10 within this category."
 
-<!-- → [INFOGRAPHIC: 8-panel grid, one panel per FT Visual Vocabulary functional category. Each panel: category name (large, uppercase), the defining reader question in italics, and 3–4 canonical chart types listed. Layout 4×2 or 2×4. This is the navigation reference the reader will return to throughout the book; it should be clean enough to screenshot or print. Warm monochrome, JetBrains Mono for labels.] -->
+![Four-by-two grid of cards naming each FT Visual Vocabulary category, the reader's question it answers, and the canonical chart types within it.](../images/04-chart-selection-as-design-decision-fig-05.png)
+*Figure 4.5 — The eight FT Visual Vocabulary functional categories*
 
 Notice that the categories are defined by the *reader's question*, not by the data's structure. A budget allocation is data with a part-to-whole structure. But if the reader's question is "which category got the most?" — that is a comparison question. The message dominates the structure. This is the error the humanitarian report made: the data *looks* like parts of a whole, so the designer went to part-to-whole, selected pie chart, and called it done. The message was a comparison question. The message should have won.
 
@@ -98,7 +99,8 @@ Every chart type in the standard taxonomy has an origin story. The bar chart was
 
 Each chart type is a solution to a specific communication problem. Knowing the original problem clarifies when the chart works and — more important — when it does not.
 
-<!-- → [INFOGRAPHIC: Horizontal timeline of chart-type inventions, 1786 to 1991. Entries: Playfair bar chart (1786, "trade deficits by country"), Playfair line chart (1786, "trade values over time"), Dupin choropleth (1826, "illiteracy rate per department"), Snow dot map (1854, "cholera deaths by address"), Nightingale polar area (1858, "preventable deaths by month"), Minard flow map (1869, "army depletion on the march"), Shneiderman treemap (1991, "disk usage in nested directories"). Each entry: chart name, inventor, year, and one-phrase original problem. Caption: "Every chart type is an answer to a question. The question clarifies when the chart works."] -->
+![Horizontal timeline of seven chart-type inventions from Playfair's 1786 bar chart and line chart through Shneiderman's 1991 treemap, with inventor and original communication problem under each event.](../images/04-chart-selection-as-design-decision-fig-06.png)
+*Figure 4.6 — A short history of chart-type invention, 1786–1991*
 
 The choropleth was invented to show *rates* per bounded geographic unit. Charles Dupin's 1826 map of French illiteracy used shading per department to show the *rate* of illiteracy, not the absolute count. Use the choropleth for absolute counts and you produce the area-size distortion: large geographic units look dark even when their rates are low, because they contain more area, not more incidence. Chapter 12 names this failure explicitly. The mechanism is already latent in the origin: the chart was designed for rates.
 
@@ -353,6 +355,34 @@ prompt structure.
 - **Friendly, Michael. (2008).** "A Brief History of Data Visualization." In *Handbook of Data Visualization*, edited by C. Chen, W. Härdle, and A. Unwin. Springer. The origin stories that ground chart-type choice.
 - **Tufte, Edward R. (1983, 2nd ed. 2001).** *The Visual Display of Quantitative Information.* Chapter 1 establishes "show the data."
 - **Few, Stephen.** *Show Me the Numbers: Designing Tables and Graphs to Enlighten.* The most rigorous practical chart-selection reference; Few's chapter on selecting the right chart is the deepest treatment of the four-step decision in book form.
+
+---
+
+## Prompts
+
+Use these prompts with Claude to generate interactive D3 v7 versions of the
+figures in this chapter. Each produces a standalone HTML file you can open
+in a browser and modify freely.
+
+**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
+your Claude project context before using these prompts. They define the stack,
+naming conventions, color system, and typography the figures use.
+
+---
+
+### Figure 4.5 — The eight FT Visual Vocabulary functional categories
+
+Build a responsive grid of eight cards rendered as a single SVG via D3 v7. Each card represents one FT Visual Vocabulary functional category and contains, top to bottom: a two-digit ordinal (01–08) in JetBrains Mono, the category name in JetBrains Mono uppercase, the defining reader question in EB Garamond italic, a hairline rule in var(--color-border), and a list of three to four canonical chart types in Inter. Categories and questions: 01 Comparison — "how do these compare?" — bar, column, slope, dot; 02 Change over time — "how is this changing?" — line, area, stream, candlestick; 03 Distribution — "what does the spread look like?" — histogram, density, box, violin; 04 Relationship — "are these variables connected?" — scatterplot, bubble, heatmap, parallel coords; 05 Part-to-whole — "what makes up this total?" — stacked bar, waffle, treemap, pie/donut; 06 Hierarchy — "how is this structured?" — treemap, sunburst, circle packing, dendrogram; 07 Flow — "how does this get from A to B?" — Sankey, alluvial, chord, network; 08 Spatial — "where is this happening?" — choropleth, dot map, bubble map, cartogram. Layout: four columns by two rows at desktop widths, two columns by four rows below 720 px. Card fill var(--color-white), stroke var(--color-border). Hover/focus tints the card with var(--color-ochre) at 8 percent. Each card is keyboard-reachable with an aria-label that concatenates name, question, and types. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver-driven redraw.
+
+> Reference implementation: `d3/04-chart-selection-as-design-decision-fig-05.html`
+
+---
+
+### Figure 4.6 — A short history of chart-type invention
+
+Build a horizontal timeline of seven chart-type inventions from 1786 to 1991, rendered in D3 v7 as a single responsive SVG. Use d3.scaleLinear with domain [1780, 1995]. The axis line runs across the vertical midpoint of the SVG with an arrowhead at the right end. Decade ticks at 1800, 1820, … 1980 in JetBrains Mono 10 px, var(--color-secondary). Seven events alternate above and below the axis to avoid label collision: 1786 bar chart, William Playfair, "trade deficits by country" (above, primary); 1786 line chart, William Playfair, "trade values over time" (below, primary); 1826 choropleth, Charles Dupin, "illiteracy rate per department" (above); 1854 dot map, John Snow, "cholera deaths by address" (below); 1858 polar area, Florence Nightingale, "preventable deaths by month" (above); 1869 flow map, Charles Minard, "army depletion on the march" (below); 1991 treemap, Ben Shneiderman, "disk usage in nested directories" (above). Each event renders as a dot on the axis, a dashed leader line to its label block, and three stacked labels: year (JetBrains Mono bold), name (EB Garamond), inventor (EB Garamond italic in var(--color-secondary)), and problem (Inter in var(--color-secondary)). Primary dots use var(--color-red); the rest use var(--color-ink). Each event is keyboard-reachable; hover shows a tooltip naming year, inventor, and problem. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver-driven redraw.
+
+> Reference implementation: `d3/04-chart-selection-as-design-decision-fig-06.html`
 
 ---
 

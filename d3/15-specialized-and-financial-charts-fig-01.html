@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 15.1 — Candlestick anatomy versus a line chart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 360px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .anno { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); }
+  .anno-sm { font-family: 'Inter', sans-serif; font-size: 10px; fill: var(--color-secondary); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 15.1 — Candlestick anatomy versus a closing-price line chart</h1>
+<p class="subtitle">The candlestick packs open, high, low, and close into one glyph using position throughout. The line chart of closing prices encodes one variable and discards three.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Single candlestick — annotated</div>
+    <div class="panel-sub">Body spans open→close; wicks reach high above and low below.</div>
+    <div id="chartCandle" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Line chart of the same closes</div>
+    <div class="panel-sub">Same eight periods — trend visible, daily range invisible.</div>
+    <div id="chartLine" class="chart"></div>
+  </div>
+</div>
+<p class="caption">The candlestick encodes four variables per period; the line chart encodes one. The efficiency is the convention's claim to exist.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const ohlcData = [
+  { t: 1, open: 104, high: 108, low: 102, close: 106 },
+  { t: 2, open: 106, high: 112, low: 105, close: 110 },
+  { t: 3, open: 110, high: 119, low: 109, close: 117 },
+  { t: 4, open: 117, high: 118, low: 111, close: 113 },
+  { t: 5, open: 113, high: 117, low: 112, close: 116 },
+  { t: 6, open: 116, high: 116, low: 110, close: 112 },
+  { t: 7, open: 112, high: 113, low: 107, close: 109 },
+  { t: 8, open: 109, high: 115, low: 108, close: 114 }
+];
+const featurePeriod = ohlcData[2]; // open 110 close 117 high 119 low 109
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(e, h) { tooltip.html(h).style('left', (e.pageX + 12) + 'px').style('top', (e.pageY - 28) + 'px').transition().duration(150).style('opacity', 1); }
+function moveTip(e) { tooltip.style('left', (e.pageX + 12) + 'px').style('top', (e.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function setup(sel, title, desc) {
+  d3.select(sel).selectAll('*').remove();
+  const c = document.querySelector(sel);
+  const w = c.clientWidth || 360, h = c.clientHeight || 360;
+  const svg = d3.select(sel).append('svg')
+    .attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${sel.slice(1)}-t ${sel.slice(1)}-d`);
+  svg.append('title').attr('id', `${sel.slice(1)}-t`).text(title);
+  svg.append('desc').attr('id', `${sel.slice(1)}-d`).text(desc);
+  return { svg, w, h };
+}
+
+function drawCandle() {
+  const { svg, w, h } = setup('#chartCandle',
+    'Annotated candlestick glyph',
+    'One up-period candlestick with open, high, low, and close labelled.');
+  const margin = { top: 24, right: 120, bottom: 32, left: 56 };
+  const cw = w - margin.left - margin.right;
+  const ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const y = d3.scaleLinear().domain([100, 122]).range([ch, 0]).nice();
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(6).tickFormat(d => `$${d}`));
+
+  // candle in middle of panel
+  const cx = cw / 2;
+  const bodyW = 36;
+  const isUp = featurePeriod.close >= featurePeriod.open;
+  const bodyTop = y(Math.max(featurePeriod.open, featurePeriod.close));
+  const bodyBot = y(Math.min(featurePeriod.open, featurePeriod.close));
+  const highY = y(featurePeriod.high);
+  const lowY  = y(featurePeriod.low);
+
+  // wicks
+  g.append('line').attr('class', 'wick')
+    .attr('x1', cx).attr('x2', cx).attr('y1', highY).attr('y2', bodyTop)
+    .attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.6);
+  g.append('line').attr('class', 'wick')
+    .attr('x1', cx).attr('x2', cx).attr('y1', bodyBot).attr('y2', lowY)
+    .attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.6);
+
+  // body — up = hollow, down = filled
+  const body = g.append('rect')
+    .attr('x', cx - bodyW / 2).attr('y', bodyTop)
+    .attr('width', bodyW).attr('height', bodyBot - bodyTop)
+    .attr('fill', isUp ? 'var(--color-white)' : 'var(--color-ink)')
+    .attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.6)
+    .attr('tabindex', 0)
+    .attr('aria-label', `Period: open ${featurePeriod.open}, high ${featurePeriod.high}, low ${featurePeriod.low}, close ${featurePeriod.close}`)
+    .on('mouseover', (e) => showTip(e, `<strong>Period ${featurePeriod.t}</strong><br>O ${featurePeriod.open} · H ${featurePeriod.high}<br>L ${featurePeriod.low} · C ${featurePeriod.close}`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  // guide lines and labels
+  const labelX = cx + bodyW / 2 + 24;
+  const labels = [
+    { val: featurePeriod.high,  yy: highY,  text: `High (${featurePeriod.high})` },
+    { val: Math.max(featurePeriod.open, featurePeriod.close), yy: bodyTop, text: `Close (${featurePeriod.close})`, sub: 'body top — up period' },
+    { val: Math.min(featurePeriod.open, featurePeriod.close), yy: bodyBot, text: `Open (${featurePeriod.open})`, sub: 'body bottom — up period' },
+    { val: featurePeriod.low,   yy: lowY,   text: `Low (${featurePeriod.low})` }
+  ];
+  labels.forEach(L => {
+    g.append('line')
+      .attr('x1', cx + bodyW / 2 + 2).attr('x2', labelX - 4)
+      .attr('y1', L.yy).attr('y2', L.yy)
+      .attr('stroke', 'var(--color-secondary)').attr('stroke-dasharray', '2 3').attr('stroke-width', 0.8);
+    g.append('text').attr('class', 'anno').attr('x', labelX).attr('y', L.yy + 4).text(L.text);
+    if (L.sub) g.append('text').attr('class', 'anno-sm').attr('x', labelX).attr('y', L.yy + 18).text(L.sub);
+  });
+
+  // legend
+  const legend = g.append('g').attr('transform', `translate(0,${ch + 20})`);
+  legend.append('rect').attr('width', 12).attr('height', 10)
+    .attr('fill', 'var(--color-white)').attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.2);
+  legend.append('text').attr('class', 'anno-sm').attr('x', 18).attr('y', 9).text('Up: close > open');
+  legend.append('rect').attr('x', 130).attr('width', 12).attr('height', 10).attr('fill', 'var(--color-ink)');
+  legend.append('text').attr('class', 'anno-sm').attr('x', 148).attr('y', 9).text('Down: close < open');
+}
+
+function drawLine() {
+  const { svg, w, h } = setup('#chartLine',
+    'Line chart of closing prices',
+    'Eight closing prices over the same period, plotted as a single trend line.');
+  const margin = { top: 24, right: 24, bottom: 40, left: 48 };
+  const cw = w - margin.left - margin.right;
+  const ch = h - margin.top - margin.bottom;
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scalePoint().domain(ohlcData.map(d => d.t)).range([0, cw]).padding(0.5);
+  const y = d3.scaleLinear().domain([100, 122]).range([ch, 0]).nice();
+
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`)
+    .call(d3.axisBottom(x).tickFormat(d => `t${d}`));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(6).tickFormat(d => `$${d}`));
+
+  const line = d3.line()
+    .x(d => x(d.t))
+    .y(d => y(d.close))
+    .curve(d3.curveMonotoneX);
+
+  g.append('path').datum(ohlcData)
+    .attr('fill', 'none').attr('stroke', 'var(--color-ink)').attr('stroke-width', 1.8)
+    .attr('d', line);
+
+  g.selectAll('.dot').data(ohlcData).join('circle')
+    .attr('class', 'dot')
+    .attr('cx', d => x(d.t)).attr('cy', d => y(d.close)).attr('r', 3.5)
+    .attr('fill', d => d === featurePeriod ? 'var(--color-red)' : 'var(--color-ink)')
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `Period ${d.t}: close ${d.close}`)
+    .on('mouseover', (e, d) => showTip(e, `<strong>Period t${d.t}</strong><br>Close $${d.close}`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  g.append('text').attr('class', 'anno-sm')
+    .attr('x', 0).attr('y', ch + 32)
+    .text('Trend visible — daily range, open, and direction are discarded.');
+}
+
+function draw() { drawCandle(); drawLine(); }
+draw();
+const ro = new ResizeObserver(draw);
+ro.observe(document.getElementById('chartCandle'));
+ro.observe(document.getElementById('chartLine'));
+</script>
+</body>
+</html>

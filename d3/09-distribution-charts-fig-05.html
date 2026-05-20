@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 9.5 — Box, violin, hybrid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 360px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .violin { fill: color-mix(in srgb, var(--color-ink) 18%, var(--color-white)); stroke: var(--color-ink); stroke-width: 1; }
+  .box-body { fill: var(--color-white); stroke: var(--color-ink); stroke-width: 1; }
+  .box-line { stroke: var(--color-ink); stroke-width: 1; }
+  .box-median { stroke: var(--color-red); stroke-width: 2; }
+  .verdict { display: inline-block; margin-top: 8px; padding: 2px 10px; border: 1px solid var(--color-ink); font-size: 11px; font-weight: 600; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 9.5 — Box, violin, hybrid</h1>
+<p class="subtitle">The same bimodal sample rendered three ways. Each form reveals what the others hide. The hybrid pays in density for completeness.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Box plot alone</div>
+    <div class="panel-sub">Two-bulge shape invisible.</div>
+    <div id="chartA" class="chart"></div>
+    <span class="verdict">quartiles yes, shape no</span>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Violin alone</div>
+    <div class="panel-sub">Bimodality unmistakable; precise quartile values unreadable.</div>
+    <div id="chartB" class="chart"></div>
+    <span class="verdict">shape yes, quartiles no</span>
+  </div>
+  <div class="panel">
+    <div class="panel-title">C. Hybrid</div>
+    <div class="panel-sub">Thin box overlaid inside violin envelope.</div>
+    <div id="chartC" class="chart"></div>
+    <span class="verdict">both readouts</span>
+  </div>
+</div>
+<p class="caption">Choose the hybrid only when both reading tasks matter and the audience can decode both forms. Otherwise pay only the cost that earns its keep.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+function rand() { return Math.random(); }
+function rnorm(mu, sigma) {
+  let u = 0, v = 0;
+  while (u === 0) u = rand();
+  while (v === 0) v = rand();
+  return mu + sigma * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+const bimodalData = [
+  ...d3.range(420).map(() => rnorm(28, 7)),
+  ...d3.range(420).map(() => rnorm(72, 7))
+].map(v => Math.max(0, Math.min(100, v)));
+
+function fiveNumber(values) {
+  const sorted = values.slice().sort(d3.ascending);
+  return {
+    min: d3.min(sorted),
+    q1: d3.quantile(sorted, 0.25),
+    median: d3.quantile(sorted, 0.5),
+    q3: d3.quantile(sorted, 0.75),
+    max: d3.max(sorted)
+  };
+}
+const summary = fiveNumber(bimodalData);
+const iqr = summary.q3 - summary.q1;
+const whiskerHi = d3.max(bimodalData.filter(v => v <= summary.q3 + 1.5 * iqr));
+const whiskerLo = d3.min(bimodalData.filter(v => v >= summary.q1 - 1.5 * iqr));
+
+function kde(kernel, thresholds, data) {
+  return thresholds.map(t => [t, d3.mean(data, d => kernel(t - d))]);
+}
+function gaussianKernel(bandwidth) {
+  return v => Math.exp(-0.5 * (v / bandwidth) ** 2) / (bandwidth * Math.sqrt(2 * Math.PI));
+}
+
+function commonSetup(selector) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth || 240;
+  const totalHeight = container.clientHeight || 360;
+  const margin = { top: 24, right: 16, bottom: 36, left: 48 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const yScaleLinear = d3.scaleLinear().domain([0, 100]).range([chartHeight, 0]);
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(5));
+  return { svg, g, chartWidth, chartHeight, yScaleLinear };
+}
+
+function drawBoxOnly(selector) {
+  const { svg, g, chartWidth, yScaleLinear } = commonSetup(selector);
+  svg.attr('aria-label', 'Box plot of bimodal data — the two peaks are invisible from the five-number summary');
+  const xCenter = chartWidth / 2;
+  const boxWidth = 60;
+  g.append('line').attr('class', 'box-line').attr('x1', xCenter).attr('x2', xCenter)
+    .attr('y1', yScaleLinear(whiskerHi)).attr('y2', yScaleLinear(whiskerLo));
+  g.append('line').attr('class', 'box-line').attr('x1', xCenter - boxWidth/3).attr('x2', xCenter + boxWidth/3)
+    .attr('y1', yScaleLinear(whiskerHi)).attr('y2', yScaleLinear(whiskerHi));
+  g.append('line').attr('class', 'box-line').attr('x1', xCenter - boxWidth/3).attr('x2', xCenter + boxWidth/3)
+    .attr('y1', yScaleLinear(whiskerLo)).attr('y2', yScaleLinear(whiskerLo));
+  g.append('rect').attr('class', 'box-body')
+    .attr('x', xCenter - boxWidth/2).attr('y', yScaleLinear(summary.q3))
+    .attr('width', boxWidth).attr('height', yScaleLinear(summary.q1) - yScaleLinear(summary.q3));
+  g.append('line').attr('class', 'box-median')
+    .attr('x1', xCenter - boxWidth/2).attr('x2', xCenter + boxWidth/2)
+    .attr('y1', yScaleLinear(summary.median)).attr('y2', yScaleLinear(summary.median));
+}
+
+function drawViolinOnly(selector) {
+  const { svg, g, chartWidth, yScaleLinear } = commonSetup(selector);
+  svg.attr('aria-label', 'Violin plot of bimodal data — two density bulges clearly visible');
+  const xCenter = chartWidth / 2;
+  const thresholds = d3.range(0, 100.5, 1);
+  const density = kde(gaussianKernel(3.5), thresholds, bimodalData);
+  const maxDensity = d3.max(density, d => d[1]);
+  const widthScale = d3.scaleLinear().domain([0, maxDensity]).range([0, 80]);
+  const area = d3.area()
+    .x0(d => xCenter - widthScale(d[1]))
+    .x1(d => xCenter + widthScale(d[1]))
+    .y(d => yScaleLinear(d[0]))
+    .curve(d3.curveCatmullRom);
+  g.append('path').datum(density).attr('class', 'violin').attr('d', area);
+}
+
+function drawHybrid(selector) {
+  const { svg, g, chartWidth, yScaleLinear } = commonSetup(selector);
+  svg.attr('aria-label', 'Hybrid box and violin plot — density shape plus precise quartile readout');
+  const xCenter = chartWidth / 2;
+  const thresholds = d3.range(0, 100.5, 1);
+  const density = kde(gaussianKernel(3.5), thresholds, bimodalData);
+  const maxDensity = d3.max(density, d => d[1]);
+  const widthScale = d3.scaleLinear().domain([0, maxDensity]).range([0, 80]);
+  const area = d3.area()
+    .x0(d => xCenter - widthScale(d[1]))
+    .x1(d => xCenter + widthScale(d[1]))
+    .y(d => yScaleLinear(d[0]))
+    .curve(d3.curveCatmullRom);
+  g.append('path').datum(density).attr('class', 'violin').attr('d', area);
+
+  // thin overlaid box (narrower than violin)
+  const boxWidth = 16;
+  g.append('line').attr('class', 'box-line').attr('x1', xCenter).attr('x2', xCenter)
+    .attr('y1', yScaleLinear(whiskerHi)).attr('y2', yScaleLinear(whiskerLo));
+  g.append('rect').attr('class', 'box-body')
+    .attr('x', xCenter - boxWidth/2).attr('y', yScaleLinear(summary.q3))
+    .attr('width', boxWidth).attr('height', yScaleLinear(summary.q1) - yScaleLinear(summary.q3));
+  g.append('line').attr('class', 'box-median')
+    .attr('x1', xCenter - boxWidth/2).attr('x2', xCenter + boxWidth/2)
+    .attr('y1', yScaleLinear(summary.median)).attr('y2', yScaleLinear(summary.median));
+}
+
+function draw() {
+  drawBoxOnly('#chartA');
+  drawViolinOnly('#chartB');
+  drawHybrid('#chartC');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartA'));
+ro.observe(document.getElementById('chartB'));
+ro.observe(document.getElementById('chartC'));
+</script>
+</body>
+</html>

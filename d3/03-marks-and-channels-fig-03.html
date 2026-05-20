@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 3.3 — Radius-vs-area bubble distortion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  .controls { margin-bottom: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .controls label { font-size: 13px; color: var(--color-secondary); }
+  .controls input[type="range"] { width: 240px; }
+  .controls .readout { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--color-ink); }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .panel-sub { color: var(--color-secondary); font-size: 12px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 280px; }
+  .ratios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; font-size: 12px; }
+  .ratio-label { color: var(--color-secondary); }
+  .ratio-value { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--color-ink); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 3.3 — Radius-vs-area bubble distortion</h1>
+<p class="subtitle">Drag the slider to change the data ratio. The two panels show what radius-linear and area-linear encodings do — and what the eye actually perceives under Stevens' law.</p>
+<div class="controls">
+  <label for="ratioSlider">Data ratio</label>
+  <input type="range" id="ratioSlider" min="1" max="4" step="0.1" value="2">
+  <span class="readout"><span id="ratioOut">2.0</span>×</span>
+</div>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">Radius scales with value</div>
+    <div class="panel-sub">radius doubles → area quadruples (wrong)</div>
+    <div id="chartRadius" class="chart" role="img" aria-labelledby="t-r d-r"></div>
+    <div class="ratios">
+      <div><div class="ratio-label">data</div><div class="ratio-value" id="rdData">2.0×</div></div>
+      <div><div class="ratio-label">area drawn</div><div class="ratio-value" id="rdArea">4.0×</div></div>
+      <div><div class="ratio-label">perceived</div><div class="ratio-value" id="rdPerc">2.6×</div></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Area scales with value</div>
+    <div class="panel-sub">radius scales with √value; area scales linearly</div>
+    <div id="chartArea" class="chart" role="img" aria-labelledby="t-a d-a"></div>
+    <div class="ratios">
+      <div><div class="ratio-label">data</div><div class="ratio-value" id="raData">2.0×</div></div>
+      <div><div class="ratio-label">area drawn</div><div class="ratio-value" id="raArea">2.0×</div></div>
+      <div><div class="ratio-label">perceived</div><div class="ratio-value" id="raPerc">1.6×</div></div>
+    </div>
+  </div>
+</div>
+<p class="caption">Stevens' law for area: Ψ = I^0.7. The eye underestimates area by the same exponent in both panels — but the area-linear encoding starts from an honest area, so the residual error is small.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const BASE_R = 18;
+function drawBubbles(sel, smallR, bigR, titleText, descText) {
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const w = container.clientWidth || 320, h = container.clientHeight || 280;
+  const svg = d3.select(sel).append('svg').attr('width', w).attr('height', h)
+    .attr('role', 'img').attr('aria-labelledby', `${sel.slice(1)}-t ${sel.slice(1)}-d`);
+  svg.append('title').attr('id', `${sel.slice(1)}-t`).text(titleText);
+  svg.append('desc').attr('id', `${sel.slice(1)}-d`).text(descText);
+  const leftX = w * 0.28, rightX = w * 0.68, midY = h * 0.5;
+  svg.append('circle').attr('cx', leftX).attr('cy', midY).attr('r', smallR).attr('fill', '#8a8480');
+  svg.append('circle').attr('cx', rightX).attr('cy', midY).attr('r', bigR).attr('fill', 'var(--color-ink)');
+  svg.append('text').attr('x', leftX).attr('y', midY + smallR + 18)
+    .attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-secondary)')
+    .text('value = 1');
+  svg.append('text').attr('x', rightX).attr('y', midY + bigR + 18)
+    .attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-secondary)')
+    .text(`value = ${d3.select('#ratioSlider').property('value')}`);
+}
+
+function update() {
+  const ratio = parseFloat(d3.select('#ratioSlider').property('value'));
+  d3.select('#ratioOut').text(ratio.toFixed(1));
+
+  // Radius-linear: big radius = base * ratio. Area ratio = ratio^2. Perceived = areaRatio^0.7.
+  const radiusBigR = BASE_R * ratio;
+  const radiusAreaRatio = ratio * ratio;
+  const radiusPerc = Math.pow(radiusAreaRatio, 0.7);
+
+  // Area-linear: big radius = base * sqrt(ratio). Area ratio = ratio. Perceived = ratio^0.7.
+  const areaBigR = BASE_R * Math.sqrt(ratio);
+  const areaPerc = Math.pow(ratio, 0.7);
+
+  drawBubbles('#chartRadius', BASE_R, radiusBigR,
+    'Radius-linear bubble pair',
+    `Two bubbles. Small radius ${BASE_R}, large radius ${radiusBigR.toFixed(1)} — the area ratio is ${radiusAreaRatio.toFixed(1)} times.`);
+  drawBubbles('#chartArea', BASE_R, areaBigR,
+    'Area-linear bubble pair',
+    `Two bubbles. Small radius ${BASE_R}, large radius ${areaBigR.toFixed(1)} — the area ratio matches the data ratio ${ratio.toFixed(1)}.`);
+
+  d3.select('#rdData').text(`${ratio.toFixed(1)}×`);
+  d3.select('#rdArea').text(`${radiusAreaRatio.toFixed(1)}×`);
+  d3.select('#rdPerc').text(`≈ ${radiusPerc.toFixed(1)}×`);
+  d3.select('#raData').text(`${ratio.toFixed(1)}×`);
+  d3.select('#raArea').text(`${ratio.toFixed(1)}×`);
+  d3.select('#raPerc').text(`≈ ${areaPerc.toFixed(1)}×`);
+}
+
+d3.select('#ratioSlider').on('input', update);
+update();
+const ro = new ResizeObserver(update);
+['#chartRadius', '#chartArea'].forEach(s => ro.observe(document.querySelector(s)));
+</script>
+</body>
+</html>

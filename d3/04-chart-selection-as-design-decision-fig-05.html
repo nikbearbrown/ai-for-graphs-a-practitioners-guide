@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 4.5 — Eight functional categories (FT Visual Vocabulary)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #grid { width: 100%; }
+  .grid-svg { width: 100%; height: auto; display: block; }
+  .card { stroke: var(--color-border); fill: var(--color-white); transition: fill 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .card:hover, .card:focus { fill: color-mix(in srgb, var(--color-ochre) 8%, var(--color-white)); outline: none; }
+  .card-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; fill: var(--color-secondary); }
+  .card-cat { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; fill: var(--color-ink); letter-spacing: 0.5px; }
+  .card-q { font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-size: 13px; fill: var(--color-secondary); }
+  .card-rule { stroke: var(--color-border); }
+  .card-type { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .footer { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 65ch; font-style: italic; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 260px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 4.5 — Eight functional categories</h1>
+<p class="subtitle">The FT Visual Vocabulary organizes every chart type by the reader's question, not the data's structure. Step 3 of Cairo's framework is a lookup against this grid.</p>
+<div id="grid" role="img" aria-labelledby="ft-t ft-d"></div>
+<p class="footer">Hover or focus a card to highlight a category. The reader's question, not the data's structure, decides the category.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const categories = [
+  { num: '01', name: 'COMPARISON',       q: 'how do these compare?',          types: ['bar chart', 'column chart', 'slope graph', 'dot plot'] },
+  { num: '02', name: 'CHANGE OVER TIME', q: 'how is this changing?',          types: ['line chart', 'area chart', 'stream graph', 'candlestick'] },
+  { num: '03', name: 'DISTRIBUTION',     q: 'what does the spread look like?',types: ['histogram', 'density plot', 'box plot', 'violin plot'] },
+  { num: '04', name: 'RELATIONSHIP',     q: 'are these variables connected?', types: ['scatterplot', 'bubble chart', 'heatmap', 'parallel coords'] },
+  { num: '05', name: 'PART-TO-WHOLE',    q: 'what makes up this total?',      types: ['stacked bar', 'waffle chart', 'treemap', 'pie / donut'] },
+  { num: '06', name: 'HIERARCHY',        q: 'how is this structured?',        types: ['treemap', 'sunburst', 'circle packing', 'dendrogram'] },
+  { num: '07', name: 'FLOW',             q: 'how does this get from A to B?', types: ['Sankey diagram', 'alluvial diagram', 'chord diagram', 'network'] },
+  { num: '08', name: 'SPATIAL',          q: 'where is this happening?',       types: ['choropleth', 'dot map', 'bubble map', 'cartogram'] }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, d) {
+  tooltip.html(`<strong>${d.name}</strong><br/><em>${d.q}</em>`)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  d3.select('#grid').selectAll('*').remove();
+  const container = document.getElementById('grid');
+  const totalWidth = container.clientWidth || 800;
+  const cols = totalWidth < 720 ? 2 : 4;
+  const rows = Math.ceil(categories.length / cols);
+  const gap = 12;
+  const cardWidth = (totalWidth - gap * (cols - 1)) / cols;
+  const cardHeight = 190;
+  const totalHeight = rows * cardHeight + (rows - 1) * gap;
+
+  const svg = d3.select('#grid').append('svg')
+    .attr('class', 'grid-svg')
+    .attr('viewBox', `0 0 ${totalWidth} ${totalHeight}`)
+    .attr('width', totalWidth)
+    .attr('height', totalHeight)
+    .attr('role', 'img')
+    .attr('aria-labelledby', 'ft-t ft-d');
+  svg.append('title').attr('id', 'ft-t').text('FT Visual Vocabulary functional categories');
+  svg.append('desc').attr('id', 'ft-d').text('Eight cards naming each functional category, the defining reader question, and the canonical chart types within it.');
+
+  const cards = svg.selectAll('.card-g')
+    .data(categories)
+    .join('g')
+      .attr('class', 'card-g')
+      .attr('transform', (d, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        return `translate(${col * (cardWidth + gap)}, ${row * (cardHeight + gap)})`;
+      })
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${d.name}: ${d.q}. Charts: ${d.types.join(', ')}.`)
+      .on('mouseover', showTip).on('mousemove', moveTip).on('mouseout', hideTip);
+
+  cards.append('rect')
+    .attr('class', 'card')
+    .attr('width', cardWidth)
+    .attr('height', cardHeight);
+
+  cards.append('text').attr('class', 'card-num').attr('x', 16).attr('y', 24).text(d => d.num);
+  cards.append('text').attr('class', 'card-cat').attr('x', 16).attr('y', 50).text(d => d.name);
+  cards.append('text').attr('class', 'card-q').attr('x', 16).attr('y', 74).text(d => d.q);
+  cards.append('line').attr('class', 'card-rule').attr('x1', 16).attr('y1', 90).attr('x2', cardWidth - 16).attr('y2', 90);
+
+  cards.each(function(d) {
+    const g = d3.select(this);
+    d.types.forEach((t, i) => {
+      g.append('text').attr('class', 'card-type').attr('x', 16).attr('y', 110 + i * 18).text(t);
+    });
+  });
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('grid'));
+</script>
+</body>
+</html>

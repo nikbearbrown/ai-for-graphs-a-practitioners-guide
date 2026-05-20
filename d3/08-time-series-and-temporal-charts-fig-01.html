@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 8.1 — Bar chart vs line chart, same y-range</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 4px; }
+  .channel-chip { display: inline-block; margin-top: 8px; padding: 2px 8px; border: 1px solid var(--color-ink); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .channel-chip.bad { border-color: var(--color-red); color: var(--color-red); }
+  .chart { width: 100%; height: 320px; margin-top: 12px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .bar { fill: var(--color-secondary); transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .bar:hover { opacity: 0.7; }
+  .line { fill: none; stroke: var(--color-ink); stroke-width: 1.8; }
+  .dot { fill: var(--color-ink); }
+  .dot.peak { fill: var(--color-red); }
+  .annotation { font-family: 'Inter', sans-serif; font-size: 12px; fill: var(--color-ink); }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 8.1 — Bar chart vs line chart, same y-range</h1>
+<p class="subtitle">Twelve months of revenue ($83k–$91k), rendered two ways with the y-axis starting at $80k. The bar chart violates proportional ink; the line chart does not.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Column bar chart, y-axis from $80k</div>
+    <div class="panel-sub">channel is bar length (area) — violation</div>
+    <span class="channel-chip bad">channel: bar length</span>
+    <div id="chartBar" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Line chart, y-axis from $80k</div>
+    <div class="panel-sub">channel is point position — legitimate</div>
+    <span class="channel-chip">channel: point position</span>
+    <div id="chartLine" class="chart"></div>
+  </div>
+</div>
+<p class="caption">Same twelve values, same y-axis range, two channels. The bar chart's length-from-baseline encoding requires zero; the line chart's position encoding does not.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const monthlyData = [
+  { date: '2024-01-01', value: 83 },
+  { date: '2024-02-01', value: 86 },
+  { date: '2024-03-01', value: 84 },
+  { date: '2024-04-01', value: 88 },
+  { date: '2024-05-01', value: 87 },
+  { date: '2024-06-01', value: 90 },
+  { date: '2024-07-01', value: 89 },
+  { date: '2024-08-01', value: 91 },
+  { date: '2024-09-01', value: 88 },
+  { date: '2024-10-01', value: 85 },
+  { date: '2024-11-01', value: 86 },
+  { date: '2024-12-01', value: 84 }
+].map(d => ({ ...d, dateObj: new Date(d.date) }));
+
+const fmtMonth = d3.utcFormat('%b');
+const fmtFull  = d3.utcFormat('%b %Y');
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawBar() {
+  const sel = '#chartBar';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 420;
+  const totalHeight = container.clientHeight || 320;
+  const margin = { top: 24, right: 16, bottom: 48, left: 56 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(sel).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'bar-t bar-d');
+  svg.append('title').attr('id', 'bar-t').text('Twelve monthly revenue values plotted as bars with a truncated y-axis');
+  svg.append('desc').attr('id', 'bar-d').text('Bars exaggerate the variation; the y-axis starts at 80 instead of zero, so bar lengths do not encode the data values.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleBand = d3.scaleBand()
+    .domain(monthlyData.map(d => d.date))
+    .range([0, chartWidth])
+    .padding(0.18);
+
+  // Truncated y-axis — deliberately violates proportional ink for demonstration
+  const yScaleLinear = d3.scaleLinear()
+    .domain([80, 92])
+    .range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleBand).tickFormat(d => fmtMonth(new Date(d))));
+  gChart.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(yScaleLinear).ticks(4).tickFormat(d => `$${d}k`));
+
+  gChart.selectAll('.bar')
+    .data(monthlyData)
+    .join('rect')
+      .attr('class', 'bar')
+      .attr('x', d => xScaleBand(d.date))
+      .attr('y', d => yScaleLinear(d.value))
+      .attr('width', xScaleBand.bandwidth())
+      .attr('height', d => chartHeight - yScaleLinear(d.value))
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${fmtFull(d.dateObj)}: $${d.value}k`)
+      .on('mouseover', (event, d) => showTip(event, `<strong>${fmtFull(d.dateObj)}</strong>: $${d.value}k`))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
+}
+
+function drawLine() {
+  const sel = '#chartLine';
+  const container = document.querySelector(sel);
+  d3.select(sel).selectAll('*').remove();
+  const totalWidth  = container.clientWidth  || 420;
+  const totalHeight = container.clientHeight || 320;
+  const margin = { top: 24, right: 16, bottom: 48, left: 56 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(sel).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-labelledby', 'line-t line-d');
+  svg.append('title').attr('id', 'line-t').text('Twelve monthly revenue values plotted as a line with the same y-range');
+  svg.append('desc').attr('id', 'line-d').text('Point position carries the magnitude, so a tight y-axis is a legitimate design choice rather than a proportional-ink violation.');
+
+  const gChart = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleUtc = d3.scaleUtc()
+    .domain(d3.extent(monthlyData, d => d.dateObj))
+    .range([0, chartWidth]);
+
+  const yScaleLinear = d3.scaleLinear()
+    .domain([80, 92])
+    .range([chartHeight, 0]);
+
+  gChart.append('g').attr('class', 'axis').attr('transform', `translate(0,${chartHeight})`)
+    .call(d3.axisBottom(xScaleUtc).ticks(d3.utcMonth.every(2)).tickFormat(fmtMonth));
+  gChart.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(yScaleLinear).ticks(4).tickFormat(d => `$${d}k`));
+
+  const lineGen = d3.line()
+    .x(d => xScaleUtc(d.dateObj))
+    .y(d => yScaleLinear(d.value))
+    .curve(d3.curveLinear);
+
+  gChart.append('path')
+    .datum(monthlyData)
+    .attr('class', 'line')
+    .attr('d', lineGen);
+
+  const peakIndex = d3.maxIndex(monthlyData, d => d.value);
+  gChart.selectAll('.dot')
+    .data(monthlyData)
+    .join('circle')
+      .attr('class', (d, i) => i === peakIndex ? 'dot peak' : 'dot')
+      .attr('cx', d => xScaleUtc(d.dateObj))
+      .attr('cy', d => yScaleLinear(d.value))
+      .attr('r', (d, i) => i === peakIndex ? 4 : 3)
+      .attr('tabindex', 0)
+      .attr('aria-label', d => `${fmtFull(d.dateObj)}: $${d.value}k`)
+      .on('mouseover', (event, d) => showTip(event, `<strong>${fmtFull(d.dateObj)}</strong>: $${d.value}k`))
+      .on('mousemove', moveTip)
+      .on('mouseout', hideTip);
+
+  // Peak annotation
+  const peak = monthlyData[peakIndex];
+  gChart.append('text')
+    .attr('class', 'annotation')
+    .attr('x', xScaleUtc(peak.dateObj))
+    .attr('y', yScaleLinear(peak.value) - 10)
+    .attr('text-anchor', 'middle')
+    .text(`peak ${fmtMonth(peak.dateObj)} $${peak.value}k`);
+}
+
+function draw() {
+  drawBar();
+  drawLine();
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartBar'));
+ro.observe(document.getElementById('chartLine'));
+</script>
+</body>
+</html>

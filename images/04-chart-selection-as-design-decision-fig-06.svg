@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t406 d406">
+  <title id="t406">A short history of chart-type invention, 1786 to 1991</title>
+  <desc id="d406">Horizontal timeline of seven chart-type inventions from Playfair's 1786 bar chart through Shneiderman's 1991 treemap. Each entry names the inventor, the year, and the original communication problem.</desc>
+  <defs>
+    <style>
+      .ti  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .yr  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 12px; font-weight: bold; fill: #2a1a0e; }
+      .nm  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .who { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .pb  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .ax  { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #8a8480; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+    <marker id="ar406" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+
+  <text x="350" y="30" text-anchor="middle" class="ti">Every chart type is an answer to a question.</text>
+
+  <!-- timeline axis. domain 1780..1995, range 60..660 -->
+  <!-- pixels per year = 600/215 ≈ 2.79 -->
+  <line x1="60" y1="220" x2="660" y2="220" stroke="#4a4540" stroke-width="1" marker-end="url(#ar406)"/>
+
+  <!-- decade tick marks -->
+  <g class="ax">
+    <line x1="116"  y1="220" x2="116"  y2="226" stroke="#8a8480"/><text x="116" y="240" text-anchor="middle">1800</text>
+    <line x1="172"  y1="220" x2="172"  y2="226" stroke="#8a8480"/><text x="172" y="240" text-anchor="middle">1820</text>
+    <line x1="228"  y1="220" x2="228"  y2="226" stroke="#8a8480"/><text x="228" y="240" text-anchor="middle">1840</text>
+    <line x1="283"  y1="220" x2="283"  y2="226" stroke="#8a8480"/><text x="283" y="240" text-anchor="middle">1860</text>
+    <line x1="339"  y1="220" x2="339"  y2="226" stroke="#8a8480"/><text x="339" y="240" text-anchor="middle">1880</text>
+    <line x1="395"  y1="220" x2="395"  y2="226" stroke="#8a8480"/><text x="395" y="240" text-anchor="middle">1900</text>
+    <line x1="451"  y1="220" x2="451"  y2="226" stroke="#8a8480"/><text x="451" y="240" text-anchor="middle">1920</text>
+    <line x1="507"  y1="220" x2="507"  y2="226" stroke="#8a8480"/><text x="507" y="240" text-anchor="middle">1940</text>
+    <line x1="563"  y1="220" x2="563"  y2="226" stroke="#8a8480"/><text x="563" y="240" text-anchor="middle">1960</text>
+    <line x1="619"  y1="220" x2="619"  y2="226" stroke="#8a8480"/><text x="619" y="240" text-anchor="middle">1980</text>
+  </g>
+
+  <!-- ENTRY 1: Playfair bar chart 1786 — x = 60 + (1786-1780)*2.79 ≈ 76.7, place above -->
+  <g>
+    <circle cx="77" cy="220" r="4" fill="#2a1a0e"/>
+    <line x1="77" y1="216" x2="77" y2="170" stroke="#8a8480" stroke-dasharray="3 2"/>
+    <text x="77" y="160" text-anchor="middle" class="yr">1786</text>
+    <text x="77" y="146" text-anchor="middle" class="nm">bar chart</text>
+    <text x="77" y="132" text-anchor="middle" class="who">Playfair</text>
+    <text x="77" y="116" text-anchor="middle" class="pb">trade deficits</text>
+    <text x="77" y="104" text-anchor="middle" class="pb">by country</text>
+  </g>
+  <!-- ENTRY 2: Playfair line chart 1786 — same year. Place below the axis -->
+  <g>
+    <circle cx="77" cy="220" r="4" fill="#2a1a0e"/>
+    <line x1="77" y1="224" x2="77" y2="266" stroke="#8a8480" stroke-dasharray="3 2"/>
+    <text x="77" y="280" text-anchor="middle" class="yr">1786</text>
+    <text x="77" y="294" text-anchor="middle" class="nm">line chart</text>
+    <text x="77" y="308" text-anchor="middle" class="who">Playfair</text>
+    <text x="77" y="324" text-anchor="middle" class="pb">trade values</text>
+    <text x="77" y="336" text-anchor="middle" class="pb">over time</text>
+  </g>
+
+  <!-- ENTRY 3: Dupin choropleth 1826 — x = 60 + (1826-1780)*2.79 ≈ 188.3 -->
+  <g>
+    <circle cx="188" cy="220" r="4" fill="#2a1a0e"/>
+    <line x1="188" y1="216" x2="188" y2="170" stroke="#8a8480" stroke-dasharray="3 2"/>
+    <text x="188" y="160" text-anchor="middle" class="yr">1826</text>
+    <text x="188" y="146" text-anchor="middle" class="nm">choropleth</text>
+    <text x="188" y="132" text-anchor="middle" class="who">Dupin</text>
+    <text x="188" y="116" text-anchor="middle" class="pb">illiteracy rate</text>
+    <text x="188" y="104" text-anchor="middle" class="pb">per department</text>
+  </g>
+
+  <!-- ENTRY 4: Snow dot map 1854 — x = 60 + (1854-1780)*2.79 ≈ 266.5 -->
+  <g>
+    <circle cx="266" cy="220" r="4" fill="#2a1a0e"/>
+    <line x1="266" y1="224" x2="266" y2="266" stroke="#8a8480" stroke-dasharray="3 2"/>
+    <text x="266" y="280" text-anchor="middle" class="yr">1854</text>
+    <text x="266" y="294" text-anchor="middle" class="nm">dot map</text>
+    <text x="266" y="308" text-anchor="middle" class="who">Snow</text>
+    <text x="266" y="324" text-anchor="middle" class="pb">cholera deaths</text>
+    <text x="266" y="336" text-anchor="middle" class="pb">by address</text>
+  </g>
+
+  <!-- ENTRY 5: Nightingale polar area 1858 — x = 60 + (1858-1780)*2.79 ≈ 277.6 -->
+  <g>
+    <circle cx="278" cy="220" r="4" fill="#2a1a0e"/>
+    <line x1="278" y1="216" x2="278" y2="170" stroke="#8a8480" stroke-dasharray="3 2"/>
+    <text x="278" y="160" text-anchor="middle" class="yr">1858</text>
+    <text x="278" y="146" text-anchor="middle" class="nm">polar area</text>
+    <text x="278" y="132" text-anchor="middle" class="who">Nightingale</text>
+    <text x="278" y="116" text-anchor="middle" class="pb">preventable</text>
+    <text x="278" y="104" text-anchor="middle" class="pb">deaths by month</text>
+  </g>
+
+  <!-- ENTRY 6: Minard flow map 1869 — x = 60 + (1869-1780)*2.79 ≈ 308.3 -->
+  <g>
+    <circle cx="308" cy="220" r="4" fill="#2a1a0e"/>
+    <line x1="308" y1="224" x2="308" y2="266" stroke="#8a8480" stroke-dasharray="3 2"/>
+    <text x="308" y="280" text-anchor="middle" class="yr">1869</text>
+    <text x="308" y="294" text-anchor="middle" class="nm">flow map</text>
+    <text x="308" y="308" text-anchor="middle" class="who">Minard</text>
+    <text x="308" y="324" text-anchor="middle" class="pb">army depletion</text>
+    <text x="308" y="336" text-anchor="middle" class="pb">on the march</text>
+  </g>
+
+  <!-- ENTRY 7: Shneiderman treemap 1991 — x = 60 + (1991-1780)*2.79 ≈ 648.7 -->
+  <g>
+    <circle cx="640" cy="220" r="4" fill="#2a1a0e"/>
+    <line x1="640" y1="216" x2="640" y2="170" stroke="#8a8480" stroke-dasharray="3 2"/>
+    <text x="640" y="160" text-anchor="middle" class="yr">1991</text>
+    <text x="640" y="146" text-anchor="middle" class="nm">treemap</text>
+    <text x="640" y="132" text-anchor="middle" class="who">Shneiderman</text>
+    <text x="640" y="116" text-anchor="middle" class="pb">disk usage in</text>
+    <text x="640" y="104" text-anchor="middle" class="pb">nested directories</text>
+  </g>
+
+  <text x="350" y="386" text-anchor="middle" class="cap">Knowing the original problem clarifies when each chart works —</text>
+  <text x="350" y="402" text-anchor="middle" class="cap">and, more important, when it does not.</text>
+</svg>

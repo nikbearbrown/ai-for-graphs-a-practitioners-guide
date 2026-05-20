@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 17.5 — The published artifact</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white:     #FFFFFF;
+    --color-ink:       #121212;
+    --color-red:       #C8102E;
+    --color-secondary: #545454;
+    --color-border:    #D4D4D4;
+    --color-ochre:     #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white:     #111111;
+      --color-ink:       #F0EBE3;
+      --color-red:       #E8243A;
+      --color-secondary: #A0978C;
+      --color-border:    #2E2E2E;
+      --color-ochre:     #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; }
+  .publication { border: 1px solid var(--color-ink); padding: 28px; background: var(--color-white); position: relative; }
+  .publication::before { content: 'publication container'; position: absolute; top: -10px; left: 16px; background: var(--color-white); padding: 0 6px; color: var(--color-secondary); font-style: italic; font-size: 11px; }
+  .pub-title { font-family: 'EB Garamond', Georgia, serif; font-size: 28px; font-weight: 700; color: var(--color-ink); margin-bottom: 4px; }
+  .pub-sub  { font-family: 'EB Garamond', Georgia, serif; font-size: 16px; color: var(--color-secondary); margin-bottom: 20px; }
+  #chart { width: 100%; height: 280px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .provenance { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--color-border); }
+  .prov-block .label { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-ink); margin-bottom: 6px; }
+  .prov-block .body { font-size: 12px; color: var(--color-secondary); line-height: 1.5; }
+  .manifest { margin-top: 16px; padding: 12px 16px; background: color-mix(in srgb, var(--color-border) 25%, var(--color-white)); border: 1px solid var(--color-border); }
+  .manifest .label { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-ink); margin-bottom: 4px; }
+  .manifest .files { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--color-ink); }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; font-style: italic; max-width: 80ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  @media (max-width: 720px) { .provenance { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<h1>Figure 17.5 — The published artifact</h1>
+<p class="subtitle">A publishable chart is not a published chart. The handoff is what makes it trustable.</p>
+<div class="publication">
+  <div class="pub-title">Where the world's refugees are going</div>
+  <div class="pub-sub">Top destination countries by total resident refugees, 2024</div>
+  <div id="chart" role="img" aria-labelledby="chart-title chart-desc"></div>
+  <div class="provenance">
+    <div class="prov-block">
+      <div class="label">Source</div>
+      <div class="body">Data: UNHCR Refugee Statistics, 2024. Available at unhcr.org/refugee-statistics.</div>
+    </div>
+    <div class="prov-block">
+      <div class="label">Methodology</div>
+      <div class="body">Point-in-time totals as of 31 December. Includes UNHCR estimates where national data is unavailable.</div>
+    </div>
+    <div class="prov-block">
+      <div class="label">Accessibility</div>
+      <div class="body">Alt text and ARIA labels provided. WCAG AA contrast verified for marks and text against the canvas.</div>
+    </div>
+  </div>
+  <div class="manifest">
+    <div class="label">Project manifest</div>
+    <div class="files">chart-01.html · chart-02.html · chart-03.html · CLAUDE.md · DESIGN.md · PROJECT.md · README.md</div>
+  </div>
+</div>
+<p class="caption">A published chart is the SVG plus the provenance that lets the reader trust it and the README that lets future-you update it when the 2025 figures land.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const barData = [
+  { country: 'Turkey',   value: 3.6 },
+  { country: 'Iran',     value: 3.4 },
+  { country: 'Germany',  value: 2.5 },
+  { country: 'Pakistan', value: 1.7 },
+  { country: 'Uganda',   value: 1.5 },
+  { country: 'Poland',   value: 1.0 }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function draw() {
+  d3.select('#chart').selectAll('*').remove();
+  const container = document.getElementById('chart');
+  const W = container.clientWidth || 800;
+  const H = container.clientHeight || 280;
+  const margin = { top: 16, right: 64, bottom: 32, left: 96 };
+  const cw = W - margin.left - margin.right;
+  const ch = H - margin.top - margin.bottom;
+  const svg = d3.select('#chart').append('svg').attr('width', W).attr('height', H)
+    .attr('role', 'img').attr('aria-labelledby', 'chart-title chart-desc');
+  svg.append('title').attr('id', 'chart-title').text('Top refugee destination countries, 2024');
+  svg.append('desc').attr('id', 'chart-desc').text('Horizontal bar chart of the six countries hosting the most refugees in 2024, with value labels in millions at the bar ends. Zero baseline.');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const yScaleBand = d3.scaleBand().domain(barData.map(d => d.country)).range([0, ch]).padding(0.18);
+  const xScaleLinear = d3.scaleLinear().domain([0, d3.max(barData, d => d.value)]).nice().range([0, cw]);
+
+  g.selectAll('rect').data(barData).join('rect')
+    .attr('class', 'bar-rect')
+    .attr('x', 0)
+    .attr('y', d => yScaleBand(d.country))
+    .attr('width', d => xScaleLinear(d.value))
+    .attr('height', yScaleBand.bandwidth())
+    .attr('fill', (d, i) => i === 0 ? 'var(--color-ink)' : (i < 3 ? '#4a4540' : (i < 5 ? '#8a8480' : 'var(--color-border)')))
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `${d.country}: ${d.value} million refugees`)
+    .on('mouseover', (event, d) => showTip(event, `<strong>${d.country}</strong><br>${d.value.toFixed(1)}M refugees`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  g.selectAll('.value-label').data(barData).join('text')
+    .attr('x', d => xScaleLinear(d.value) + 6)
+    .attr('y', d => yScaleBand(d.country) + yScaleBand.bandwidth() / 2 + 4)
+    .attr('font-family', 'JetBrains Mono, monospace').attr('font-size', 12).attr('fill', 'var(--color-ink)')
+    .text(d => `${d.value.toFixed(1)}M`);
+
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleBand).tickSize(0))
+    .call(s => s.select('.domain').remove())
+    .selectAll('text').attr('font-family', "'EB Garamond', Georgia, serif").attr('font-size', 13).attr('fill', 'var(--color-ink)');
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${ch})`)
+    .call(d3.axisBottom(xScaleLinear).ticks(4).tickFormat(d => `${d}M`));
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chart'));
+</script>
+</body>
+</html>

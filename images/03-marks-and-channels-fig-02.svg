@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" role="img" aria-labelledby="t02 d02">
+  <title id="t02">The four mark types — point, line, area, and glyph</title>
+  <desc id="d02">A four-panel reference showing each mark family with one canonical chart example: a scatter for point marks, a price line for line marks, a filled area for area marks, and a candlestick for glyph marks.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+    </style>
+  </defs>
+  <rect width="700" height="420" fill="#fdfcfb"/>
+  <text x="32" y="28" class="ti">The four mark families</text>
+  <text x="32" y="44" class="sm">Each mark already carries a claim about the data. Choose accordingly.</text>
+
+  <!-- 2x2 grid: panel size ~310 x 150, margin 28 -->
+  <!-- PANEL A — POINT MARK (scatter) -->
+  <g transform="translate(40,72)">
+    <text x="0" y="0" class="ti">Point marks</text>
+    <text x="0" y="14" class="sm">scatterplot · one mark per observation · no continuity claim</text>
+    <line x1="20" y1="30" x2="20" y2="140" stroke="#8a8480"/>
+    <line x1="20" y1="140" x2="280" y2="140" stroke="#8a8480"/>
+    <g fill="#2a1a0e">
+      <circle cx="38"  cy="120" r="3"/>
+      <circle cx="58"  cy="108" r="3"/>
+      <circle cx="78"  cy="118" r="3"/>
+      <circle cx="98"  cy="92"  r="3"/>
+      <circle cx="118" cy="98"  r="3"/>
+      <circle cx="138" cy="74"  r="3"/>
+      <circle cx="158" cy="84"  r="3"/>
+      <circle cx="178" cy="62"  r="3"/>
+      <circle cx="198" cy="70"  r="3"/>
+      <circle cx="218" cy="48"  r="3"/>
+      <circle cx="238" cy="58"  r="3"/>
+      <circle cx="258" cy="40"  r="3"/>
+    </g>
+  </g>
+
+  <!-- PANEL B — LINE MARK -->
+  <g transform="translate(380,72)">
+    <text x="0" y="0" class="ti">Line marks</text>
+    <text x="0" y="14" class="sm">line chart · connects points · implies continuity between them</text>
+    <line x1="20" y1="30" x2="20" y2="140" stroke="#8a8480"/>
+    <line x1="20" y1="140" x2="280" y2="140" stroke="#8a8480"/>
+    <polyline points="28,118 58,104 88,112 118,86 148,94 178,70 208,82 238,56 268,64"
+              fill="none" stroke="#2a1a0e" stroke-width="1.5"/>
+    <g fill="#2a1a0e">
+      <circle cx="28"  cy="118" r="2"/>
+      <circle cx="58"  cy="104" r="2"/>
+      <circle cx="88"  cy="112" r="2"/>
+      <circle cx="118" cy="86"  r="2"/>
+      <circle cx="148" cy="94"  r="2"/>
+      <circle cx="178" cy="70"  r="2"/>
+      <circle cx="208" cy="82"  r="2"/>
+      <circle cx="238" cy="56"  r="2"/>
+      <circle cx="268" cy="64"  r="2"/>
+    </g>
+  </g>
+
+  <!-- PANEL C — AREA MARK -->
+  <g transform="translate(40,250)">
+    <text x="0" y="0" class="ti">Area marks</text>
+    <text x="0" y="14" class="sm">area chart, bar chart, choropleth · filled region encodes magnitude</text>
+    <line x1="20" y1="30" x2="20" y2="140" stroke="#8a8480"/>
+    <line x1="20" y1="140" x2="280" y2="140" stroke="#8a8480"/>
+    <path d="M 28 118 L 58 104 L 88 112 L 118 86 L 148 94 L 178 70 L 208 82 L 238 56 L 268 64 L 268 140 L 28 140 Z"
+          fill="#8a8480"/>
+    <path d="M 28 118 L 58 104 L 88 112 L 118 86 L 148 94 L 178 70 L 208 82 L 238 56 L 268 64"
+          fill="none" stroke="#2a1a0e" stroke-width="1.2"/>
+  </g>
+
+  <!-- PANEL D — GLYPH MARK (candlestick) -->
+  <g transform="translate(380,250)">
+    <text x="0" y="0" class="ti">Glyph marks</text>
+    <text x="0" y="14" class="sm">candlestick, bullet, wind-rose · one mark, several attributes encoded</text>
+    <line x1="20" y1="30" x2="20" y2="140" stroke="#8a8480"/>
+    <line x1="20" y1="140" x2="280" y2="140" stroke="#8a8480"/>
+    <!-- 7 candlesticks: high-wick, body (open-close), low-wick. Up bodies hollow, down bodies filled. -->
+    <g stroke="#2a1a0e" stroke-width="1">
+      <!-- 1 up -->
+      <line x1="40" y1="46" x2="40" y2="120"/>
+      <rect x="34" y="80" width="12" height="28" fill="#fdfcfb"/>
+      <!-- 2 down -->
+      <line x1="74" y1="58" x2="74" y2="128"/>
+      <rect x="68" y="74" width="12" height="36" fill="#2a1a0e"/>
+      <!-- 3 up -->
+      <line x1="108" y1="40" x2="108" y2="110"/>
+      <rect x="102" y="62" width="12" height="40" fill="#fdfcfb"/>
+      <!-- 4 down -->
+      <line x1="142" y1="50" x2="142" y2="118"/>
+      <rect x="136" y="68" width="12" height="32" fill="#2a1a0e"/>
+      <!-- 5 up -->
+      <line x1="176" y1="36" x2="176" y2="100"/>
+      <rect x="170" y="52" width="12" height="36" fill="#fdfcfb"/>
+      <!-- 6 up -->
+      <line x1="210" y1="30" x2="210" y2="92"/>
+      <rect x="204" y="44" width="12" height="38" fill="#fdfcfb"/>
+      <!-- 7 down -->
+      <line x1="244" y1="38" x2="244" y2="108"/>
+      <rect x="238" y="60" width="12" height="32" fill="#2a1a0e"/>
+    </g>
+  </g>
+
+  <text x="350" y="408" text-anchor="middle" class="cap">Mark choice is already an argument: continuity, depletion, identity — chosen before any channel is assigned.</text>
+</svg>

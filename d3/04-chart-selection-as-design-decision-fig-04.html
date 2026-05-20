@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 4.4 — One dataset, three questions, three charts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #panels { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  @media (max-width: 900px) { #panels { grid-template-columns: 1fr; } }
+  .panel { border: 1px solid var(--color-border); padding: 16px; background: var(--color-white); }
+  .panel h2 { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; letter-spacing: 0.4px; margin-bottom: 4px; }
+  .panel .question { font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-size: 13px; color: var(--color-secondary); margin-bottom: 12px; }
+  .panel .footer { font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-size: 11px; color: var(--color-secondary); margin-top: 8px; }
+  .chart-host { width: 100%; height: 260px; }
+  .axis-line { stroke: var(--color-secondary); }
+  .tick-line { stroke: var(--color-secondary); }
+  .tick-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-secondary); }
+  .axis-title { font-family: 'Inter', sans-serif; font-size: 10px; fill: var(--color-secondary); }
+  .data-line { fill: none; stroke: var(--color-ink); stroke-width: 1.5; }
+  .bar-rect { transition: opacity 200ms cubic-bezier(0.2,0.8,0.2,1); }
+  .bar-rect:hover, .bar-rect:focus { opacity: 1 !important; outline: none; }
+  .bar-active .bar-rect { opacity: 0.4; }
+  .cat-label { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); }
+  .val-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; fill: var(--color-ink); }
+  .legend-text { font-family: 'Inter', sans-serif; font-size: 11px; fill: var(--color-ink); }
+  .legend-swatch { stroke: var(--color-border); }
+  .caption { color: var(--color-secondary); font-size: 12px; margin-top: 16px; max-width: 70ch; font-style: italic; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; max-width: 280px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 4.4 — One dataset, three questions, three charts</h1>
+<p class="subtitle">Five sectors (food, water, shelter, health, protection), monthly funding amounts, 2022 to 2024. The dataset is the same in all three panels. The chart follows the question.</p>
+<div id="panels">
+  <div class="panel">
+    <h2>LINE CHART</h2>
+    <p class="question">"how has total monthly funding changed?"</p>
+    <div id="line" class="chart-host"></div>
+    <p class="footer">change over time — total funding across all five sectors per month</p>
+  </div>
+  <div class="panel">
+    <h2>HORIZONTAL BAR CHART</h2>
+    <p class="question">"which sector received the most cumulatively?"</p>
+    <div id="bars" class="chart-host"></div>
+    <p class="footer">comparison — summed across all months; time dimension collapsed</p>
+  </div>
+  <div class="panel">
+    <h2>100% STACKED COLUMN</h2>
+    <p class="question">"has each year's allocation split changed?"</p>
+    <div id="stack" class="chart-host"></div>
+    <p class="footer">part-to-whole with temporal sub-message — absolute amounts collapsed</p>
+  </div>
+</div>
+<p class="caption">Source: monthly humanitarian funding, 2022 to 2024 (illustrative). The dataset is identical in all three panels; the chart-type choice answers a different question each time.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const sectors = ['food', 'water', 'shelter', 'health', 'protection'];
+const sectorPalette = { food: '#121212', water: '#404040', shelter: '#787878', health: '#ADADAD', protection: '#C8C4C0' };
+
+const monthlyTotals = [
+  8.2, 7.9, 8.1, 7.6, 7.8, 7.3, 7.5, 7.2, 7.4, 7.0, 6.8, 6.5,
+  6.7, 6.4, 6.2, 5.9, 5.7, 5.4, 5.6, 5.9, 6.3, 6.6, 6.9, 7.1,
+  7.3, 7.6, 7.8, 7.9, 8.2, 8.5, 8.4, 8.6, 8.8, 9.0, 8.9, 9.1
+];
+
+const cumulativeBySector = [
+  { sector: 'food security',        usd: 84 },
+  { sector: 'water and sanitation', usd: 56 },
+  { sector: 'shelter',              usd: 48 },
+  { sector: 'health',               usd: 44 },
+  { sector: 'protection',           usd: 36 }
+];
+
+const yearlyComposition = [
+  { year: 2022, food: 30, water: 18, shelter: 15, health: 14, protection: 10 },
+  { year: 2023, food: 26, water: 19, shelter: 16, health: 15, protection: 12 },
+  { year: 2024, food: 28, water: 19, shelter: 17, health: 15, protection: 14 }
+];
+
+const tooltip = d3.select('body').append('div').attr('class', 'tooltip');
+function showTip(event, html) {
+  tooltip.html(html)
+    .style('left', (event.pageX + 12) + 'px')
+    .style('top', (event.pageY - 28) + 'px')
+    .transition().duration(150).style('opacity', 1);
+}
+function moveTip(event) { tooltip.style('left', (event.pageX + 12) + 'px').style('top', (event.pageY - 28) + 'px'); }
+function hideTip() { tooltip.transition().duration(100).style('opacity', 0); }
+
+function drawLine() {
+  const host = document.getElementById('line');
+  d3.select(host).selectAll('*').remove();
+  const width = host.clientWidth || 320;
+  const height = host.clientHeight || 260;
+  const margin = { top: 12, right: 16, bottom: 36, left: 40 };
+  const cw = width - margin.left - margin.right;
+  const ch = height - margin.top - margin.bottom;
+
+  const svg = d3.select('#line').append('svg')
+    .attr('width', width).attr('height', height)
+    .attr('role', 'img').attr('aria-labelledby', 'line-t line-d');
+  svg.append('title').attr('id', 'line-t').text('Line chart of total monthly funding 2022 to 2024');
+  svg.append('desc').attr('id', 'line-d').text('Total monthly humanitarian funding across five sectors fluctuates around 7.5 million USD, dipping mid-2023 before recovering above 9 million by late 2024.');
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleLinear = d3.scaleLinear().domain([0, monthlyTotals.length - 1]).range([0, cw]);
+  const yScaleLinear = d3.scaleLinear().domain([0, 10]).range([ch, 0]);
+
+  // axes
+  g.append('line').attr('class', 'axis-line').attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', ch);
+  g.append('line').attr('class', 'axis-line').attr('x1', 0).attr('x2', cw).attr('y1', ch).attr('y2', ch);
+
+  // y ticks 0, 5, 10
+  [0, 5, 10].forEach(t => {
+    g.append('line').attr('class', 'tick-line').attr('x1', -4).attr('x2', 0).attr('y1', yScaleLinear(t)).attr('y2', yScaleLinear(t));
+    g.append('text').attr('class', 'tick-label').attr('x', -8).attr('y', yScaleLinear(t) + 3).attr('text-anchor', 'end').text(t);
+  });
+  g.append('text').attr('class', 'axis-title').attr('x', -32).attr('y', -2).text('USD M');
+
+  // x ticks: month 0 = Jan 2022, 12 = Jan 2023, 24 = Jan 2024, 35 = Dec 2024
+  [{ i: 0, label: '2022' }, { i: 12, label: '2023' }, { i: 24, label: '2024' }].forEach(({i, label}) => {
+    g.append('line').attr('class', 'tick-line').attr('x1', xScaleLinear(i)).attr('x2', xScaleLinear(i)).attr('y1', ch).attr('y2', ch + 4);
+    g.append('text').attr('class', 'tick-label').attr('x', xScaleLinear(i)).attr('y', ch + 16).attr('text-anchor', 'middle').text(label);
+  });
+
+  const line = d3.line().x((d, i) => xScaleLinear(i)).y(d => yScaleLinear(d));
+  g.append('path').attr('class', 'data-line').attr('d', line(monthlyTotals));
+
+  // hover overlay for tooltip
+  const months = monthlyTotals.map((v, i) => ({ i, v }));
+  g.selectAll('.hover-dot').data(months).join('circle')
+    .attr('class', 'hover-dot')
+    .attr('cx', d => xScaleLinear(d.i)).attr('cy', d => yScaleLinear(d.v))
+    .attr('r', 6).attr('fill', 'transparent')
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `month ${d.i + 1}: ${d.v} million USD`)
+    .on('mouseover', (event, d) => showTip(event, `<strong>month ${d.i + 1}</strong>: ${d.v.toFixed(1)}M USD`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+}
+
+function drawBars() {
+  const host = document.getElementById('bars');
+  d3.select(host).selectAll('*').remove();
+  const width = host.clientWidth || 320;
+  const height = host.clientHeight || 260;
+  const margin = { top: 12, right: 28, bottom: 36, left: 112 };
+  const cw = width - margin.left - margin.right;
+  const ch = height - margin.top - margin.bottom;
+
+  const svg = d3.select('#bars').append('svg')
+    .attr('width', width).attr('height', height)
+    .attr('role', 'img').attr('aria-labelledby', 'bar-t bar-d');
+  svg.append('title').attr('id', 'bar-t').text('Horizontal bar chart of cumulative funding by sector');
+  svg.append('desc').attr('id', 'bar-d').text('Five sectors ordered by cumulative funding descending. Food security at 84 million USD is more than the next two combined.');
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`)
+    .on('mouseenter', function() { d3.select(this).classed('bar-active', true); })
+    .on('mouseleave', function() { d3.select(this).classed('bar-active', false); });
+
+  const xScaleLinear = d3.scaleLinear().domain([0, 90]).range([0, cw]);
+  const yScaleBand = d3.scaleBand().domain(cumulativeBySector.map(d => d.sector)).range([0, ch]).padding(0.18);
+
+  g.append('line').attr('class', 'axis-line').attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', ch);
+
+  const ticks = [0, 30, 60, 90];
+  ticks.forEach(t => {
+    g.append('line').attr('class', 'tick-line').attr('x1', xScaleLinear(t)).attr('x2', xScaleLinear(t)).attr('y1', ch).attr('y2', ch + 4);
+    g.append('text').attr('class', 'tick-label').attr('x', xScaleLinear(t)).attr('y', ch + 16).attr('text-anchor', 'middle').text(t);
+  });
+  g.append('text').attr('class', 'axis-title').attr('x', cw / 2).attr('y', ch + 32).attr('text-anchor', 'middle').text('USD millions (cumulative)');
+
+  g.selectAll('.bar-rect').data(cumulativeBySector).join('rect')
+    .attr('class', 'bar-rect')
+    .attr('x', 0).attr('y', d => yScaleBand(d.sector))
+    .attr('width', d => xScaleLinear(d.usd)).attr('height', yScaleBand.bandwidth())
+    .attr('fill', (d, i) => i === 0 ? 'var(--color-red)' : 'var(--color-ink)')
+    .attr('tabindex', 0)
+    .attr('aria-label', d => `${d.sector}: ${d.usd} million USD cumulative`)
+    .on('mouseover', (event, d) => showTip(event, `<strong>${d.sector}</strong>: ${d.usd}M USD`))
+    .on('mousemove', moveTip).on('mouseout', hideTip);
+
+  g.selectAll('.cat-label-text').data(cumulativeBySector).join('text')
+    .attr('class', 'cat-label')
+    .attr('x', -8).attr('y', d => yScaleBand(d.sector) + yScaleBand.bandwidth() / 2 + 4)
+    .attr('text-anchor', 'end').text(d => d.sector);
+
+  g.selectAll('.val-label-text').data(cumulativeBySector).join('text')
+    .attr('class', 'val-label')
+    .attr('x', d => xScaleLinear(d.usd) + 6).attr('y', d => yScaleBand(d.sector) + yScaleBand.bandwidth() / 2 + 4)
+    .text(d => d.usd);
+}
+
+function drawStack() {
+  const host = document.getElementById('stack');
+  d3.select(host).selectAll('*').remove();
+  const width = host.clientWidth || 320;
+  const height = host.clientHeight || 260;
+  const margin = { top: 12, right: 8, bottom: 56, left: 36 };
+  const cw = width - margin.left - margin.right;
+  const ch = height - margin.top - margin.bottom;
+
+  const svg = d3.select('#stack').append('svg')
+    .attr('width', width).attr('height', height)
+    .attr('role', 'img').attr('aria-labelledby', 'stack-t stack-d');
+  svg.append('title').attr('id', 'stack-t').text('Hundred percent stacked column chart of yearly composition');
+  svg.append('desc').attr('id', 'stack-d').text('Three columns, one per year, each segmented by sector. Proportions are directly comparable across years; the absolute total is not.');
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScaleBand = d3.scaleBand().domain(yearlyComposition.map(d => d.year)).range([0, cw]).padding(0.35);
+  const yScaleLinear = d3.scaleLinear().domain([0, 1]).range([ch, 0]);
+
+  g.append('line').attr('class', 'axis-line').attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', ch);
+  g.append('line').attr('class', 'axis-line').attr('x1', 0).attr('x2', cw).attr('y1', ch).attr('y2', ch);
+
+  // y ticks 0/25/50/75/100
+  [0, 0.25, 0.5, 0.75, 1].forEach(p => {
+    g.append('line').attr('class', 'tick-line').attr('x1', -4).attr('x2', 0).attr('y1', yScaleLinear(p)).attr('y2', yScaleLinear(p));
+    g.append('text').attr('class', 'tick-label').attr('x', -8).attr('y', yScaleLinear(p) + 3).attr('text-anchor', 'end').text(`${p * 100}`);
+  });
+  g.append('text').attr('class', 'axis-title').attr('x', -28).attr('y', -2).text('%');
+
+  yearlyComposition.forEach(yr => {
+    const total = sectors.reduce((s, k) => s + yr[k], 0);
+    let acc = 0;
+    sectors.forEach(k => {
+      const prop = yr[k] / total;
+      const yTop = yScaleLinear(acc + prop);
+      const h = yScaleLinear(acc) - yScaleLinear(acc + prop);
+      g.append('rect')
+        .attr('x', xScaleBand(yr.year)).attr('y', yTop)
+        .attr('width', xScaleBand.bandwidth()).attr('height', h)
+        .attr('fill', sectorPalette[k])
+        .attr('tabindex', 0)
+        .attr('aria-label', `${yr.year}, ${k}: ${(prop * 100).toFixed(1)} percent`)
+        .on('mouseover', (event) => showTip(event, `<strong>${yr.year} · ${k}</strong>: ${(prop * 100).toFixed(1)}%`))
+        .on('mousemove', moveTip).on('mouseout', hideTip);
+      acc += prop;
+    });
+    g.append('text').attr('class', 'tick-label')
+      .attr('x', xScaleBand(yr.year) + xScaleBand.bandwidth() / 2)
+      .attr('y', ch + 16).attr('text-anchor', 'middle').text(yr.year);
+  });
+
+  // legend
+  const legendY = ch + 32;
+  const legend = g.append('g').attr('transform', `translate(0, ${legendY})`);
+  sectors.forEach((k, i) => {
+    const col = i % 3;
+    const row = Math.floor(i / 3);
+    const entry = legend.append('g').attr('transform', `translate(${col * (cw / 3)}, ${row * 14})`);
+    entry.append('rect').attr('class', 'legend-swatch').attr('width', 9).attr('height', 9).attr('y', -7).attr('fill', sectorPalette[k]);
+    entry.append('text').attr('class', 'legend-text').attr('x', 12).attr('y', 0).text(k);
+  });
+}
+
+function draw() {
+  drawLine();
+  drawBars();
+  drawStack();
+}
+
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('panels'));
+</script>
+</body>
+</html>

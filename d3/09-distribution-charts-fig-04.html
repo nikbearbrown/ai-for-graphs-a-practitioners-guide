@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Figure 9.4 — Tukey box plot anatomy and the imposter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-white: #FFFFFF; --color-ink: #121212; --color-red: #C8102E;
+    --color-secondary: #545454; --color-border: #D4D4D4; --color-ochre: #C8860E;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-white: #111111; --color-ink: #F0EBE3; --color-red: #E8243A;
+      --color-secondary: #A0978C; --color-border: #2E2E2E; --color-ochre: #D49A30;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--color-white); color: var(--color-ink); font-family: 'Inter', sans-serif; padding: 24px; }
+  h1 { font-family: 'EB Garamond', Georgia, serif; font-weight: 400; font-size: 28px; margin-bottom: 4px; }
+  p.subtitle { color: var(--color-secondary); font-size: 13px; margin-bottom: 24px; max-width: 65ch; }
+  #wrap { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+  .panel { border: 1px solid var(--color-border); padding: 16px; }
+  .panel-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 16px; }
+  .panel-sub { color: var(--color-secondary); font-size: 13px; margin-bottom: 12px; }
+  .chart { width: 100%; height: 460px; }
+  .axis text { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--color-secondary); }
+  .axis path, .axis line { stroke: var(--color-secondary); shape-rendering: crispEdges; }
+  .box-body { fill: var(--color-white); stroke: var(--color-ink); stroke-width: 1; }
+  .box-line { stroke: var(--color-ink); stroke-width: 1; }
+  .box-median { stroke: var(--color-red); stroke-width: 2; }
+  .outlier { fill: var(--color-ink); }
+  .callout-line { stroke: var(--color-ochre); stroke-width: 1; fill: none; }
+  .callout-text { font-size: 12px; fill: var(--color-ink); }
+  .callout-sub { font-size: 11px; fill: var(--color-secondary); }
+  .verdict { display: inline-block; margin-top: 8px; padding: 2px 10px; border: 1px solid var(--color-red); color: var(--color-red); font-size: 11px; font-weight: 600; }
+  .caption { color: var(--color-secondary); font-size: 13px; margin-top: 16px; max-width: 65ch; }
+  .tooltip { position: absolute; pointer-events: none; opacity: 0; background: var(--color-ink); color: var(--color-white); padding: 6px 10px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<h1>Figure 9.4 — Tukey's design is specific</h1>
+<p class="subtitle">The fence is what makes the outlier visible. A box plot whose whiskers run to the data minimum and maximum is a range chart wearing a box plot's clothing.</p>
+<div id="wrap">
+  <div class="panel">
+    <div class="panel-title">A. Tukey's box plot — annotated</div>
+    <div class="panel-sub">Each element has a specific meaning.</div>
+    <div id="chartTukey" class="chart"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">B. Min-to-max whiskers</div>
+    <div class="panel-sub">Looks like a box plot. Isn't one.</div>
+    <div id="chartImposter" class="chart"></div>
+    <span class="verdict">verdict: range chart, not Tukey</span>
+  </div>
+</div>
+<p class="caption">First audit check for any box plot: do the whiskers stop at the most extreme value within 1.5 × IQR, or do they extend to the data minimum and maximum?</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const distribution = {
+  min: 12, q1: 38, median: 52, q3: 68, whiskerHi: 92, whiskerLo: 18, outliers: [8, 100, 106]
+};
+
+function drawTukey(selector) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth || 480;
+  const totalHeight = container.clientHeight || 460;
+  const margin = { top: 24, right: 220, bottom: 36, left: 56 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-label', 'Annotated Tukey box plot with callouts for Q1, median, Q3, IQR, whisker fence and outliers');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const yScaleLinear = d3.scaleLinear().domain([0, 120]).range([chartHeight, 0]);
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(6));
+
+  const xCenter = chartWidth / 2;
+  const boxWidth = 80;
+
+  // whiskers
+  g.append('line').attr('class', 'box-line').attr('x1', xCenter).attr('x2', xCenter)
+    .attr('y1', yScaleLinear(distribution.whiskerHi)).attr('y2', yScaleLinear(distribution.whiskerLo));
+  g.append('line').attr('class', 'box-line').attr('x1', xCenter - boxWidth/3).attr('x2', xCenter + boxWidth/3)
+    .attr('y1', yScaleLinear(distribution.whiskerHi)).attr('y2', yScaleLinear(distribution.whiskerHi));
+  g.append('line').attr('class', 'box-line').attr('x1', xCenter - boxWidth/3).attr('x2', xCenter + boxWidth/3)
+    .attr('y1', yScaleLinear(distribution.whiskerLo)).attr('y2', yScaleLinear(distribution.whiskerLo));
+  // box
+  g.append('rect').attr('class', 'box-body')
+    .attr('x', xCenter - boxWidth/2).attr('y', yScaleLinear(distribution.q3))
+    .attr('width', boxWidth).attr('height', yScaleLinear(distribution.q1) - yScaleLinear(distribution.q3));
+  // median
+  g.append('line').attr('class', 'box-median')
+    .attr('x1', xCenter - boxWidth/2).attr('x2', xCenter + boxWidth/2)
+    .attr('y1', yScaleLinear(distribution.median)).attr('y2', yScaleLinear(distribution.median));
+  // outliers
+  distribution.outliers.forEach(v => {
+    g.append('circle').attr('class', 'outlier').attr('cx', xCenter).attr('cy', yScaleLinear(v)).attr('r', 3);
+  });
+
+  // callouts to the right
+  const callouts = [
+    { y: distribution.whiskerHi, text: 'whisker fence', sub: '= max value within Q3 + 1.5 × IQR' },
+    { y: distribution.q3, text: 'Q3 — 75th percentile' },
+    { y: distribution.median, text: 'median — Q2 (50th)' },
+    { y: distribution.q1, text: 'Q1 — 25th percentile' },
+    { y: distribution.whiskerLo, text: 'lower whisker', sub: '= min value within Q1 − 1.5 × IQR' },
+    { y: 103, text: 'outliers — beyond fence', sub: 'flagged individually' }
+  ];
+  const calloutX = xCenter + boxWidth/2 + 24;
+  callouts.forEach(c => {
+    const cy = yScaleLinear(c.y);
+    g.append('path').attr('class', 'callout-line').attr('d', `M ${xCenter + boxWidth/2 + 4} ${cy} L ${calloutX} ${cy}`);
+    g.append('text').attr('class', 'callout-text').attr('x', calloutX + 6).attr('y', cy + 3).text(c.text);
+    if (c.sub) {
+      g.append('text').attr('class', 'callout-sub').attr('x', calloutX + 6).attr('y', cy + 16).text(c.sub);
+    }
+  });
+
+  // IQR label to the left
+  g.append('path').attr('class', 'callout-line')
+    .attr('d', `M ${xCenter - boxWidth/2 - 4} ${yScaleLinear(distribution.median)} L ${xCenter - boxWidth/2 - 24} ${yScaleLinear(distribution.median)}`);
+  g.append('text').attr('class', 'callout-text').attr('x', xCenter - boxWidth/2 - 28).attr('y', yScaleLinear(distribution.median) + 3)
+    .style('text-anchor', 'end').text('IQR = box height');
+}
+
+function drawImposter(selector) {
+  const container = document.querySelector(selector);
+  d3.select(selector).selectAll('*').remove();
+  const totalWidth  = container.clientWidth || 320;
+  const totalHeight = container.clientHeight || 460;
+  const margin = { top: 24, right: 140, bottom: 36, left: 56 };
+  const chartWidth  = totalWidth  - margin.left - margin.right;
+  const chartHeight = totalHeight - margin.top  - margin.bottom;
+
+  const svg = d3.select(selector).append('svg')
+    .attr('width', totalWidth).attr('height', totalHeight)
+    .attr('role', 'img').attr('aria-label', 'A box plot with whiskers extending to data minimum and maximum — no fence, no outliers');
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const yScaleLinear = d3.scaleLinear().domain([0, 120]).range([chartHeight, 0]);
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(yScaleLinear).ticks(6));
+
+  const xCenter = chartWidth / 2;
+  const boxWidth = 60;
+  const dataMax = 106, dataMin = 8;
+
+  g.append('line').attr('class', 'box-line').attr('x1', xCenter).attr('x2', xCenter)
+    .attr('y1', yScaleLinear(dataMax)).attr('y2', yScaleLinear(dataMin));
+  g.append('line').attr('class', 'box-line').attr('x1', xCenter - boxWidth/3).attr('x2', xCenter + boxWidth/3)
+    .attr('y1', yScaleLinear(dataMax)).attr('y2', yScaleLinear(dataMax));
+  g.append('line').attr('class', 'box-line').attr('x1', xCenter - boxWidth/3).attr('x2', xCenter + boxWidth/3)
+    .attr('y1', yScaleLinear(dataMin)).attr('y2', yScaleLinear(dataMin));
+  g.append('rect').attr('class', 'box-body')
+    .attr('x', xCenter - boxWidth/2).attr('y', yScaleLinear(distribution.q3))
+    .attr('width', boxWidth).attr('height', yScaleLinear(distribution.q1) - yScaleLinear(distribution.q3));
+  g.append('line').attr('class', 'box-median')
+    .attr('x1', xCenter - boxWidth/2).attr('x2', xCenter + boxWidth/2)
+    .attr('y1', yScaleLinear(distribution.median)).attr('y2', yScaleLinear(distribution.median));
+
+  const calloutX = xCenter + boxWidth/2 + 24;
+  g.append('path').attr('class', 'callout-line').attr('d', `M ${xCenter + boxWidth/2 + 4} ${yScaleLinear(dataMax)} L ${calloutX} ${yScaleLinear(dataMax)}`);
+  g.append('text').attr('class', 'callout-text').attr('x', calloutX + 6).attr('y', yScaleLinear(dataMax) + 3).text('whisker = data max');
+  g.append('path').attr('class', 'callout-line').attr('d', `M ${xCenter + boxWidth/2 + 4} ${yScaleLinear(dataMin)} L ${calloutX} ${yScaleLinear(dataMin)}`);
+  g.append('text').attr('class', 'callout-text').attr('x', calloutX + 6).attr('y', yScaleLinear(dataMin) + 3).text('whisker = data min');
+  g.append('text').attr('class', 'callout-text').attr('x', calloutX + 6).attr('y', yScaleLinear(distribution.median) + 3).text('no fence');
+  g.append('text').attr('class', 'callout-sub').attr('x', calloutX + 6).attr('y', yScaleLinear(distribution.median) + 16).text('no outliers exist');
+}
+
+function draw() {
+  drawTukey('#chartTukey');
+  drawImposter('#chartImposter');
+}
+draw();
+const ro = new ResizeObserver(() => draw());
+ro.observe(document.getElementById('chartTukey'));
+ro.observe(document.getElementById('chartImposter'));
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 440" role="img" aria-labelledby="t1301 d1301">
+  <title id="t1301">Sankey with proportional widths versus uniform-width topology</title>
+  <desc id="d1301">Two panels of the same three-column flow data. Left panel encodes magnitude as band width. Right panel uses uniform widths and only shows topology.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .nd { fill: #2a1a0e; }
+      .bd1 { fill: #4a4540; fill-opacity: 0.55; }
+      .bd2 { fill: #8a8480; fill-opacity: 0.55; }
+      .bd3 { fill: #c8c4c0; fill-opacity: 0.65; }
+    </style>
+    <marker id="ar13a" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="700" height="440" fill="#fdfcfb"/>
+  <text x="350" y="26" text-anchor="middle" class="ti">Same connections, two encodings. Width carries magnitude — or it does not.</text>
+
+  <!-- LEFT PANEL: proportional widths -->
+  <g transform="translate(20,60)">
+    <text x="0" y="0" class="ti">A. Proportional widths</text>
+    <text x="0" y="14" class="sm">band width = quantity (Bertin magnitude channel)</text>
+    <!-- column headers -->
+    <text x="32"  y="42" class="sm">Source</text>
+    <text x="150" y="42" class="sm">Transform</text>
+    <text x="270" y="42" class="sm">End use</text>
+    <!-- left nodes: Oil (top), Coal, Gas -->
+    <rect class="nd" x="24" y="60"  width="14" height="60"/>
+    <rect class="nd" x="24" y="130" width="14" height="36"/>
+    <rect class="nd" x="24" y="176" width="14" height="24"/>
+    <text x="20" y="78"  text-anchor="end" class="sm">Oil</text>
+    <text x="20" y="148" text-anchor="end" class="sm">Coal</text>
+    <text x="20" y="194" text-anchor="end" class="sm">Gas</text>
+    <!-- middle nodes: Transport, Electricity -->
+    <rect class="nd" x="158" y="60"  width="14" height="70"/>
+    <rect class="nd" x="158" y="140" width="14" height="50"/>
+    <text x="178" y="78"  class="sm">Transport</text>
+    <text x="178" y="158" class="sm">Electricity</text>
+    <!-- right nodes: Industrial, Residential -->
+    <rect class="nd" x="280" y="60"  width="14" height="65"/>
+    <rect class="nd" x="280" y="135" width="14" height="55"/>
+    <text x="298" y="78"  class="sm">Industrial</text>
+    <text x="298" y="153" class="sm">Residential</text>
+
+    <!-- Flows source -> transform (left col x=38 to mid col x=158) -->
+    <!-- Oil to Transport (large, 50) -->
+    <path d="M 38 60 C 98 60, 98 60, 158 60 L 158 110 C 98 110, 98 110, 38 110 Z" class="bd1"/>
+    <!-- Oil to Electricity (small, 10) -->
+    <path d="M 38 110 C 98 110, 98 140, 158 140 L 158 150 C 98 150, 98 120, 38 120 Z" class="bd2"/>
+    <!-- Coal to Electricity (medium, 30) -->
+    <path d="M 38 130 C 98 130, 98 150, 158 150 L 158 180 C 98 180, 98 160, 38 160 Z" class="bd2"/>
+    <!-- Coal to Transport (tiny, 6) -->
+    <path d="M 38 160 C 98 160, 98 110, 158 110 L 158 116 C 98 116, 98 166, 38 166 Z" class="bd1"/>
+    <!-- Gas to Electricity (small, 20) -->
+    <path d="M 38 176 C 98 176, 98 180, 158 180 L 158 190 C 98 190, 98 200, 38 200 Z" class="bd2"/>
+
+    <!-- Flows transform -> end use (mid col x=172 to right col x=280) -->
+    <!-- Transport to Industrial (45) -->
+    <path d="M 172 60 C 226 60, 226 60, 280 60 L 280 105 C 226 105, 226 105, 172 105 Z" class="bd1"/>
+    <!-- Transport to Residential (25) -->
+    <path d="M 172 105 C 226 105, 226 135, 280 135 L 280 160 C 226 160, 226 130, 172 130 Z" class="bd3"/>
+    <!-- Electricity to Industrial (20) -->
+    <path d="M 172 140 C 226 140, 226 105, 280 105 L 280 125 C 226 125, 226 160, 172 160 Z" class="bd1"/>
+    <!-- Electricity to Residential (30) -->
+    <path d="M 172 160 C 226 160, 226 160, 280 160 L 280 190 C 226 190, 226 190, 172 190 Z" class="bd3"/>
+
+    <!-- annotation arrow on dominant band -->
+    <path d="M 80 210 L 80 245 L 96 245" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" fill="none" marker-end="url(#ar13a)"/>
+    <text x="100" y="248" class="sm">dominant flow visible (Oil → Transport)</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="360" y1="50" x2="360" y2="380" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT PANEL: uniform widths -->
+  <g transform="translate(380,60)">
+    <text x="0" y="0" class="ti">B. Uniform-width topology</text>
+    <text x="0" y="14" class="sm">topology only — cannot answer "how much?"</text>
+    <text x="32"  y="42" class="sm">Source</text>
+    <text x="150" y="42" class="sm">Transform</text>
+    <text x="270" y="42" class="sm">End use</text>
+    <rect class="nd" x="24" y="70"  width="14" height="24"/>
+    <rect class="nd" x="24" y="120" width="14" height="24"/>
+    <rect class="nd" x="24" y="170" width="14" height="24"/>
+    <text x="20" y="86"  text-anchor="end" class="sm">Oil</text>
+    <text x="20" y="136" text-anchor="end" class="sm">Coal</text>
+    <text x="20" y="186" text-anchor="end" class="sm">Gas</text>
+    <rect class="nd" x="158" y="80"  width="14" height="24"/>
+    <rect class="nd" x="158" y="160" width="14" height="24"/>
+    <text x="178" y="96"  class="sm">Transport</text>
+    <text x="178" y="176" class="sm">Electricity</text>
+    <rect class="nd" x="280" y="70"  width="14" height="24"/>
+    <rect class="nd" x="280" y="170" width="14" height="24"/>
+    <text x="298" y="86"  class="sm">Industrial</text>
+    <text x="298" y="186" class="sm">Residential</text>
+
+    <!-- Uniform-width "bands" — all height 4 -->
+    <g fill="#8a8480" fill-opacity="0.55">
+      <!-- Oil → Transport -->
+      <path d="M 38 80 C 98 80, 98 88, 158 88 L 158 92 C 98 92, 98 84, 38 84 Z"/>
+      <!-- Oil → Electricity -->
+      <path d="M 38 86 C 98 86, 98 168, 158 168 L 158 172 C 98 172, 98 90, 38 90 Z"/>
+      <!-- Coal → Electricity -->
+      <path d="M 38 130 C 98 130, 98 172, 158 172 L 158 176 C 98 176, 98 134, 38 134 Z"/>
+      <!-- Coal → Transport -->
+      <path d="M 38 136 C 98 136, 98 92, 158 92 L 158 96 C 98 96, 98 140, 38 140 Z"/>
+      <!-- Gas → Electricity -->
+      <path d="M 38 180 C 98 180, 98 176, 158 176 L 158 180 C 98 180, 98 184, 38 184 Z"/>
+      <!-- Transport → Industrial -->
+      <path d="M 172 88 C 226 88, 226 78, 280 78 L 280 82 C 226 82, 226 92, 172 92 Z"/>
+      <!-- Transport → Residential -->
+      <path d="M 172 96 C 226 96, 226 178, 280 178 L 280 182 C 226 182, 226 100, 172 100 Z"/>
+      <!-- Electricity → Industrial -->
+      <path d="M 172 168 C 226 168, 226 82, 280 82 L 280 86 C 226 86, 226 172, 172 172 Z"/>
+      <!-- Electricity → Residential -->
+      <path d="M 172 176 C 226 176, 226 182, 280 182 L 280 186 C 226 186, 226 180, 172 180 Z"/>
+    </g>
+
+    <path d="M 80 210 L 80 245 L 96 245" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" fill="none" marker-end="url(#ar13a)"/>
+    <text x="100" y="248" class="sm">every band looks identical — magnitude lost</text>
+  </g>
+
+  <text x="350" y="412" text-anchor="middle" class="cap">The same connections. Different questions. Different charts.</text>
+</svg>
