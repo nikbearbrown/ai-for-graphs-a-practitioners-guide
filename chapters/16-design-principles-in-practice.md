@@ -374,50 +374,6 @@ Walk me through the full design audit:
 
 ---
 
-## Prompts
-
-Use these prompts with Claude to generate interactive D3 v7 versions of the
-figures in this chapter. Each produces a standalone HTML file you can open
-in a browser and modify freely.
-
-**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
-your Claude project context before using these prompts. They define the stack,
-naming conventions, color system, and typography the figures use.
-
----
-
-### Figure 16.1 — Seven visible failures
-
-Build a two-column D3 v7 figure pairing a deliberately flawed quarterly bar chart with an interactive failure list. Left column: render five regional sales bars (North 480, South 470, East 450, West 440, Central 430) with a truncated y-axis from 400 to 500, faux 3D perspective (front face plus a side and top trapezoid), a rainbow palette across five regions, heavy gridlines at every $10K, and 8pt italic 45°-rotated x-labels. Above the chart, a tiny italic title reads "Q4 Performance Highlights." Overlay seven numbered black callout circles on the chart positioned at each failure — y-axis baseline, bar-top 3D, rainbow color, gridlines, rotated labels, title, missing comparison reference. Right column: a clickable list of those seven failures, each with a numbered badge, a one-line description, and the principle violated (Tufte proportional ink, Bertin false order, Cairo "compared with what?", and so on). Hovering or clicking a list item highlights the matching callout in var(--color-red). Below the list, a static score chip reads "14 of 22 items fail." Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
-
-> Reference implementation: `d3/16-design-principles-in-practice-fig-01.html`
-
----
-
-### Figure 16.2 — Four sources, one synthesis
-
-Build a single-panel D3 v7 quadrant infographic. Four rectangular cards arranged in a 2×2 grid: top-left Tufte ("the heuristics" — data-ink ratio, proportional ink); top-right Few ("the working criterion" — "does this support the message?"); bottom-left Cairo ("the ethical frame" — responsibility to the reader, "compared with what?", graphicacy); bottom-right Gestalt ("the perceptual mechanism" — proximity, similarity, continuity, figure–ground). At the center, a smaller rectangle in a warm tint reads "Evergreen/Emery 22-point checklist — five categories, one audit instrument." Four curved arrows flow from the inner edge of each quadrant card to the center node; arrows use var(--color-secondary) at rest. Hovering a quadrant tints the card with var(--color-ochre) at low opacity and highlights its connecting arrow in var(--color-red). Card titles set in EB Garamond, italic role lines beneath them, bullet items in Inter, and a one-sentence note at the bottom of each card. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
-
-> Reference implementation: `d3/16-design-principles-in-practice-fig-02.html`
-
----
-
-### Figure 16.3 — Three color vocabularies
-
-Build a three-panel D3 v7 swatch reference. Each panel contains a horizontal strip of color swatches, a label below indicating the use case, a one-paragraph description, and a small monospace footer naming canonical palettes. Panel A (categorical): five swatches with distinct hues at matched luminance, labeled Apparel / Home / Sports / Beauty / Tech; description names the "no inherent order" property and the seven-hue ceiling; footer reads "ColorBrewer qualitative · color-blind safe." Panel B (sequential): six swatches forming a single-hue luminance ramp from pale to dark, labeled "low" and "high" at the ends; description names the pale-equals-low convention; footer reads "viridis · magma · grays." Panel C (diverging): seven swatches as a two-hue ramp with a neutral middle, labeled −, 0, + at the ends and middle; description names the meaningful-midpoint requirement; footer reads "RdBu · BrBG · PRGn." All swatches use var(--color-*) ramps consistent with the book's warm-grayscale palette extended only as needed for the three categories of demonstration. Hovering a swatch shows a tooltip naming the swatch's position in its scale. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
-
-> Reference implementation: `d3/16-design-principles-in-practice-fig-03.html`
-
----
-
-### Figure 16.4 — Before and after redesign
-
-Build a two-panel D3 v7 before/after figure using the same five-region dataset (North 480, South 470, East 450, West 440, Central 430). Left panel ("Before"): rerender the flawed chart from Figure 16.1 in miniature — truncated 400–500 y-axis, faux 3D bars, rainbow palette, heavy gridlines, tiny italic 45°-rotated labels, occasion-named "Q4 Performance Highlights" title. Below the chart, a verdict chip reads "8 pass / 14 fail" with a neutral border. Right panel ("After"): a horizontal bar chart of the same five values, sorted descending, zero baseline, single var(--color-secondary) fill, light gridlines at axis ticks only, JetBrains Mono category labels reading left-to-right, direct value labels at bar ends. Panel title reads "Food Security funding leads Q4 by a wide margin"; subtitle reads "compared with Q3 2024 target — five regions, $K." Below the chart, a verdict chip in var(--color-ochre) tint reads "22 pass / 0 fail" followed by a five-cell mini-checklist showing checkmarks for Text, Arrangement, Color, Lines, and Overall. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive, with tooltips on both panels.
-
-> Reference implementation: `d3/16-design-principles-in-practice-fig-04.html`
-
----
-
 ## AI Wayback Machine
 
 The ideas in this chapter didn't appear from nowhere. **Edward Tufte** published *The Visual Display of Quantitative Information* in 1983 — and coined the terms "chartjunk," "data-ink ratio," and "sparklines." His insistence on stripping decoration from charts continues to shape how serious data graphics get made.

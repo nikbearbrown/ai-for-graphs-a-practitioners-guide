@@ -318,58 +318,6 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 
 ---
 
-## Prompts
-
-Use these prompts with Claude to generate interactive D3 v7 versions of the
-figures in this chapter. Each produces a standalone HTML file you can open
-in a browser and modify freely.
-
-**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
-your Claude project context before using these prompts. They define the stack,
-naming conventions, color system, and typography the figures use.
-
----
-
-### Figure 11.1 — Five-slice vs twelve-slice pie
-
-Build a two-panel D3 v7 figure comparing the same total rendered as a five-slice pie and a twelve-slice pie. Left panel data: Food Security 56, Shelter 21, Water 14, Health 6, Protection 3 (sums to 100). Right panel data: twelve roughly equal categories at 8–9% each (sums to 100). Both panels use `d3.pie()` with `sort(null)` so the largest slice anchors at twelve o'clock and the remaining slices proceed clockwise. Channels: angle for both. Color: the largest slice in the left panel is `var(--color-red)`; remaining slices use a luminance ramp through grays from `#4a4540` to `#c8c4c0`. The right panel uses the same ramp cycled across twelve wedges (no red highlight). Direct labels appear on slices whose angular sweep exceeds 0.35 rad (about 20°). Subtitle the right panel "wedges below the 30° threshold of reliable angle discrimination." Deliverable: a single standalone HTML file, inline CSS, inline JS, D3 7.9.0 from the pinned CDN, `role="img"` with `title` and `desc`, tooltip on hover.
-
-> Reference implementation: `d3/11-part-to-whole-charts-fig-01.html`
-
----
-
-### Figure 11.2 — Pie vs waffle
-
-Build a two-panel D3 v7 figure rendering the same five-category proportional dataset as a pie chart (left) and a 10×10 waffle chart (right). Data: A 38, B 23, C 18, D 13, E 8 (sums to 100). Left panel: pie chart with the largest slice at twelve o'clock; channel = angle; primary slice `var(--color-red)`, others through a gray luminance ramp. Right panel: 10×10 cell grid (100 cells total); each cell sized to fit the panel with 2 px gaps; cells filled row-major top-to-bottom in category order so cell 1 is the top-left A cell and cell 100 is the bottom-right E cell. Add a legend below the waffle with category color swatch + percentage. Both panels share a tooltip on hover showing the category and value. Channels: angle (pie, Cleveland & McGill rank 4) vs counted-cell position (waffle, rank 1). Deliverable: a single standalone HTML file, inline CSS/JS, D3 7.9.0, accessible markup, dark-mode aware.
-
-> Reference implementation: `d3/11-part-to-whole-charts-fig-02.html`
-
----
-
-### Figure 11.3 — Nightingale polar area with the distortion named
-
-Build a single-panel D3 v7 polar area chart of twelve months of mortality data split into three causes — preventable disease (largest), wounds from battle (middle), and other causes (smallest). Data per month is given as three values; sample dataset peaks around Dec–Jan to mirror Nightingale's 1854–55 finding. Each month occupies a 30° wedge anchored at -90° and sweeping clockwise. For each wedge, render three nested arcs in z-order largest-first so the smaller causes sit on top: disease (`#2a1a0e`), wounds (`#8a8480`), other (`#c8c4c0`). Use `d3.scaleLinear()` (not `scaleSqrt`) for the radius because Nightingale's chart encodes the value as the radial length — the area distortion is what the figure documents. Month labels orbit the outside. Inline legend top-left. Beside the chart, render two callout boxes with `var(--color-ochre)` left-borders: (1) "Wedge area encodes value — area scales as r²"; (2) "Defensible in advocacy. The same form fails in analysis unless disclosed." Tooltip on hover shows month + all three cause values. Deliverable: a single standalone HTML file, inline CSS/JS, D3 7.9.0, accessible markup, dark-mode aware.
-
-> Reference implementation: `d3/11-part-to-whole-charts-fig-03.html`
-
----
-
-### Figure 11.4 — Decision tree: composition vs ranking
-
-Build a single-panel D3 v7 decision-tree infographic answering "is the message compositional or comparative?" Nodes (decision boxes are filled `#f5f2ee` in light mode, dark-mode equivalent in dark mode; leaves are filled `var(--color-ink)` with white text, except two leaves marked primary use `var(--color-red)`). Tree topology, positioned by fractional (x, y) across the SVG: root at (0.50, 0.10) "Is the message about composition or about ranking?"; left branch (compositional) at (0.25, 0.32) "How many categories? — apply the five-slice rule"; right branch (comparative) at (0.78, 0.32) "Use the highest-accuracy channel — position along a common baseline"; under the compositional node, two children at (0.12, 0.54) "Precision or familiarity?" and (0.40, 0.54) "Aggregate to top-5 + Other"; leaves at y=0.82: "Waffle" (0.04), "Pie / Donut" (0.22, primary), "Bar chart or pie-of-5" (0.42), "Bar chart (sorted)" (0.78, primary). Edges are 1 px lines with arrowhead markers; each edge labeled where meaningful (compositional, comparative/ranking, ≤5, >5, precision, familiarity, always). Deliverable: a single standalone HTML file, inline CSS/JS, D3 7.9.0, accessible markup, dark-mode aware.
-
-> Reference implementation: `d3/11-part-to-whole-charts-fig-04.html`
-
----
-
-### Figure 11.5 — Five design decisions in one pie chart
-
-Build an interactive annotated D3 v7 pie chart of the pantry's five-slice funding allocation (Food Security 56, Shelter 21, Water 14, Health 6, Protection 3). On the left side of the layout, render an ordered list of five decision cards, each with a numbered badge and a one-line justification: (1) five slices — aggregated before building; (2) sort order — largest at 12 o'clock, clockwise; (3) direct labels — no legend lookup required; (4) color hue — categorical identity, no implied ranking; (5) largest slice ≈ half the circle — dominance signal. Clicking a card sets it active; the corresponding region of the pie picks up a 3 px `var(--color-ochre)` stroke. Decision 5 highlights only the largest slice; the other four highlight all slices. Pie itself: largest slice `var(--color-red)`, remaining slices on a luminance ramp through grays. Direct on-slice labels for slices whose sweep exceeds ~0.35 rad. Tooltip on hover. Cards are keyboard-reachable (`tabindex="0"`, Enter/Space toggles). Deliverable: a single standalone HTML file, inline CSS/JS, D3 7.9.0, accessible markup, dark-mode aware.
-
-> Reference implementation: `d3/11-part-to-whole-charts-fig-05.html`
-
----
-
 ## AI Wayback Machine
 
 The ideas in this chapter didn't appear from nowhere. **Georg von Mayr** was a 19th-century German statistician who built systematic part-to-whole charts (pie variants, stacked bars, area diagrams) to display the components of state and demographic data — and helped move statistics from text tables to visual reasoning.

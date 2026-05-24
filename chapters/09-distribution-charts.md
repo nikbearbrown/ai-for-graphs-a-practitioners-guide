@@ -307,58 +307,6 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 
 ---
 
-## Prompts
-
-Use these prompts with Claude to generate interactive D3 v7 versions of the
-figures in this chapter. Each produces a standalone HTML file you can open
-in a browser and modify freely.
-
-**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
-your Claude project context before using these prompts. They define the stack,
-naming conventions, color system, and typography the figures use.
-
----
-
-### Figure 9.1 — Five zone box plots, the Inner Suburbs cluster
-
-Build a single horizontal-layout D3 v7 figure showing five Tukey box plots side by side, one per residential zone (Urban Core, Inner Suburbs, Outer Suburbs, Exurban, Rural). Data per zone: minimum within fence, Q1, median, Q3, upper whisker within Q3 + 1.5 × IQR, and any individual outlier points. Use these summaries — Urban Core 18/32/46/62/92, Inner Suburbs 28/48/64/84/118 with outliers [150, 158, 168, 174, 182, 188], Outer Suburbs 36/58/72/90/122, Exurban 30/50/62/78/108, Rural 16/26/38/52/78. Channels: x-position is zone (categorical band, ordered as given), y-position is income in $000s (quantitative linear, zero baseline, ticks every 50). Highlight the Inner Suburbs box in var(--color-red) for fill and stroke; other boxes use var(--color-ink). Render whisker caps, central whisker line, the box between Q1 and Q3, a thick median line, and outlier points jittered horizontally. Add an annotation arrow on the right margin pointing into the Inner Suburbs outlier cluster with text "outlier cluster above whisker — bimodal sub-population, or just a long tail?". Standalone HTML, D3 v7, inline CSS/JS, accessible markup, ResizeObserver, tooltips on hover showing the five-number summary per box.
-
-> Reference implementation: `d3/09-distribution-charts-fig-01.html`
-
----
-
-### Figure 9.2 — Same five-number summary, different shape
-
-Build a two-panel D3 v7 figure. Left panel: two box plots side by side, one labelled "Normal" and one labelled "Bimodal", sharing identical Q1, median, Q3, and whisker extent so the two boxes are visually indistinguishable. Right panel: two violin plots from the same underlying samples, one a single bell shape, one a clear two-bulge bimodal shape. Sample synthetically — normal via N(50, 17) clipped to [0, 100]; bimodal via mixture of N(28, 6), N(72, 6), and extreme tails to force the same five-number summary. Channels: y-position is value 0–100 (shared scale), x-position is group. Use kernel density with Gaussian kernel, bandwidth 3.5 for bimodal and 6 for normal, evaluated at 1-unit thresholds. Add a "visually identical" badge under the box panel and a "two peaks visible" badge under the violin panel. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver. Use d3.scaleLinear and d3.scaleBand; never d3.scaleLinear for radius. Box fill var(--color-white), violin fill semi-opaque var(--color-ink), median tick var(--color-red).
-
-> Reference implementation: `d3/09-distribution-charts-fig-02.html`
-
----
-
-### Figure 9.3 — Three bin widths on a bimodal income
-
-Build a three-panel D3 v7 figure showing the same bimodal income dataset histogrammed three ways. Sample synthetically — mixture of N(40, 9) and N(120, 14) with 760 observations, clipped to [0, 170]. Panel A: bins of $50K (3 bars, both peaks merge into one broad shape) — verdict "bimodality hidden". Panel B: Freedman–Diaconis-style binning at roughly $12K (14 bars, two peaks legible with a gap between them) — verdict "structure visible". Panel C: bins of $2K (50+ narrow bars, sampling variation produces visible wiggles) — verdict "noise amplified". Channels: x-position is income (quantitative linear 0–170, zero baseline), y-position is count (quantitative linear, zero baseline). Bars use var(--color-secondary). Each verdict chip outlined in var(--color-red) for the two failure panels and in var(--color-ink) for the centre panel. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver. Use d3.bin().domain([0, 170]).thresholds(...) for the binning.
-
-> Reference implementation: `d3/09-distribution-charts-fig-03.html`
-
----
-
-### Figure 9.4 — Tukey box plot anatomy and the imposter
-
-Build a two-panel D3 v7 figure. Left panel (wider): a single fully annotated Tukey box plot with these summaries — min within fence 18, Q1 38, median 52, Q3 68, upper whisker within fence 92, and three outlier points at 8, 100, 106. Draw callouts to the right of the box with leader lines pointing at each element: Q3 (75th percentile), median (Q2, 50th percentile), Q1 (25th percentile), whisker fence (= max value within Q3 + 1.5 × IQR), lower whisker (= min value within Q1 − 1.5 × IQR), outliers (beyond fence — flagged individually). Add a separate leader to the left of the box labelled "IQR = box height". Right panel: the same data with whiskers extending to the data min (8) and max (106), no outlier points, no fence. Callout text "whisker = data max", "whisker = data min", "no fence — no outliers exist". Below the right panel, a verdict chip outlined in var(--color-red) reading "verdict: range chart, not Tukey". Channels: y-position is value (quantitative linear 0–120). Median line var(--color-red); callout leaders var(--color-ochre). Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver.
-
-> Reference implementation: `d3/09-distribution-charts-fig-04.html`
-
----
-
-### Figure 9.5 — Box, violin, hybrid
-
-Build a three-panel D3 v7 figure rendering the same bimodal sample three ways. Sample synthetically — mixture of N(28, 7) and N(72, 7), 840 observations clipped to [0, 100]. Panel A: a box plot alone with Tukey whiskers (compute Q1, Q3, IQR, upper and lower whisker fences directly from the sample). Verdict chip "quartiles yes, shape no". Panel B: a violin plot alone (kernel density, Gaussian kernel, bandwidth 3.5, evaluated at 1-unit thresholds), no overlaid box, no quartile marks. Verdict chip "shape yes, quartiles no". Panel C: a hybrid — same violin envelope as panel B with a thin box overlay (16 px wide) centred on the violin axis, showing Q1–Q3, the median line, and the whisker range. Verdict chip "both readouts". Channels: y-position is value 0–100 (shared scale across panels), x-position centred within each panel. Violin fill semi-opaque var(--color-ink); median line var(--color-red); box bodies var(--color-white) with var(--color-ink) outline. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver.
-
-> Reference implementation: `d3/09-distribution-charts-fig-05.html`
-
----
-
 ## AI Wayback Machine
 
 The ideas in this chapter didn't appear from nowhere. **Adolphe Quetelet** coined "the average man" in 1835 — proposing that human traits (height, chest circumference, criminal tendency) follow normal distributions. He gave statistics the conceptual tools to think about populations as distributions, not lists.

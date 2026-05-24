@@ -358,34 +358,6 @@ prompt structure.
 
 ---
 
-## Prompts
-
-Use these prompts with Claude to generate interactive D3 v7 versions of the
-figures in this chapter. Each produces a standalone HTML file you can open
-in a browser and modify freely.
-
-**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
-your Claude project context before using these prompts. They define the stack,
-naming conventions, color system, and typography the figures use.
-
----
-
-### Figure 4.5 — The eight FT Visual Vocabulary functional categories
-
-Build a responsive grid of eight cards rendered as a single SVG via D3 v7. Each card represents one FT Visual Vocabulary functional category and contains, top to bottom: a two-digit ordinal (01–08) in JetBrains Mono, the category name in JetBrains Mono uppercase, the defining reader question in EB Garamond italic, a hairline rule in var(--color-border), and a list of three to four canonical chart types in Inter. Categories and questions: 01 Comparison — "how do these compare?" — bar, column, slope, dot; 02 Change over time — "how is this changing?" — line, area, stream, candlestick; 03 Distribution — "what does the spread look like?" — histogram, density, box, violin; 04 Relationship — "are these variables connected?" — scatterplot, bubble, heatmap, parallel coords; 05 Part-to-whole — "what makes up this total?" — stacked bar, waffle, treemap, pie/donut; 06 Hierarchy — "how is this structured?" — treemap, sunburst, circle packing, dendrogram; 07 Flow — "how does this get from A to B?" — Sankey, alluvial, chord, network; 08 Spatial — "where is this happening?" — choropleth, dot map, bubble map, cartogram. Layout: four columns by two rows at desktop widths, two columns by four rows below 720 px. Card fill var(--color-white), stroke var(--color-border). Hover/focus tints the card with var(--color-ochre) at 8 percent. Each card is keyboard-reachable with an aria-label that concatenates name, question, and types. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver-driven redraw.
-
-> Reference implementation: `d3/04-chart-selection-as-design-decision-fig-05.html`
-
----
-
-### Figure 4.6 — A short history of chart-type invention
-
-Build a horizontal timeline of seven chart-type inventions from 1786 to 1991, rendered in D3 v7 as a single responsive SVG. Use d3.scaleLinear with domain [1780, 1995]. The axis line runs across the vertical midpoint of the SVG with an arrowhead at the right end. Decade ticks at 1800, 1820, … 1980 in JetBrains Mono 10 px, var(--color-secondary). Seven events alternate above and below the axis to avoid label collision: 1786 bar chart, William Playfair, "trade deficits by country" (above, primary); 1786 line chart, William Playfair, "trade values over time" (below, primary); 1826 choropleth, Charles Dupin, "illiteracy rate per department" (above); 1854 dot map, John Snow, "cholera deaths by address" (below); 1858 polar area, Florence Nightingale, "preventable deaths by month" (above); 1869 flow map, Charles Minard, "army depletion on the march" (below); 1991 treemap, Ben Shneiderman, "disk usage in nested directories" (above). Each event renders as a dot on the axis, a dashed leader line to its label block, and three stacked labels: year (JetBrains Mono bold), name (EB Garamond), inventor (EB Garamond italic in var(--color-secondary)), and problem (Inter in var(--color-secondary)). Primary dots use var(--color-red); the rest use var(--color-ink). Each event is keyboard-reachable; hover shows a tooltip naming year, inventor, and problem. Standalone HTML, D3 v7, inline CSS/JS, accessible, ResizeObserver-driven redraw.
-
-> Reference implementation: `d3/04-chart-selection-as-design-decision-fig-06.html`
-
----
-
 ## AI Wayback Machine
 
 The ideas in this chapter didn't appear from nowhere. **Calvin F. Schmid** was an American sociologist and statistician who wrote *Handbook of Graphic Presentation* (1954) — the first practical manual that walked the reader through *which chart to use for which question*. Before Schmid's book, chart selection was mostly inherited from whatever the previous author had done. After it, the question "key message → data structure → functional category → specific form" had a textbook answer.

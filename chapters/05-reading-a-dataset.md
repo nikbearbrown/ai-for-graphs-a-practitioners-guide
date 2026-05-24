@@ -339,42 +339,6 @@ to the chart-selection step and the Claude Code prompt.
 
 ---
 
-## Prompts
-
-Use these prompts with Claude to generate interactive D3 v7 versions of the
-figures in this chapter. Each produces a standalone HTML file you can open
-in a browser and modify freely.
-
-**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
-your Claude project context before using these prompts. They define the stack,
-naming conventions, color system, and typography the figures use.
-
----
-
-### Figure 5.1 — Analyst vs reader question
-
-Build an interactive two-column contrast diagram comparing three MBTA-style question pairs. Layout: a header row with three labels ("Analyst's question", "What differs", "Reader's question") followed by three rows of paired cards. Pair 1 contrasts "What is the system's load distribution across stations and time-of-day?" with "When and where are the trains crowded or delayed?" labeled "exploratory → summative." Pair 2 contrasts "How does ridership respond to weather variables across multiple winters?" with "How do snowstorms affect the system?" labeled "producer's interest → audience's need." Pair 3 contrasts "What patterns exist in passenger-trip duration across the network?" with "How congested is my route?" labeled "open-ended → actionable." Cards use var(--color-white) fill, var(--color-border) stroke. Hover on a row highlights both cards in var(--color-red) and shows a tooltip with the differential label. Use ResizeObserver to redraw. Wrap text inside cards. Standalone HTML, D3 v7 from the pinned CDN, EB Garamond for card text, Inter for headers and labels, accessible (role, aria-labelledby, title, desc), responsive, prefers-reduced-motion honored.
-
-> Reference implementation: `d3/05-reading-a-dataset-fig-01.html`
-
----
-
-### Figure 5.2 — Three honest moves decision tree
-
-Build a horizontal-then-vertical decision tree. Root node: "Does the dataset support the reader's question?" Right branch labeled "yes" leads to a "Proceed" node. Left dashed-red branch labeled "substitute silently (not honest)" leads to a dark "The failure mode" node with the sub-line "visual claim outruns data." Center "no" branch trunk goes down and splits into three gate boxes: "Can you get the missing data?", "Is there a related question worth answering?", "Must you proceed anyway?" — each followed by an outcome card ("Find better data", "Reframe the question", "Acknowledge the gap") with a one-line elaboration. Use var(--color-secondary) for ordinary edges and var(--color-red) dashed for the failure edge. Add SVG arrow markers in defs. Outcome cards have heavier borders. Hover on outcomes and failure shows a tooltip with the detail string. Wrap text inside boxes. Use ResizeObserver to redraw. Standalone HTML, D3 v7, EB Garamond for outcome titles, Inter for node text and gates, accessible, responsive, prefers-reduced-motion honored.
-
-> Reference implementation: `d3/05-reading-a-dataset-fig-02.html`
-
----
-
-### Figure 5.3 — Five-step audit flow
-
-Build a vertical five-step audit flow for the food-assistance example. Each of the first four steps renders as a full-width card with a numbered circle badge on the left, a step title in EB Garamond, and two labeled lines: "input:" and "output:". Step 1 input: "the dataset columns"; output: "state (geographic), assistance $ (quantitative, ratio), population (quantitative, denominator)." Step 2 input: "analyst version vs reader versions"; output: "policymaker, peer NGO, general reader — three readers, three potential charts." Step 3 input: "the reader's primary question"; output: "per-capita rate is the comparison; absolute dollars without it would lie." Step 4 input: "the eight relationships"; output: "assistance per capita: yes. assistance per food-insecure household: no — annotate the gap." Vertical arrows connect each box downward. Step 5 is a taller "Chart specification" card with a red badge and four rows: key message, data structure, functional category, specific form. Hover on any step shows a tooltip with a sentence of additional detail. Wrap text. Use ResizeObserver to redraw. Standalone HTML, D3 v7, EB Garamond for step titles, Inter for everything else, accessible, responsive, prefers-reduced-motion honored.
-
-> Reference implementation: `d3/05-reading-a-dataset-fig-03.html`
-
----
-
 ## AI Wayback Machine
 
 The ideas in this chapter didn't appear from nowhere. **John Tukey** invented exploratory data analysis (EDA) in the 1960s and 70s — arguing that the right first move with a dataset is to *look* at it, not test it. He also coined the words "bit" and "software."

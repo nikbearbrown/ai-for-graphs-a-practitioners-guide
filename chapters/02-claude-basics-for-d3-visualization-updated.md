@@ -21,7 +21,6 @@ Claude Code returns a working bar chart, sorted, annotated, on a zero baseline, 
 ![Side-by-side comparison of two prompts. The vague prompt on the left lists the five decisions the model made on its own — chart type, marks, channels, sort order, baseline. The specific prompt on the right names the same five decisions as author-controlled. Connecting arrows pair each decision across the two columns.](../images/02-claude-basics-for-d3-visualization-updated-fig-01.png)
 *Figure 2.1 — Five decisions in every chart prompt. The vague prompt delegates them; the specific prompt names them.*
 
-
 The difference between those two prompts is not length, and it is not politeness. It is **specificity**. The first prompt told Claude Code to make a chart. The second told Claude Code *which* chart, *which* marks, *which* channels, *which* constraints. The model did not decide these things. You did.
 
 That gap — between letting the model decide and deciding yourself — is the entire subject of this chapter. The rest of the book gives you the vocabulary to close it for every chart type, every dataset, every communication goal. This chapter teaches you the machinery that makes the vocabulary useful.
@@ -50,7 +49,6 @@ The general rule is simple: if the task produces a file, use Claude Code. If the
 | Claude API | Whatever you wire up | Whatever you persist | Programmatic pipelines — batch chart generation, build scripts | Generating 50 small multiples from a script |
 
 *Table 2.1 — Where Claude lives. The product chooses itself once you know whether the work produces a file, a conversation, or a pipeline.*
-
 
 ---
 
@@ -81,23 +79,3 @@ Merged:    ~200+ instructions, budget exceeded, later rules degraded.
 ```
 
 ---
-
-## Prompts
-
-Use these prompts with Claude to generate interactive D3 v7 versions of the
-figures in this chapter. Each produces a standalone HTML file you can open
-in a browser and modify freely.
-
-**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
-your Claude project context before using these prompts. They define the stack,
-naming conventions, color system, and typography the figures use.
-
----
-
-### Figure 2.1 — Vague vs specific prompt: five decisions
-
-Build a two-panel D3 v7 figure comparing a vague chart prompt against a specific one across five decision points. Data: five decision rows — (1) Chart type, (2) Marks, (3) Channels, (4) Sort order, (5) Baseline / annotation — each with a `vague` string and a `spec` string. Chart type: two parallel vertical lists rendered as SVG, one per panel; no scales required, but use `d3.scaleBand()` to space the five rows evenly on the y-axis of each panel. Channels: vertical position (band) encodes decision index; the row label and detail string sit side by side; the numbered badge is a filled circle marked with the row index. Sort: stable input order 1→5. Each row is keyboard-focusable (`tabindex="0"`) and has an `aria-label` describing the decision and the chosen value; hovering or focusing reveals a tooltip with the same content. Above each list, render a quoted prompt card (italic EB Garamond, monospace meta line counting words). Below each list, render a verdict block — dashed border for the vague panel, solid red border for the specific panel. Standalone HTML, D3 v7, inline CSS/JS, accessible markup, responsive via ResizeObserver.
-
-> Reference implementation: `d3/02-claude-basics-for-d3-visualization-updated-fig-01.html`
-
-

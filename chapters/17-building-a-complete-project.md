@@ -356,58 +356,6 @@ PROJECT.md, README.md, and a publication-ready artifact.
 
 ---
 
-## Prompts
-
-Use these prompts with Claude to generate interactive D3 v7 versions of the
-figures in this chapter. Each produces a standalone HTML file you can open
-in a browser and modify freely.
-
-**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
-your Claude project context before using these prompts. They define the stack,
-naming conventions, color system, and typography the figures use.
-
----
-
-### Figure 17.1 — The five-phase pipeline
-
-Build a horizontal flow diagram of the five-phase pipeline. Five labelled boxes laid out left-to-right with arrows between them: Phase A (Audit), Phase B (Schema), Phase C (Generate), Phase D (Verify), Phase E (Handoff). Each box has a dark header bar with the phase name in white, two interior text lines naming the deliverable (e.g. "Three framed questions + data audit"), a hairline, and a source line naming the chapters the phase draws from (e.g. "Chapters 3 & 4"). Below Phase E, an arrow drops to a sixth element labelled "Published artifact" — slightly wider, with two interior lines listing the manifest (three charts, PROJECT.md, README, audit log). A dashed loop curves from the artifact back to Phase A, labelled "if Cairo's purpose test fails → return to the question." Above the flow, a strap line in EB Garamond: "The MBTA model — question, working code, provenance." Hover on a box reveals a tooltip with the phase's detail sentence. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
-
-> Reference implementation: `d3/17-building-a-complete-project-fig-01.html`
-
----
-
-### Figure 17.2 — Phase A deliverables
-
-Build a three-panel structured document in a 1.1 / 1.1 / 1 grid. Each panel has a dark header bar with white text. Panel 1 ("Three questions") contains three stacked cards, one per question (Origins, Destinations, Composition), each card with a card title, the question text, an audience line, and a decision line. Panel 2 ("Data audit") shows the UNHCR dataset as a column table: five rows, each with a column name (`country_of_origin`, `country_of_asylum`, `year`, `type`, `count`) and a colour-coded badge naming the column type (categorical = mid-grey, temporal = darker grey, quantitative = ink). Below the table, a "Relationships supported" block lists comparison, change over time, part-to-whole, and spatial. Panel 3 ("Gaps identified") contains an ochre-bordered card describing the flow-map gap and a separate "Honest move" block explaining the scope decision. Standalone HTML, D3 v7 used for data binding, inline CSS/JS, accessible, responsive — single column on narrow viewports.
-
-> Reference implementation: `d3/17-building-a-complete-project-fig-02.html`
-
----
-
-### Figure 17.3 — The session-loading split
-
-Build a two-column comparison diagram showing which file loads in which session. Left column header: "Every session · CLAUDE.md"; right column header: "Visual sessions · +DESIGN.md". Each column lists eight rules, each rendered as a list row with a small ink dot, a monospace code chip naming the rule's keyword (e.g. `D3 7.9.0`, `[0, max]`, `d3.scaleSqrt`, `geoEqualEarth`), and a prose explanation in Inter. The left column lists coding rules; the right column lists visual rules. Between columns, a dotted vertical divider with a rotated italic label "load on demand". A footer eyebrow under each column explains the consequence of mis-loading. Below the two columns, a full-width strap block in EB Garamond explains the instruction budget: roughly 60 lines reliably retained per file, combined loading drops the bottom. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive — stacks vertically below 720 px.
-
-> Reference implementation: `d3/17-building-a-complete-project-fig-03.html`
-
----
-
-### Figure 17.4 — Phase C deliverables
-
-Build a three-panel figure rendering the three project charts side by side. Each panel has a dark header naming the question and family, a chart body, and a footer block listing Family, Channel, Sort, and a one-line summary. Panel 1 (Q1 · Origins): sequential-luminance heatmap of six refugee-origin countries (Syria, Ukraine, Afghanistan, Sudan, South Sudan, Myanmar) across years 2020–2024; countries on y-axis, years on x-axis, refugee count interpolated from `#F0EBE3` to `var(--color-ink)`. Panel 2 (Q2 · Destinations): horizontal bar chart of six destination countries (Turkey 3.6M, Iran 3.4M, Germany 2.5M, Pakistan 1.7M, Uganda 1.5M, Poland 1.0M), sorted descending, zero baseline, value labels in JetBrains Mono at the bar ends. Panel 3 (Q3 · Composition): single horizontal stacked bar with two segments (60% Internal, 40% International) with EB Garamond labels inside each segment and a small legend below. Each panel responsive, with tooltips on hover; grid collapses to one column below 900 px. Standalone HTML, D3 v7, inline CSS/JS, accessible.
-
-> Reference implementation: `d3/17-building-a-complete-project-fig-04.html`
-
----
-
-### Figure 17.5 — The published artifact
-
-Build a publication-packaged chart. The outer element is a bordered "publication container" with an italic eyebrow label peeking over its top edge. Inside: an EB Garamond title ("Where the world's refugees are going"), an EB Garamond subtitle in secondary grey, a horizontal bar chart of six refugee destination countries with value labels in JetBrains Mono at the bar ends. Below the chart, a horizontal divider, then a three-column provenance row with eyebrow labels (SOURCE, METHODOLOGY, ACCESSIBILITY) and short prose blocks underneath. Below the provenance row, a "Project manifest" panel with a soft border-tinted background and a single JetBrains Mono line listing the deliverable files: `chart-01.html · chart-02.html · chart-03.html · CLAUDE.md · DESIGN.md · PROJECT.md · README.md`. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive — provenance row collapses to one column below 720 px.
-
-> Reference implementation: `d3/17-building-a-complete-project-fig-05.html`
-
----
-
 ## AI Wayback Machine
 
 The ideas in this chapter didn't appear from nowhere. **Buckminster Fuller** spent decades insisting that a designer's job is not to make objects but to make the whole system legible to the people who have to live with it. His Dymaxion map and the *World Game* were enormous communication projects: a data narrative wrapped around a verifiable artifact, end to end. The complete-project discipline of this chapter — README to chart to audit log — is Fuller's idea of legibility scaled down.

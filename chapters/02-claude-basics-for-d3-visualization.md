@@ -437,58 +437,6 @@ Save the document as DESIGN.md.
 
 ---
 
-## Prompts
-
-Use these prompts with Claude to generate interactive D3 v7 versions of the
-figures in this chapter. Each produces a standalone HTML file you can open
-in a browser and modify freely.
-
-**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
-your Claude project context before using these prompts. They define the stack,
-naming conventions, color system, and typography the figures use.
-
----
-
-### Figure 2.1 — Vague vs specific prompt
-
-Build a two-column comparison panel in D3 v7. Each column represents a single Claude Code prompt for the cognitive-domain dataset. Render a header block (column title plus a one-line who-decides caption), a quoted prompt block (EB Garamond, italic), and a list of five decision rows: chart type, mark, channel for score, channel for domain, sort order & baseline. Channels are categorical: the left column labels each row "model picks: …" using a softer secondary border; the right column labels each row "author: …" using a heavier ink border. Bind the rows with d3.select().selectAll().data().join() so the rows are real D3-managed elements, not static HTML. Add hover tooltips that explain the channel-theory consequence of leaving each decision to the model. Close each column with a verdict chip: left = "chart, not information", right = "information, on first attempt". Standalone HTML, inline CSS and JS, D3 v7 from the pinned CDN, accessible markup, responsive grid that collapses to a single column on narrow viewports.
-
-> Reference implementation: `d3/02-claude-basics-for-d3-visualization-fig-01.html`
-
----
-
-### Figure 2.2 — The instruction budget
-
-Build a two-row horizontal stacked-bar figure rendering the instruction budget as an actual data visualization, not an icon. The x-scale is a d3.scaleLinear from 0 to 230 (the visual ceiling — slightly past the 200-instruction reliable-tracking ceiling). Row 1 ("Two files, separated") contains three segments bound via .data().join(): Claude Code system prompt (~50), CLAUDE.md coding constitution (~100), and a separately-rendered DESIGN.md on-demand bar (~50). Row 2 ("One merged file") contains the system prompt (~50) followed by a single merged-file segment (~230) that crosses the ceiling. Draw the ceiling as a dashed red vertical at x=200 in both rows; render a striped overflow zone in row 2 between x=200 and the merged segment's end. Each segment gets an in-bar label and a hover tooltip naming what kind of rules live there. Verdict chips: row 1 "within budget", row 2 "budget exceeded" with red border. Standalone HTML, inline CSS and JS, D3 v7 from the pinned CDN, ResizeObserver on each row, accessible markup, dark-mode-aware.
-
-> Reference implementation: `d3/02-claude-basics-for-d3-visualization-fig-02.html`
-
----
-
-### Figure 2.3 — The four-move prompt
-
-Build a vertical four-panel flow diagram showing the four-move prompt structure — Show, Say, Constrain, Verify. Use a three-column CSS grid: a numbered-badge rail with a connecting line on the left, the move card in the middle, and an if-skipped callout on the right. Render the moves from a single data array bound through D3 so the four rows are generated, not hand-written. Each card carries a move name, a one-line definition, and an EB Garamond italic example pulled from the cognitive-domain prompt. Move 3 ("Constrain it") gets a heavier ink border and is labeled "(the move most people skip)" inline with its name. The if-skipped callouts list three concrete decisions the model takes over when the move is omitted. Hovering or keyboard-focusing any move highlights it with an ochre border. Standalone HTML, inline CSS and JS, D3 v7 from the pinned CDN, accessible (role="button", tabindex, aria-label per move), responsive (rail collapses on narrow viewports), prefers-reduced-motion respected.
-
-> Reference implementation: `d3/02-claude-basics-for-d3-visualization-fig-03.html`
-
----
-
-### Figure 2.4 — The three-layer verification stack
-
-Build a vertical three-layer stack diagram of the verification process — format, facts, test. Render as an SVG of three stacked rectangles bound via d3.selectAll().data().join(). Use d3.interpolateRgb between a warm near-white and var(--color-ink) to compute the fill for each layer from a `shade` property (Layer 1 = 0.18, Layer 2 = 0.55, Layer 3 = 1.0). Inside each rectangle render a large numeral, the layer name, the time estimate, a "look at:" line, and a "catches:" line; switch text fill to white when shade exceeds 0.5. Layer 3 carries an extra subtitle "most likely to catch runtime failures". On the right, draw a vertical rail with rotated text reading "catches earlier failures first · don't skip ahead". Add an accessible hover tooltip per layer that quotes the practical instruction (e.g., "Open it. Resize it. Squint at it."). Standalone HTML, inline CSS and JS, D3 v7 from the pinned CDN, ResizeObserver-driven redraw, dark-mode-aware.
-
-> Reference implementation: `d3/02-claude-basics-for-d3-visualization-fig-04.html`
-
----
-
-### Figure 2.5 — Audit, prompt, build, verify
-
-Build a horizontal four-stage workflow figure with two synchronized rows. The top row is the workflow itself — Audit, Prompt, Build, Verify — rendered as four cards generated from a single data array via d3.selectAll().data().join(). Each card carries a "where" line (e.g., "step 1 · in Claude chat"), the stage name, and a one-line description. The bottom row is a parallel four-card "if skipped" rail naming the failure mode at each stage. Hovering or focusing any workflow card highlights both the card and its matching skip card with an ochre border (use a cross-row class toggle bound through D3). Below the two rows, render a worked-example block describing the cognitive-domain scatterplot failure walking through all four stages. The grid collapses from four columns to two on narrow viewports. Standalone HTML, inline CSS and JS, D3 v7 from the pinned CDN, accessible (role="button", aria-label per card), prefers-reduced-motion respected.
-
-> Reference implementation: `d3/02-claude-basics-for-d3-visualization-fig-05.html`
-
----
-
 ## AI Wayback Machine
 
 The ideas in this chapter didn't appear from nowhere. **Margaret Hamilton** led the team that wrote the Apollo Guidance Computer software in the 1960s — coining the term "software engineering" along the way. Her stack of program listings stood taller than she did. The discipline of "talk to your software carefully and you will get something you didn't expect" was hers.

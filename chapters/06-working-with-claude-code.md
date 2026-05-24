@@ -373,50 +373,6 @@ Save outputs as a chapter-05-full-pipeline/ directory:
 
 ---
 
-## Prompts
-
-Use these prompts with Claude to generate interactive D3 v7 versions of the
-figures in this chapter. Each produces a standalone HTML file you can open
-in a browser and modify freely.
-
-**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
-your Claude project context before using these prompts. They define the stack,
-naming conventions, color system, and typography the figures use.
-
----
-
-### Figure 5.1 — Vague vs four-move prompt
-
-Build a two-panel D3 v7 figure comparing the same humanitarian-funding dataset rendered from two prompts. Data: five sectors with funding in USD millions — Food Security 380.2, Shelter 142.7, Water and Sanitation 98.4, Health 87.3, Protection 64.1. Left panel renders the vague-prompt output: vertical bar chart with x-axis in source-file order, truncated y-axis from 40 to 400 with ticks every 100, uniform `var(--color-secondary)` fill, no value labels, long category labels unrotated and crowded along the x-axis. Right panel renders the four-move-prompt output: horizontal bar chart sorted by funding descending, zero-baseline x-axis with ticks at 0, 100, 200, 300, 400 prefixed with `$` and suffixed with `M`, sequential luminance from `var(--color-red)` at rank 1 through `var(--color-ink)`, `#787878`, `#ADADAD` down to `var(--color-border)` at rank 5, direct value labels at the right end of each bar, generous left margin (160 px) for sector names right-aligned. Below each chart, render a short bulleted list naming the failures or passes that match. Standalone HTML, D3 7.9.0 from the pinned CDN, inline CSS/JS, accessible markup (role="img", title, desc), tooltips, responsive via ResizeObserver.
-
-> Reference implementation: `d3/06-working-with-claude-code-fig-01.html`
-
----
-
-### Figure 5.2 — The four-move prompt, annotated
-
-Build a single-figure D3 v7 layout rendering the opening-case prompt as an annotated code block. Layout: a vertical code-block frame centered on the page, with four left-margin brackets labeling Move 1 through Move 4, and four right-margin annotations pointing at the corresponding code region. Code is rendered in `'JetBrains Mono', monospace` at 12 px, with section headers (`Show what I have:`, `Say what I want:`, `Constrain it:`, `Verify:`) in `var(--color-secondary)` and body lines in `var(--color-ink)`. Move 3 (Constrain it) occupies the largest vertical region — eight bullet lines. Move 4 (Verify) is last. Brackets are 1.25 px `var(--color-secondary)` paths. Annotation lines are dashed `var(--color-ochre)` with text in `var(--color-secondary)` italic Inter 11 px. Each move is keyboard-reachable with `tabindex="0"` and triggers a tooltip describing what the move does and why it is in this position. Standalone HTML, D3 7.9.0 from the pinned CDN, accessible, responsive via ResizeObserver.
-
-> Reference implementation: `d3/06-working-with-claude-code-fig-02.html`
-
----
-
-### Figure 5.3 — The MBTA iteration loop
-
-Build a single-figure D3 v7 node-and-edge diagram of a four-node loop with one exit branch. Nodes laid out in diamond formation: top (Four-move prompt, ≈ 12 seconds), right (Working chart), bottom (Audit, Evergreen/Emery ≈ 90 seconds), left (Targeted follow-up, one concern per iteration). Edges flow clockwise: prompt → working chart → audit → follow-up. A dashed feedback edge runs from the follow-up node back to the working-chart node, labeled "small targeted change · one concern per iteration." A fifth exit node (Publishable chart) sits below-right of the audit node; a solid edge runs from audit to publishable labeled "audit passes." Node rectangles are 200×60 with 1.25 px `var(--color-secondary)` borders, hover and focus states raise stroke to `var(--color-red)` 2 px width. The exit node permanently uses the red border to mark it as the loop's terminating state. Arrowheads via SVG `<defs>` `<marker>`. Below the diagram, render the Barry & Card 2014 quote in `'EB Garamond'` italic 16 px. Standalone HTML, D3 7.9.0 from the pinned CDN, accessible, responsive via ResizeObserver, tooltips on every node.
-
-> Reference implementation: `d3/06-working-with-claude-code-fig-03.html`
-
----
-
-### Figure 5.4 — End-to-end pipeline
-
-Build a single-figure D3 v7 horizontal flow diagram of five stages, evenly spaced and connected by right-pointing arrows. Each stage is a 240 px tall rectangle containing: stage title (Inter 13 px bold), chapter source line (Inter 11 px `var(--color-secondary)`), a horizontal `var(--color-border)` rule, four to five bullet lines naming the stage's outputs (Inter 11 px), and a deliverable filename at the bottom (`'JetBrains Mono', monospace` 10 px `var(--color-secondary)`). The five stages: (1) Data audit — Chapter 3, deliverable `01-data-audit.md`. (2) Chart selection — Chapter 4, deliverable `02-selection-audit.md`. (3) Channel decomposition — Chapter 3, deliverable `03-channel-decomp.md`. (4) Four-move prompt — Chapter 5 (this chapter), deliverable `04-prompt.txt`, rendered with a `var(--color-red)` 2 px border and an italic "here" marker. (5) Audit & iterate — Evergreen/Emery, deliverable `05-iteration-log.md`. A dashed feedback arrow loops from stage 5 down and back to stage 4, labeled "structural failure → revise decomposition." Hover and focus on any stage shows a tooltip explaining the stage's role. Standalone HTML, D3 7.9.0 from the pinned CDN, accessible, responsive via ResizeObserver.
-
-> Reference implementation: `d3/06-working-with-claude-code-fig-04.html`
-
----
-
 ## AI Wayback Machine
 
 The ideas in this chapter didn't appear from nowhere. **Grace Hopper** wrote the first compiler in 1952 — A-0 — arguing that programmers should not write in machine code if a machine could translate from something more human. The chain that runs from her work to "tell Claude what you want" is short.

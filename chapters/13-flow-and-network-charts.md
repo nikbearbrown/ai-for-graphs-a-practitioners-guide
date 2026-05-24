@@ -302,58 +302,6 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 
 ---
 
-## Prompts
-
-Use these prompts with Claude to generate interactive D3 v7 versions of the
-figures in this chapter. Each produces a standalone HTML file you can open
-in a browser and modify freely.
-
-**Prerequisites:** Load `brutalist/CLAUDE.md` and `brutalist/DESIGN.md` into
-your Claude project context before using these prompts. They define the stack,
-naming conventions, color system, and typography the figures use.
-
----
-
-### Figure 13.1 — Proportional vs uniform Sankey
-
-Build a two-panel D3 v7 figure rendering the same three-column flow data twice. Data: a small energy-flow graph with sources Oil, Coal, Gas; transforms Transport, Electricity; end uses Industrial, Residential. Provide nine links with values: Oil→Transport 50, Oil→Electricity 10, Coal→Electricity 30, Coal→Transport 6, Gas→Electricity 20, Transport→Industrial 35, Transport→Residential 21, Electricity→Industrial 22, Electricity→Residential 38. Chart type: `d3.sankey()` from the d3-sankey plugin (CDN). Left panel uses the real values so band widths are proportional. Right panel substitutes every link value with 1 so all bands are uniform width — topology only. Highlight the largest link in `var(--color-red)` on the proportional panel; on the uniform panel highlight nothing. Both panels share node positions, fonts, and labels. Tooltip shows source, target, and value (or "topology only" on the uniform panel). Standalone HTML, D3 v7, d3-sankey plugin, inline CSS/JS, accessible markup, responsive via ResizeObserver.
-
-> Reference implementation: `d3/13-flow-and-network-charts-fig-01.html`
-
----
-
-### Figure 13.2 — Sankey proportionality audit
-
-Build a two-panel D3 v7 audit figure for three flows of values 400, 200, and 80 units. Panel A renders the flows with correct widths (40, 20, 8 px) from a single source rect to three target rects. Panel B renders the same three flows with failure widths (30, 20, 12 px). For each panel, render an audit log below the chart showing two computed ratios — A:B and A:C — each compared to the data ratio (2:1 and 5:1), with a check mark on match and a cross on mismatch. Panel A ends with a verdict chip "honest"; Panel B with a verdict chip "distorts" in `var(--color-red)`. Manual band geometry — use cubic Bézier curves from the source rect to each target rect with width set in pixels, not by `d3.sankey()`. Tooltip names each flow's id, value, and rendered width. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
-
-> Reference implementation: `d3/13-flow-and-network-charts-fig-02.html`
-
----
-
-### Figure 13.3 — Sankey vs alluvial vs ribbon chord
-
-Build a three-panel D3 v7 figure rendering each member of the magnitude family on the same line. Panel A: a `d3.sankey()` of two source nodes, two transform nodes, and two end-use nodes with seven flows. Panel B: an alluvial built on `d3.sankey()` across three time points (2018, 2020, 2022) with three categories (A, B, C) and ten transitions that include a few category switches. Panel C: a `d3.chord()` ribbon diagram between four entities (FR, DE, IT, UK) using a 4×4 symmetric matrix. Each panel has its own title and a "Q:" line naming the question it answers. Use `var(--color-ink)` for nodes, `var(--color-red)` for the single dominant ribbon or link in each panel, grays elsewhere. Tooltip on every link or ribbon shows source, target, and value. Standalone HTML, D3 v7 + d3-sankey plugin, inline CSS/JS, accessible, responsive.
-
-> Reference implementation: `d3/13-flow-and-network-charts-fig-03.html`
-
----
-
-### Figure 13.4 — Four hairball mitigations
-
-Build a four-panel D3 v7 figure rendering the same dense network four ways. Generate a 60-node graph with average degree 8 using a deterministic seeded RNG so the layout is reproducible. Panel 1: an unmitigated `d3.forceSimulation()` with `forceLink`, `forceManyBody`, `forceCenter`, `forceCollide` — visibly a hairball. Panel 2: filter to the top 12 nodes by degree before running the simulation — sparse and structured. Panel 3: aggregate the 60 nodes into 8 super-nodes (one per cluster of 8 adjacent ids), edges weighted by inter-cluster edge counts — community structure visible. Panel 4: an adjacency matrix with rows and columns ordered by node degree, cells shaded where edges exist. Each panel labels what it reveals and what it gives up in a small caption beneath. Tooltip on each form. Standalone HTML, D3 v7, inline CSS/JS, accessible, responsive.
-
-> Reference implementation: `d3/13-flow-and-network-charts-fig-04.html`
-
----
-
-### Figure 13.5 — Four design decisions in one Sankey
-
-Build an interactive D3 v7 figure that renders a `d3.sankey()` of energy sources (Oil, Coal, Gas) through transforms (Transport, Electricity) to end uses (Industrial, Residential), alongside a numbered list of four design decisions: (1) proportional widths; (2) node ordering; (3) color follows source; (4) labels on dominant flows. Color flows by source — Oil flows in `var(--color-red)`, Coal flows in `var(--color-ink)`, Gas flows in mid-gray. Annotate the top four flows by value with their numeric value rendered in white on an ink halo. Clicking a decision in the list highlights the relevant region of the chart: decision 1 outlines the two widest bands with an ochre dashed stroke; decision 2 frames the middle node column with an ochre dashed rectangle; decision 3 dims all non-source-traced flows to 0.18 opacity; decision 4 circles each value label with an ochre dashed ring. Tooltip on every flow. Standalone HTML, D3 v7 + d3-sankey plugin, inline CSS/JS, accessible, responsive.
-
-> Reference implementation: `d3/13-flow-and-network-charts-fig-05.html`
-
----
-
 ## AI Wayback Machine
 
 The ideas in this chapter didn't appear from nowhere. **Charles Joseph Minard** drew the 1869 flow map of Napoleon's Russian campaign — combining six variables (army size, location, direction, temperature, distance, time) in a single image. Tufte called it possibly "the best statistical graphic ever drawn."
