@@ -1,6 +1,6 @@
 # AI for Graphs A Practitioner's Guide
 
-**Author:** Nik Bear Brown
+**Author:** Humanitarians AI
 **Publisher:** Bear Brown, LLC
 **Status:** Draft
 **Started:** 2026-05-18

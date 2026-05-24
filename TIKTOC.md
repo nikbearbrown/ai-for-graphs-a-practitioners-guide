@@ -2,7 +2,7 @@
 
 **Working title:** AI for Graphs: A Practitioner's Guide *(working frontmatter title: Brutalist d3 x Claude)*
 **Series:** Practitioner's AI Series · Northeastern University College of Engineering
-**Author:** Nik Bear Brown · ni.brown@neu.edu · Bear Brown & Company
+**Author:** Humanitarians AI · ni.brown@neu.edu · Bear Brown & Company
 **Document:** Full TIKTOC — Complete Architecture, reverse-engineered from 18 existing chapter drafts
 **Version:** 1.0
 **Status:** Reverse-engineered from existing drafts — TIKTOC precedes rewrite pass

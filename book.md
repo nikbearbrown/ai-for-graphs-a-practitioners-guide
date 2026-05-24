@@ -12,7 +12,7 @@
 
 # AI for Graphs A Practitioner's Guide
 
-**Author:** Nik Bear Brown
+**Author:** Humanitarians AI
 
 ---
 

@@ -14,7 +14,7 @@
 
 # AI for Graphs A Practitioner's Guide — Outline
 
-**Author:** Nik Bear Brown
+**Author:** Humanitarians AI
 
 ---
 
