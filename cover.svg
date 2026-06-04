@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2560" width="1600" height="2560" preserveAspectRatio="xMidYMid meet" shape-rendering="geometricPrecision">
+  <g id="background"><rect x="0" y="0" width="1600" height="2560" fill="#1B6B5A"/></g>
+  <g id="symbol-fragments" transform="rotate(-12, 800, 850)">
+    <polygon points="231,180 316,180 281,227 196,227" fill="#F5F0E8"/>
+    <polygon points="539,244 634,244 593,829 498,829" fill="#F5F0E8"/>
+    <polygon points="355,262 436,262 381,252 300,252" fill="#F5C518"/>
+    <polygon points="262,261 346,261 305,188 221,188" fill="#F5F0E8"/>
+    <polygon points="371,360 452,360 277,358 196,358" fill="#F5F0E8"/>
+    <polygon points="549,668 643,668 365,224 270,224" fill="#F5F0E8"/>
+    <polygon points="302,282 388,282 322,1392 235,1392" fill="#F5F0E8"/>
+    <polygon points="221,203 316,203 359,597 264,597" fill="#F5F0E8"/>
+  </g>
+  <g id="title-letterforms">
+    <text x="120" y="1482" font-family="Arial Black, Arial, sans-serif" font-size="190" font-weight="900" letter-spacing="0" fill="#F5F0E8">AI FOR</text>
+    <text x="120" y="1678" font-family="Arial Black, Arial, sans-serif" font-size="190" font-weight="900" letter-spacing="0" fill="#F5C518" textLength="1300" lengthAdjust="spacingAndGlyphs">GRAPHS A</text>
+    <text x="120" y="1874" font-family="Arial Black, Arial, sans-serif" font-size="190" font-weight="900" letter-spacing="0" fill="#F5F0E8" textLength="1300" lengthAdjust="spacingAndGlyphs">PRACTITIONERS</text>
+    <text x="120" y="2070" font-family="Arial Black, Arial, sans-serif" font-size="190" font-weight="900" letter-spacing="0" fill="#F5F0E8">GUIDE</text>
+  </g>
+</svg>

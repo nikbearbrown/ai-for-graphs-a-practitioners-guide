@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 440" role="img" aria-labelledby="t14-01 d14-01">
+  <title id="t14-01">Same health data, two encodings — total uninsured vs uninsured rate</title>
+  <desc id="d14-01">Two schematic US state choropleth maps. Left panel encodes total uninsured population; right panel encodes uninsured rate. Several states flip dramatically between the two maps.</desc>
+  <defs>
+    <style>
+      .ti { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 13px; font-weight: bold; fill: #2a1a0e; }
+      .lb { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 11px; fill: #2a1a0e; }
+      .sm { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; fill: #4a4540; }
+      .cap { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; font-size: 10px; font-style: italic; fill: #4a4540; }
+      .st { stroke: #fdfcfb; stroke-width: 0.75; }
+    </style>
+    <marker id="ar14-01" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2a1a0e"/>
+    </marker>
+  </defs>
+  <rect width="760" height="440" fill="#fdfcfb"/>
+
+  <!-- LEFT PANEL — Total count -->
+  <text x="32" y="28" class="ti">Total uninsured people by state</text>
+  <text x="32" y="44" class="sm">absolute count · mostly tracks population</text>
+
+  <!-- Schematic US grid: 4 rows × 8 cols, each tile a state -->
+  <!-- Tile size 30×22, gap 2, origin x=40 y=70. Letters mark states; fills encode count rank. -->
+  <!-- Fills: dark #2a1a0e, mid-dark #4a4540, mid #8a8480, light #c8c4c0, pale #ece8e3 -->
+  <g transform="translate(40,70)">
+    <!-- Row 0 (north tier) -->
+    <rect class="st" x="0"   y="0"   width="30" height="22" fill="#ece8e3"/><text x="15" y="14" text-anchor="middle" class="sm">WA</text>
+    <rect class="st" x="32"  y="0"   width="30" height="22" fill="#c8c4c0"/><text x="47" y="14" text-anchor="middle" class="sm">MT</text>
+    <rect class="st" x="64"  y="0"   width="30" height="22" fill="#ece8e3"/><text x="79" y="14" text-anchor="middle" class="sm">ND</text>
+    <rect class="st" x="96"  y="0"   width="30" height="22" fill="#c8c4c0"/><text x="111" y="14" text-anchor="middle" class="sm">MN</text>
+    <rect class="st" x="128" y="0"   width="30" height="22" fill="#8a8480"/><text x="143" y="14" text-anchor="middle" class="sm">WI</text>
+    <rect class="st" x="160" y="0"   width="30" height="22" fill="#8a8480"/><text x="175" y="14" text-anchor="middle" class="sm">MI</text>
+    <rect class="st" x="192" y="0"   width="30" height="22" fill="#c8c4c0"/><text x="207" y="14" text-anchor="middle" class="sm">NY</text>
+    <rect class="st" x="224" y="0"   width="30" height="22" fill="#ece8e3"/><text x="239" y="14" text-anchor="middle" class="sm">VT</text>
+    <!-- Row 1 -->
+    <rect class="st" x="0"   y="24"  width="30" height="22" fill="#8a8480"/><text x="15" y="38" text-anchor="middle" class="sm">OR</text>
+    <rect class="st" x="32"  y="24"  width="30" height="22" fill="#ece8e3"/><text x="47" y="38" text-anchor="middle" class="sm">ID</text>
+    <rect class="st" x="64"  y="24"  width="30" height="22" fill="#ece8e3"/><text x="79" y="38" text-anchor="middle" class="sm">SD</text>
+    <rect class="st" x="96"  y="24"  width="30" height="22" fill="#c8c4c0"/><text x="111" y="38" text-anchor="middle" class="sm">IA</text>
+    <rect class="st" x="128" y="24"  width="30" height="22" fill="#8a8480"/><text x="143" y="38" text-anchor="middle" class="sm">IL</text>
+    <rect class="st" x="160" y="24"  width="30" height="22" fill="#8a8480"/><text x="175" y="38" text-anchor="middle" class="sm">OH</text>
+    <rect class="st" x="192" y="24"  width="30" height="22" fill="#c8c4c0"/><text x="207" y="38" text-anchor="middle" class="sm">PA</text>
+    <rect class="st" x="224" y="24"  width="30" height="22" fill="#ece8e3"/><text x="239" y="38" text-anchor="middle" class="sm">RI</text>
+    <!-- Row 2 -->
+    <rect class="st" x="0"   y="48"  width="30" height="22" fill="#2a1a0e"/><text x="15" y="62" text-anchor="middle" class="lb" fill="#fdfcfb">CA</text>
+    <rect class="st" x="32"  y="48"  width="30" height="22" fill="#ece8e3"/><text x="47" y="62" text-anchor="middle" class="sm">UT</text>
+    <rect class="st" x="64"  y="48"  width="30" height="22" fill="#c8c4c0"/><text x="79" y="62" text-anchor="middle" class="sm">CO</text>
+    <rect class="st" x="96"  y="48"  width="30" height="22" fill="#c8c4c0"/><text x="111" y="62" text-anchor="middle" class="sm">MO</text>
+    <rect class="st" x="128" y="48"  width="30" height="22" fill="#8a8480"/><text x="143" y="62" text-anchor="middle" class="sm">IN</text>
+    <rect class="st" x="160" y="48"  width="30" height="22" fill="#8a8480"/><text x="175" y="62" text-anchor="middle" class="sm">NC</text>
+    <rect class="st" x="192" y="48"  width="30" height="22" fill="#c8c4c0"/><text x="207" y="62" text-anchor="middle" class="sm">VA</text>
+    <rect class="st" x="224" y="48"  width="30" height="22" fill="#ece8e3"/><text x="239" y="62" text-anchor="middle" class="sm">NJ</text>
+    <!-- Row 3 (south tier) -->
+    <rect class="st" x="0"   y="72"  width="30" height="22" fill="#4a4540"/><text x="15" y="86" text-anchor="middle" class="lb" fill="#fdfcfb">AZ</text>
+    <rect class="st" x="32"  y="72"  width="30" height="22" fill="#ece8e3"/><text x="47" y="86" text-anchor="middle" class="sm">NM</text>
+    <rect class="st" x="64"  y="72"  width="30" height="22" fill="#2a1a0e"/><text x="79" y="86" text-anchor="middle" class="lb" fill="#fdfcfb">TX</text>
+    <rect class="st" x="96"  y="72"  width="30" height="22" fill="#c8c4c0"/><text x="111" y="86" text-anchor="middle" class="sm">LA</text>
+    <rect class="st" x="128" y="72"  width="30" height="22" fill="#8a8480"/><text x="143" y="86" text-anchor="middle" class="sm">GA</text>
+    <rect class="st" x="160" y="72"  width="30" height="22" fill="#4a4540"/><text x="175" y="86" text-anchor="middle" class="lb" fill="#fdfcfb">FL</text>
+    <rect class="st" x="192" y="72"  width="30" height="22" fill="#ece8e3"/><text x="207" y="86" text-anchor="middle" class="sm">WV</text>
+    <rect class="st" x="224" y="72"  width="30" height="22" fill="#ece8e3"/><text x="239" y="86" text-anchor="middle" class="sm">WY</text>
+  </g>
+
+  <!-- Legend left -->
+  <g transform="translate(40,210)">
+    <text x="0" y="0" class="sm">low</text>
+    <rect x="22" y="-9" width="18" height="11" fill="#ece8e3" class="st"/>
+    <rect x="40" y="-9" width="18" height="11" fill="#c8c4c0" class="st"/>
+    <rect x="58" y="-9" width="18" height="11" fill="#8a8480" class="st"/>
+    <rect x="76" y="-9" width="18" height="11" fill="#4a4540" class="st"/>
+    <rect x="94" y="-9" width="18" height="11" fill="#2a1a0e" class="st"/>
+    <text x="118" y="0" class="sm">high</text>
+    <text x="0" y="16" class="sm">uninsured population (thousands)</text>
+  </g>
+
+  <!-- Callouts left: CA, TX, WY -->
+  <path d="M 55 318 L 90 250 L 55 142" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-01)"/>
+  <text x="90" y="240" text-anchor="start" class="lb">CA · very dark</text>
+  <path d="M 200 318 L 230 280 L 134 162" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-01)"/>
+  <text x="232" y="278" text-anchor="start" class="lb">TX · very dark</text>
+  <path d="M 295 318 L 320 200 L 280 162" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-01)"/>
+  <text x="304" y="190" text-anchor="start" class="lb">WY · pale</text>
+
+  <!-- divider -->
+  <line x1="380" y1="16" x2="380" y2="424" stroke="#c8c4c0" stroke-width="0.75"/>
+
+  <!-- RIGHT PANEL — Rate -->
+  <text x="400" y="28" class="ti">Uninsured rate (%) by state</text>
+  <text x="400" y="44" class="sm">per-capita · genuinely geographic</text>
+
+  <g transform="translate(408,70)">
+    <!-- Row 0 -->
+    <rect class="st" x="0"   y="0"   width="30" height="22" fill="#c8c4c0"/><text x="15" y="14" text-anchor="middle" class="sm">WA</text>
+    <rect class="st" x="32"  y="0"   width="30" height="22" fill="#c8c4c0"/><text x="47" y="14" text-anchor="middle" class="sm">MT</text>
+    <rect class="st" x="64"  y="0"   width="30" height="22" fill="#c8c4c0"/><text x="79" y="14" text-anchor="middle" class="sm">ND</text>
+    <rect class="st" x="96"  y="0"   width="30" height="22" fill="#ece8e3"/><text x="111" y="14" text-anchor="middle" class="sm">MN</text>
+    <rect class="st" x="128" y="0"   width="30" height="22" fill="#ece8e3"/><text x="143" y="14" text-anchor="middle" class="sm">WI</text>
+    <rect class="st" x="160" y="0"   width="30" height="22" fill="#ece8e3"/><text x="175" y="14" text-anchor="middle" class="sm">MI</text>
+    <rect class="st" x="192" y="0"   width="30" height="22" fill="#ece8e3"/><text x="207" y="14" text-anchor="middle" class="sm">NY</text>
+    <rect class="st" x="224" y="0"   width="30" height="22" fill="#ece8e3"/><text x="239" y="14" text-anchor="middle" class="sm">VT</text>
+    <!-- Row 1 -->
+    <rect class="st" x="0"   y="24"  width="30" height="22" fill="#ece8e3"/><text x="15" y="38" text-anchor="middle" class="sm">OR</text>
+    <rect class="st" x="32"  y="24"  width="30" height="22" fill="#c8c4c0"/><text x="47" y="38" text-anchor="middle" class="sm">ID</text>
+    <rect class="st" x="64"  y="24"  width="30" height="22" fill="#c8c4c0"/><text x="79" y="38" text-anchor="middle" class="sm">SD</text>
+    <rect class="st" x="96"  y="24"  width="30" height="22" fill="#ece8e3"/><text x="111" y="38" text-anchor="middle" class="sm">IA</text>
+    <rect class="st" x="128" y="24"  width="30" height="22" fill="#ece8e3"/><text x="143" y="38" text-anchor="middle" class="sm">IL</text>
+    <rect class="st" x="160" y="24"  width="30" height="22" fill="#ece8e3"/><text x="175" y="38" text-anchor="middle" class="sm">OH</text>
+    <rect class="st" x="192" y="24"  width="30" height="22" fill="#ece8e3"/><text x="207" y="38" text-anchor="middle" class="sm">PA</text>
+    <rect class="st" x="224" y="24"  width="30" height="22" fill="#ece8e3"/><text x="239" y="38" text-anchor="middle" class="sm">RI</text>
+    <!-- Row 2 -->
+    <rect class="st" x="0"   y="48"  width="30" height="22" fill="#c8c4c0"/><text x="15" y="62" text-anchor="middle" class="sm">CA</text>
+    <rect class="st" x="32"  y="48"  width="30" height="22" fill="#c8c4c0"/><text x="47" y="62" text-anchor="middle" class="sm">UT</text>
+    <rect class="st" x="64"  y="48"  width="30" height="22" fill="#c8c4c0"/><text x="79" y="62" text-anchor="middle" class="sm">CO</text>
+    <rect class="st" x="96"  y="48"  width="30" height="22" fill="#c8c4c0"/><text x="111" y="62" text-anchor="middle" class="sm">MO</text>
+    <rect class="st" x="128" y="48"  width="30" height="22" fill="#ece8e3"/><text x="143" y="62" text-anchor="middle" class="sm">IN</text>
+    <rect class="st" x="160" y="48"  width="30" height="22" fill="#8a8480"/><text x="175" y="62" text-anchor="middle" class="sm">NC</text>
+    <rect class="st" x="192" y="48"  width="30" height="22" fill="#c8c4c0"/><text x="207" y="62" text-anchor="middle" class="sm">VA</text>
+    <rect class="st" x="224" y="48"  width="30" height="22" fill="#ece8e3"/><text x="239" y="62" text-anchor="middle" class="sm">NJ</text>
+    <!-- Row 3 -->
+    <rect class="st" x="0"   y="72"  width="30" height="22" fill="#4a4540"/><text x="15" y="86" text-anchor="middle" class="lb" fill="#fdfcfb">AZ</text>
+    <rect class="st" x="32"  y="72"  width="30" height="22" fill="#8a8480"/><text x="47" y="86" text-anchor="middle" class="sm">NM</text>
+    <rect class="st" x="64"  y="72"  width="30" height="22" fill="#2a1a0e"/><text x="79" y="86" text-anchor="middle" class="lb" fill="#fdfcfb">TX</text>
+    <rect class="st" x="96"  y="72"  width="30" height="22" fill="#8a8480"/><text x="111" y="86" text-anchor="middle" class="sm">LA</text>
+    <rect class="st" x="128" y="72"  width="30" height="22" fill="#8a8480"/><text x="143" y="86" text-anchor="middle" class="sm">GA</text>
+    <rect class="st" x="160" y="72"  width="30" height="22" fill="#4a4540"/><text x="175" y="86" text-anchor="middle" class="lb" fill="#fdfcfb">FL</text>
+    <rect class="st" x="192" y="72"  width="30" height="22" fill="#ece8e3"/><text x="207" y="86" text-anchor="middle" class="sm">WV</text>
+    <rect class="st" x="224" y="72"  width="30" height="22" fill="#8a8480"/><text x="239" y="86" text-anchor="middle" class="sm">WY</text>
+  </g>
+
+  <!-- Legend right -->
+  <g transform="translate(408,210)">
+    <text x="0" y="0" class="sm">low</text>
+    <rect x="22" y="-9" width="18" height="11" fill="#ece8e3" class="st"/>
+    <rect x="40" y="-9" width="18" height="11" fill="#c8c4c0" class="st"/>
+    <rect x="58" y="-9" width="18" height="11" fill="#8a8480" class="st"/>
+    <rect x="76" y="-9" width="18" height="11" fill="#4a4540" class="st"/>
+    <rect x="94" y="-9" width="18" height="11" fill="#2a1a0e" class="st"/>
+    <text x="118" y="0" class="sm">high</text>
+    <text x="0" y="16" class="sm">uninsured rate (% of residents)</text>
+  </g>
+
+  <!-- Callouts right: CA flipped lighter, WY now darker, RI ≈ national average -->
+  <path d="M 425 318 L 460 252 L 425 142" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-01)"/>
+  <text x="460" y="240" text-anchor="start" class="lb">CA · lighter now</text>
+  <path d="M 665 318 L 690 200 L 651 162" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-01)"/>
+  <text x="630" y="190" text-anchor="start" class="lb">WY · darker than CA</text>
+  <path d="M 665 280 L 700 270 L 665 92" fill="none" stroke="#2a1a0e" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ar14-01)"/>
+  <text x="640" y="260" text-anchor="start" class="lb">RI · near average</text>
+
+  <!-- caption -->
+  <text x="380" y="418" text-anchor="middle" class="cap">Same states. Same data. Different question. The map shows what you drew; the reader sees what's big.</text>
+</svg>
