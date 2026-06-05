@@ -1,4 +1,11 @@
 # Chapter 4 — Chart Selection as Design Decision
+
+## TL;DR
+
+- The Wrong Chart Feels Familiar; the Right One Takes Work.
+- The chapter moves through Why the Pie Chart Was Chosen Anyway, The Eight Categories That Contain Every Chart, Cairo's Four Steps, The Mechanism Behind Each Chart Type, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *The Wrong Chart Feels Familiar; the Right One Takes Work.*
 
 ---
@@ -358,12 +365,15 @@ prompt structure.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Calvin F. Schmid** was an American sociologist and statistician who wrote *Handbook of Graphic Presentation* (1954) — the first practical manual that walked the reader through *which chart to use for which question*. Before Schmid's book, chart selection was mostly inherited from whatever the previous author had done. After it, the question "key message → data structure → functional category → specific form" had a textbook answer.
 
 ![Calvin F. Schmid, circa 1955. AI-generated portrait based on a public domain photograph.](../images/calvin-f-schmid.jpg)
 *Calvin F. Schmid, circa 1955. AI-generated portrait based on a public domain photograph (Wikimedia Commons).*
+
+![Calvin F. Schmid](../images/calvin-f-schmid-x3l.png)
+
+*Puppet Art by [Nik Bear Brown](https://www.nikbearbrown.com/).*
 
 **Run this:**
 

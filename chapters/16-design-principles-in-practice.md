@@ -1,5 +1,12 @@
 # Chapter 16 — Design Principles in Practice
 
+
+## TL;DR
+
+- A published quarterly report has a bar chart of Q4 sales by region.
+- The chapter moves through The four sources, and what each contributes, Proportional ink: the foundation, Data-ink ratio: the heuristic and its resolution, Color: the three vocabularies, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *From Principle to Audit Checklist.*
 
 ---
@@ -374,12 +381,15 @@ Walk me through the full design audit:
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Edward Tufte** published *The Visual Display of Quantitative Information* in 1983 — and coined the terms "chartjunk," "data-ink ratio," and "sparklines." His insistence on stripping decoration from charts continues to shape how serious data graphics get made.
 
 ![Edward Tufte, circa 1983. AI-generated portrait based on a public domain photograph.](../images/edward-tufte.jpg)
 *Edward Tufte, circa 1983. AI-generated portrait based on a public domain photograph (Wikimedia Commons).*
+
+![Edward Tufte](../images/edward-tufte-jj2.png)
+
+*Puppet Art by [Nik Bear Brown](https://www.nikbearbrown.com/).*
 
 **Run this:**
 

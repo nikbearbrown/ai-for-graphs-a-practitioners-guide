@@ -1,5 +1,12 @@
 # Chapter 05 — Reading a Dataset
 
+
+## TL;DR
+
+- Read the Data Before You Reach for the Code.
+- The chapter moves through What a dataset contains, Whose question is the chart answering?, Compared with what?, What relationships does your data actually support?, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *Read the Data Before You Reach for the Code.*
 
 ---
@@ -339,8 +346,7 @@ to the chart-selection step and the Claude Code prompt.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **John Tukey** invented exploratory data analysis (EDA) in the 1960s and 70s — arguing that the right first move with a dataset is to *look* at it, not test it. He also coined the words "bit" and "software."
 
 ![John Tukey, circa 1970. AI-generated portrait based on a public domain photograph.](../images/john-tukey.jpg)

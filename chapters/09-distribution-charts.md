@@ -1,5 +1,12 @@
 # Chapter 09 — Distribution Charts
 
+
+## TL;DR
+
+- Shape, Spread, and Skew — Beyond the Mean.
+- The chapter moves through What the mean hides, The histogram and the bin-width problem, What the box plot shows and doesn't, Violin plots: shape made visible, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *Shape, Spread, and Skew — Beyond the Mean.*
 
 ---
@@ -307,8 +314,7 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Adolphe Quetelet** coined "the average man" in 1835 — proposing that human traits (height, chest circumference, criminal tendency) follow normal distributions. He gave statistics the conceptual tools to think about populations as distributions, not lists.
 
 ![Adolphe Quetelet, circa 1860. AI-generated portrait based on a public domain photograph.](../images/adolphe-quetelet.jpg)

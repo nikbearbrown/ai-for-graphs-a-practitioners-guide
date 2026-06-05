@@ -1,4 +1,11 @@
 # Chapter 10 — Relationship and Correlation Charts
+
+## TL;DR
+
+- Two Variables and the Question They Refuse to Settle.
+- The chapter moves through What a Scatterplot Actually Is, The Overplotting Problem, Bubble Charts and the Radius Trap, Heatmaps: Position Traded for Density, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *Two Variables and the Question They Refuse to Settle.*
 
 ---
@@ -348,12 +355,15 @@ overplotting addressed, color scale appropriate for heatmaps.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Francis Galton** drew the first scatter plot in 1885 to compare parents' and children's heights — and named the resulting downward-sloping pattern "regression toward the mean." His statistical instincts were brilliant; his applications of them (founding eugenics) were catastrophic.
 
 ![Francis Galton, circa 1890. AI-generated portrait based on a public domain photograph.](../images/francis-galton.jpg)
 *Francis Galton, circa 1890. AI-generated portrait based on a public domain photograph (Wikimedia Commons).*
+
+![Francis Galton](../images/francis-galton-8pc.png)
+
+*Puppet Art by [Nik Bear Brown](https://www.nikbearbrown.com/).*
 
 **Run this:**
 

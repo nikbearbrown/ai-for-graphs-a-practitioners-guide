@@ -1,5 +1,12 @@
 # Chapter 02 — Claude Basics for D3 Visualization
 
+
+## TL;DR
+
+- The gap between "make a chart" and "make the chart" is the whole problem.
+- The chapter moves through Where Claude lives, The instruction budget, and why two files beat one.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *The gap between "make a chart" and "make the chart" is the whole problem.*
 
 ---

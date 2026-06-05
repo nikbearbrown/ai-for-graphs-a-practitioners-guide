@@ -1,5 +1,12 @@
 # Chapter 13 — Flow and Network Charts
 
+
+## TL;DR
+
+- This chapter gives a working overview of Flow and Network Charts, focusing on the ideas a reader needs before moving to the next chapter.
+- The chapter moves through Width as a channel, The three flow-magnitude forms, The three connection-existence forms, The hairball, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *What Flows Where — and How Much.*
 
 ---
@@ -302,8 +309,7 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Charles Joseph Minard** drew the 1869 flow map of Napoleon's Russian campaign — combining six variables (army size, location, direction, temperature, distance, time) in a single image. Tufte called it possibly "the best statistical graphic ever drawn."
 
 ![Charles Joseph Minard, circa 1860. AI-generated portrait based on a public domain engraving.](../images/charles-joseph-minard.jpg)

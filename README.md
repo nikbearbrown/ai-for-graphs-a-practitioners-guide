@@ -1,42 +1,47 @@
 # AI for Graphs A Practitioner's Guide
 
-**Publisher:** Humanitarians AI  
-**Edition:** 2026  
-**License:** CC BY 4.0 for text; AI+1 marks and cover design are trademarks of Humanitarians AI.
+AI+1, Hands on. Domain specific. No generic prompts.
 
-## Overview
+**Author:** Humanitarians AI Incorporated  
+**Publisher:** Humanitarians AI Incorporated, a 501(c)(3) nonprofit organization  
+**Copyright:** Copyright © 2026 Humanitarians AI Incorporated. All rights reserved.  
+**Edition:** 2026
 
-AI for Graphs A Practitioner's Guide is part of the AI+1 series from Humanitarians AI. The book asks what a AI for Graphs practitioner can do with AI while preserving the human judgment, accountability, and domain expertise that the tool cannot supply.
+## Summary
 
-The book's front matter explains the copyright, CC BY 4.0 license, distribution model, AI and errata disclosure, and the Humanitarians AI publishing context. The introduction frames the reader's path through the chapters: where AI helps, where it fails, and how to keep the boundary between execution and judgment visible.
+*AI for Graphs A Practitioner's Guide* is a structured textbook for readers who need a clear path through the subject rather than a loose collection of explanations. It begins with Chapter 02 — Claude Basics for D3 Visualization, moves through 19 core chapters, and ends with Chapter 16 — The Brutalist Claude Project.
+
+AI matters to *AI for Graphs A Practitioner's Guide* because the modern textbook is no longer only a static container. It is also part of a learning system: searchable, remixable, explainable, and increasingly connected to tools such as Medhavy. For Humanitarians AI books, the relevant question is not whether AI can replace the learner or the teacher. It cannot. The useful question is what AI can make easier to inspect: definitions, worked examples, misconceptions, practice sequences, alternate explanations, and the structure of an argument. This book treats AI as infrastructure for open, public-interest learning infrastructure. The chapters should still stand on their own as readable prose, but they are also designed to be legible to an intelligent textbook system.
 
 ## Table of Contents
 
-- [Chapter 02 — Claude Basics for D3 Visualization](chapters/02-claude-basics-for-d3-visualization-updated.md)
-- [Chapter 02 — Claude Basics for D3 Visualization](chapters/02-claude-basics-for-d3-visualization.md)
-- [Chapter 3 — Marks and Channels](chapters/03-marks-and-channels.md)
-- [Chapter 4 — Chart Selection as Design Decision](chapters/04-chart-selection-as-design-decision.md)
-- [Chapter 05 — Reading a Dataset](chapters/05-reading-a-dataset.md)
-- [Chapter 6 — Working with Claude Code](chapters/06-working-with-claude-code.md)
-- [Chapter 07 — Comparison Charts](chapters/07-comparison-charts.md)
-- [Chapter 8 — Time Series and Temporal Charts](chapters/08-time-series-and-temporal-charts.md)
-- [Chapter 09 — Distribution Charts](chapters/09-distribution-charts.md)
-- [Chapter 10 — Relationship and Correlation Charts](chapters/10-relationship-and-correlation-charts.md)
-- [Chapter 11 — Part-to-Whole Charts](chapters/11-part-to-whole-charts.md)
-- [Chapter 12 — Hierarchy Charts](chapters/12-hierarchy-charts.md)
-- [Chapter 13 — Flow and Network Charts](chapters/13-flow-and-network-charts.md)
-- [Chapter 14 — Spatial and Geographic Charts](chapters/14-spatial-and-geographic-charts.md)
-- [Chapter 15 — Specialized and Financial Charts](chapters/15-specialized-and-financial-charts.md)
-- [Chapter 16 — Design Principles in Practice](chapters/16-design-principles-in-practice.md)
-- [Chapter 17 — Building a Complete Project](chapters/17-building-a-complete-project.md)
-- [Part II — Examples](chapters/18-arc-diagram.md)
-- [Chapter 16 — The Brutalist Claude Project](chapters/18-brutalist-claude-project.md)
-- [The Fundamental Themes](chapters/97-fundamenta-themes.md)
+- **Chapter 1: Chapter 02 — Claude Basics for D3 Visualization.** - The gap between "make a chart" and "make the chart" is the whole problem. - The chapter moves through Where Claude lives, The instruction budget, and why two files beat one. - Read it for the main argument, the vocabulary it...
+- **Chapter 2: Chapter 02 — Claude Basics for D3 Visualization.** - The gap between "make a chart" and "make the chart" is the whole problem. - The chapter moves through Where Claude lives, The instruction budget, and why two files beat one, The four-move prompt, Three notes specific to D3, and related...
+- **Chapter 3: Chapter 3 — Marks and Channels.** - The Channels Your Eye Trusts and the Ones It Doesn't. - The chapter moves through The Grammar Beneath the Chart, Marks: The Geometric Primitives, Channels: The Visual Variables, Why Area Gets Underestimated: Stevens' Power Law, and related ideas. - Read it...
+- **Chapter 4: Chapter 4 — Chart Selection as Design Decision.** - The Wrong Chart Feels Familiar; the Right One Takes Work. - The chapter moves through Why the Pie Chart Was Chosen Anyway, The Eight Categories That Contain Every Chart, Cairo's Four Steps, The Mechanism Behind Each Chart Type, and related ideas....
+- **Chapter 5: Chapter 05 — Reading a Dataset.** - Read the Data Before You Reach for the Code. - The chapter moves through What a dataset contains, Whose question is the chart answering?, Compared with what?, What relationships does your data actually support?, and related ideas. - Read it for...
+- **Chapter 6: Chapter 6 — Working with Claude Code.** - You Decide, the Machine Renders, You Review. - The chapter moves through What the Pipeline Actually Is, The Four-Move Structure, What Claude Code Does and Does Not Do Well, The MBTA Lesson, and related ideas. - Read it for the main...
+- **Chapter 7: Chapter 07 — Comparison Charts.** - Length Along a Shared Baseline Is the Honest Channel. - The chapter moves through What a bar chart actually does, The argument defenders make, and why it fails, The choice between horizontal and vertical, When one variable becomes two, and related...
+- **Chapter 8: Chapter 8 — Time Series and Temporal Charts.** - What Changes, in What Direction, How Fast. - The chapter moves through The Temporal Family and What Each Member Is For, Why the Zero-Baseline Rule Splits the Family, What Lines Claim That Bars Do Not, Gestalt Continuity and the Skipped-Interval Problem,...
+- **Chapter 9: Chapter 09 — Distribution Charts.** - Shape, Spread, and Skew — Beyond the Mean. - The chapter moves through What the mean hides, The histogram and the bin-width problem, What the box plot shows and doesn't, Violin plots: shape made visible, and related ideas. - Read it...
+- **Chapter 10: Chapter 10 — Relationship and Correlation Charts.** - Two Variables and the Question They Refuse to Settle. - The chapter moves through What a Scatterplot Actually Is, The Overplotting Problem, Bubble Charts and the Radius Trap, Heatmaps: Position Traded for Density, and related ideas. - Read it for the...
+- **Chapter 11: Chapter 11 — Part-to-Whole Charts.** - When the Pieces Have to Add Up to One. - The chapter moves through What the pie chart is actually asking the eye to do, When the pie chart works anyway, Waffle charts and what they do differently, Stacked bars and...
+- **Chapter 12: Chapter 12 — Hierarchy Charts.** - Here is a problem that looks like it has an obvious solution. - The chapter moves through What a Hierarchy Actually Contains, The Four Forms and What Each Encodes, Why Rectangles Win on Area Comparison, The Depth Limit and Why It...
+- **Chapter 13: Chapter 13 — Flow and Network Charts.** - This chapter gives a working overview of Flow and Network Charts, focusing on the ideas a reader needs before moving to the next chapter. - The chapter moves through Width as a channel, The three flow-magnitude forms, The three connection-existence forms,...
+- **Chapter 14: Chapter 14 — Spatial and Geographic Charts.** - This chapter gives a working overview of Spatial and Geographic Charts, focusing on the ideas a reader needs before moving to the next chapter. - The chapter moves through What Geographic Visualization Is For, The Four Spatial Forms, The Area-Size Distortion,...
+- **Chapter 15: Chapter 15 — Specialized and Financial Charts.** - Conventions That Earn Their Strangeness. - The chapter moves through What makes a convention earn its strangeness, Candlestick and OHLC charts, Kagi and Point & Figure: removing time from the axis, Bullet graphs and the gauge chart replacement, and related ideas....
+- **Chapter 16: Chapter 16 — Design Principles in Practice.** - A published quarterly report has a bar chart of Q4 sales by region. - The chapter moves through The four sources, and what each contributes, Proportional ink: the foundation, Data-ink ratio: the heuristic and its resolution, Color: the three vocabularies, and...
+- **Chapter 17: Chapter 17 — Building a Complete Project.** - From Raw Data to Published Chart in One Pipeline. - The chapter moves through Why a Project Is Different From a Chart, Phase A: The Question Precedes the Data, Phase B: The Schema Before the Chart, The split between CLAUDE.md and...
+- **Chapter 18: Part II — Examples.** - Sixty-one chart types, alphabetically. - The chapter moves through What this chart type is, How to read this chart, Why arc diagrams — not force-directed graphs, Strengths and limitations, and related ideas. - Read it for the main argument, the vocabulary...
+- **Chapter 19: Chapter 16 — The Brutalist Claude Project.** - The Brutalist Claude Project — A System Prompt for the Three Files - A Claude Project That Holds the Phase Gate So You Don't Have To - Brutalist as a Conversational Tool — The System Prompt You Paste Once This appendix...
 
-## Copyright and License
+## Files
 
-Copyright © 2026 Humanitarians AI. The text is licensed under CC BY 4.0. See [LICENSE.md](LICENSE.md) for full terms, including trademark restrictions for AI+1 marks and cover design.
+- `chapters/00-frontmatter.md` — title page, copyright, dedication, and preface
+- `chapters/00-introduction.md` — roadmap and book-level AI note
+- `chapters/99-back-matter.md` — acknowledgments, author note, references placeholder, and Medhavy note
+- `LICENSE.md` — rights and reuse terms
 
-## Errata
+## Medhavy
 
-Errata, corrections, and suspected mistakes may be submitted through [humanitarians.ai](https://www.humanitarians.ai/).
+This book is prepared for Kindle, online publication, and integration with Medhavy: https://www.medhavy.com/

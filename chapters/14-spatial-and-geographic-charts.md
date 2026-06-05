@@ -1,4 +1,11 @@
 # Chapter 14 — Spatial and Geographic Charts
+
+## TL;DR
+
+- This chapter gives a working overview of Spatial and Geographic Charts, focusing on the ideas a reader needs before moving to the next chapter.
+- The chapter moves through What Geographic Visualization Is For, The Four Spatial Forms, The Area-Size Distortion, Rates, Not Counts, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *Position on the Earth Is the Story.*
 
 ---
@@ -318,12 +325,15 @@ uses d3.scaleSqrt if applicable.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **John Snow** mapped the 1854 Broad Street cholera outbreak in London — using a dot map of deaths to identify a single contaminated pump. The map became the founding case for spatial epidemiology and one of the most influential pieces of data visualization ever made.
 
 ![John Snow, circa 1856. AI-generated portrait based on a public domain photograph.](../images/john-snow.jpg)
 *John Snow, circa 1856. AI-generated portrait based on a public domain photograph (Wikimedia Commons).*
+
+![John Snow](../images/john-snow-50m.png)
+
+*Puppet Art by [Nik Bear Brown](https://www.nikbearbrown.com/).*
 
 **Run this:**
 

@@ -1,5 +1,12 @@
 # Chapter 07 — Comparison Charts
 
+
+## TL;DR
+
+- Length Along a Shared Baseline Is the Honest Channel.
+- The chapter moves through What a bar chart actually does, The argument defenders make, and why it fails, The choice between horizontal and vertical, When one variable becomes two, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *Length Along a Shared Baseline Is the Honest Channel.*
 
 ---
@@ -332,8 +339,7 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **William Playfair** invented the bar chart, line graph, and pie chart in his 1786 *Commercial and Political Atlas* — and used them to make political arguments about British trade. Most of the chart vocabulary you use today is his.
 
 ![William Playfair, circa 1800. AI-generated portrait based on a public domain engraving.](../images/william-playfair.jpg)

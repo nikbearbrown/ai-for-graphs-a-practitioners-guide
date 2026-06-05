@@ -1,4 +1,11 @@
 # Chapter 8 — Time Series and Temporal Charts
+
+## TL;DR
+
+- What Changes, in What Direction, How Fast.
+- The chapter moves through The Temporal Family and What Each Member Is For, Why the Zero-Baseline Rule Splits the Family, What Lines Claim That Bars Do Not, Gestalt Continuity and the Skipped-Interval Problem, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *What Changes, in What Direction, How Fast.*
 
 ---
@@ -337,12 +344,15 @@ appropriate.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Étienne-Jules Marey** was a 19th-century French physiologist who developed the "graphical method" — recording heartbeats, gait, and bird flight as continuous time-series traces on paper. He believed the trace was a more honest record than the human eye.
 
 ![Étienne-Jules Marey, circa 1885. AI-generated portrait based on a public domain photograph.](../images/etienne-jules-marey.jpg)
 *Étienne-Jules Marey, circa 1885. AI-generated portrait based on a public domain photograph (Wikimedia Commons).*
+
+![Étienne-Jules Marey](../images/etienne-jules-marey-q7y.png)
+
+*Puppet Art by [Nik Bear Brown](https://www.nikbearbrown.com/).*
 
 **Run this:**
 

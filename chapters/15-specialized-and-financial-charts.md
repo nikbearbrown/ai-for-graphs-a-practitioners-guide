@@ -1,5 +1,12 @@
 # Chapter 15 — Specialized and Financial Charts
 
+
+## TL;DR
+
+- Conventions That Earn Their Strangeness.
+- The chapter moves through What makes a convention earn its strangeness, Candlestick and OHLC charts, Kagi and Point & Figure: removing time from the axis, Bullet graphs and the gauge chart replacement, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *Conventions That Earn Their Strangeness.*
 
 ---
@@ -299,8 +306,7 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Munehisa Homma** was an 18th-century Japanese rice trader who developed the candlestick charting technique to track price action in the Osaka rice futures market — the earliest organized derivatives exchange. His method reached the West only in the 1990s.
 
 ![Munehisa Homma, 18th century. AI-generated illustration based on a public domain painting.](../images/munehisa-homma.jpg)

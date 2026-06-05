@@ -1,4 +1,11 @@
 # Chapter 12 — Hierarchy Charts
+
+## TL;DR
+
+- Here is a problem that looks like it has an obvious solution.
+- The chapter moves through What a Hierarchy Actually Contains, The Four Forms and What Each Encodes, Why Rectangles Win on Area Comparison, The Depth Limit and Why It Exists, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *Containment as the Encoding.*
 
 ---
@@ -319,12 +326,15 @@ readable, click-to-zoom implemented if the depth requires it.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Ben Shneiderman** invented the treemap in 1990 — to display hierarchical disk usage on his hard drive without wasted screen space. The algorithm now displays everything from stock-market sectors to government budgets to file-system contents.
 
 ![Ben Shneiderman, circa 1991. AI-generated portrait based on a public domain photograph.](../images/ben-shneiderman.jpg)
 *Ben Shneiderman, circa 1991. AI-generated portrait based on a public domain photograph (Wikimedia Commons).*
+
+![Ben Shneiderman](../images/ben-shneiderman-jv1.png)
+
+*Puppet Art by [Nik Bear Brown](https://www.nikbearbrown.com/).*
 
 **Run this:**
 

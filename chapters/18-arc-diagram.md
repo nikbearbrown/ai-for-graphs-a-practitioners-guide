@@ -1,5 +1,12 @@
 # Part II — Examples
 
+
+## TL;DR
+
+- Sixty-one chart types, alphabetically.
+- The chapter moves through What this chart type is, How to read this chart, Why arc diagrams — not force-directed graphs, Strengths and limitations, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 Sixty-one chart types, alphabetically. Each chapter is short — a placeholder image, the rich pedagogical text from the working pantry page, a single Claude Code prompt that generates a similar chart and its data file together, and a link to [bearbrown.co](https://www.bearbrown.co/) where the original code and data live. Browse, take what you need, skip what you don't. The prompts are the value: paste one into Claude Code and you have a working chart of that type in seconds, with a data file you can replace with your own.
 
 ---
@@ -83,12 +90,15 @@ The original code and data — copy-paste-ready — live at [bearbrown.co](https
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Leonhard Euler** solved the Königsberg-bridges puzzle in 1735 by abstracting a city into nodes and edges and asking which path crossed each bridge exactly once. That single diagram founded graph theory — the mathematics that arc diagrams, force-directed networks, and every modern network visualization are built on. The arcs in this chapter trace back to those bridges.
 
 ![Leonhard Euler, circa 1750. AI-generated portrait based on a public domain engraving.](../images/leonhard-euler.jpg)
 *Leonhard Euler, circa 1750. AI-generated portrait based on a public domain engraving (Wikimedia Commons).*
+
+![Leonhard Euler Königsberg bridges](../images/leonhard-euler-bbq.png)
+
+*Puppet Art by [Nik Bear Brown](https://www.nikbearbrown.com/).*
 
 **Run this:**
 

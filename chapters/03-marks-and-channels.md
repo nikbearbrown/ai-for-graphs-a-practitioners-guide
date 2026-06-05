@@ -1,4 +1,11 @@
 # Chapter 3 — Marks and Channels
+
+## TL;DR
+
+- The Channels Your Eye Trusts and the Ones It Doesn't.
+- The chapter moves through The Grammar Beneath the Chart, Marks: The Geometric Primitives, Channels: The Visual Variables, Why Area Gets Underestimated: Stevens' Power Law, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *The Channels Your Eye Trusts and the Ones It Doesn't.*
 
 ---
@@ -347,8 +354,7 @@ output on the first attempt.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Jock Mackinlay** ranked visual channels by perceptual accuracy in his 1986 dissertation — showing that position beats length beats angle beats color, in roughly that order. The ranking still drives every decision about which channel to use for the most important variable.
 
 ![Jock Mackinlay, circa 1986. AI-generated portrait based on a public domain photograph.](../images/jock-mackinlay.jpg)

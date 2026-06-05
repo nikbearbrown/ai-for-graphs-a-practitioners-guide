@@ -1,4 +1,11 @@
 # Chapter 6 — Working with Claude Code
+
+## TL;DR
+
+- You Decide, the Machine Renders, You Review.
+- The chapter moves through What the Pipeline Actually Is, The Four-Move Structure, What Claude Code Does and Does Not Do Well, The MBTA Lesson, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *You Decide, the Machine Renders, You Review.*
 
 ---
@@ -373,12 +380,15 @@ Save outputs as a chapter-05-full-pipeline/ directory:
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Grace Hopper** wrote the first compiler in 1952 — A-0 — arguing that programmers should not write in machine code if a machine could translate from something more human. The chain that runs from her work to "tell Claude what you want" is short.
 
 ![Grace Hopper, circa 1960. AI-generated portrait based on a public domain photograph.](../images/grace-hopper.jpg)
 *Grace Hopper, circa 1960. AI-generated portrait based on a public domain photograph (Wikimedia Commons).*
+
+![Grace Hopper](../images/grace-hopper-w8h.png)
+
+*Puppet Art by [Nik Bear Brown](https://www.nikbearbrown.com/).*
 
 **Run this:**
 

@@ -1,5 +1,12 @@
 # Chapter 02 — Claude Basics for D3 Visualization
 
+
+## TL;DR
+
+- The gap between "make a chart" and "make the chart" is the whole problem.
+- The chapter moves through Where Claude lives, The instruction budget, and why two files beat one, The four-move prompt, Three notes specific to D3, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *The gap between "make a chart" and "make the chart" is the whole problem.*
 
 ---
@@ -437,12 +444,15 @@ Save the document as DESIGN.md.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Margaret Hamilton** led the team that wrote the Apollo Guidance Computer software in the 1960s — coining the term "software engineering" along the way. Her stack of program listings stood taller than she did. The discipline of "talk to your software carefully and you will get something you didn't expect" was hers.
 
 ![Margaret Hamilton, circa 1969. AI-generated portrait based on a public domain photograph.](../images/margaret-hamilton.jpg)
 *Margaret Hamilton, circa 1969. AI-generated portrait based on a public domain photograph (Wikimedia Commons).*
+
+![Margaret Hamilton](../images/margaret-hamilton-ees.png)
+
+*Puppet Art by [Nik Bear Brown](https://www.nikbearbrown.com/).*
 
 **Run this:**
 

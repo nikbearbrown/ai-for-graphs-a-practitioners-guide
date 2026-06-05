@@ -1,4 +1,11 @@
 # Chapter 17 — Building a Complete Project
+
+## TL;DR
+
+- From Raw Data to Published Chart in One Pipeline.
+- The chapter moves through Why a Project Is Different From a Chart, Phase A: The Question Precedes the Data, Phase B: The Schema Before the Chart, The split between CLAUDE.md and DESIGN.md, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *From Raw Data to Published Chart in One Pipeline.*
 
 ---
@@ -356,8 +363,7 @@ PROJECT.md, README.md, and a publication-ready artifact.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Buckminster Fuller** spent decades insisting that a designer's job is not to make objects but to make the whole system legible to the people who have to live with it. His Dymaxion map and the *World Game* were enormous communication projects: a data narrative wrapped around a verifiable artifact, end to end. The complete-project discipline of this chapter — README to chart to audit log — is Fuller's idea of legibility scaled down.
 
 ![Buckminster Fuller, circa 1962. AI-generated portrait based on a public domain photograph.](../images/buckminster-fuller.jpg)

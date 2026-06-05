@@ -991,8 +991,7 @@ That boundary, held firmly, is the whole idea.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Le Corbusier** championed *béton brut* — raw concrete left honest, marks of the wooden formwork visible — in projects like the Unité d'Habitation (1952) and the Chandigarh capitol complex. The aesthetic that gave brutalism its name was a moral claim: show the structure, do not disguise it. The Brutalist Claude project applies the same rule to charts. The grid is visible. The data is the ornament.
 
 ![Le Corbusier, circa 1953. AI-generated portrait based on a public domain photograph.](../images/le-corbusier.jpg)

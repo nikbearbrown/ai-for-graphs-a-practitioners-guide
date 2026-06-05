@@ -1,5 +1,12 @@
 # Chapter 11 — Part-to-Whole Charts
 
+
+## TL;DR
+
+- When the Pieces Have to Add Up to One.
+- The chapter moves through What the pie chart is actually asking the eye to do, When the pie chart works anyway, Waffle charts and what they do differently, Stacked bars and what the single-bar form is good for, and related ideas.
+- Read it for the main argument, the vocabulary it introduces, and the practical judgment it asks you to develop.
+
 *When the Pieces Have to Add Up to One.*
 
 ---
@@ -318,8 +325,7 @@ Flag any audit failure and write the follow-up prompt that corrects it.
 
 ---
 
-## AI Wayback Machine
-
+##  AI Wayback Machine
 The ideas in this chapter didn't appear from nowhere. **Georg von Mayr** was a 19th-century German statistician who built systematic part-to-whole charts (pie variants, stacked bars, area diagrams) to display the components of state and demographic data — and helped move statistics from text tables to visual reasoning.
 
 ![Georg von Mayr, circa 1900. AI-generated portrait based on a public domain photograph.](../images/georg-von-mayr.jpg)

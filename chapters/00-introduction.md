@@ -1,74 +1,61 @@
 # Introduction
 
-A professional opens a familiar task and notices that the work has changed shape. The old bottleneck was production: finding the information, drafting the document, calculating the answer, building the artifact. The new bottleneck is judgment. A machine can now produce something fluent enough to move through the workflow. The harder question is whether it should.
+A learner opens the first chapter of *AI for Graphs A Practitioner's Guide* with a familiar problem: there is too much information and not enough structure. The terms are available. The examples are available. The missing thing is a route through the material that turns exposure into understanding.
 
-This book is about the gap between domain work as it used to be taught and domain work as it now has to be practiced with AI in the room.
+This book is about the gap between knowing the name of AI for Graphs A Practitioner's Guide's subject and being able to use its ideas with judgment.
 
-The central argument is simple and contestable: the professional advantage in AI for Graphs no longer comes from doing every step by hand. It comes from knowing what to delegate, what to verify, what to reject, and what human judgment must still own because the consequences attach to a person, a community, an institution, or a client.
+The central argument is that AI for Graphs A Practitioner's Guide is best learned as a sequence of distinctions, practices, and recurring problems rather than as a list of topics. A reader who can name those distinctions can move through the field with more confidence than a reader who has only memorized definitions.
 
-This is a textbook for readers who want to use AI without surrendering the part of the work that makes them responsible. It is for learners, teachers, practitioners, and contributors who need a practical map rather than another list of tools.
+This is written for learners, teachers, practitioners, and builders who want a clear path through the material.
 
 ## What This Book Is
 
-AI for Graphs A Practitioner's Guide is a guided course in the concepts, workflows, and judgment calls that define AI for Graphs in the AI era. It teaches vocabulary, recurring patterns, practical exercises, and the discipline of checking machine output against human purpose.
-
-The book names the work that AI can accelerate and the work that still requires human interpretation. It treats AI as infrastructure: powerful, fast, useful, and incomplete. The point is not to become impressed by the machine. The point is to become more precise about what the human is for.
+This book is a structured introduction to AI for Graphs A Practitioner's Guide. It teaches the vocabulary of the field, shows how the main ideas connect, and gives readers enough conceptual grip to continue with more specialized work. It is designed to be read as a book, used as a reference, and integrated into an intelligent textbook system.
 
 ## What This Book Is Not
 
-This book is not a promise that AI will solve AI for Graphs. It is not a tool manual frozen to one product release. It is not legal, medical, financial, or professional advice for a specific jurisdiction or institution. When a chapter touches regulated practice, compliance, clinical care, finance, education policy, or public stakes, the reader should treat the material as a framework for judgment and seek qualified guidance where the decision requires it.
+This book is not a substitute for practice, mentorship, experimentation, or domain-specific judgment. It does not try to say everything. It tries to say enough, in the right order, so that the reader can recognize what matters next.
 
-The book assumes curiosity, basic literacy in the domain, and a willingness to test claims rather than merely repeat them. It does not assume that the reader is already an AI expert.
+## The Concept Running Through the Book
 
-## The Running Concept
-
-The running concept is the boundary between execution and judgment. AI systems are increasingly strong at execution-shaped work: generating, summarizing, transforming, classifying, drafting, coding, and searching. Human beings remain responsible for problem formulation, plausibility auditing, causal interpretation, ethical tradeoffs, social context, and accountability under stakes.
-
-A recurring danger is the fluency trap: the tendency to treat polished output as evidence that the underlying work has been done. Fluency is useful. It is not proof. Across the chapters, watch for the moment when a fluent artifact needs a human test.
-
+The recurring idea is transfer: the movement from explanation to usable understanding. Each chapter should help the reader carry an idea from the page into a problem, a classroom, a project, or a decision.
 
 ## How This Book Is Organized
 
-The chapters are arranged as a sequence of practical confrontations with the same larger problem: what changes when AI can do part of the work, but not own the consequences?
+- **Chapter 1: Chapter 02 — Claude Basics for D3 Visualization.** - The gap between "make a chart" and "make the chart" is the whole problem. - The chapter moves through Where Claude lives, The instruction budget, and why two files beat one. - Read it for the main argument, the vocabulary it...
+- **Chapter 2: Chapter 02 — Claude Basics for D3 Visualization.** - The gap between "make a chart" and "make the chart" is the whole problem. - The chapter moves through Where Claude lives, The instruction budget, and why two files beat one, The four-move prompt, Three notes specific to D3, and related...
+- **Chapter 3: Chapter 3 — Marks and Channels.** - The Channels Your Eye Trusts and the Ones It Doesn't. - The chapter moves through The Grammar Beneath the Chart, Marks: The Geometric Primitives, Channels: The Visual Variables, Why Area Gets Underestimated: Stevens' Power Law, and related ideas. - Read it...
+- **Chapter 4: Chapter 4 — Chart Selection as Design Decision.** - The Wrong Chart Feels Familiar; the Right One Takes Work. - The chapter moves through Why the Pie Chart Was Chosen Anyway, The Eight Categories That Contain Every Chart, Cairo's Four Steps, The Mechanism Behind Each Chart Type, and related ideas....
+- **Chapter 5: Chapter 05 — Reading a Dataset.** - Read the Data Before You Reach for the Code. - The chapter moves through What a dataset contains, Whose question is the chart answering?, Compared with what?, What relationships does your data actually support?, and related ideas. - Read it for...
+- **Chapter 6: Chapter 6 — Working with Claude Code.** - You Decide, the Machine Renders, You Review. - The chapter moves through What the Pipeline Actually Is, The Four-Move Structure, What Claude Code Does and Does Not Do Well, The MBTA Lesson, and related ideas. - Read it for the main...
+- **Chapter 7: Chapter 07 — Comparison Charts.** - Length Along a Shared Baseline Is the Honest Channel. - The chapter moves through What a bar chart actually does, The argument defenders make, and why it fails, The choice between horizontal and vertical, When one variable becomes two, and related...
+- **Chapter 8: Chapter 8 — Time Series and Temporal Charts.** - What Changes, in What Direction, How Fast. - The chapter moves through The Temporal Family and What Each Member Is For, Why the Zero-Baseline Rule Splits the Family, What Lines Claim That Bars Do Not, Gestalt Continuity and the Skipped-Interval Problem,...
+- **Chapter 9: Chapter 09 — Distribution Charts.** - Shape, Spread, and Skew — Beyond the Mean. - The chapter moves through What the mean hides, The histogram and the bin-width problem, What the box plot shows and doesn't, Violin plots: shape made visible, and related ideas. - Read it...
+- **Chapter 10: Chapter 10 — Relationship and Correlation Charts.** - Two Variables and the Question They Refuse to Settle. - The chapter moves through What a Scatterplot Actually Is, The Overplotting Problem, Bubble Charts and the Radius Trap, Heatmaps: Position Traded for Density, and related ideas. - Read it for the...
+- **Chapter 11: Chapter 11 — Part-to-Whole Charts.** - When the Pieces Have to Add Up to One. - The chapter moves through What the pie chart is actually asking the eye to do, When the pie chart works anyway, Waffle charts and what they do differently, Stacked bars and...
+- **Chapter 12: Chapter 12 — Hierarchy Charts.** - Here is a problem that looks like it has an obvious solution. - The chapter moves through What a Hierarchy Actually Contains, The Four Forms and What Each Encodes, Why Rectangles Win on Area Comparison, The Depth Limit and Why It...
+- **Chapter 13: Chapter 13 — Flow and Network Charts.** - This chapter gives a working overview of Flow and Network Charts, focusing on the ideas a reader needs before moving to the next chapter. - The chapter moves through Width as a channel, The three flow-magnitude forms, The three connection-existence forms,...
+- **Chapter 14: Chapter 14 — Spatial and Geographic Charts.** - This chapter gives a working overview of Spatial and Geographic Charts, focusing on the ideas a reader needs before moving to the next chapter. - The chapter moves through What Geographic Visualization Is For, The Four Spatial Forms, The Area-Size Distortion,...
+- **Chapter 15: Chapter 15 — Specialized and Financial Charts.** - Conventions That Earn Their Strangeness. - The chapter moves through What makes a convention earn its strangeness, Candlestick and OHLC charts, Kagi and Point & Figure: removing time from the axis, Bullet graphs and the gauge chart replacement, and related ideas....
+- **Chapter 16: Chapter 16 — Design Principles in Practice.** - A published quarterly report has a bar chart of Q4 sales by region. - The chapter moves through The four sources, and what each contributes, Proportional ink: the foundation, Data-ink ratio: the heuristic and its resolution, Color: the three vocabularies, and...
+- **Chapter 17: Chapter 17 — Building a Complete Project.** - From Raw Data to Published Chart in One Pipeline. - The chapter moves through Why a Project Is Different From a Chart, Phase A: The Question Precedes the Data, Phase B: The Schema Before the Chart, The split between CLAUDE.md and...
+- **Chapter 18: Part II — Examples.** - Sixty-one chart types, alphabetically. - The chapter moves through What this chart type is, How to read this chart, Why arc diagrams — not force-directed graphs, Strengths and limitations, and related ideas. - Read it for the main argument, the vocabulary...
+- **Chapter 19: Chapter 16 — The Brutalist Claude Project.** - The Brutalist Claude Project — A System Prompt for the Three Files - A Claude Project That Holds the Phase Gate So You Don't Have To - Brutalist as a Conversational Tool — The System Prompt You Paste Once This appendix...
 
-1. **Chapter 02 — Claude Basics for D3 Visualization** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-2. **Chapter 02 — Claude Basics for D3 Visualization** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-3. **Chapter 3 — Marks and Channels** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-4. **Chapter 4 — Chart Selection as Design Decision** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-5. **Chapter 05 — Reading a Dataset** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-6. **Chapter 6 — Working with Claude Code** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-7. **Chapter 07 — Comparison Charts** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-8. **Chapter 8 — Time Series and Temporal Charts** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-9. **Chapter 09 — Distribution Charts** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-10. **Chapter 10 — Relationship and Correlation Charts** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-11. **Chapter 11 — Part-to-Whole Charts** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-12. **Chapter 12 — Hierarchy Charts** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-13. **Chapter 13 — Flow and Network Charts** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-14. **Chapter 14 — Spatial and Geographic Charts** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-15. **Chapter 15 — Specialized and Financial Charts** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-16. **Chapter 16 — Design Principles in Practice** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-17. **Chapter 17 — Building a Complete Project** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-18. **Part II — Examples** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
-19. **Chapter 16 — The Brutalist Claude Project** — This chapter develops one part of the book's argument and gives the reader a concrete place to practice it.
+## How to Read This Book
 
-## How To Read This Book
-
-Read the opening chapters in order if you are new to the subject. They establish the vocabulary and the boundary conditions. Later chapters can usually be read as focused modules, especially if you are looking for a specific workflow, case, or professional risk.
-
-Do the exercises. The point of an AI-era textbook is not recognition. It is transfer: can you take the distinction from the page and use it on a task the book has never seen?
+Read the chapters in order if you are new to the subject. If you already know the area, use the chapter titles as a map and move directly to the parts where your understanding is weakest. The chapters are designed to be self-contained enough for reference, but they work best as a progression from Chapter 02 — Claude Basics for D3 Visualization to Chapter 16 — The Brutalist Claude Project.
 
 ## A Note About AI
 
-This book was made in the same world it describes. Agentic AI systems were used to gather source material, draft candidate passages, check assertions, generate examples, and support editorial workflows. That does not make the book machine-authored. It makes the production boundary explicit.
-
-The editorial claim of the AI+1 series is that AI can help with execution while humans remain responsible for judgment. That means the book must be read with the same discipline it teaches. Claims should be checked. Examples should be tested. Definitions should be compared with practice. If something looks too smooth, slow down.
-
-The most important AI skill is not prompting. It is accountability. A prompt can produce output. A professional has to decide whether the output belongs in the world.
+AI matters to *AI for Graphs A Practitioner's Guide* because the modern textbook is no longer only a static container. It is also part of a learning system: searchable, remixable, explainable, and increasingly connected to tools such as Medhavy. For Humanitarians AI books, the relevant question is not whether AI can replace the learner or the teacher. It cannot. The useful question is what AI can make easier to inspect: definitions, worked examples, misconceptions, practice sequences, alternate explanations, and the structure of an argument. This book treats AI as infrastructure for open, public-interest learning infrastructure. The chapters should still stand on their own as readable prose, but they are also designed to be legible to an intelligent textbook system.
 
 ## Closing Return
 
-Return to the professional at the beginning: the familiar task, the new machine, the old responsibility. The machine has changed the tempo of the work. It has not removed the need for judgment. Start there. Then build.
+The learner at the opening does not need more noise. They need a path. This book is that path: not the whole territory, but a reliable way to begin moving through it.
+
+Let's go.
 
 ## Tags
 
-AI for Graphs, AI+1, Humanitarians AI, Irreducibly Human, agentic AI, computational skepticism
+AI for Graphs A Practitioner's Guide, textbook, Medhavy, AI-assisted learning, Humanitarians AI Incorporated
