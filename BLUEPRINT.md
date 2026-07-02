@@ -1,11 +1,11 @@
-# TIKTOC — AI for Graphs: A Practitioner's Guide
+# BLUEPRINT — AI for Graphs: A Practitioner's Guide
 
 **Working title:** AI for Graphs: A Practitioner's Guide *(working frontmatter title: Brutalist d3 x Claude)*
 **Series:** Practitioner's AI Series · Northeastern University College of Engineering
 **Author:** Humanitarians AI · ni.brown@neu.edu · Bear Brown & Company
-**Document:** Full TIKTOC — Complete Architecture, reverse-engineered from 18 existing chapter drafts
+**Document:** Full BLUEPRINT — Complete Architecture, reverse-engineered from 18 existing chapter drafts
 **Version:** 1.0
-**Status:** Reverse-engineered from existing drafts — TIKTOC precedes rewrite pass
+**Status:** Reverse-engineered from existing drafts — BLUEPRINT precedes rewrite pass
 **Directory:** ai-for-graphs-a-practitioners-guide/
 
 ---
@@ -172,7 +172,7 @@ Appendices
 
 ---
 
-## Chapter-by-Chapter TIKTOC
+## Chapter-by-Chapter BLUEPRINT
 
 ---
 
@@ -816,6 +816,6 @@ The appendix is already drafted at `chapters/97-fundamenta-themes.md`. The Recon
 
 ---
 
-*TIKTOC v1.0 — Reverse-engineered from 18 existing chapter drafts*
+*BLUEPRINT v1.0 — Reverse-engineered from 18 existing chapter drafts*
 *Frontmatter, 18 chapters (1 to be written), back matter, and 6 appendices documented*
 *Reconciliation Report at `pantry/_reconciliation_report.md`*
